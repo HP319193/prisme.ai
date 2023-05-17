@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlock } from '../../Provider';
+import { useBlocks } from '../../Provider/blocksContext';
 import { BaseBlock } from '../BaseBlock';
 import { BlocksList, BlocksListConfig } from '../BlocksList';
 import { BaseBlockConfig } from '../types';
@@ -38,6 +39,9 @@ export const Carousel = ({
   },
   ...props
 }: CarouselProps) => {
+  const {
+    utils: { BlockLoader },
+  } = useBlocks();
   const container = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
 
@@ -146,7 +150,10 @@ export const Carousel = ({
 
   return (
     <div ref={container} className={`pr-block-carousel ${className}`}>
-      <BlocksList {...props} className="pr-block-carousel__content" />
+      <BlockLoader
+        name="BlocksList"
+        config={{ ...props, className: 'pr-block-carousel__content' }}
+      />
       {canScroll && (
         <div className="pr-block-carousel__arrows">
           <div className="pr-block-carousel__arrow pr-block-carousel__arrow--left">

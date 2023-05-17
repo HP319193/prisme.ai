@@ -1,19 +1,16 @@
 import { isLocalizedObject } from '@prisme.ai/design-system';
 import { ReactNode, useState } from 'react';
 import { BlockContext, useBlock } from '../../Provider';
-import {
-  BlocksDependenciesContext,
-  useBlocks,
-} from '../../Provider/blocksContext';
+import { useBlocks } from '../../Provider/blocksContext';
 import useLocalizedText from '../../useLocalizedText';
 import { ActionConfig, Action } from '../Action';
 import { BaseBlock } from '../BaseBlock';
-import { BlocksList, BlocksListConfig } from '../BlocksList';
+import { BlocksListConfig } from '../BlocksList';
 import { BaseBlockConfig } from '../types';
 
 interface TabsViewConfig extends BaseBlockConfig {
   tabs: ({
-    text: ReactNode;
+    text: ReactNode | BlocksListConfig;
     selectedText?: ReactNode;
     content: BlocksListConfig;
   } & ActionConfig)[];
@@ -22,7 +19,6 @@ interface TabsViewConfig extends BaseBlockConfig {
 
 interface TabsViewProps extends TabsViewConfig {
   events: BlockContext['events'];
-  Link: BlocksDependenciesContext['components']['Link'];
 }
 
 function isAction(
@@ -31,16 +27,25 @@ function isAction(
   return !!(action.type && action.value);
 }
 
+function isBlocksList(
+  text: TabsViewConfig['tabs'][number]['text']
+): text is BlocksListConfig {
+  return !!(text as BlocksListConfig).blocks;
+}
+
 export const TabsView = ({
   tabs = [],
   direction,
   className,
   events,
-  Link,
 }: TabsViewProps) => {
   const { localize } = useLocalizedText();
   const [currentTab, setCurrentTab] = useState(0);
   const isHorizontal = direction !== 'vertical';
+  const {
+    components: { Link },
+    utils: { BlockLoader },
+  } = useBlocks();
   return (
     <div
       className={`pr-block-tabs-view ${
@@ -57,9 +62,24 @@ export const TabsView = ({
           const currentText =
             currentTab === k && selectedText ? selectedText : text;
 
+          if (isBlocksList(text)) {
+            return (
+              <button
+                key={k}
+                type="button"
+                onClick={navigate}
+                className={`pr-block-tabs-view__tab ${
+                  currentTab === k ? 'pr-block-tabs-view__tab--active' : ''
+                }`}
+              >
+                <BlockLoader name="BlocksList" config={text} />
+              </button>
+            );
+          }
           if (isAction(action)) {
             return (
               <Action
+                key={k}
                 text={currentText}
                 {...action}
                 events={events}
@@ -73,6 +93,7 @@ export const TabsView = ({
           }
           return (
             <button
+              key={k}
               type="button"
               onClick={navigate}
               className={`pr-block-tabs-view__tab ${
@@ -88,11 +109,15 @@ export const TabsView = ({
       </div>
       <div className="pr-block-tabs-view__content">
         {tabs.map((tab, index) => (
-          <BlocksList
-            {...tabs[index].content}
-            className={`${tab.content?.className || ''}${
-              index === currentTab ? '' : 'hidden'
-            }`}
+          <BlockLoader
+            key={index}
+            name="BlocksList"
+            config={{
+              ...tabs[index].content,
+              className: `${tab.content?.className || ''}${
+                index === currentTab ? '' : 'hidden'
+              }`,
+            }}
           />
         ))}
       </div>
@@ -126,13 +151,10 @@ const defaultStyles = `:block {
 
 export const TabsViewInContext = () => {
   const { config, events } = useBlock<TabsViewConfig>();
-  const {
-    components: { Link },
-  } = useBlocks();
 
   return (
     <BaseBlock defaultStyles={defaultStyles}>
-      <TabsView {...config} events={events} Link={Link} />
+      <TabsView {...config} events={events} />
     </BaseBlock>
   );
 };

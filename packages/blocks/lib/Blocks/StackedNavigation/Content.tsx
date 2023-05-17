@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { Content as IContent } from './context';
 import tw from '../../tw';
 import { BlocksList } from '../BlocksList';
+import { useBlocks } from '../../Provider/blocksContext';
 
 interface ContentProps {
   content: IContent;
@@ -16,6 +17,9 @@ export const Content = ({
   onUnmount,
   removed,
 }: ContentProps) => {
+  const {
+    utils: { BlockLoader },
+  } = useBlocks();
   const [animationClassName, setAnimationClassName] = useState(
     tw`translate-x-full`
   );
@@ -42,10 +46,13 @@ export const Content = ({
       className={tw`${className} flex content-stack__content content transition-transform  ${animationClassName}`}
     >
       {blocks && (
-        <BlocksList
-          blocks={legacyBlocks}
-          className="flex flex-1 flex-col max-w-full overflow-auto"
-          blocksClassName={tw`flex flex-1 content__block-container block-container snap-start max-h-full`}
+        <BlockLoader
+          name="BlocksList"
+          config={{
+            blocks: legacyBlocks,
+            className: 'flex flex-1 flex-col max-w-full overflow-auto',
+            blocksClassName: tw`flex flex-1 content__block-container block-container snap-start max-h-full`,
+          }}
         />
       )}
     </div>

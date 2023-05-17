@@ -1,6 +1,6 @@
 import tw from '../../../tw';
 import BlockTitle from '../../Internal/BlockTitle';
-import { CardAction, CardBlocks, CardProps } from '../types';
+import { CardBlocks, CardProps } from '../types';
 import useLocalizedText from '../../../useLocalizedText';
 import CarouselNavigation from '../CarouselNavigation';
 import { BlocksList } from '../../BlocksList';

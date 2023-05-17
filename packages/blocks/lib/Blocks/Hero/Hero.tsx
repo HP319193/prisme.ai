@@ -1,4 +1,5 @@
 import { useBlock } from '../../Provider';
+import { useBlocks } from '../../Provider/blocksContext';
 import useLocalizedText from '../../useLocalizedText';
 import { BaseBlock } from '../BaseBlock';
 import { BlocksList, BlocksListConfig } from '../BlocksList';
@@ -26,13 +27,16 @@ export const Hero = ({
 }: HeroProps) => {
   const { localize } = useLocalizedText();
   const H = `h${level}` as keyof JSX.IntrinsicElements;
+  const {
+    utils: { BlockLoader },
+  } = useBlocks();
   return (
     <div className={`pr-block-hero ${className}`} style={{ backgroundColor }}>
       <div className="pr-block-hero__container">
         <div className="pr-block-hero__text">
           <H className="pr-block-hero__title">{localize(title)}</H>
           {lead && <p className="pr-block-hero__lead">{localize(lead)}</p>}
-          {content && <BlocksList {...content} />}
+          {content && <BlockLoader name="BlocksList" config={content} />}
         </div>
         {img && (
           <div className="pr-block-hero__img">

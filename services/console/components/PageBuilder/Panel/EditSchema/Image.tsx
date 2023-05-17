@@ -11,13 +11,13 @@ const schema: Schema = {
       'ui:widget': 'upload',
     },
     caption: {
-      type: 'string',
+      type: 'localized:string',
       title: 'pages.blocks.image.settings.caption.label',
       description: 'pages.blocks.image.settings.caption.description',
       'ui:widget': 'html',
     },
     alt: {
-      type: 'string',
+      type: 'localized:string',
       title: 'pages.blocks.image.settings.alt.label',
       description: 'pages.blocks.image.settings.alt.description',
     },
