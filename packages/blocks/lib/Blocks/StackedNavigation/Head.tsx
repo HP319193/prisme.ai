@@ -3,6 +3,7 @@ import { StackedNavigationContext, useStackedNavigation } from './context';
 import tw from '../../tw';
 import { LeftCircleOutlined } from '@ant-design/icons';
 import { BlocksList } from '../BlocksList';
+import { useBlocks } from '../../Provider/blocksContext';
 
 interface HeadRendererProps {
   blocks: StackedNavigationContext['head'];
@@ -14,6 +15,9 @@ export const HeadRenderer = ({
   onBack,
   hasHistory,
 }: HeadRendererProps) => {
+  const {
+    utils: { BlockLoader },
+  } = useBlocks();
   const buttonEl = useRef<HTMLButtonElement>(null);
   const [animationClassName, setAnimationClassName] = useState('');
 
@@ -46,7 +50,12 @@ export const HeadRenderer = ({
         >
           <LeftCircleOutlined />
         </button>
-        {blocks && <BlocksList blocks={legacyBlocks} className="flex-1" />}
+        {blocks && (
+          <BlockLoader
+            name="BlocksList"
+            config={{ blocks: legacyBlocks, className: 'flex-1' }}
+          />
+        )}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ body {
   --color-accent-light: #80A4FF;
   --color-accent-dark: #052e84;
   --color-accent-darker: #03133a;
+  --color-accent-contrast: white;
   --color-background: white;
   --color-text: black;
   --color-border: black;
@@ -12,10 +13,11 @@ body {
   background-color: var(--color-background);
 }
 
-.page-blocks .pr-block-blocks-list {
+.page-blocks > .pr-block-blocks-list {
   display: flex;
   flex-direction: column;
   min-width: 100%;
+  min-height: 100%;
   flex: 1;
 }
 

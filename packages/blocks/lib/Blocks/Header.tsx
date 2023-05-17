@@ -6,7 +6,7 @@ import { BaseBlockConfig } from './types';
 import { BaseBlock } from './BaseBlock';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useLocalizedText from '../useLocalizedText';
-import { BlocksListConfig, BlocksList } from './BlocksList';
+import { BlocksListConfig } from './BlocksList';
 import { CloseOutlined, MenuOutlined } from '@ant-design/icons';
 
 interface HeaderConfig extends BaseBlockConfig {
@@ -35,10 +35,13 @@ interface MenuItemProps extends Pick<ActionProps, 'Link' | 'events'> {
   item: HeaderConfig['nav'][number];
 }
 const MenuItem = ({ item, events, Link }: MenuItemProps) => {
+  const {
+    utils: { BlockLoader },
+  } = useBlocks();
   if (isAction(item)) {
     return <Action {...item} events={events} Link={Link} />;
   }
-  return <BlocksList {...item} />;
+  return <BlockLoader name="BlocksList" config={item} />;
 };
 
 export const Header = ({

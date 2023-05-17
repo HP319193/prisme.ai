@@ -1,6 +1,7 @@
 import { useBlock } from '../Provider';
+import { useBlocks } from '../Provider/blocksContext';
 import { BaseBlock } from './BaseBlock';
-import { BlocksList, BlocksListConfig } from './BlocksList';
+import { BlocksListConfig } from './BlocksList';
 import { BaseBlockConfig } from './types';
 
 export interface FooterConfig extends BaseBlockConfig {
@@ -8,9 +9,12 @@ export interface FooterConfig extends BaseBlockConfig {
 }
 
 export const Footer = ({ content, className = '' }: FooterConfig) => {
+  const {
+    utils: { BlockLoader },
+  } = useBlocks();
   return (
     <footer className={`pr-block-footer ${className}`}>
-      {content && <BlocksList {...content} />}
+      {content && <BlockLoader name="BlocksList" config={content} />}
     </footer>
   );
 };
