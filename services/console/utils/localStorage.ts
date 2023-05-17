@@ -1,1 +1,6 @@
-export default global.localStorage;
+let localStorage;
+try {
+  localStorage = global.localStorage || {};
+} catch {}
+
+export default localStorage
