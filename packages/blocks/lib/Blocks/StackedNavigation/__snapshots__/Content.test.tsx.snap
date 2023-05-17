@@ -3,49 +3,29 @@
 exports[`should be removed 1`] = `
 <div
   className="flex content-stack__content content transition-transform translate-x-full"
->
-  <div
-    className="pr-block-blocks-list flex flex-1 flex-col max-w-full overflow-auto"
-  />
-</div>
+/>
 `;
 
 exports[`should be removed 2`] = `
 <div
   className="flex content-stack__content content transition-transform translate-x-full"
->
-  <div
-    className="pr-block-blocks-list flex flex-1 flex-col max-w-full overflow-auto"
-  />
-</div>
+/>
 `;
 
 exports[`should render with blocks 1`] = `
 <div
   className="flex content-stack__content content transition-transform translate-x-full"
->
-  <div
-    className="pr-block-blocks-list flex flex-1 flex-col max-w-full overflow-auto"
-  />
-</div>
+/>
 `;
 
 exports[`should render with only a title 1`] = `
 <div
   className="flex content-stack__content content transition-transform translate-x-full"
->
-  <div
-    className="pr-block-blocks-list flex flex-1 flex-col max-w-full overflow-auto"
-  />
-</div>
+/>
 `;
 
 exports[`should render with only a title 2`] = `
 <div
   className="flex content-stack__content content transition-transform"
->
-  <div
-    className="pr-block-blocks-list flex flex-1 flex-col max-w-full overflow-auto"
-  />
-</div>
+/>
 `;

@@ -1,17 +1,18 @@
 import Storage from './Storage';
 import localStorage from './localStorage';
+const ls = localStorage!
 
 it('should use Local Storage', () => {
-  localStorage.clear();
-  localStorage.setItem('foo', 'bar');
+  ls.clear();
+  ls.setItem('foo', 'bar');
   expect(Storage.get('foo')).toBe('bar');
 
   Storage.set('foo', 'BAR');
-  expect(localStorage.getItem('foo')).toBe('BAR');
+  expect(ls.getItem('foo')).toBe('BAR');
   expect(Storage.get('foo')).toBe('BAR');
 
   Storage.remove('foo');
-  expect(localStorage.getItem('foo')).toBeNull();
+  expect(ls.getItem('foo')).toBeNull();
   expect(Storage.get('foo')).toBeNull();
 });
 
