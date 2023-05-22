@@ -24,10 +24,8 @@ export class Fetcher {
     this._apiKey = apiKey;
   }
 
-  protected async _fetch<T>(
-    url: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  prepareRequest(url: string,
+    options: RequestInit = {}) {
     const headers = new Headers(options.headers || {});
 
     if (this.token && !headers.has('x-prismeai-token')) {
@@ -51,10 +49,17 @@ export class Fetcher {
 
     headers.append('Access-Control-Allow-Origin', '*');
 
-    const res = await global.fetch(`${this.host}${url}`, {
+    return global.fetch(`${this.host}${url}`, {
       ...options,
       headers,
     });
+  }
+
+  protected async _fetch<T>(
+    url: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    const res = await this.prepareRequest(url, options);
 
     if (!res.ok) {
       let error;
