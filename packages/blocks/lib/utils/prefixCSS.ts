@@ -42,7 +42,7 @@ export function prefixCSS(
     const compiler = new Identity();
     return compiler.compile(parsed);
   } catch (e) {
-    console.error(e);
+    console.trace(new Error(`Failed to get prefix css on: ${cssText}`), e)
     return cssText;
   }
 }
