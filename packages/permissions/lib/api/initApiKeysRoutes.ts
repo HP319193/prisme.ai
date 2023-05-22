@@ -114,7 +114,8 @@ export function initApiKeysRoutes<
     if (broker) {
       broker.send<Prismeai.DeletedApiKey['payload']>(EventType.DeletedApiKey, {
         apiKey,
-        subjectType: subjectType as Prismeai.DeletedApiKey['payload']['subjectType'],
+        subjectType:
+          subjectType as Prismeai.DeletedApiKey['payload']['subjectType'],
         subjectId,
       });
     }

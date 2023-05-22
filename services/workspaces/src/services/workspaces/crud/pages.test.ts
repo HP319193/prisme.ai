@@ -28,15 +28,6 @@ const getMockedAccessManager = (get?: any) => ({
   update: jest.fn(),
   delete: jest.fn(),
   deleteMany: jest.fn(),
-  createApiKey: jest.fn(() => ({
-    apiKey: 'apiKey',
-  })),
-  updateApiKey: jest.fn(() => ({
-    apiKey: 'apiKey',
-  })),
-  deleteApiKey: jest.fn(() => ({
-    apiKey: 'apiKey',
-  })),
 });
 
 const getMockedBroker = () => ({
@@ -354,7 +345,6 @@ describe('Detailed pages', () => {
         },
       ],
       public: false,
-      apiKey: expect.any(String),
     });
   });
 });

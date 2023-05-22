@@ -26,6 +26,7 @@ const getMockedAccessManager = () => {
     update: jest.fn(),
     delete: jest.fn(),
     deleteMany: jest.fn(),
+    getLoadedSubjectRole: jest.fn(),
   };
   (<any>mock).as = jest.fn(() => mock);
 

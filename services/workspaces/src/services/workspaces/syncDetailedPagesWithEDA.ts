@@ -43,16 +43,6 @@ export async function syncDetailedPagesWithEDA(
       workspaceId,
       slug: slug!,
     });
-    if ((detailedPage.labels || []).includes(DISABLE_APIKEY_PAGES_LABEL)) {
-      if (detailedPage.apiKey) {
-        await accessManager.deleteApiKey(
-          detailedPage.apiKey,
-          SubjectType.Workspace,
-          workspaceId
-        );
-        (<any>detailedPage).apiKey = undefined;
-      }
-    }
     if (!workspaceSlug) {
       workspaceSlug = detailedPage.workspaceSlug;
     }
