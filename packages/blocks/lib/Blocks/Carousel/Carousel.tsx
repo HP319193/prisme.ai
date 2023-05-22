@@ -1,12 +1,6 @@
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
@@ -135,7 +129,7 @@ export const Carousel = ({
   }, [autoscrollIsActive, autoscrollSpeed]);
 
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
-  useLayoutEffect(() => {
+  useEffect(() => {
     const t = setInterval(() => {
       const { current } = container;
       if (!current) return;
