@@ -100,6 +100,9 @@
         "confirm": "Please note that the current state of your Workspace will be lost if you have not saved a version.",
         "confirm_ok": "Rollback to this version",
         "success": "Back to the previous version with success."
+      },
+      "export": {
+        "label": "Export"
       }
     },
     "tabs": {
