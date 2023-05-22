@@ -11,26 +11,13 @@ export interface RichTextEditorProps {
   onChange: (v: string) => void;
 }
 export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
-  const { t } = useTranslation('workspaces');
-  const [displayRaw, setDisplayRaw] = useState(true);
-
-  const initialValue = useRef(value);
-  useEffect(() => {
-    setDisplayRaw(!isWysiwygSupported(`${initialValue.current}`));
-  }, []);
-
-  const toggle = useCallback(() => {
-    setDisplayRaw(!displayRaw);
-    if (displayRaw) {
-      onChange(value.replace(/\n/g, ''));
-    } else {
-      onChange(pretty(value));
-    }
-  }, [displayRaw, onChange, value]);
-
+  const [displayRaw, setDisplayRaw] = useState(!isWysiwygSupported(value));
   const ignoreValueChange = useRef(false);
   const [quillMounted, setQuillMounted] = useState(true);
+  const { t } = useTranslation('workspaces');
+
   useEffect(() => {
+    console.log(ignoreValueChange.current);
     if (ignoreValueChange.current) return;
     setQuillMounted(false);
     setTimeout(() => {
@@ -50,33 +37,34 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
             className={`pr-rich-text__html mt-0 ${
               displayRaw ? 'text-primary' : 'text-gray'
             } text-xs`}
-            onClick={toggle}
+            onClick={() => setDisplayRaw(!displayRaw)}
           >
             HTML
           </button>
         </Tooltip>
       </div>
-      {displayRaw ? (
+      {displayRaw && (
         <div className="flex flex-1 rounded-[.3rem]">
           <CodeEditorInline
             mode="html"
-            value={`${value}`}
+            value={`${pretty(value)}`}
             onChange={onChange}
           />
         </div>
-      ) : quillMounted ? (
+      )}
+      {!displayRaw && quillMounted && (
         <Quill
-          theme="snow"
-          defaultValue={`${value}`}
-          onChange={(v) => {
+          defaultValue={value}
+          onChange={(value) => {
             ignoreValueChange.current = true;
             setTimeout(() => {
               ignoreValueChange.current = false;
             }, 10);
-            onChange(v);
+            onChange(value);
           }}
+          className="min-h-[10rem]"
         />
-      ) : null}
+      )}
     </div>
   );
 };
