@@ -459,7 +459,11 @@ Any set variable to one of these contexts is automatically synchronized with par
     <tr>
       <td><b>user.authData</b></td>
       <td>For now, basic & empty object containing either <b>prismeai</b> or <b>anonymous</b> key, depending on user authentication mode</td>
-    </tr>               
+    </tr>    
+    <tr>
+      <td><b>user.role</b></td>
+      <td>If any, current user role</td>
+    </tr>                   
   </table>
 </center>
 

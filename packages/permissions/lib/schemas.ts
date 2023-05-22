@@ -57,7 +57,6 @@ const BaseSchema = new Schema({
   permissions: {
     type: Map,
     of: PermissionListSchema,
-    index: true,
   },
 });
 

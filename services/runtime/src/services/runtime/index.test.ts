@@ -1224,6 +1224,24 @@ describe('Automations execution permissions', () => {
         })
       );
     });
+
+    // But he can execute others regular automations !
+    event = await broker.send(
+      'anotherAutomation',
+      {},
+      { userId: 'randomUser', sessionId: 'randomUser' }
+    );
+    await waitForExpect(() => {
+      expect(sendEventSpy).toBeCalledWith(
+        expect.objectContaining({
+          type: EventType.ExecutedAutomation,
+          source: expect.objectContaining({
+            correlationId: event.source.correlationId,
+            userId: 'randomUser',
+          }),
+        })
+      );
+    });
   });
 
   it('Automations with authorizations.action can be executed by owner/editor', async () => {

@@ -315,6 +315,8 @@ export class Permissions<
     const authorAssignedRole = this.subjects[subjectType]?.author?.assignRole;
     if (authorAssignedRole && subject.createdBy === this.user.id) {
       this.loadRole(authorAssignedRole, subjectType, subject);
+      this.loadedSubjectRoles[`${subjectType}.${subject.id}`] =
+        authorAssignedRole;
       return;
     }
 
@@ -371,6 +373,10 @@ export class Permissions<
         subject
       );
     }
+  }
+
+  public getLoadedSubjectRole(subjectType: SubjectType, subjectId: string) {
+    return this.loadedSubjectRoles[`${subjectType}.${subjectId}`];
   }
 
   can(

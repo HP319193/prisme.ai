@@ -61,6 +61,9 @@ export interface GlobalContext {
 
 export interface UserContext {
   id?: string;
+  role?: string;
+  email?: string;
+  authData?: Record<string, any>;
   [k: string]: any;
 }
 
@@ -450,7 +453,7 @@ export class ContextsManager {
   ) {
     const { ttl, persist = true } = opts || {};
     let type: Prismeai.ContextSetType = opts?.type || 'replace';
-    if (path.endsWith('[]')) {
+    if ((path || '').endsWith('[]')) {
       type = 'push';
       path = path.slice(0, -2);
     }
@@ -556,6 +559,12 @@ export class ContextsManager {
         ...publicContexts.user,
         email: this.session?.email,
         authData: this.session?.authData,
+        role: this.accessManager
+          ? this.accessManager.getLoadedSubjectRole(
+              SubjectType.Workspace,
+              this.workspaceId
+            )
+          : undefined,
       },
       session: {
         ...session,

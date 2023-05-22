@@ -824,4 +824,9 @@ export class AccessManager<
       this.getApiKeyRoleId(apiKey, subjectType, subjectId)
     );
   }
+
+  public getLoadedSubjectRole(subjectType: SubjectType, subjectId: string) {
+    const { permissions } = this.checkAsUser();
+    return permissions.getLoadedSubjectRole(subjectType, subjectId);
+  }
 }
