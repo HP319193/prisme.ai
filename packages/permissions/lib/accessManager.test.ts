@@ -339,8 +339,7 @@ describe('CRUD with a predefined role', () => {
 });
 
 describe('Role & Permissions granting', () => {
-  let createdWorkspace: SubjectInterfaces[SubjectType.Workspace] &
-    BaseSubject<Role>;
+  let createdWorkspace: SubjectInterfaces[SubjectType.Workspace] & BaseSubject;
   it('Any admin can grant a specific role to someone else on its own workspace', async () => {
     // Lets make adminA create a workspace
     createdWorkspace = await adminA.create(SubjectType.Workspace, <any>{});
