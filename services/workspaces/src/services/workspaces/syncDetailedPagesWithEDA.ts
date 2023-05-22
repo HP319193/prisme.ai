@@ -1,6 +1,5 @@
 import { Broker } from '@prisme.ai/broker';
 import { Pages } from '..';
-import { DISABLE_APIKEY_PAGES_LABEL } from '../../../config';
 import { getPagesService } from '../../api/routes/pages';
 import { EventType } from '../../eda';
 import { logger } from '../../logger';

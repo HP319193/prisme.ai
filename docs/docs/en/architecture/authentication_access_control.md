@@ -23,7 +23,3 @@ Each backend microservice keep this configuration inside a `src/permissions` fol
 This folder has 2 main files :  
 - `config.ts` :  declares the existing roles (i.e `owner`), object types (i.e `workspace`) and the rules defining the allowed / forbidden interactions  
 - `index.ts` :  Instantiates the `@prisme.ai/permissions` with the above configuration + a persistance Mongoose schema (optional, only if we want the package to handle the permissions persistance)
-
-The `config.ts` can also specify an optional `customRulesBuilder` callback used to dynamically generate roles given an external payload, by returning the same kind of rules as present in `rbac` and `abac` fields.  
-This is how api keys are created under the hood, with this callback mapping the api key settings to the corresponding rules which will be evaluated when validating this API Key against a given access request.  
-For a more concrete example, see `services/events/src/permissions/config.ts`.

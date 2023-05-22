@@ -2,19 +2,11 @@ import { Broker } from '@prisme.ai/broker';
 import { NextFunction, Request, Response } from 'express';
 import { AccessManager } from '../..';
 
-export type InstantiatedAccessManager<
-  SubjectType extends string,
-  CustomRules = any
-> = Required<
-  AccessManager<
-    SubjectType,
-    { [k in SubjectType]: any },
-    Prismeai.Role,
-    CustomRules
-  >
+export type InstantiatedAccessManager<SubjectType extends string> = Required<
+  AccessManager<SubjectType, { [k in SubjectType]: any }, Prismeai.Role>
 >;
-export type ExtendedRequest<SubjectType extends string, CustomRules = any> = {
-  accessManager: InstantiatedAccessManager<SubjectType, CustomRules>;
+export type ExtendedRequest<SubjectType extends string> = {
+  accessManager: InstantiatedAccessManager<SubjectType>;
   broker: Broker;
 };
 

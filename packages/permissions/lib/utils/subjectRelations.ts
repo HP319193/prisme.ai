@@ -19,10 +19,9 @@ import { extractObjectsByPath } from './extractObjectsByPath';
 
 export function buildSubjectRelations<
   SubjectType extends string,
-  Role extends string,
-  C
+  Role extends string = string
 >(
-  permissionsConfig: PermissionsConfig<SubjectType, Role, C>
+  permissionsConfig: PermissionsConfig<SubjectType, Role>
 ): SubjectRelations<SubjectType> {
   return (permissionsConfig.rbac || []).reduce((subjectFieldRefs, role) => {
     const parentSubject = role.subjectType;

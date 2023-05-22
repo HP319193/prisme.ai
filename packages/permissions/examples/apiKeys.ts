@@ -1,4 +1,4 @@
-import { ActionType, PermissionsConfig } from '..';
+import { PermissionsConfig } from '..';
 
 export enum SubjectType {
   User = 'user',
@@ -14,7 +14,7 @@ export enum Role {
   Guest = 'guest',
 }
 
-const config: PermissionsConfig<SubjectType, Role, Prismeai.ApiKeyRules> = {
+const config: PermissionsConfig<SubjectType, Role> = {
   subjects: Object.values(SubjectType).reduce(
     (subjects, cur) => ({
       ...subjects,
@@ -42,27 +42,6 @@ const config: PermissionsConfig<SubjectType, Role, Prismeai.ApiKeyRules> = {
     },
   ],
   abac: [],
-  customRulesBuilder: ({ type, subjectType, subjectId, rules }) => {
-    if (type !== 'apiKey') {
-      throw new Error('Unsupported custom role type ' + type);
-    }
-
-    if (subjectType === SubjectType.Workspace) {
-      return [
-        {
-          action: [ActionType.Create, ActionType.Read],
-          subject: SubjectType.Event,
-          conditions: {
-            type: {
-              $in: rules.events,
-            },
-            'source.workspaceId': subjectId,
-          },
-        },
-      ];
-    }
-    throw new Error('Unsupported api key');
-  },
 };
 
 export default config;

@@ -780,40 +780,7 @@ declare namespace Prismeai {
         apiKey: string;
         subjectType: string;
         subjectId: string;
-        rules: ApiKeyRules;
-    }
-    export interface ApiKeyRules {
-        events?: {
-            /**
-             * example:
-             * [
-             *   "allowedEvent1",
-             *   "allowedEvent2"
-             * ]
-             */
-            types?: string[];
-            /**
-             * Only match the next event fulfilling these filters. Multiple filters will be joined with an 'AND' operator
-             * example:
-             * {
-             *   "automationSlug": "someId",
-             *   "someObjectField.someNestedField": "foo"
-             * }
-             */
-            filters?: {
-                [name: string]: string;
-            };
-        };
-        uploads?: {
-            /**
-             * example:
-             * [
-             *   "image/*",
-             *   "audio/*"
-             * ]
-             */
-            mimetypes?: string[];
-        };
+        rules: PermissionRule[];
     }
     export interface App {
         workspaceId: string;
@@ -1159,7 +1126,7 @@ declare namespace Prismeai {
             apiKey: string;
             subjectType: "workspaces";
             subjectId: string;
-            rules: ApiKeyRules;
+            rules: PermissionRule[];
         };
     }
     export interface CreatedAutomation {
@@ -2224,7 +2191,7 @@ declare namespace Prismeai {
             apiKey: string;
             subjectType: "workspaces";
             subjectId: string;
-            rules: ApiKeyRules;
+            rules: PermissionRule[];
         };
     }
     export interface UpdatedAutomation {
@@ -2690,15 +2657,13 @@ declare namespace PrismeaiAPI {
     }
     namespace CreateApiKey {
         namespace Parameters {
-            export type SubjectId = string;
-            export type SubjectType = Prismeai.SharableSubjectTypes;
+            export type WorkspaceId = string;
         }
         export interface PathParameters {
-            subjectType: Parameters.SubjectType;
-            subjectId: Parameters.SubjectId;
+            workspaceId: Parameters.WorkspaceId;
         }
         export interface RequestBody {
-            rules: Prismeai.ApiKeyRules;
+            rules: Prismeai.PermissionRule[];
         }
         namespace Responses {
             export type $200 = Prismeai.ApiKey;
@@ -2811,12 +2776,10 @@ declare namespace PrismeaiAPI {
     namespace DeleteApiKey {
         namespace Parameters {
             export type ApiKey = string;
-            export type SubjectId = string;
-            export type SubjectType = Prismeai.SharableSubjectTypes;
+            export type WorkspaceId = string;
         }
         export interface PathParameters {
-            subjectType: Parameters.SubjectType;
-            subjectId: Parameters.SubjectId;
+            workspaceId: Parameters.WorkspaceId;
             apiKey: Parameters.ApiKey;
         }
         namespace Responses {
@@ -3408,12 +3371,10 @@ declare namespace PrismeaiAPI {
     }
     namespace ListApiKeys {
         namespace Parameters {
-            export type SubjectId = string;
-            export type SubjectType = Prismeai.SharableSubjectTypes;
+            export type WorkspaceId = string;
         }
         export interface PathParameters {
-            subjectType: Parameters.SubjectType;
-            subjectId: Parameters.SubjectId;
+            workspaceId: Parameters.WorkspaceId;
         }
         namespace Responses {
             export type $200 = Prismeai.ApiKey[];
@@ -3759,16 +3720,14 @@ declare namespace PrismeaiAPI {
     namespace UpdateApiKey {
         namespace Parameters {
             export type ApiKey = string;
-            export type SubjectId = string;
-            export type SubjectType = Prismeai.SharableSubjectTypes;
+            export type WorkspaceId = string;
         }
         export interface PathParameters {
-            subjectType: Parameters.SubjectType;
-            subjectId: Parameters.SubjectId;
+            workspaceId: Parameters.WorkspaceId;
             apiKey: Parameters.ApiKey;
         }
         export interface RequestBody {
-            rules: Prismeai.ApiKeyRules;
+            rules: Prismeai.PermissionRule[];
         }
         namespace Responses {
             export type $200 = Prismeai.ApiKey;

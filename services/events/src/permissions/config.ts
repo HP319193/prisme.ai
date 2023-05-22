@@ -40,8 +40,7 @@ const workspaceFilter = {
 };
 export const config: PermissionsConfig<
   SubjectType,
-  Prismeai.Role | Role.SuperAdmin,
-  Prismeai.ApiKeyRules
+  Prismeai.Role | Role.SuperAdmin
 > = {
   subjects: {
     [SubjectType.Workspace]: {
@@ -180,36 +179,4 @@ export const config: PermissionsConfig<
       priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
     },
   ],
-  customRulesBuilder: (role) => {
-    if (role.type !== 'apiKey') {
-      throw new Error('Unsupported custom role ' + JSON.stringify(role));
-    }
-
-    if (role.subjectType === SubjectType.Workspace) {
-      if (!role?.rules?.events) {
-        return [];
-      }
-      const { types, filters } = role.rules.events;
-
-      const escapedAllowedEvents = (types || []).map((cur) =>
-        cur.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/[*]/g, '.*')
-      );
-      const allowedEventsRegex = `^(${escapedAllowedEvents.join('|')})$`;
-
-      return [
-        {
-          action: [ActionType.Create, ActionType.Read],
-          subject: SubjectType.Event,
-          conditions: {
-            type: {
-              $regex: allowedEventsRegex,
-            },
-            ...filters,
-            'source.workspaceId': role.subjectId,
-          },
-        },
-      ];
-    }
-    throw new Error('Unsupported api key');
-  },
 };

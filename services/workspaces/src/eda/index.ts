@@ -21,6 +21,9 @@ export enum EventType {
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
   UpdatedWorkspaceSecurity = 'workspaces.security.updated',
+  CreatedApiKey = 'apikeys.created',
+  UpdatedApiKey = 'apikeys.updated',
+  DeletedApiKey = 'apikeys.deleted',
 
   PublishedWorkspaceVersion = 'workspaces.versions.published',
   DeletedWorkspaceVersion = 'workspaces.versions.deleted',

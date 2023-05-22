@@ -32,8 +32,7 @@ export enum Role {
 
 export const config: PermissionsConfig<
   SubjectType,
-  Prismeai.Role | Role.SuperAdmin,
-  Prismeai.ApiKeyRules
+  Prismeai.Role | Role.SuperAdmin
 > = {
   subjects: {
     [SubjectType.Workspace]: {
@@ -98,5 +97,4 @@ export const config: PermissionsConfig<
       },
     },
   ],
-  customRulesBuilder: () => [],
 };

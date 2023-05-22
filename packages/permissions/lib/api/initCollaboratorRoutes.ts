@@ -57,7 +57,7 @@ export function initCollaboratorRoutes<SubjectType extends string>(
         async ([permId, permissions]: [string, any]) => {
           return {
             target: permissionIdToTarget(permId),
-            permissions: permissions as SubjectCollaborator<string>,
+            permissions: permissions as SubjectCollaborator,
           };
         }
       )

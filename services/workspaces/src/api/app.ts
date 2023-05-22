@@ -15,10 +15,7 @@ import {
 } from './middlewares/validation';
 import { AccessManager, SubjectType } from '../permissions';
 import { accessManagerMiddleware } from './middlewares/accessManager';
-import {
-  initApiKeysRoutes,
-  initCollaboratorRoutes,
-} from '@prisme.ai/permissions';
+import { initCollaboratorRoutes } from '@prisme.ai/permissions';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../eda';
 import { PrismeError } from '../errors';
@@ -143,11 +140,6 @@ export function initAPI(
       }
     },
   });
-
-  /**
-   * API Key routes
-   */
-  initApiKeysRoutes<SubjectType, Prismeai.ApiKeyRules>(app);
 
   /**
    * User routes

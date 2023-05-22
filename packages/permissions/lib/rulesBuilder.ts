@@ -5,7 +5,7 @@ import { RoleTemplates, SubjectOptions } from '..';
 import { extractObjectsByPath } from './utils';
 
 export interface RuleContext {
-  user: User<string>;
+  user: User;
   subject?: { id?: string };
   [k: string]: any;
 }
@@ -118,7 +118,7 @@ export function sortRules(rules: Rules) {
 }
 
 export function nativeRules(
-  user: User<string>,
+  user: User,
   roles: RoleTemplates<any, string>,
   subjects: Record<any, SubjectOptions<any>>
 ) {

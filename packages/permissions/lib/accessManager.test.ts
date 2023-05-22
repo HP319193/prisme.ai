@@ -58,10 +58,7 @@ const accessManager = new AccessManager<SubjectType, SubjectInterfaces, Role>(
       platform: false,
     },
   },
-  {
-    ...abacWithRoles,
-    customRulesBuilder: apiKeys.customRulesBuilder,
-  }
+  abacWithRoles
 );
 
 const adminAId = 'adminUserIdA';
@@ -524,17 +521,25 @@ describe('API Keys', () => {
     });
   });
 
-  const ourWorkspaceAPIKey: ApiKey<SubjectType, Prismeai.ApiKeyRules> = {
+  const ourWorkspaceAPIKey: ApiKey<SubjectType> = {
     apiKey: 'will be defined on creation',
     subjectType: SubjectType.Workspace,
     subjectId: ourWorkspace.id,
-    rules: {
-      events: ['event1', 'event4'],
-    },
+    rules: [
+      {
+        action: ActionType.Read,
+        subject: SubjectType.Event,
+        conditions: {
+          type: {
+            $in: ['event1', 'event4'],
+          },
+        },
+      },
+    ],
   };
 
   const allowedEvent = {
-    type: ourWorkspaceAPIKey.rules.events?.[0],
+    type: ourWorkspaceAPIKey.rules[0].conditions.type['$in'][0],
     source: {
       workspaceId: ourWorkspace.id,
     },
@@ -591,12 +596,16 @@ describe('API Keys', () => {
   });
 
   it("An admin can update its workspace's api keys", async () => {
-    const newPayload = {
-      ...ourWorkspaceAPIKey.rules,
-      events: (ourWorkspaceAPIKey.rules.events || []).concat([
-        'someOtherEvent',
-      ]),
-    };
+    const newPayload = [
+      {
+        ...ourWorkspaceAPIKey.rules[0],
+        conditions: {
+          type: {
+            $in: ['event1', 'event4', 'someOtherEvent'],
+          },
+        },
+      },
+    ];
     await expect(
       adminA
         .updateApiKey(
@@ -637,7 +646,6 @@ describe('API Keys', () => {
 
     //@ts-ignore
     await adminB.pullApiKey(ourSavedApiKey.apiKey);
-
     await expect(
       adminB.throwUnlessCan(ActionType.Read, SubjectType.Event, allowedEvent)
     ).resolves.toBe(true);

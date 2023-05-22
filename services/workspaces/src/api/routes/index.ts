@@ -46,6 +46,9 @@ export const init = (
     initPagesBackoffice(dsulStorage)
   );
 
+  /**
+   * Security related routes
+   */
   app.use(
     `${root}/workspaces/:workspaceId/security`,
     initSecurity(dsulStorage)

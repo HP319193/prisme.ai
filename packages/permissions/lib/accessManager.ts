@@ -1,10 +1,9 @@
 import crypto from 'crypto';
-import { BaseSchema, Roles as RolesSchema } from './schemas';
+import { ApiKey, BaseSchema, Roles as RolesSchema } from './schemas';
 import mongoose from 'mongoose';
 import { accessibleRecordsPlugin, AccessibleRecordModel } from '@casl/mongoose';
 import {
   ActionType,
-  ApiKey,
   BaseSubject,
   buildFilterFieldsMethod,
   CustomRole,
@@ -14,19 +13,17 @@ import {
   SubjectCollaborator,
   User,
   UserSubject,
-  RoleTemplate,
   SubjectRelations,
+  Rules,
 } from '..';
 import { validateRules } from './rulesBuilder';
 import { buildSubjectRelations, getParentSubjectIds } from './utils';
 import { InvalidAPIKey, ObjectNotFoundError, PrismeError } from './errors';
 
-type Document<T, Role extends string> = Omit<mongoose.Document<T>, 'toJSON'> &
-  BaseSubject<Role> & {
-    filterFields: (
-      permissions: Permissions<any, Role>
-    ) => T & BaseSubject<Role>;
-    toJSON: () => T & BaseSubject<Role>;
+type Document<T = any> = Omit<mongoose.Document<T>, 'toJSON'> &
+  BaseSubject & {
+    filterFields: (permissions: Permissions<any>) => T & BaseSubject;
+    toJSON: () => T & BaseSubject;
   };
 
 export interface AccessManagerOptions<SubjectType extends string = string> {
@@ -58,29 +55,25 @@ const DEFAULT_FIND_PAGE_SIZE = 20;
 export type FilterQuery<
   SubjectInterface,
   Role extends string = string
-> = mongoose.FilterQuery<Document<SubjectInterface, Role>>;
+> = mongoose.FilterQuery<Document<SubjectInterface>>;
 
 export class AccessManager<
   SubjectType extends string,
   SubjectInterfaces extends { [k in SubjectType]: UserSubject },
-  Role extends string,
-  CustomRules = any
+  Role extends string = string
 > {
   private opts: AccessManagerOptions<SubjectType>;
-  private models: Record<
-    SubjectType,
-    AccessibleRecordModel<Document<any, Role>>
-  >;
-  private permissionsConfig: PermissionsConfig<SubjectType, Role, CustomRules>;
-  private permissions?: Permissions<SubjectType, Role>;
-  public user?: User<Role>;
+  private models: Record<SubjectType, AccessibleRecordModel<Document>>;
+  private permissionsConfig: PermissionsConfig<SubjectType, Role>;
+  private permissions?: Permissions<SubjectType>;
+  public user?: User;
   private subjectRelations: SubjectRelations<SubjectType>;
   private alreadyPulledSubjectFieldRefs: Set<any>;
-  private customRoles?: Record<string, CustomRole<SubjectType, CustomRules>[]>;
+  private customRoles?: Record<string, CustomRole<SubjectType>[]>;
 
   constructor(
     opts: AccessManagerOptions<SubjectType>,
-    permissionsConfig: PermissionsConfig<SubjectType, Role, CustomRules>
+    permissionsConfig: PermissionsConfig<SubjectType, Role>
   ) {
     this.opts = opts;
     this.permissionsConfig = permissionsConfig;
@@ -127,7 +120,7 @@ export class AccessManager<
         ...models,
         [name]: mongoose.model(name, schema as mongoose.Schema),
       };
-    }, {} as Record<SubjectType, AccessibleRecordModel<Document<any, Role>>>);
+    }, {} as Record<SubjectType, AccessibleRecordModel<Document>>);
 
     this.alreadyPulledSubjectFieldRefs = new Set();
     this.subjectRelations = buildSubjectRelations(permissionsConfig);
@@ -139,21 +132,18 @@ export class AccessManager<
   }
 
   async as(
-    user: User<Role>,
+    user: User,
     apiKey?: string
-  ): Promise<
-    Required<AccessManager<SubjectType, SubjectInterfaces, Role, CustomRules>>
-  > {
-    const child: Required<
-      AccessManager<SubjectType, SubjectInterfaces, Role, CustomRules>
-    > = Object.assign({}, this, {
-      permissions: new Permissions(user, this.permissionsConfig),
-      user: {
-        ...user,
-        role: user.role || 'guest',
-      },
-      alreadyPulledSubjectFieldRefs: new Set(),
-    });
+  ): Promise<Required<AccessManager<SubjectType, SubjectInterfaces, Role>>> {
+    const child: Required<AccessManager<SubjectType, SubjectInterfaces, Role>> =
+      Object.assign({}, this, {
+        permissions: new Permissions(user, this.permissionsConfig),
+        user: {
+          ...user,
+          role: user.role || 'guest',
+        },
+        alreadyPulledSubjectFieldRefs: new Set(),
+      });
     Object.setPrototypeOf(child, AccessManager.prototype);
 
     if (apiKey) {
@@ -164,7 +154,7 @@ export class AccessManager<
     return child;
   }
 
-  async updatePermissions(user: User<Role>) {
+  async updatePermissions(user: User) {
     this.permissions?.updateUserRules(user);
   }
 
@@ -186,7 +176,7 @@ export class AccessManager<
       {
         subjectType,
         subjectId: subject.id,
-        type: 'casl',
+        type: ['casl', 'role'],
       },
       {
         cache: true,
@@ -221,7 +211,7 @@ export class AccessManager<
   private async fetch<returnType extends SubjectType>(
     subjectType: returnType,
     id: string | FilterQuery<SubjectInterfaces[returnType], Role>
-  ): Promise<Document<SubjectInterfaces[returnType], Role> | null> {
+  ): Promise<Document<SubjectInterfaces[returnType]> | null> {
     if (!id) {
       return null;
     }
@@ -233,7 +223,7 @@ export class AccessManager<
 
   public model<returnType extends SubjectType>(
     subjectType: returnType
-  ): AccessibleRecordModel<Document<SubjectInterfaces[returnType], Role>> {
+  ): AccessibleRecordModel<Document<SubjectInterfaces[returnType]>> {
     if (!(subjectType in this.models)) {
       throw new Error(
         `Unknown model ${subjectType}. Did you provide a persistance schema for this subjectType ?`
@@ -255,10 +245,10 @@ export class AccessManager<
   async findAll<returnType extends SubjectType>(
     subjectType: returnType,
     additionalQuery?: mongoose.FilterQuery<
-      Document<SubjectInterfaces[returnType], Role>
+      Document<SubjectInterfaces[returnType]>
     >,
     opts?: FindOptions
-  ): Promise<(SubjectInterfaces[returnType] & BaseSubject<Role>)[]> {
+  ): Promise<(SubjectInterfaces[returnType] & BaseSubject)[]> {
     if (additionalQuery) {
       await this.pullRoleFromSubject(subjectType, <any>additionalQuery);
     }
@@ -285,7 +275,7 @@ export class AccessManager<
   async get<returnType extends SubjectType>(
     subjectType: returnType,
     query: string | FilterQuery<SubjectInterfaces[returnType], Role>
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions } = this.checkAsUser();
     const subject = await this.fetch(subjectType, query);
     if (!subject) {
@@ -299,10 +289,10 @@ export class AccessManager<
     return subject.filterFields(permissions);
   }
 
-  private filterFieldsBeforeUpdate<T>(document: T | Document<T, Role>): T {
+  private filterFieldsBeforeUpdate<T>(document: T | Document<T>): T {
     const object: T =
-      typeof (<Document<any, Role>>document).toJSON === 'function'
-        ? ((<Document<any, Role>>document).toJSON() as T)
+      typeof (<Document>document).toJSON === 'function'
+        ? ((<Document>document).toJSON() as T)
         : ({ ...document } as T);
 
     delete (<any>object).createdAt;
@@ -318,7 +308,7 @@ export class AccessManager<
   async create<returnType extends SubjectType>(
     subjectType: returnType,
     subject: Omit<SubjectInterfaces[returnType], 'id'> & { id?: string }
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions, user } = this.checkAsUser();
     await this.throwUnlessCan(ActionType.Create, subjectType, <any>subject!!);
     const Model = this.model(subjectType);
@@ -348,7 +338,7 @@ export class AccessManager<
   async update<returnType extends SubjectType>(
     subjectType: returnType,
     updatedSubject: Partial<SubjectInterfaces[returnType]> & { id: string }
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions, user } = this.checkAsUser();
 
     const currentSubject = await this.fetch(subjectType, updatedSubject.id);
@@ -422,8 +412,8 @@ export class AccessManager<
     subjectType: returnType,
     id: string,
     user: Prismeai.UserPermissionsTarget,
-    permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
+    permission: ActionType | ActionType[] | Role | SubjectCollaborator
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions } = this.checkAsUser();
 
     const doc = await this.fetch(subjectType, id);
@@ -442,7 +432,7 @@ export class AccessManager<
       doc.toJSON()
     );
 
-    if (user.role && (permission as SubjectCollaborator<Role>)?.role) {
+    if (user.role && (permission as SubjectCollaborator)?.role) {
       throw new PrismeError(
         'Cant bind a role to another role. Only policies are supported'
       );
@@ -472,7 +462,7 @@ export class AccessManager<
     subjectType: returnType,
     id: string,
     permId: string
-  ): Promise<SubjectInterfaces[returnType] & BaseSubject<Role>> {
+  ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions } = this.checkAsUser();
 
     const doc = await this.fetch(subjectType, id);
@@ -564,9 +554,7 @@ export class AccessManager<
   }
 
   async pullRole(
-    query: mongoose.FilterQuery<
-      Document<CustomRole<SubjectType, CustomRules>, Role>
-    >,
+    query: mongoose.FilterQuery<Document<CustomRole<SubjectType>>>,
     opts?: { loadRules?: boolean; cache?: boolean }
   ) {
     if (
@@ -586,14 +574,9 @@ export class AccessManager<
     let roles =
       opts?.cache && this.customRoles ? this.customRoles[cacheKey] : undefined;
     if (!roles) {
-      const RolesModel = (await this.model(
-        <any>NativeSubjectType.Roles
-      )) as any as AccessibleRecordModel<
-        Document<CustomRole<SubjectType, CustomRules>, any>
-      >;
-
-      const docs = await RolesModel.find(query);
-      roles = docs.map((cur) => cur.toJSON()).filter((cur) => !cur.disabled);
+      roles = (await this.findRoles(query, true)).filter(
+        (cur) => !cur.disabled
+      );
       if (this.customRoles && (opts?.cache || cacheKey in this.customRoles)) {
         this.customRoles[cacheKey] = roles;
       }
@@ -602,44 +585,21 @@ export class AccessManager<
     if (!roles?.length) {
       return [];
     }
-    // Maybe we should get rid of CustomRules syntax (originally made to ease api keys configuration) & have a single RoleTemplate interface ?
-    const roleTemplates = roles.map<RoleTemplate<SubjectType, Role>>((role) => {
-      let rules =
-        typeof role.casl === 'string' ? JSON.parse(role.casl) : role.casl;
-      if (!rules && Object.keys(role.rules || {}).length) {
-        rules = this.buildRules(role);
-      }
-      return {
-        name: role.name as Role,
-        subjectType: role.subjectType,
-        rules,
-      };
-    });
 
     // loadRules make generated rules immediately effective (i.e apiKey or forced role sent within a request),
     // while loadRoles make these rules available in case we load an object with one of these role names assigned
     if (opts?.loadRules) {
-      permissions.loadRules(roleTemplates.flatMap((role) => role.rules));
+      permissions.loadRules(roles.flatMap((role) => role.rules));
     } else {
-      permissions.loadRoles(roleTemplates);
+      permissions.loadRoles(roles);
     }
 
     return roles;
   }
 
-  private buildRules(role: CustomRole<SubjectType, CustomRules>) {
-    const rulesBuilder = this.permissionsConfig.customRulesBuilder;
-    if (!rulesBuilder) {
-      throw new Error(
-        'Cannot save any custom role without specifying the rules builder inside permissions config !'
-      );
-    }
-    return rulesBuilder(role);
-  }
-
   async saveRole(
-    role: CustomRole<SubjectType, CustomRules>
-  ): Promise<CustomRole<SubjectType, CustomRules>> {
+    role: CustomRole<SubjectType>
+  ): Promise<CustomRole<SubjectType>> {
     if (!role.id) {
       throw new PrismeError('A role id is required for saving');
     }
@@ -660,16 +620,13 @@ export class AccessManager<
 
     const RolesModel = (await this.model(
       <any>NativeSubjectType.Roles
-    )) as any as AccessibleRecordModel<
-      Document<CustomRole<SubjectType, CustomRules>, any>
-    >;
+    )) as any as AccessibleRecordModel<Document<CustomRole<SubjectType>>>;
 
     // Validate role
-    if ((<any>role.rules)?.length) {
-      this.buildRules(role);
-    } else if (typeof role.casl === 'object') {
-      (<any>role).casl = JSON.stringify(role.casl);
+    if (typeof role.rules === 'object') {
+      (<any>role).rules = JSON.stringify(role.rules);
     }
+    (<any>role).casl = null;
 
     const savedApiKey = await RolesModel.findOneAndUpdate(
       {
@@ -688,9 +645,7 @@ export class AccessManager<
   async deleteRole(id: string): Promise<boolean> {
     const RolesModel = (await this.model(
       <any>NativeSubjectType.Roles
-    )) as any as AccessibleRecordModel<
-      Document<CustomRole<SubjectType, CustomRules>, any>
-    >;
+    )) as any as AccessibleRecordModel<Document<CustomRole<SubjectType>>>;
 
     // Check that authenticated user has the expected permissions
     const doc = await RolesModel.findOne({ id });
@@ -710,37 +665,45 @@ export class AccessManager<
   }
 
   async findRoles(
-    subjectType: SubjectType,
-    subjectId: string
-  ): Promise<CustomRole<SubjectType, CustomRules>[]> {
-    await this.throwUnlessCan(
-      ActionType.ManagePermissions,
-      subjectType,
-      subjectId
-    );
+    query: mongoose.FilterQuery<Document<CustomRole<SubjectType>>>,
+    asSuperAdmin?: boolean
+  ): Promise<CustomRole<SubjectType>[]> {
+    if (!asSuperAdmin) {
+      await this.throwUnlessCan(
+        ActionType.ManagePermissions,
+        query.subjectType,
+        query.subjectId
+      );
+    }
 
     const RolesModel = (await this.model(
       <any>NativeSubjectType.Roles
-    )) as any as AccessibleRecordModel<
-      Document<CustomRole<SubjectType, CustomRules>, any>
-    >;
+    )) as any as AccessibleRecordModel<Document<CustomRole<SubjectType>>>;
 
-    const docs = await RolesModel.find({
-      subjectType,
-      subjectId,
-    });
-    return docs
-      .map((cur) => cur.toJSON())
-      .map((cur) => ({
-        ...cur,
-        casl:
-          typeof cur.casl === 'string' ? JSON.parse(cur.casl as any) : cur.casl,
-      }));
+    const docs = await RolesModel.find(query);
+    const roles = docs
+      .map((role) => role.toJSON())
+      .map((role) => {
+        // Keep role.casl retro compatibility, but role.rules should now be stringified CASL
+        if (typeof (<any>role).casl === 'string') {
+          role.rules = JSON.parse((<any>role).casl);
+        } else if (typeof role.rules === 'string') {
+          role.rules = JSON.parse(role.rules);
+        } else {
+          role.rules = (<any>role).casl || role.rules;
+        }
+        delete (<any>role).casl;
+        return role;
+      });
+    return roles;
   }
 
   async pullApiKey(apiKey: string) {
     try {
-      const roles = await this.pullRole({ name: apiKey }, { loadRules: true });
+      const roles = await this.pullRole(
+        { name: apiKey, type: 'apiKey' },
+        { loadRules: true }
+      );
       if (!roles.length) {
         throw new InvalidAPIKey();
       }
@@ -750,27 +713,14 @@ export class AccessManager<
     }
   }
 
-  private convertRoleToApiKey(
-    role: CustomRole<SubjectType, CustomRules>
-  ): ApiKey<SubjectType, CustomRules> {
-    delete (<any>role)._id;
-    delete (<any>role).__v;
-    const { name, casl, type, id, ...sharedFields } = role;
-    return {
-      ...sharedFields,
-      apiKey: name,
-      rules: role.rules || ({} as any),
-    };
-  }
-
   async findApiKeys(
     subjectType: SubjectType,
     subjectId: string
-  ): Promise<ApiKey<SubjectType, CustomRules>[]> {
-    const roles = await this.findRoles(subjectType, subjectId);
+  ): Promise<ApiKey<SubjectType>[]> {
+    const roles = await this.findRoles({ subjectType, subjectId });
     return roles
       .filter((cur) => cur.type === 'apiKey')
-      .map(this.convertRoleToApiKey);
+      .map((role) => this.convertRoleToApiKey(role));
   }
 
   private getApiKeyRoleId(
@@ -781,11 +731,22 @@ export class AccessManager<
     return `apiKey/${apiKey}/${subjectType}/${subjectId}/`;
   }
 
+  private convertRoleToApiKey(
+    role: CustomRole<SubjectType>
+  ): ApiKey<SubjectType> {
+    let { name, rules, disabled, subjectId, subjectType } = role;
+    if (typeof rules === 'string') {
+      rules = JSON.parse(rules);
+    }
+
+    return { apiKey: name, rules, disabled, subjectId, subjectType };
+  }
+
   async createApiKey(
     subjectType: SubjectType,
     subjectId: string,
-    rules: CustomRules
-  ): Promise<ApiKey<SubjectType, CustomRules>> {
+    rules: Rules
+  ): Promise<ApiKey<SubjectType>> {
     const apiKey = crypto.randomUUID();
     const role = await this.saveRole({
       id: this.getApiKeyRoleId(apiKey, subjectType, subjectId),
@@ -802,8 +763,8 @@ export class AccessManager<
     apiKey: string,
     subjectType: SubjectType,
     subjectId: string,
-    rules: CustomRules
-  ): Promise<ApiKey<SubjectType, CustomRules>> {
+    rules: Rules
+  ): Promise<ApiKey<SubjectType>> {
     const role = await this.saveRole({
       id: this.getApiKeyRoleId(apiKey, subjectType, subjectId),
       name: apiKey,

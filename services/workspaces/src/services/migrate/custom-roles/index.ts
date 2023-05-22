@@ -9,10 +9,7 @@ import {
   SubjectType,
 } from '../../../permissions';
 import { MissingFieldError } from '../../../errors';
-import {
-  DISABLE_APIKEY_PAGES_LABEL,
-  INIT_WORKSPACE_SECURITY,
-} from '../../../../config';
+import { INIT_WORKSPACE_SECURITY } from '../../../../config';
 
 const SECURITY_MIGRATED_WORKSPACE_LABEL = 'customRoles:migrated';
 
@@ -64,7 +61,7 @@ export async function initCustomRoles(
       SubjectType.Page,
       {
         labels: {
-          $nin: [DISABLE_APIKEY_PAGES_LABEL],
+          $nin: ['disableApiKey'],
         },
       },
       {

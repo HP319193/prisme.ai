@@ -1159,8 +1159,7 @@ describe('Automations execution permissions', () => {
       subjectType: SubjectType.Workspace,
       subjectId: AvailableModels.Basic,
       type: 'casl',
-      rules: [],
-      casl: [
+      rules: [
         {
           action: 'execute',
           subject: 'automations',

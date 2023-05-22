@@ -1,5 +1,5 @@
 import { Document, Schema, Types } from 'mongoose';
-import { ActionType, Permissions, Rules, Subject } from '..';
+import { ActionType, Permissions, RoleTemplate, Rules, Subject } from '..';
 
 export const Roles = new Schema({
   id: { type: String, index: true },
@@ -16,22 +16,23 @@ export enum NativeSubjectType {
   Roles = 'roles',
 }
 
-export type CustomRole<SubjectType extends string, CustomRules = any> = {
-  name: string;
+export type CustomRole<SubjectType extends string> = RoleTemplate<
+  SubjectType,
+  string
+> & {
   id: string;
-  type: 'apiKey' | 'casl';
   subjectType: SubjectType;
+  type: 'apiKey' | 'casl' | 'role';
   subjectId: string;
-  rules: CustomRules;
-  casl?: Rules;
   disabled?: boolean;
 };
 
-export type ApiKey<SubjectType extends string, CustomRules = any> = Omit<
-  CustomRole<SubjectType, CustomRules>,
-  'name' | 'casl' | 'type' | 'id'
-> & {
+export type ApiKey<SubjectType extends string> = {
   apiKey: string;
+  subjectType: SubjectType;
+  subjectId: string;
+  rules: Rules;
+  disabled?: boolean;
 };
 
 const PermissionListSchema = new Schema(
