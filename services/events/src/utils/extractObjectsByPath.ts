@@ -2,7 +2,7 @@ export function extractObjectsByPath(
   rootObject: any,
   path: string | string[]
 ): any {
-  const splittedPath = (typeof path === 'string' ? path.split('.') : path)
+  const splittedPath = (typeof path === 'string' ? path.split('.') : path || [])
     .map((cur) => cur.trim())
     .filter(Boolean);
   if (!rootObject) {

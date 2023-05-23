@@ -33,7 +33,7 @@ export async function joinUserTopic(
     );
   }
   return await Promise.all(
-    join.userIds.map(async (userId) => {
+    (join.userIds || []).map(async (userId) => {
       return await broker.send<Prismeai.JoinedUserTopic['payload']>(
         EventType.JoinedUserTopic,
         {
