@@ -1,10 +1,11 @@
 import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Quill from 'react-quill';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import pretty from 'pretty';
 import { isWysiwygSupported } from './isWysiwygSupported';
+import { useImageUpload } from './useImageUpload';
 
 export interface RichTextEditorProps {
   value: string;
@@ -17,8 +18,9 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const { t } = useTranslation('workspaces');
   const toolbarId = useRef(`toolbar-${(Math.random() * 1000).toFixed()}`);
 
+  useImageUpload(value, onChange);
+
   useEffect(() => {
-    console.log(ignoreValueChange.current);
     if (ignoreValueChange.current) return;
     setQuillMounted(false);
     setTimeout(() => {
