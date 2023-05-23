@@ -4,15 +4,16 @@ import { useEffect, useRef, useState } from 'react';
 import Quill from 'react-quill';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import pretty from 'pretty';
-import { isWysiwygSupported } from './isWysiwygSupported';
 import { useImageUpload } from './useImageUpload';
+
+const rawModeMarker = '<!-- raw mode -->';
 
 export interface RichTextEditorProps {
   value: string;
   onChange: (v: string) => void;
 }
 export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
-  const [displayRaw, setDisplayRaw] = useState(!isWysiwygSupported(value));
+  const [displayRaw, setDisplayRaw] = useState(value.includes(rawModeMarker));
   const ignoreValueChange = useRef(false);
   const [quillMounted, setQuillMounted] = useState(true);
   const { t } = useTranslation('workspaces');
@@ -50,8 +51,8 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
         <div className="flex flex-1 rounded-[.3rem]">
           <CodeEditorInline
             mode="html"
-            value={`${pretty(value)}`}
-            onChange={onChange}
+            value={`${pretty(value.replace(rawModeMarker, ''))}`}
+            onChange={(v) => onChange(`${v}${rawModeMarker}`)}
           />
         </div>
       )}
