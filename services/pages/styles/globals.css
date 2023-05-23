@@ -262,3 +262,7 @@ body .ant-modal-confirm-title {
   background-size: cover;
   display: block;
 }
+
+.ql-snow .ql-tooltip {
+  margin-left: 150px;
+}
