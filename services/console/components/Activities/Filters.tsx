@@ -8,6 +8,7 @@ import moment from 'moment';
 import { useQueryString } from '../../providers/QueryStringProvider';
 import { Popover } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
+import { useUser } from '../UserProvider';
 
 type FiltersValue = {
   beforeDate?: moment.Moment;
@@ -40,6 +41,7 @@ const Filters = () => {
   const { queryString, setQueryString } = useQueryString();
   const [suggestionsPopupState, setSuggestionsPopupState] = useState(false);
   const fieldsInput = useRef<HTMLDivElement>(null);
+  const { user } = useUser();
 
   const updateValue = useCallback(
     ({ values }: { values: FiltersValue }) => {
@@ -71,11 +73,13 @@ const Filters = () => {
 
   const builtinFilters = useMemo(
     () =>
-      Object.entries(filters).map(([key, filter]) => ({
-        value: key,
-        label: t('events.filters.suggestions.label', { context: key }),
-        filter,
-      })),
+      Object.entries(filters({ sessionId: user?.sessionId })).map(
+        ([key, filter]) => ({
+          value: key,
+          label: t('events.filters.suggestions.label', { context: key }),
+          filter,
+        })
+      ),
     [t]
   );
 

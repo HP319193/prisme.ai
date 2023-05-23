@@ -160,7 +160,8 @@
         "label_webhooks": "Appels webhooks",
         "label_errors": "Erreurs",
         "label_shares": "Partages d'accès",
-        "label_application": "Evénements applicatifs"
+        "label_application": "Evénements applicatifs",
+        "label_mySession": "Ma session"
       },
       "reset": "Réinitialiser les filtres"
     },
