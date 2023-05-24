@@ -130,8 +130,28 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
         }
       }
     );
+
     socket.on('disconnect', () => {
+      logger.info({
+        msg: 'Websocket disconnected.',
+        userId,
+        sessionId,
+      });
       subscription.unsubscribe();
+    });
+    socket.on('connect', () => {
+      logger.info({
+        msg: 'Websocket connected.',
+        userId,
+        sessionId,
+      });
+    });
+    socket.on('reconnect', () => {
+      logger.info({
+        msg: 'Websocket reconnecting ...',
+        userId,
+        sessionId,
+      });
     });
   });
 }
