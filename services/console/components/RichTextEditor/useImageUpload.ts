@@ -25,12 +25,17 @@ export function useImageUpload(value: string, setValue: any) {
             new Promise(async (resolve) => {
               const res = await uploadFile(imageData);
               const url = typeof res === 'string' ? res : res.value;
-              setImagesDataStore((prev) => {
-                const newImagesStore = new Map(prev);
-                newImagesStore.set(imageData, url);
-                return newImagesStore;
-              });
-              resolve(url);
+              // Put image in browser cache to avoid blinking
+              const i = new Image();
+              i.onload = () => {
+                setImagesDataStore((prev) => {
+                  const newImagesStore = new Map(prev);
+                  newImagesStore.set(imageData, url);
+                  return newImagesStore;
+                });
+                resolve(url);
+              };
+              i.src = url;
             })
           );
         });
