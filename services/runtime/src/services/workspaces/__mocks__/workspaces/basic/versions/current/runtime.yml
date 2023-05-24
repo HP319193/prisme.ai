@@ -55,3 +55,36 @@ automations:
       events:
         - config
     output: '{{config}}'
+
+  protected:
+    name: Protected
+    when:
+      events:
+        - protected
+    authorizations:
+      action: protected
+    do:
+      - conditions:
+          '{{payload.call}}':
+            - nestedProtected:
+                output: 'output'
+          '{{payload.emit}}':
+            - emit:
+                event: nestedProtected
+                payload: {}
+          default:
+            - set:
+                name: output
+                value: success
+
+    output: '{{output}}'
+
+  nestedProtected:
+    name: NestedProtected
+    when:
+      events:
+        - nestedProtected
+    authorizations:
+      action: nestedProtected
+    do: []
+    output: 'success'

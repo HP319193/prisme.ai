@@ -58,7 +58,8 @@ function compareValues<T>(value1: T, value2: T) {
 
 export function getObjectsDifferences<RawType>(
   obj1: RawType,
-  obj2: RawType
+  obj2: RawType,
+  ignoreFields?: string[]
 ): Diffs {
   if (isFunction(obj1) || isFunction(obj2)) {
     throw 'Invalid argument. Function given, object expected.';

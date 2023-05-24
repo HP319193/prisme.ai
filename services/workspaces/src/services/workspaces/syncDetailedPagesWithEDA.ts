@@ -1,6 +1,5 @@
 import { Broker } from '@prisme.ai/broker';
 import { Pages } from '..';
-import { DISABLE_APIKEY_PAGES_LABEL } from '../../../config';
 import { getPagesService } from '../../api/routes/pages';
 import { EventType } from '../../eda';
 import { logger } from '../../logger';
@@ -43,16 +42,6 @@ export async function syncDetailedPagesWithEDA(
       workspaceId,
       slug: slug!,
     });
-    if ((detailedPage.labels || []).includes(DISABLE_APIKEY_PAGES_LABEL)) {
-      if (detailedPage.apiKey) {
-        await accessManager.deleteApiKey(
-          detailedPage.apiKey,
-          SubjectType.Workspace,
-          workspaceId
-        );
-        (<any>detailedPage).apiKey = undefined;
-      }
-    }
     if (!workspaceSlug) {
       workspaceSlug = detailedPage.workspaceSlug;
     }

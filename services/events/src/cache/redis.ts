@@ -10,6 +10,7 @@ export default class RedisCache implements CacheDriver {
     this.client = createClient({
       url: opts.host,
       password: opts.password,
+      pingInterval: 4 * 1000 * 60,
     });
     this.client.on('error', (err: Error) => {
       console.error(`Error occured with cache redis driver : ${err}`);

@@ -1,5 +1,4 @@
 import {
-  Rule,
   ActionType as NativeActionType,
   NativeSubjectType,
   PermissionsConfig,
@@ -12,6 +11,7 @@ export const ActionType = {
   ManageSecurity: 'manage_security',
   GetUsage: 'get_usage',
   AggregateSearch: 'aggregate_search',
+  Execute: 'execute',
 };
 
 export enum SubjectType {
@@ -43,8 +43,7 @@ export enum Role {
 
 export const config: PermissionsConfig<
   SubjectType,
-  Prismeai.Role | Role.SuperAdmin,
-  Prismeai.ApiKeyRules
+  Prismeai.Role | Role.SuperAdmin
 > = {
   subjects: {
     [SubjectType.Workspace]: {
@@ -232,39 +231,4 @@ export const config: PermissionsConfig<
       subject: SubjectType.App,
     },
   ],
-  customRulesBuilder: (role) => {
-    if (role.type !== 'apiKey') {
-      throw new Error('Unsupported custom role ' + JSON.stringify(role));
-    }
-    let rules = [];
-    if (role.subjectType === SubjectType.Workspace) {
-      if (role?.rules?.uploads) {
-        const uploadsRule: Rule = {
-          action: [ActionType.Create, ActionType.Read, ActionType.Delete],
-          subject: SubjectType.File,
-          conditions: {
-            workspaceId: role.subjectId,
-          },
-        };
-
-        if (role.rules.uploads?.mimetypes?.length) {
-          const escapedAllowedUploads = (
-            role.rules.uploads?.mimetypes || []
-          ).map((cur) => cur.replace(/[*]/g, '.*'));
-
-          const allowedUploadsRegex = `^(${escapedAllowedUploads.join('|')})$`;
-
-          uploadsRule.conditions = {
-            ...uploadsRule.conditions,
-            mimetype: {
-              $regex: allowedUploadsRegex,
-            },
-          };
-        }
-        rules.push(uploadsRule);
-      }
-    }
-
-    return rules;
-  },
 };

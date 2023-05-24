@@ -10,6 +10,7 @@ import useBlockPageConfig from '../useBlockPageConfig';
 import { useWorkspace } from '../../../providers/Workspace';
 import components from '../../SchemaForm/schemaFormComponents';
 import { mergeAndCleanObjects } from '../../../utils/objects';
+import api from '../../../utils/api';
 
 interface SettingsProps {
   removeBlock: () => void;
@@ -21,18 +22,13 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   const { t } = useTranslation('workspaces');
   const { value } = usePageBuilder();
   const {
-    workspace: { automations, pages },
+    workspace: { automations, pages, id: workspaceId },
   } = useWorkspace();
   const { config, onConfigUpdate } = useBlockPageConfig({
     blockId,
   });
-  const {
-    onInit,
-    updateOn,
-    automation,
-    sectionId,
-    ...initialConfigBlocks
-  } = config;
+  const { onInit, updateOn, automation, sectionId, ...initialConfigBlocks } =
+    config;
   const initialConfigAdvanced = { onInit, updateOn, automation, sectionId };
   const [configBlock, setConfigBlock] = useState(initialConfigBlocks);
   const [configAdvanced, setConfigAdvanced] = useState(initialConfigAdvanced);
@@ -66,9 +62,9 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   }, [configAdvanced, configBlock, debouncedMergeConfig, mergeConfig]);
 
   const { extractSelectOptions } = useSchema({
-    pageSections: Array.from(
-      value.values()
-    ).flatMap(({ config: { sectionId } = {} }) => (sectionId ? sectionId : [])),
+    pageSections: Array.from(value.values()).flatMap(
+      ({ config: { sectionId } = {} }) => (sectionId ? sectionId : [])
+    ),
     automations,
     pages,
   });
@@ -123,6 +119,16 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
     [t]
   );
 
+  const uploadFile = useCallback(
+    async (file: string) => {
+      if (!workspaceId) return file;
+      const [{ url }] = (await api.uploadFiles(file, workspaceId)) || [{}];
+
+      return url;
+    },
+    [workspaceId]
+  );
+
   const items = useMemo(() => {
     const items: TabsProps['items'] = [];
     if (schema !== null) {
@@ -136,7 +142,7 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
             initialValues={config}
             buttons={[]}
             locales={locales}
-            utils={{ extractSelectOptions }}
+            utils={{ extractSelectOptions, uploadFile }}
             components={components}
           />
         ) : (
@@ -154,12 +160,20 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
           initialValues={config}
           buttons={[]}
           locales={locales}
-          utils={{ extractSelectOptions }}
+          utils={{ extractSelectOptions, uploadFile }}
         />
       ),
     });
     return items;
-  }, [commonSchema, config, extractSelectOptions, locales, schema, t]);
+  }, [
+    commonSchema,
+    config,
+    extractSelectOptions,
+    locales,
+    schema,
+    t,
+    uploadFile,
+  ]);
 
   return (
     <div className="pr-panel-settings flex flex-1 flex-col">

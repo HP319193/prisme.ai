@@ -16,6 +16,23 @@ import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
 global.console.warn = jest.fn();
 let brokers = [];
 
+const getMockedAccessManager = () => {
+  const mock = {
+    findAll: jest.fn(),
+    throwUnlessCan: jest.fn(),
+    create: jest.fn(),
+    get: jest.fn(),
+    fetch: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    deleteMany: jest.fn(),
+    getLoadedSubjectRole: jest.fn(),
+  };
+  (<any>mock).as = jest.fn(() => mock);
+
+  return mock;
+};
+
 const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
   const parentBroker = new Broker();
   const broker = parentBroker.child(
@@ -51,7 +68,13 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
   );
   workspaces.saveWorkspace = () => Promise.resolve();
 
-  const runtime = new Runtime(broker as any, workspaces, new Cache());
+  const mockedAccessManager = getMockedAccessManager();
+  const runtime = new Runtime(
+    broker as any,
+    workspaces,
+    new Cache(),
+    mockedAccessManager as any
+  );
   broker.start();
   runtime.start();
   brokers.push(broker);

@@ -103,30 +103,51 @@ export default class Broker {
   async send<PayloadType extends object = object>(
     eventType: string,
     payload: PayloadType,
-    partialSource?: Partial<EventSource>
+    partialSource?: Partial<EventSource>,
+    additionalFields?: any,
+    throwErrors?: boolean
   ) {
     const overrideSource =
       payload instanceof Error ? (<any>payload).source : partialSource;
-    const event = this.eventsFactory.create(
-      eventType,
-      payload,
-      {
-        ...this.parentSource,
-        ...(overrideSource || {}),
-        host: {
-          replica: this.consumer.name,
-          ...(partialSource?.host || {}),
-          service: this.service,
-        },
+    let event: PrismeEvent;
+    const source = {
+      ...this.parentSource,
+      ...(overrideSource || {}),
+      host: {
+        replica: this.consumer.name,
+        ...(partialSource?.host || {}),
+        service: this.service,
       },
-      {
+    };
+    try {
+      event = this.eventsFactory.create(eventType, payload, source, {
         validateEvent: false,
+        additionalFields,
+      }) as PrismeEvent;
+      (<any>event).id = `${eventType}-${Math.random() * 10000}`;
+      event.source.serviceTopic = this.getEventTopic(event);
+      this._send(event);
+    } catch (err) {
+      if (throwErrors) {
+        throw err;
+      } else {
+        (<any>err).source = source;
+        let errEvent = this.eventsFactory.safeFormat(
+          'error',
+          err as any,
+          source,
+          {
+            validateEvent: false,
+            additionalFields,
+          }
+        );
+        (<any>errEvent).id = `error-${Math.random() * 10000}`;
+        errEvent.source.serviceTopic = 'error';
+        this._send(errEvent);
       }
-    ) as PrismeEvent;
-    event.id = `${eventType}-${Math.random() * 10000}`;
-    event.source.serviceTopic = this.getEventTopic(event);
+      return Promise.resolve(false);
+    }
 
-    this._send(event);
     return Promise.resolve(event);
   }
 

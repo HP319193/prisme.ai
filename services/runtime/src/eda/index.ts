@@ -54,6 +54,9 @@ export enum EventType {
   PagePermissionsDeleted = 'workspaces.pages.permissions.deleted',
 
   DuplicatedWorkspace = 'workspaces.duplicated',
+  UpdatedWorkspaceSecurity = 'workspaces.security.updated',
+  WorkspacePermissionsShared = 'workspaces.permissions.shared',
+  WorkspacePermissionsDeleted = 'workspaces.permissions.deleted',
 }
 export class CallbackContext {
   public logger: Logger;

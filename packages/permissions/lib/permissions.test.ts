@@ -9,7 +9,7 @@ import { PublicAccess } from './utils';
 
 export type Subject = Record<string, any> & {
   id?: string;
-  permissions?: SubjectCollaborators<Role>;
+  permissions?: SubjectCollaborators;
 };
 
 export enum SubjectType {
@@ -837,7 +837,11 @@ describe('Subject-attached Roles', () => {
       )
     ).toBe(true);
   });
+});
 
+describe('Custom Roles', () => {
+  const config: PermissionsConfig<SubjectType, Role> =
+    configs.roles as PermissionsConfig<SubjectType, Role>;
   it('Someone with a workspace custom role can read a page if it has been shared to this role', () => {
     const user = {
       id: 'someRandomUser',
@@ -883,5 +887,123 @@ describe('Subject-attached Roles', () => {
 
     // User now can read it !
     expect(userPerms.can(ActionType.Read, SubjectType.Page, page)).toBe(true);
+  });
+
+  it('Someone with a workspace custom role can read an event if it has been allowed to this role', () => {
+    const user = {
+      id: 'someRandomUser',
+    };
+    const userPerms = new Permissions(user, config);
+    // Load custom role
+    userPerms.loadRoles([
+      {
+        name: 'agent' as any,
+        subjectType: SubjectType.Workspace,
+        rules: [
+          {
+            action: ActionType.Read,
+            subject: SubjectType.Event,
+            conditions: {
+              'payload.test': 'bar',
+            },
+          },
+        ],
+      },
+    ]);
+    const hisWorkspace = {
+      id: 'hisWorkspaceId',
+      createdBy: 'someOtherAdminId',
+      permissions: {
+        [user.id]: {
+          role: 'agent' as any,
+        },
+      },
+    } as Subject;
+
+    const event = {
+      id: 'eventId',
+      payload: {
+        test: 'bar',
+      },
+    } as any as Subject;
+
+    // We cannot read this page until parent workspace permissions are loaded :
+    expect(userPerms.can(ActionType.Read, SubjectType.Event, event)).toBe(
+      false
+    );
+    userPerms.pullRoleFromSubject(SubjectType.Workspace, hisWorkspace);
+
+    // User now can read it !
+    expect(userPerms.can(ActionType.Read, SubjectType.Event, event)).toBe(true);
+  });
+
+  it('Takes into account rules priority', () => {
+    const user = {
+      id: 'someRandomUser',
+    };
+    let userPerms = new Permissions(user, config);
+    const role = {
+      name: 'agent' as any,
+      subjectType: SubjectType.Workspace,
+      rules: [
+        {
+          action: ActionType.Read,
+          subject: SubjectType.Event,
+          conditions: {
+            'payload.test': 'bar',
+          },
+        },
+        {
+          inverted: true,
+          action: ActionType.Read,
+          subject: SubjectType.Event,
+        },
+      ],
+    };
+    // Load custom role
+    userPerms.loadRoles([role]);
+    const hisWorkspace = {
+      id: 'hisWorkspaceId',
+      createdBy: 'someOtherAdminId',
+      permissions: {
+        [user.id]: {
+          role: 'agent' as any,
+        },
+      },
+    } as Subject;
+
+    const event = {
+      id: 'eventId',
+      payload: {
+        test: 'bar',
+      },
+    } as any as Subject;
+
+    userPerms.pullRoleFromSubject(SubjectType.Workspace, hisWorkspace);
+
+    // Doesn't work without priority :
+    expect(userPerms.can(ActionType.Read, SubjectType.Event, event)).toBe(
+      false
+    );
+
+    // But priority reorders our rules so they now work :
+    userPerms = new Permissions(user, config);
+    userPerms.loadRoles([
+      {
+        ...role,
+        rules: [
+          {
+            ...role.rules[0],
+            priority: 2,
+          },
+          {
+            ...role.rules[1],
+            priority: 1,
+          },
+        ],
+      },
+    ]);
+    userPerms.pullRoleFromSubject(SubjectType.Workspace, hisWorkspace);
+    expect(userPerms.can(ActionType.Read, SubjectType.Event, event)).toBe(true);
   });
 });

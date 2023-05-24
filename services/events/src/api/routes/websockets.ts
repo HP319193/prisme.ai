@@ -36,9 +36,19 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     url: SOCKETIO_REDIS_HOST,
     password: SOCKETIO_REDIS_PASSWORD,
     name: `${APP_NAME}-websockets`,
+    pingInterval: 4 * 1000 * 60,
   });
   redisPubClient.on('error', (err: Error) => {
     console.error(`Error occured with websockets redis pub client : ${err}`);
+  });
+  redisPubClient.on('connect', () => {
+    console.info('Websockets redis pub client connected.');
+  });
+  redisPubClient.on('reconnecting', () => {
+    console.info('Websockets redis pub client reconnecting ...');
+  });
+  redisPubClient.on('ready', () => {
+    console.info('Websockets redis pub client is ready.');
   });
   const redisSubClient = redisPubClient.duplicate();
   redisPubClient.on('error', (err: Error) => {

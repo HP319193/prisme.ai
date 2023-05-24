@@ -79,6 +79,7 @@ export class EventsFactory {
           : {
               payload: {
                 message: payload.message,
+                error: (<any>payload).error,
               },
             }
         : { payload };

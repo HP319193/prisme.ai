@@ -9,7 +9,7 @@ import {
   Role,
   SubjectType,
 } from '../../../permissions';
-import { CustomRole } from '@prisme.ai/permissions';
+import { CustomRole, Rule, Rules } from '@prisme.ai/permissions';
 import { InvalidSecurity } from '../../../errors';
 import { getObjectsDifferences } from '../../../utils/getObjectsDifferences';
 import { logger } from '../../../logger';
@@ -24,6 +24,7 @@ const OnlyAllowedSubjects = [
   SubjectType.File,
   SubjectType.App,
   'events',
+  'automations',
 ];
 const OnlyAllowedActions = Object.values(ActionType);
 
@@ -60,13 +61,101 @@ class Security {
     return `workspaces/${workspaceId}/role/${name}`;
   }
 
+  // Validate user provided rules & scope them to the target workspace
+  private validateUserRule(workspaceId: string, rule: Rule): Rule[] {
+    const { action, subject, inverted, reason, conditions } = rule;
+    const actions = Array.isArray(action) ? action : [action];
+    const subjects = Array.isArray(subject) ? subject : [subject];
+
+    // First validte subjects & actions
+    if (
+      !subjects.length ||
+      subjects.some(
+        (subject) => !OnlyAllowedSubjects.includes(subject as SubjectType)
+      )
+    ) {
+      throw new InvalidSecurity(
+        `Forbidden subjectType '${subject}' found in security rules`
+      );
+    }
+    if (
+      !actions.length ||
+      actions.some(
+        (action) => !OnlyAllowedActions.includes(action as SubjectType)
+      )
+    ) {
+      throw new InvalidSecurity(
+        `Forbidden actionType '${action}' found in security rules`
+      );
+    }
+
+    // Then enforce workspace scoped conditions
+    const ruleWithoutConditions = {
+      action: actions,
+      inverted,
+      reason,
+    };
+    const rules: Rule[] = [];
+    subjects.forEach((subject) => {
+      if (subject === 'events') {
+        const actionsWithoutCreate = actions.filter(
+          (cur) => cur !== ActionType.Create
+        );
+        if (actionsWithoutCreate.length) {
+          rules.push({
+            ...ruleWithoutConditions,
+            subject: 'events',
+            action: actionsWithoutCreate,
+            conditions: {
+              ...conditions,
+              'source.workspaceId': workspaceId,
+            },
+          });
+        }
+        // Create specific conditions : No one but the platform should be able to emit native events
+        if (actionsWithoutCreate.length !== actions.length) {
+          rules.push({
+            ...ruleWithoutConditions,
+            subject: 'events',
+            action: 'create',
+            conditions: {
+              ...conditions,
+              'source.workspaceId': workspaceId,
+              'source.serviceTopic': 'topic:runtime:emit',
+            },
+          });
+        }
+      } else {
+        const workspaceIdField =
+          {
+            [SubjectType.Workspace]: 'id',
+            [SubjectType.App]: 'workspaceId',
+            [SubjectType.File]: 'workspaceId',
+            [SubjectType.Page]: 'workspaceId',
+            ['automations']: 'runningWorkspaceId',
+          }[subject as SubjectType] || 'workspaceId';
+
+        rules.push({
+          ...ruleWithoutConditions,
+          subject,
+          conditions: {
+            ...conditions,
+            [workspaceIdField]: workspaceId,
+          },
+        });
+      }
+    });
+
+    return rules;
+  }
+
   private buildRoles = (
     workspaceId: string,
     authorizations: Prismeai.WorkspaceAuthorizations
   ) => {
     const { editor: _, owner: __, ...roles } = authorizations?.roles || {};
     const initRoles = Object.keys(roles).reduce<
-      Record<string, CustomRole<SubjectType, any>>
+      Record<string, CustomRole<SubjectType>>
     >(
       (initRoles, roleName) => ({
         ...initRoles,
@@ -84,122 +173,53 @@ class Security {
     );
 
     const builtRoles = (authorizations?.rules || []).reduce<
-      Record<string, CustomRole<SubjectType, any>>
-    >(
-      (
-        builtRoles,
-        { role: attachedRole, action, subject, inverted, reason, conditions },
-        ruleIdx
-      ) => {
-        const attachedRoles = Array.isArray(attachedRole)
-          ? attachedRole
-          : [attachedRole || 'default'];
-        const actions = Array.isArray(action) ? action : [action];
-        const subjects = Array.isArray(subject) ? subject : [subject];
+      Record<string, CustomRole<SubjectType>>
+    >((builtRoles, rule, ruleIdx) => {
+      const attachedRoles = Array.isArray(rule.role)
+        ? rule.role
+        : [rule.role || 'default'];
 
-        if (
-          !subjects.length ||
-          subjects.some(
-            (subject) => !OnlyAllowedSubjects.includes(subject as SubjectType)
-          )
-        ) {
+      attachedRoles.forEach((roleName) => {
+        if (roleName === Role.Owner) {
           throw new InvalidSecurity(
-            `Forbidden subjectType '${subject}' found in security rules`
+            `Reserved role '${roleName} cannot be overriden !'`
           );
         }
+        // Check that referenced roles exist
         if (
-          !actions.length ||
-          actions.some(
-            (action) => !OnlyAllowedActions.includes(action as SubjectType)
-          )
+          roleName !== 'default' &&
+          !(roleName in (authorizations?.roles || {}))
         ) {
           throw new InvalidSecurity(
-            `Forbidden actionType '${action}' found in security rules`
+            `Unknown custom role '${roleName}' referenced in a rule`
           );
         }
 
-        attachedRoles.forEach((roleName) => {
-          if (roleName === Role.Owner) {
-            throw new InvalidSecurity(
-              `Reserved role '${roleName} cannot be overriden !'`
-            );
-          } else if (
-            roleName !== 'default' &&
-            !(roleName in (authorizations?.roles || {}))
-          ) {
-            throw new InvalidSecurity(
-              `Unknown custom role '${roleName}' referenced in a rule`
-            );
-          }
+        if (!(roleName in builtRoles)) {
+          builtRoles[roleName] = {
+            id: this.getRoleId(workspaceId, roleName),
+            type: 'casl',
+            name: roleName,
+            subjectType: SubjectType.Workspace,
+            subjectId: workspaceId,
+            rules: [],
+          };
+        }
 
-          if (!(roleName in builtRoles)) {
-            builtRoles[roleName] = {
-              id: this.getRoleId(workspaceId, roleName),
-              type: 'casl',
-              name: roleName,
-              subjectType: SubjectType.Workspace,
-              subjectId: workspaceId,
-              rules: [],
-              casl: [],
-            };
-          }
-
-          const ruleWithoutConditions = {
-            action: actions,
-            inverted,
-            reason,
+        // Validate & scope current rule, splitted if necessary
+        builtRoles[roleName].rules.push(
+          ...this.validateUserRule(workspaceId, rule).map((cur) => ({
+            ...cur,
             priority:
               FIRST_CUSTOM_RULE_PRIORITY + ruleIdx < LAST_CUSTOM_RULE_PRIORITY
                 ? FIRST_CUSTOM_RULE_PRIORITY + ruleIdx
                 : LAST_CUSTOM_RULE_PRIORITY,
-          };
-          subjects.forEach((subject) => {
-            if (subject === 'events') {
-              const actionsWithoutCreate = actions.filter(
-                (cur) => cur !== ActionType.Create
-              );
-              if (actionsWithoutCreate.length) {
-                builtRoles[roleName].casl?.push({
-                  ...ruleWithoutConditions,
-                  subject: 'events',
-                  action: actionsWithoutCreate,
-                  conditions: {
-                    ...conditions,
-                    'source.workspaceId': workspaceId,
-                  },
-                });
-              }
-              // Create specific conditions : No one but the platform should be able to emit native events
-              if (actionsWithoutCreate.length !== actions.length) {
-                builtRoles[roleName].casl?.push({
-                  ...ruleWithoutConditions,
-                  subject: 'events',
-                  action: 'create',
-                  conditions: {
-                    ...conditions,
-                    'source.workspaceId': workspaceId,
-                    'source.serviceTopic': 'topic:runtime:emit',
-                  },
-                });
-              }
-            } else {
-              const workspaceIdField =
-                subject === SubjectType.Workspace ? 'id' : 'workspaceId';
-              builtRoles[roleName].casl?.push({
-                ...ruleWithoutConditions,
-                subject,
-                conditions: {
-                  ...conditions,
-                  [workspaceIdField]: workspaceId,
-                },
-              });
-            }
-          });
-        });
-        return builtRoles;
-      },
-      initRoles
-    );
+          }))
+        );
+      });
+
+      return builtRoles;
+    }, initRoles);
 
     return Object.values(builtRoles);
   };
@@ -212,13 +232,13 @@ class Security {
     const builtRoles = this.buildRoles(workspaceId, authorizations);
 
     // Compare new roles specs with current ones
-    const currentRoles = await this.accessManager.findRoles(
-      SubjectType.Workspace,
-      workspaceId
-    );
+    const currentRoles = await this.accessManager.findRoles({
+      subjectType: SubjectType.Workspace,
+      subjectId: workspaceId,
+    });
     const currentRolesMapping = currentRoles
       .filter((cur) => cur.type === 'casl')
-      .reduce<Record<string, CustomRole<SubjectType, any>>>(
+      .reduce<Record<string, CustomRole<SubjectType>>>(
         (mapping, { _id: _, __v: __, ...role }: any) => ({
           ...mapping,
           [role.id]: role,
@@ -226,7 +246,7 @@ class Security {
         {}
       );
     const updatedRolesMapping = builtRoles.reduce<
-      Record<string, CustomRole<SubjectType, any>>
+      Record<string, CustomRole<SubjectType>>
     >(
       (mapping, role) => ({
         ...mapping,
@@ -332,6 +352,72 @@ class Security {
       name,
       description: (<any>role)?.description,
     }));
+  };
+
+  /**
+   * API Keys
+   */
+
+  listApiKeys = async (workspaceId: string) => {
+    const apiKeys = await this.accessManager.findApiKeys(
+      SubjectType.Workspace,
+      workspaceId
+    );
+    return apiKeys;
+  };
+
+  createApiKey = async (workspaceId: string, rules: Rules) => {
+    const validatedRules = rules.flatMap((rule) =>
+      this.validateUserRule(workspaceId, rule)
+    );
+    const apiKey = await this.accessManager.createApiKey(
+      SubjectType.Workspace,
+      workspaceId,
+      validatedRules
+    );
+
+    this.broker.send<Prismeai.CreatedApiKey['payload']>(
+      EventType.CreatedApiKey,
+      <Prismeai.CreatedApiKey['payload']>apiKey
+    );
+
+    return apiKey;
+  };
+
+  updateApiKey = async (workspaceId: string, apiKey: string, rules: Rules) => {
+    const validatedRules = rules.flatMap((rule) =>
+      this.validateUserRule(workspaceId, rule)
+    );
+    const updatedApiKey = await this.accessManager.updateApiKey(
+      apiKey,
+      SubjectType.Workspace,
+      workspaceId,
+      validatedRules
+    );
+
+    this.broker.send<Prismeai.UpdatedApiKey['payload']>(
+      EventType.UpdatedApiKey,
+      <Prismeai.UpdatedApiKey['payload']>updatedApiKey
+    );
+
+    return updatedApiKey;
+  };
+
+  deleteApiKey = async (workspaceId: string, apiKey: string) => {
+    await this.accessManager.deleteApiKey(
+      apiKey,
+      SubjectType.Workspace,
+      workspaceId
+    );
+
+    this.broker.send<Prismeai.DeletedApiKey['payload']>(
+      EventType.DeletedApiKey,
+      {
+        apiKey,
+        subjectType: SubjectType.Workspace,
+        subjectId: workspaceId,
+      }
+    );
   };
 }
 

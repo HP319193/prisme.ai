@@ -38,12 +38,10 @@ interface Subject<Role extends string> {
   [k: string]: any;
 }
 
-export class Permissions<
-  SubjectType extends string,
-  Role extends string = string
-> {
+type Role = string;
+export class Permissions<SubjectType extends string> {
   private subjects: Record<SubjectType, SubjectOptions<Role>>;
-  private user: User<Role>;
+  private user: User;
   private roleTemplates: RoleTemplates<SubjectType, Role>;
   private abac: Rules;
   private rules: Rules;
@@ -52,7 +50,7 @@ export class Permissions<
   private loadedSubjectRoles: Record<string, string>; // map subjectType+subjectId to its role
   public ability: Ability;
 
-  constructor(user: User<Role>, config: PermissionsConfig<SubjectType, Role>) {
+  constructor(user: User, config: PermissionsConfig<SubjectType, Role>) {
     this.user = user;
     const { rbac, abac, subjects } = config;
     this.roleTemplates = rbac;
@@ -107,7 +105,7 @@ export class Permissions<
   }
 
   grant(
-    permission: ActionType | ActionType[] | Role | SubjectCollaborator<Role>,
+    permission: ActionType | ActionType[] | Role | SubjectCollaborator,
     subjectType: SubjectType,
     subject: Subject<Role>,
     target: Prismeai.UserPermissionsTarget
@@ -125,7 +123,7 @@ export class Permissions<
     // Update entire user
     if (typeof permission === 'object' && !Array.isArray(permission)) {
       const { role, policies, ...otherFields } =
-        permission as SubjectCollaborator<Role>;
+        permission as SubjectCollaborator;
       if (Object.keys(otherFields).length) {
         throw new InvalidPermissions(
           `Only allowed permissions fields are 'role' and 'policies' (found ${Object.keys(
@@ -146,7 +144,7 @@ export class Permissions<
         ...subject,
         permissions: {
           ...subject.permissions,
-          [targetStr]: permission as SubjectCollaborator<Role>,
+          [targetStr]: permission as SubjectCollaborator,
         },
       };
     }
@@ -295,7 +293,7 @@ export class Permissions<
     return this.loadRules(roleTemplate?.rules || [], { subject });
   }
 
-  updateUserRules(user: User<Role>) {
+  updateUserRules(user: User) {
     this.user = user;
     this.loadRules(this.abac);
   }
@@ -315,6 +313,8 @@ export class Permissions<
     const authorAssignedRole = this.subjects[subjectType]?.author?.assignRole;
     if (authorAssignedRole && subject.createdBy === this.user.id) {
       this.loadRole(authorAssignedRole, subjectType, subject);
+      this.loadedSubjectRoles[`${subjectType}.${subject.id}`] =
+        authorAssignedRole;
       return;
     }
 
@@ -373,6 +373,10 @@ export class Permissions<
     }
   }
 
+  public getLoadedSubjectRole(subjectType: SubjectType, subjectId: string) {
+    return this.loadedSubjectRoles[`${subjectType}.${subjectId}`];
+  }
+
   can(
     action: string,
     subjectType: SubjectType,
@@ -404,10 +408,15 @@ export class Permissions<
       );
     } catch (error) {
       if (error instanceof ForbiddenError) {
-        throw new PrismeaiForbiddenError(error.message, {
-          action: error.action,
-          subjectType: error.subjectType,
-        });
+        throw new PrismeaiForbiddenError(
+          `${error.message} ${(<any>subject).id || (<any>subject).slug}`,
+          {
+            action: error.action,
+            subjectType: error.subjectType,
+            id: (<any>subject).id,
+            slug: (<any>subject).slug,
+          }
+        );
       }
       throw error;
     }

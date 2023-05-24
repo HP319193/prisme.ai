@@ -82,6 +82,7 @@ export class ClientPool {
       )
         .toString(36)
         .substring(7)}${blocking ? '-blocking' : '-non-blocking'}`,
+      pingInterval: 4 * 1000 * 60,
     });
     client.on('error', (err: Error) => {
       console.error(`Error occured with broker redis driver : ${err}`);

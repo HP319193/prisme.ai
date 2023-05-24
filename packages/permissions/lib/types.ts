@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { Ability, RawRuleOf } from '@casl/ability';
-import { CustomRole } from '..';
 
 export enum ActionType {
   Manage = 'manage', // Super admin : permits every action
@@ -14,31 +13,28 @@ export enum ActionType {
 export type UserId = string;
 
 export type UserSubject = Record<string, any>;
-export type SubjectCollaborator<Role extends string> = {
-  role?: Role;
+export type SubjectCollaborator = {
+  role?: string;
   policies?: Partial<Record<ActionType, boolean>>;
 };
-export type SubjectCollaborators<Role extends string> = Record<
-  UserId,
-  SubjectCollaborator<Role>
->;
-export interface BaseSubject<Role extends string> {
+export type SubjectCollaborators = Record<UserId, SubjectCollaborator>;
+export interface BaseSubject {
   id: string;
   createdBy: string;
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
-  permissions?: SubjectCollaborators<Role>;
+  permissions?: SubjectCollaborators;
 }
 export type Subject<
   CustomAttributes = UserSubject,
   Role extends string = string
-> = BaseSubject<Role> & CustomAttributes;
+> = BaseSubject & CustomAttributes;
 
-export interface User<Role extends string> {
+export interface User {
   id: UserId;
   sessionId?: string;
-  role?: Role;
+  role?: string;
   [k: string]: any;
 }
 
@@ -68,15 +64,11 @@ export interface SubjectOptions<Role> {
 
 export interface PermissionsConfig<
   SubjectType extends string,
-  Role extends string,
-  CustomRules = any
+  Role extends string
 > {
   subjects: Record<SubjectType, SubjectOptions<Role>>;
   rbac: RoleTemplates<SubjectType, Role>;
   abac: Rules;
-  customRulesBuilder?: (
-    role: Omit<CustomRole<SubjectType, CustomRules>, 'casl'>
-  ) => Rules;
 }
 
 export type SubjectRelations<SubjectType extends string> = Record<

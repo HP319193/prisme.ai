@@ -2,6 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   AppstoreAddOutlined,
   CodeOutlined,
+  ExportOutlined,
+  LoadingOutlined,
   ShareAltOutlined,
   TagOutlined,
 } from '@ant-design/icons';
@@ -29,6 +31,7 @@ import VersionModal from './VersionModal';
 import HeaderPopovers from '../views/HeaderPopovers';
 import { useWorkspace } from '../providers/Workspace';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
+import api from '../utils/api';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
@@ -49,6 +52,21 @@ const HeaderWorkspace = () => {
       placement: 'bottomRight',
     });
   }, [deleteWorkspace, push, t]);
+
+  const [exporting, setExporting] = useState(false);
+  const exportWorkspace = useCallback(async () => {
+    if (exporting) return;
+    setExporting(true);
+    const zip = await api.workspaces(workspace.id).versions.export();
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.setAttribute('download', `workspace-${workspace.id}.zip`);
+    a.setAttribute('href', URL.createObjectURL(zip));
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setExporting(false);
+  }, [exporting, workspace.id]);
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -142,13 +160,21 @@ const HeaderWorkspace = () => {
                   <TagOutlined className="mr-2" />
                   {t('workspace.versions.create.label')}
                 </Button>
+                <Button onClick={exportWorkspace}>
+                  {exporting ? (
+                    <LoadingOutlined className="mr-2" />
+                  ) : (
+                    <ExportOutlined className="mr-2" />
+                  )}
+                  {t('workspace.versions.export.label')}
+                </Button>
               </div>
             </div>
           ),
         },
       },
     }),
-    [displaySource, sourceDisplayed, t]
+    [displaySource, exportWorkspace, exporting, sourceDisplayed, t]
   );
 
   const updateDetails = useCallback(

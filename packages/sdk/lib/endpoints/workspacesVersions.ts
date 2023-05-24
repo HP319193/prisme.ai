@@ -19,6 +19,16 @@ export class WorkspacesVersionsEndpoint {
       `/workspaces/${this.workspaceId}/versions/${versionId}/rollback`
     );
   }
+
+  async export(version: PrismeaiAPI.ExportWorkspaceVersion.Parameters.VersionId = 'current') {
+    const res = await this.api.prepareRequest(
+      `/workspaces/${this.workspaceId}/versions/${version}/export`, {
+        method: 'post'
+      }
+    )
+    return new Blob([await res.arrayBuffer()], { type: 'application/zip' });
+    
+  }
 }
 
 export default WorkspacesVersionsEndpoint;

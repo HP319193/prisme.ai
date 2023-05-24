@@ -135,7 +135,7 @@ export class Subscriptions {
 
         const userIds: string[] = (<any>event.payload).user?.id
           ? [(<any>event.payload).user?.id]
-          : (<any>event.payload).userIds;
+          : (<any>event.payload).userIds || [];
         const topicName = event.payload.topic;
         if (!topicName) {
           return true;
@@ -179,7 +179,7 @@ export class Subscriptions {
 
         const userIds: string[] = (<any>event.payload).user?.id
           ? [(<any>event.payload).user?.id]
-          : (<any>event.payload).userIds;
+          : (<any>event.payload).userIds || [];
         const topicName = event.payload.topic;
         if (!topicName) {
           return true;

@@ -15,6 +15,7 @@ export type DetailedTrigger = {
 
 export type DetailedAutomation = Prismeai.Automation & {
   workspace: Workspace;
+  runningWorkspaceId: string; // Might be different from workspace.id if workspace is an app
   secretPaths: string[];
 };
 export type AppName = string;
@@ -357,7 +358,12 @@ export class Workspace {
       if (!(appSlug in this.imports)) {
         return null;
       }
-      return this.imports[appSlug].getAutomation(name, false);
+      const automation = this.imports[appSlug].getAutomation(name, false);
+      if (automation) {
+        // For apps automation, fix runningWorkspaceId with current one
+        automation.runningWorkspaceId = this.id;
+      }
+      return automation;
     }
 
     const automation = (this.dsul.automations || {})[appSlug ? slug : name];
@@ -372,8 +378,11 @@ export class Workspace {
 
     return {
       slug: name,
+      // Not initializing this would make permissions rule "authorizations.actions: { $exists: false } " fail when authorizations is undefined
+      authorizations: {},
       ...automation,
       workspace: this,
+      runningWorkspaceId: this.id,
       secretPaths: automation.arguments
         ? findSecretPaths(automation.arguments)
         : [],
