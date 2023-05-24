@@ -91,6 +91,20 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       searchOptions: cleanSearchQuery(query),
     });
 
+    const logsCtx = {
+      userId,
+      sessionId,
+      workspaceId,
+      'user-agent': socket.handshake.headers['user-agent'],
+      referer: socket.handshake.headers['referer'],
+    };
+    logger.info({
+      msg:
+        'Websocket connected.' +
+        ((<any>socket).recovered ? ' (RECOVERED)' : ''),
+      ...logsCtx,
+    });
+
     // Handle events creation
     const userIp = Array.isArray(socket.handshake.headers?.['x-forwarded-for'])
       ? socket.handshake.headers?.['x-forwarded-for'][0]
@@ -131,26 +145,35 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       }
     );
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (reason) => {
       logger.info({
-        msg: 'Websocket disconnected.',
-        userId,
-        sessionId,
+        msg: `Websocket disconnected (${reason})`,
+        ...logsCtx,
       });
       subscription.unsubscribe();
     });
     socket.on('connect', () => {
       logger.info({
         msg: 'Websocket connected.',
-        userId,
-        sessionId,
+        ...logsCtx,
       });
     });
     socket.on('reconnect', () => {
       logger.info({
-        msg: 'Websocket reconnecting ...',
-        userId,
-        sessionId,
+        msg: 'Websocket reconnected !',
+        ...logsCtx,
+      });
+    });
+    socket.on('reconnect_attempt', (attempt) => {
+      logger.info({
+        msg: `Websocket reconnection attempt ${attempt}`,
+        ...logsCtx,
+      });
+    });
+    socket.on('reconnect_failed', (attempt) => {
+      logger.warn({
+        msg: `Websocket could not reconnect`,
+        ...logsCtx,
       });
     });
   });
