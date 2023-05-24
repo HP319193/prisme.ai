@@ -80,6 +80,13 @@ export function cleanSearchQuery({
   appInstanceDepth,
   ...payloadQuery
 }: PrismeaiAPI.EventsLongpolling.QueryParameters): SearchOptions {
+  const fixedArrayParams = Object.entries(payloadQuery).reduce(
+    (fixedArrayParams, [k, v]) => ({
+      ...fixedArrayParams,
+      [k]: v?.constructor?.name === 'Object' && '0' in v ? Object.values(v) : v,
+    }),
+    {}
+  );
   const opts: SearchOptions = {
     afterDate,
     beforeDate,
@@ -88,7 +95,7 @@ export function cleanSearchQuery({
     text,
     sort,
     appInstanceDepth,
-    payloadQuery: payloadQuery as PayloadQuery,
+    payloadQuery: fixedArrayParams as PayloadQuery,
     types: types ? types.split(',') : undefined,
   };
 
