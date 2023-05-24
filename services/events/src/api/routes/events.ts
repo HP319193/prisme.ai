@@ -83,7 +83,10 @@ export function cleanSearchQuery({
   const fixedArrayParams = Object.entries(payloadQuery).reduce(
     (fixedArrayParams, [k, v]) => ({
       ...fixedArrayParams,
-      [k]: v?.constructor?.name === 'Object' && '0' in v ? Object.values(v) : v,
+      [k]:
+        v?.constructor?.name === 'Object' && '0' in <any>v
+          ? Object.values(v)
+          : v,
     }),
     {}
   );
