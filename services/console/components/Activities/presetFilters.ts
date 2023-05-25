@@ -1,4 +1,4 @@
-export const filters = {
+export const filters = ({ sessionId }: { sessionId?: string }) => ({
   versions: {
     type: 'workspaces.versions.published',
   },
@@ -17,4 +17,7 @@ export const filters = {
   application: {
     'source.serviceTopic': 'topic:runtime:emit',
   },
-};
+  mySession: {
+    'source.sessionId': `${sessionId}`,
+  },
+});

@@ -160,7 +160,8 @@
         "label_webhooks": "Webhooks calls",
         "label_errors": "Errors",
         "label_shares": "Workspace shares",
-        "label_application": "Applications events"
+        "label_application": "Applications events",
+        "label_mySession": "My session"
       },
       "reset": "Reset filters"
     },
