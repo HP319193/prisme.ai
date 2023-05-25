@@ -29,6 +29,11 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
         if (prev) {
           prev.destroy();
         }
+        if (typeof window !== 'undefined') {
+          window.Prisme = window.Prisme || {};
+          window.Prisme.ai = window.Prisme.ai || {};
+          window.Prisme.ai.events = events;
+        }
         return events;
       });
     }
