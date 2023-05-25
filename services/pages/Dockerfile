@@ -31,6 +31,7 @@ COPY --from=build /www/package.json /www/package-lock.json /www/rollup.config.js
 COPY --from=build /www/specifications/  /www/specifications/
 COPY --from=build /www/node_modules/  /www/node_modules/
 
+
 # Pages dependencies
 COPY --from=build /www/services/console/  /www/services/console/
 
