@@ -11,7 +11,9 @@ export enum OperationSuccess {
 export interface ApiSuccess {
   type: OperationSuccess;
 }
-export interface UserContext<T = Prismeai.User | null> {
+export interface UserContext<
+  T = (Prismeai.User & { sessionId?: string }) | null
+> {
   user: T;
   loading: boolean;
   error?: ApiError;
@@ -44,7 +46,9 @@ export const userContext = createContext<UserContext>({
 });
 
 export function useUser(throwIfNotExist?: boolean): UserContext;
-export function useUser(throwIfNotExist?: true): UserContext<Prismeai.User>;
+export function useUser(
+  throwIfNotExist?: true
+): UserContext<Prismeai.User & { sessionId?: string }>;
 export function useUser(throwIfNotExist?: boolean) {
   const context = useContext(userContext);
 
