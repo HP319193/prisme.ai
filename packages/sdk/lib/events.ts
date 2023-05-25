@@ -19,6 +19,7 @@ export class Events {
   private filters: Record<string, any>[];
   private listenedUserTopics: Map<string, string[]>;
   private listeners: Map<string, Function[]> = new Map();
+  private lastReceivedEventDate: Date;
 
   constructor({
     workspaceId,
@@ -41,6 +42,7 @@ export class Events {
     const extraHeaders: any = {
       'x-prismeai-token': token,
     };
+    this.lastReceivedEventDate = new Date();
     if (apiKey) {
       extraHeaders['x-prismeai-api-key'] = apiKey;
     }
@@ -53,12 +55,15 @@ export class Events {
       }
     );
 
-    let lastConnectionTime = new Date();
     const onConnect = () => {
+      // Reset last filters
+      this.updateFilters({
+        payloadQuery: this.filters,
+      });
       setTimeout(async () => {
         const events = await api.getEvents(workspaceId, {
           ...this.filters[this.filters.length - 1],
-          afterDate: lastConnectionTime.toISOString(),
+          afterDate: this.lastReceivedEventDate.toISOString(),
         });
         events.reverse().forEach((event) => {
           (this.listeners.get(event.type) || []).forEach((listener) =>
@@ -68,7 +73,9 @@ export class Events {
       }, 2000);
     };
     this.client.on('disconnect', () => {
-      lastConnectionTime = new Date();
+      if (!this.lastReceivedEventDate) {
+        this.lastReceivedEventDate = new Date();
+      }
       this.client.off('connect', onConnect);
       this.client.on('connect', onConnect);
     });
@@ -94,7 +101,10 @@ export class Events {
   }
 
   all(listener: (eventName: string, eventData: Prismeai.PrismeEvent) => void) {
-    this.client.onAny(listener);
+    this.client.onAny((eventName: string, eventData: Prismeai.PrismeEvent) => {
+      this.lastReceivedEventDate = new Date(eventData?.createdAt);
+      return listener(eventName, eventData);
+    });
 
     return () => this.client.offAny(listener);
   }
