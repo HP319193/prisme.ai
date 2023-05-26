@@ -14,7 +14,6 @@ module.exports = {
     BILLING_HOME: process.env.BILLING_HOME || '',
     BILLING_USAGE: process.env.BILLING_USAGE || '',
   },
-  swcMinify: false,
   webpack(config) {
     config.module.rules.push({
       test: /\.svgr$/i,
