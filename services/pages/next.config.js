@@ -4,7 +4,7 @@ const { headers, ...config } = require('../console/next.config');
 const nextConfig = {
   ...config,
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   experimental: {
     externalDir: true,
   },
