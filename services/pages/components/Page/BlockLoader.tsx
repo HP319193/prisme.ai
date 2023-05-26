@@ -148,6 +148,9 @@ export const BlockLoader: TBlockLoader = ({
       config: initialConfig,
       language,
     };
+    if (window.location.hash && !payload.hash) {
+      payload.hash = window.location.hash;
+    }
     if (window.location.search) {
       payload.query = Array.from(
         new URLSearchParams(window.location.search).entries()
@@ -160,7 +163,7 @@ export const BlockLoader: TBlockLoader = ({
       );
     }
     events.emit(onInit, payload);
-  }, [events, initialConfig, listening, onInit, page, user]);
+  }, [events, initialConfig, language, listening, onInit, page, user]);
 
   const onAppConfigUpdate = useCallback(
     async (newConfig: any) => {
