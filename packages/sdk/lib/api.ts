@@ -26,7 +26,7 @@ export type UserPermissions = {
 
 export class Api extends Fetcher {
   private sessionId?: string;
-  private _user?: Prismeai.User;
+  private _user?: Prismeai.User & { sessionId?: string };
 
   get user() {
     return this._user;
