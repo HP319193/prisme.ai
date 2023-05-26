@@ -55,11 +55,15 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
       offs.push(
         events.on(page.updateOn, ({ payload: { url, redirect } }) => {
           function redirectGet(url: string, locale?: string) {
+            if (url.match(/^#/)) {
+              window.location.hash = url;
+              return;
+            }
             if (url.match(/^http/)) {
               window.location.href = url;
-            } else {
-              push(url, undefined, { locale });
+              return;
             }
+            push(url, undefined, { locale });
           }
           function redirectPost(url: string, body: Record<string, string>) {
             const form = document.createElement('form');
