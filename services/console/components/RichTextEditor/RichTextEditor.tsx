@@ -114,6 +114,28 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
                 container: `#${toolbarId.current}`,
               },
             }}
+            formats={[
+              'background',
+              'bold',
+              'color',
+              'font',
+              'code',
+              'italic',
+              'link',
+              'size',
+              'strike',
+              'script',
+              'underline',
+              'blockquote',
+              'header',
+              'indent',
+              'list',
+              'align',
+              'direction',
+              'code-block',
+              'image',
+              'video',
+            ]}
           />
         </>
       )}
