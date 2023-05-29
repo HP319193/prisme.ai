@@ -6,9 +6,11 @@ import {
   CORRELATION_ID_HEADER,
   FETCH_USER_AGENT_HEADER,
   PUBLIC_API_URL,
+  RUNTIME_EMITS_BROKER_TOPIC,
 } from '../../../../../config';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
+import { logger } from '../../../../logger';
 
 const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages'].map(
   (cur) => `${PUBLIC_API_URL}${cur}`
@@ -16,6 +18,14 @@ const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages'].map(
 
 const base64Regex =
   /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+
+// https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#event_stream_format
+interface StreamChunk {
+  event?: string;
+  data: any[];
+  id?: string;
+  retry?: number;
+}
 
 export async function fetch(
   fetch: Prismeai.Fetch['fetch'],
@@ -30,6 +40,7 @@ export async function fetch(
     query,
     multipart,
     emitErrors = true,
+    stream,
   } = fetch;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
@@ -103,14 +114,45 @@ export async function fetch(
       parsedURL.searchParams.append(key, val);
     }
   }
+
   const result = await nodeFetch(parsedURL, params);
-  const responseBody = await getResponseBody(result);
-  if (result.status >= 400 && result.status < 600 && emitErrors) {
+  let responseBody, error;
+  if (!stream?.event) {
+    responseBody = await getResponseBody(result);
+    if (result.status >= 400 && result.status < 600 && emitErrors) {
+      error = responseBody;
+    }
+  } else {
+    await streamResponse(result.body, async (chunk: StreamChunk) => {
+      try {
+        if (result.status >= 400 && result.status < 600) {
+          error = chunk;
+          responseBody = chunk;
+        } else {
+          await broker.send(
+            stream?.event!,
+            {
+              chunk,
+              additionalPayload: stream?.payload,
+            },
+            {
+              serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+            },
+            { target: stream?.target, options: stream?.options }
+          );
+        }
+      } catch (err) {
+        logger.warn({ msg: `Could not stream fetch response chunk`, err });
+      }
+    });
+  }
+
+  if (error && emitErrors) {
     broker.send<Prismeai.FailedFetch['payload']>(EventType.FailedFetch, {
       request: fetch,
       response: {
         status: result.status,
-        body: responseBody,
+        body: error,
         headers: result.headers,
       },
     });
@@ -119,11 +161,51 @@ export async function fetch(
 }
 
 async function getResponseBody(response: Response) {
-  if (
-    (response.headers.get('Content-Type') || '').includes('application/json')
-  ) {
+  const parseJSON = (response.headers.get('Content-Type') || '').includes(
+    'application/json'
+  );
+  if (parseJSON) {
     const json = await response.json();
     return json;
   }
   return await response.text();
+}
+
+async function streamResponse(
+  stream: NodeJS.ReadableStream,
+  callback: (chunk: StreamChunk) => Promise<void>
+) {
+  for await (const buffer of stream) {
+    const str = buffer.toString().trim();
+    // No stream : entire json response is given at once
+    if (str[0] === '[' || str[0] === '{') {
+      try {
+        return callback({
+          data: [JSON.parse(str)],
+        });
+      } catch {}
+    }
+    const chunk: StreamChunk = str.split('\n').reduce<StreamChunk>(
+      (chunk, line) => {
+        if (line.startsWith('data:')) {
+          let content = line.slice(5).trim();
+          if (content[0] == '[' || content[0] == '{') {
+            try {
+              content = JSON.parse(content);
+            } catch {}
+          }
+          chunk.data.push(content);
+        } else if (line.startsWith('event:')) {
+          chunk.event = line.slice(6);
+        } else if (line.startsWith('id:')) {
+          chunk.id = line.slice(3);
+        } else if (line.startsWith('retry:')) {
+          chunk.retry = parseInt(line.slice(6));
+        }
+        return chunk;
+      },
+      { data: [] }
+    );
+    await callback(chunk);
+  }
 }
