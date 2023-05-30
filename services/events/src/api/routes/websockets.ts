@@ -15,7 +15,7 @@ import {
 import { logger } from '../../logger';
 import sendEvent from '../../services/events/send';
 import { SearchOptions } from '../../services/events/store';
-import { Subscriptions } from '../../services/events/Subscriptions';
+import { Subscriber, Subscriptions } from '../../services/events/Subscriptions';
 import { cleanSearchQuery } from './events';
 
 const WORKSPACE_PATH = /^\/v2\/workspaces\/([\w-_]+)\/events$/;
@@ -81,16 +81,6 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     }
     const sessionId = socket.handshake.headers[SESSION_ID_HEADER];
     const apiKey = socket.handshake.headers[API_KEY_HEADER];
-    const subscription = await events.subscribe(workspaceId, {
-      id: userId as string,
-      sessionId: sessionId as string,
-      apiKey: apiKey as string,
-      callback: (event: PrismeEvent<any>) => {
-        socket.emit(event.type, event);
-      },
-      searchOptions: cleanSearchQuery(query),
-    });
-
     const logsCtx = {
       userId,
       sessionId,
@@ -98,6 +88,32 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       'user-agent': socket.handshake.headers['user-agent'],
       referer: socket.handshake.headers['referer'],
     };
+
+    let subscription: Subscriber;
+    const ready = events
+      .subscribe(workspaceId, {
+        id: userId as string,
+        sessionId: sessionId as string,
+        apiKey: apiKey as string,
+        callback: (event: PrismeEvent<any>) => {
+          socket.emit(event.type, event);
+        },
+        searchOptions: cleanSearchQuery(query),
+      })
+      .then((suscribed) => {
+        subscription = suscribed;
+        return true;
+      })
+      .catch((err) => {
+        socket.disconnect();
+        logger.warn({
+          msg: 'Disconnect websocket',
+          ...logsCtx,
+          err,
+        });
+        return false;
+      });
+
     logger.info({
       msg:
         'Websocket connected.' +
@@ -118,6 +134,10 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     });
     socket.onAny(
       async (type, payload: Prismeai.PrismeEvent | SearchOptions) => {
+        const isReady = await ready;
+        if (!isReady) {
+          return;
+        }
         try {
           if (type === 'event') {
             await sendEvent(
@@ -150,7 +170,9 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
         msg: `Websocket disconnected (${reason})`,
         ...logsCtx,
       });
-      subscription.unsubscribe();
+      if (subscription) {
+        subscription.unsubscribe();
+      }
     });
     socket.on('connect', () => {
       logger.info({
