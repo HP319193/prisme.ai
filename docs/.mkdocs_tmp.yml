@@ -1,9 +1,9 @@
-site_name: i18n.site_name
+site_name:  Prisme.ai
 site_url: https://docs.eda.prisme.ai
 console_url: https://console.eda.prisme.ai/signin
 site_author: Prisme.ai
-site_description: i18n.site_description
-start: i18n.start
+site_description:  Everything you need to know about Prisme.ai
+start:  Documentation
 docs_dir: docs/en
 site_dir: public/fr
 # Copyright
@@ -37,42 +37,43 @@ extra:
   generator: false
 
 nav:
-  - i18n.home: index.md
-  - i18n.getstarted:
-      - i18n.index: getstarted/index.md
-      - i18n.configuration: getstarted/configuration.md
+  -  Home: index.md
+  -  Getting Started:
+      -  Index: getstarted/index.md
+      -  Configuration: getstarted/configuration.md
+      -  Permissions and API Keys: getstarted/permissions.md
   - Workspaces:
-      - i18n.index: workspaces/index.md
+      -  Index: workspaces/index.md
       - Apps: workspaces/apps.md
-      - i18n.automations:
-          - i18n.index: workspaces/automations.md
-          - i18n.instructions: workspaces/instructions.md
-          - i18n.conditions: workspaces/conditions.md
+      -  Automations:
+          -  Index: workspaces/automations.md
+          -  Instructions: workspaces/instructions.md
+          -  Conditions: workspaces/conditions.md
       - Pages:
           - Pages: workspaces/pages.md
       - Blocks:
           - Form: blocks/form.md
       - Schema Form: workspaces/schemaform.md
-      - i18n.security: workspaces/security.md
+      -  Security: workspaces/security.md
   - API: /api
-  - i18n.architecture:
-      - i18n.index: architecture/index.md
-      - i18n.authentication_access_control: architecture/authentication_access_control.md
-      - i18n.apiGateway:
-          - i18n.specifications: architecture/technical/apiGateway/specifications.md
-      - i18n.console:
-          - i18n.specifications: architecture/technical/console/specifications.md
-      - i18n.events:
-          - i18n.specifications: architecture/technical/events/specifications.md
-      - i18n.runtime:
-          - i18n.specifications: architecture/technical/runtime/specifications.md
-      - i18n.workspaces:
-          - i18n.specifications: architecture/technical/workspaces/specifications.md
+  -  Architecture:
+      -  Index: architecture/index.md
+      -  Authentication and Authorization: architecture/authentication_access_control.md
+      -  API Gateway:
+          -  Specifications: architecture/technical/apiGateway/specifications.md
+      -  Console:
+          -  Specifications: architecture/technical/console/specifications.md
+      -  Events:
+          -  Specifications: architecture/technical/events/specifications.md
+      -  Runtime:
+          -  Specifications: architecture/technical/runtime/specifications.md
+      -  Workspaces:
+          -  Specifications: architecture/technical/workspaces/specifications.md
       - Schema Form: architecture/technical/schemaform.md
-  - i18n.examples:
-      - i18n.index: examples/index.md
-  - i18n.contributing:
-      - i18n.index: contributing/index.md
+  -  Examples:
+      -  Index: examples/index.md
+  -  Contributing:
+      -  Index: contributing/index.md
 
 markdown_extensions:
   - admonition
@@ -113,3 +114,8 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+
+docs_dir: docs/en
+site_dir: public/en
+cur_lang: en
+
