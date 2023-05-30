@@ -21,10 +21,15 @@ const sendEvent = async (
     sessionId: accessManager.user.sessionId,
     serviceTopic: event?.source?.serviceTopic || RUNTIME_EMITS_BROKER_TOPIC,
   };
-  await accessManager.throwUnlessCan(ActionType.Create, SubjectType.Event, {
-    ...event,
-    source: partialSource,
-  } as Prismeai.PrismeEvent);
+  await accessManager.throwUnlessCan(
+    ActionType.Create,
+    SubjectType.Event,
+    {
+      ...event,
+      source: partialSource,
+    } as Prismeai.PrismeEvent,
+    true
+  );
 
   return await broker
     .child(partialSource, {
