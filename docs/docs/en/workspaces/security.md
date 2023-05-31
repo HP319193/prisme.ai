@@ -22,6 +22,7 @@ authorizations:
 ### Rule structure
 
 Each rule must define at least these 2 fields :  
+
 * **action** : Target action name or list of names
 * **subject** : Target subject type or list of subjects 
 
@@ -29,6 +30,7 @@ By default, rules **allow** the given **action** for the given **subject** type.
 Some subjects have their specific actions which won't have any effect when allowed for another subject type. See available [subjects & actions](#subjects-and-actions).  
 
 Rules can be more precisely configured using the following optional fields :  
+
 * **role** : Only apply this rule for the specified role
   * If not set, the rule will apply to everyone (including anonymous users or editors)
 * **conditions** : Match subjects by filtering on their fields using a [subset of MongoDB query syntax](https://casl.js.org/v4/en/guide/conditions-in-depth#supported-operators).
@@ -42,7 +44,8 @@ See [default security config](#default-security-config) for a full example.
 
 ### Subjects and Actions
 
-**Available subjects and their specific actions :**
+**Available subjects and their specific actions :**  
+
 * **workspaces**
   * manage_security :  allows updating security configuration
   * manage_permissions : allows sharing / unsharing
@@ -149,6 +152,7 @@ A few security considerations to have when using default security configuration 
 3. **Everyone can read any event emitted in his session :** Once an automation has been triggered by the user, every child emits will be visible to the user, potentially giving him access to **internal events** or **sensitive events** from unrestricted automations (i.e getAnalytics automation used by some admin page)    
 
 For event triggered automations, all three issues could be solved by tuning **create events** related rules, using one of these methods :  
+
 * Add conditions to "everyone can create any event" default rule :  
 ```yaml
   - action: create
@@ -178,6 +182,7 @@ For event triggered automations, all three issues could be solved by tuning **cr
 
 ## Securing automations
 By default, anyone can execute any automation, provided it has some available trigger :  
+
 * Event trigger (if the user is allowed to emit given events)
 * Endpoint trigger (by default even allowed to unauthenticated requests)
 * Direct call from another automation available by event/endpoint trigger
