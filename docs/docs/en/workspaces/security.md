@@ -32,12 +32,12 @@ Some subjects have their specific actions which won't have any effect when allow
 Rules can be more precisely configured using the following optional fields :  
 
 * **role** : Only apply this rule for the specified role
-  * If not set, the rule will apply to everyone (including anonymous users or editors)
+    * If not set, the rule will apply to everyone (including anonymous users or editors)
 * **conditions** : Match subjects by filtering on their fields using a [subset of MongoDB query syntax](https://casl.js.org/v4/en/guide/conditions-in-depth#supported-operators).
-  * Rule does not apply if specified conditions does not match with given subject.  
-  * A rule without any conditions (or an empty object) will apply to every instance of specified **subject**
+    * Rule does not apply if specified conditions does not match with given subject.  
+    * A rule without any conditions (or an empty object) will apply to every instance of specified **subject**
 * **inverted** : If set to true, **deny** given action (instead of allow).  
-  * Rules are executed in the same order they as appear in your configuration, meaning an **inverted** rule won't have any effect if it's followed by an **ALLOW** rule without any **conditions**.  
+    * Rules are executed in the same order they as appear in your configuration, meaning an **inverted** rule won't have any effect if it's followed by an **ALLOW** rule without any **conditions**.  
 * **reason** : A string that will be returned by API on denied requests  
 
 See [default security config](#default-security-config) for a full example.  
@@ -47,15 +47,15 @@ See [default security config](#default-security-config) for a full example.
 **Available subjects and their specific actions :**  
 
 * **workspaces**
-  * manage_security :  allows updating security configuration
-  * manage_permissions : allows sharing / unsharing
-  * aggregate_search : allows using /search API  
-  * get_usage : allows using /usage API
+    * manage_security :  allows updating security configuration
+    * manage_permissions : allows sharing / unsharing
+    * aggregate_search : allows using /search API  
+    * get_usage : allows using /usage API
 * **apps**
 * **pages**
 * **files**
 * **automations**
-  * execute : allows executing the automation (regardless the trigger method is)
+    * execute : allows executing the automation (regardless the trigger method is)
 * **events**
 
 **Shared actions :**  
@@ -147,7 +147,8 @@ authorizations:
 
 ## Considerations  
 A few security considerations to have when using default security configuration :  
-1. **Everyone can create any event :** This means everyone can create any event & thus execute any automation with an event trigger
+
+1. **Everyone can create any event :** This means everyone can create any event & thus execute any automation with an event trigger  
 2. **Everyone can execute any automation :** Regardless of the automation trigger (event or endpoint), everyone is allowed to execute any automation  
 3. **Everyone can read any event emitted in his session :** Once an automation has been triggered by the user, every child emits will be visible to the user, potentially giving him access to **internal events** or **sensitive events** from unrestricted automations (i.e getAnalytics automation used by some admin page)    
 
