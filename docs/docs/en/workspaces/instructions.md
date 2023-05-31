@@ -151,6 +151,7 @@ Sends an HTTP request to call external web services
 - **multipart** : List of field definitions for multipart/form-data requests
 - **emitErrors** : Boolean enabling or disabling error events upon 4xx or 5xx responses. Enabled by default.  
 - **output** : Name of the variable that will store the response body
+- **stream** : For streamed responses, emit data chunks as they are received
 
 When receiving 4xx or 5xx HTTP errors, a native event `runtime.fetch.failed` is automatically emitted, including both request & response contents.
 
@@ -169,6 +170,37 @@ If **Content-Type** header is set to 'application/x-www-form-urlencoded', the **
       - fieldname: metadata
         value: some random metadata
 ```
+
+**stream**
+```yaml
+- fetch:
+    url: ..
+    stream:
+      event: chunk
+      payload:
+        foo: bar
+```
+
+Each chunk will be emitted like this :  
+```json
+{
+  "type": "chunk",
+  "payload": {
+    "chunk": {
+      "data": [
+        "data1",
+        "data2"
+      ]
+    },
+    "additionalPayload": {
+      "foo": "bar"
+    }
+  }
+}
+```
+If data strings are JSON, they will be automatically parsed into objects.  
+**stream** option also accepts **target** and **options** fields from emit instruction.  
+
 
 ### Emit
 
