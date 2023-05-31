@@ -51,7 +51,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     console.info('Websockets redis pub client is ready.');
   });
   const redisSubClient = redisPubClient.duplicate();
-  redisPubClient.on('error', (err: Error) => {
+  redisSubClient.on('error', (err: Error) => {
     console.error(`Error occured with websockets redis sub client : ${err}`);
   });
 
