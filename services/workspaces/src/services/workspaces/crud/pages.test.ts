@@ -332,6 +332,12 @@ describe('Detailed pages', () => {
         },
         {
           blocks: {
+            'Dialog Box.Editor': 'block url',
+          },
+          slug: 'Dialog Box',
+        },
+        {
+          blocks: {
             myBlock: 'myBlockURL',
           },
           slug: '',

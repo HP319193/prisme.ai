@@ -227,6 +227,11 @@ class Pages {
     if (!page.public && !permissionsAlreadyChecked) {
       await this.accessManager.get(SubjectType.Page, query);
     }
+    // Delete legacy appConfig field
+    page.appInstances = (page.appInstances || []).map((appInstance) => {
+      delete (<any>appInstance).appConfig;
+      return appInstance;
+    });
     return { ...page, workspaceSlug: (<any>query).workspaceSlug };
   };
 
@@ -275,15 +280,6 @@ class Pages {
           };
         }, {});
         if (!Object.keys(blocks).length) {
-          return false;
-        }
-        const blockNames = Object.keys(blocks);
-        // No block page is from this appInstance : do not include it !
-        if (
-          !(page.blocks || []).find((cur) =>
-            blockNames.includes(cur.slug || '')
-          )
-        ) {
           return false;
         }
         return {
