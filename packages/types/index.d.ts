@@ -1350,7 +1350,6 @@ declare namespace Prismeai {
         automation?: string;
         appInstances: {
             slug?: string;
-            appConfig?: any;
             /**
              * Map block slugs to their URL
              * example:
@@ -1744,7 +1743,6 @@ declare namespace Prismeai {
     export interface PageDetails {
         appInstances: {
             slug?: string;
-            appConfig?: any;
             /**
              * Map block slugs to their URL
              * example:
