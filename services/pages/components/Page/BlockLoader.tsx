@@ -74,7 +74,6 @@ export const BlockLoader: TBlockLoader = ({
     if (debugUrl) {
       app.blocks[name] = debugUrl;
     }
-    setAppConfig(app.appConfig);
     setUrl(app.blocks[name]);
   }, [debug, name, page]);
 

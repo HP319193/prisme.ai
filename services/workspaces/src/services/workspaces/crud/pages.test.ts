@@ -283,6 +283,7 @@ describe('Detailed pages', () => {
             code: 'return "hello world";',
           },
         },
+        apiKey: 'someApiKey',
       },
     });
     await appInstancesCrud.installApp(WORKSPACE_ID, {
@@ -305,6 +306,7 @@ describe('Detailed pages', () => {
       blocks: [
         {
           slug: 'Custom Code.Editor',
+          apiKey: '{{appConfig.apiKey}}',
         },
       ],
     });
@@ -315,33 +317,24 @@ describe('Detailed pages', () => {
     });
     expect(detailedPage).toEqual({
       ...page,
+      blocks: [
+        {
+          slug: 'Custom Code.Editor',
+          apiKey: 'someApiKey',
+        },
+      ],
       appInstances: [
         {
           slug: 'Custom Code',
           blocks: {
             'Custom Code.Editor': 'block url',
           },
-          appConfig: {
-            functions: {
-              foo: {
-                code: 'return "hello world";',
-              },
-            },
-          },
-        },
-        {
-          blocks: {
-            'Dialog Box.Editor': 'block url',
-          },
-          slug: 'Dialog Box',
-          appConfig: {},
         },
         {
           blocks: {
             myBlock: 'myBlockURL',
           },
           slug: '',
-          appConfig: {},
         },
       ],
       public: false,

@@ -15,7 +15,6 @@ jest.mock('./PageProvider', () => {
       appInstances: [
         {
           slug: 'Foo',
-          appConfig: {},
           blocks: {
             'Foo.Block1': 'http://fooblock1',
             'Foo.Block2': 'http://fooblock2',
@@ -48,7 +47,6 @@ it('should render a builtin block', () => {
   const child = root.root.children[0] as renderer.ReactTestInstance;
   expect(child.props.name).toBe('RichText');
   expect(child.props.url).toBe('');
-  expect(child.props.appConfig).not.toBeDefined();
   expect(child.props.language).toBe('en');
   expect(child.props.workspaceId).toBe('42');
   expect(child.props.config).not.toBeDefined();
@@ -65,9 +63,6 @@ it('should render an App block', () => {
   const child = root.root.children[0] as renderer.ReactTestInstance;
   expect(child.props.name).toBe('Foo.Block1');
   expect(child.props.url).toBe('http://fooblock1');
-  expect(child.props.appConfig).toBe(
-    page && page.appInstances && page.appInstances[0].appConfig
-  );
   expect(child.props.language).toBe('en');
   expect(child.props.workspaceId).toBe('42');
   expect(child.props.config).not.toBeDefined();
@@ -83,7 +78,6 @@ it('should render a custom block with url', () => {
   const child = root.root.children[0] as renderer.ReactTestInstance;
   expect(child.props.name).toBe('http://custom');
   expect(child.props.url).toBe('http://custom');
-  expect(child.props.appConfig).not.toBeDefined();
   expect(child.props.language).toBe('en');
   expect(child.props.workspaceId).toBe('42');
   expect(child.props.config).not.toBeDefined();
