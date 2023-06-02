@@ -33,9 +33,8 @@ export class RedisDriver implements Driver {
     this.serverTimeOffset = 0;
 
     this.client = new ClientPool(opts);
-    this.ready = this.client.ready;
-    this.ready.then(() => {
-      this.detectServerTimeOffset();
+    this.ready = this.client.ready.then(async () => {
+      return await this.detectServerTimeOffset();
     });
   }
 
@@ -48,6 +47,9 @@ export class RedisDriver implements Driver {
     if (curTime) {
       const localTime = Date.now();
       this.serverTimeOffset = localTime - parseInt(curTime);
+      console.log(
+        `Redis broker ${this.groupName} detected an offset of ${this.serverTimeOffset}ms with remote server time.`
+      );
     }
   }
 

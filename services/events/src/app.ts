@@ -27,6 +27,8 @@ process.on('uncaughtException', uncaughtExceptionHandler);
     httpServer.close();
     process.exit(0);
   }
+
+  await broker.ready;
   process.on('SIGTERM', exit);
   process.on('SIGINT', exit);
 

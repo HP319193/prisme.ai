@@ -508,7 +508,8 @@ export class AccessManager<
   async throwUnlessCan<returnType extends SubjectType>(
     actionType: ActionType | string,
     subjectType: SubjectType,
-    idOrSubject: SubjectInterfaces[returnType] | string
+    idOrSubject: SubjectInterfaces[returnType] | string,
+    includeErrorSubject?: boolean
   ) {
     const { permissions } = this.checkAsUser();
 
@@ -532,7 +533,8 @@ export class AccessManager<
     permissions.throwUnlessCan(
       actionType,
       subjectType,
-      typeof subject.toJSON === 'function' ? subject.toJSON() : subject
+      typeof subject.toJSON === 'function' ? subject.toJSON() : subject,
+      includeErrorSubject
     );
 
     return true;

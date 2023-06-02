@@ -396,7 +396,8 @@ export class Permissions<SubjectType extends string> {
   throwUnlessCan(
     action: string,
     subjectType: SubjectType,
-    subject?: Subject<Role>
+    subject?: Subject<Role>,
+    includeErrorSubject?: boolean
   ) {
     if (subject) {
       this.pullRoleFromSubject(subjectType, subject);
@@ -415,6 +416,7 @@ export class Permissions<SubjectType extends string> {
             subjectType: error.subjectType,
             id: (<any>subject).id,
             slug: (<any>subject).slug,
+            subject: includeErrorSubject ? subject : undefined,
           }
         );
       }
