@@ -749,7 +749,6 @@ components:
             properties:
               slug:
                 type: string
-              appConfig: {}
               blocks:
                 description: Map block slugs to their URL
                 additionalProperties:

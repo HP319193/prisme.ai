@@ -8,6 +8,7 @@ import { logger } from '../../../logger';
 import { DSULType, DSULStorage } from '../../DSULStorage';
 import { AppInstances } from '../..';
 import { extractPageEvents } from '../../../utils/extractEvents';
+import { interpolate } from '../../../utils/interpolate';
 
 class Pages {
   private accessManager: Required<AccessManager>;
@@ -231,13 +232,35 @@ class Pages {
 
   private async getPageDetails(
     page: Prismeai.Page
-  ): Promise<Prismeai.PageDetails> {
+  ): Promise<Prismeai.PageDetails & { blocks: Prismeai.Page['blocks'] }> {
     const workspace = await this.storage.get({
       dsulType: DSULType.DSULIndex,
       workspaceId: page.workspaceId,
     });
     const detailedAppInstances = await this.appInstances.getDetailedList(
       page.workspaceId!
+    );
+
+    const injectedBlocks = await Promise.all(
+      (page.blocks || []).map(async (block) => {
+        const contexts = {
+          config: workspace.config?.value || {},
+          appConfig: {},
+        };
+        const appInstance = detailedAppInstances.find((appInstance) =>
+          (appInstance?.blocks || []).some(
+            (appInstanceBlock) => appInstanceBlock.slug == block.slug
+          )
+        );
+        if (appInstance) {
+          const appInstanceWithConfig = await this.appInstances.getAppInstance(
+            page.workspaceId!,
+            appInstance.slug!
+          );
+          contexts.appConfig = appInstanceWithConfig.config?.value || {};
+        }
+        return interpolate(block, contexts, { undefinedVars: 'leave' });
+      })
     );
 
     const filteredAppInstances = detailedAppInstances
@@ -254,16 +277,15 @@ class Pages {
         if (!Object.keys(blocks).length) {
           return false;
         }
-        // TODO Uncomment as soon as we've found a mean to avoid sending appConfigs to blocks
-        // const blockNames = Object.keys(blocks);
+        const blockNames = Object.keys(blocks);
         // No block page is from this appInstance : do not include it !
-        // if (
-        //   !(page.blocks || []).find((cur) =>
-        //     blockNames.includes(cur.slug || '')
-        //   )
-        // ) {
-        //   return false;
-        // }
+        if (
+          !(page.blocks || []).find((cur) =>
+            blockNames.includes(cur.slug || '')
+          )
+        ) {
+          return false;
+        }
         return {
           slug: cur.slug,
           blocks: blocks,
@@ -271,20 +293,9 @@ class Pages {
       }, [])
       .filter<Prismeai.PageDetails['appInstances'][0]>(Boolean as any);
 
-    const appInstances = await Promise.all(
-      filteredAppInstances.map(async (cur) => {
-        const appInstance = await this.appInstances.getAppInstance(
-          page.workspaceId!,
-          cur.slug!
-        );
-        return { ...cur, appConfig: appInstance.config?.value || {} };
-      })
-    );
-
     if (workspace.blocks) {
-      appInstances.push({
+      filteredAppInstances.push({
         slug: '',
-        appConfig: {},
         blocks: Object.entries(workspace.blocks).reduce(
           (prev, [slug, { url = '' }]) => ({
             ...prev,
@@ -295,7 +306,10 @@ class Pages {
       });
     }
 
-    return { appInstances };
+    return {
+      appInstances: filteredAppInstances,
+      blocks: injectedBlocks,
+    };
   }
 
   updatePage = async (

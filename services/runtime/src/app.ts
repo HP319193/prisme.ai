@@ -26,7 +26,11 @@ const schedulesBroker = initEDA(`${APP_NAME}-schedules`);
 const workspacesSynchroBroker = initEDA(`${APP_NAME}-workspaces-synchro`);
 
 (async function () {
-  await Promise.all([broker.ready, schedulesBroker.ready]);
+  await Promise.all([
+    broker.ready,
+    schedulesBroker.ready,
+    workspacesSynchroBroker.ready,
+  ]);
 
   const accessManager = initAccessManager(
     PERMISSIONS_STORAGE_MONGODB_OPTIONS,
