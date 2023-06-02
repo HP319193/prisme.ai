@@ -361,6 +361,46 @@
           "output": {
             "type": "string",
             "description": "Name of the variable which will hold the result"
+          },
+          "stream": {
+            "type": "object",
+            "description": "Instead of blocking until we can output the entire response, emit individual response parts through events",
+            "required": [
+              "event"
+            ],
+            "properties": {
+              "event": {
+                "type": "string"
+              },
+              "payload": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "target": {
+                "type": "object",
+                "properties": {
+                  "userTopic": {
+                    "type": "string"
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "sessionId": {
+                    "type": "string"
+                  }
+                }
+              },
+              "options": {
+                "type": "object",
+                "properties": {
+                  "persist": {
+                    "type": "boolean",
+                    "description": "Whether to persist this event or not. Defaults to true",
+                    "default": true
+                  }
+                }
+              }
+            }
           }
         }
       }

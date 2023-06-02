@@ -264,9 +264,6 @@ describe('Sync DetailedPages with the EDA', () => {
         blocks: {
           'Custom Code.Editor': 'block url',
         },
-        appConfig: {
-          foo: 'bar',
-        },
       })
     );
 
