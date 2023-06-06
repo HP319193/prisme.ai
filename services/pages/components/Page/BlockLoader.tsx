@@ -3,7 +3,6 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api from '../../../console/utils/api';
-import Storage from '../../../console/utils/Storage';
 import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
 
