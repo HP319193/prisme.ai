@@ -16,7 +16,16 @@ export const InfoBubble: FC<InfoBubbleProps> = ({
 
   return (
     <div className={`${className} pr-form-description`}>
-      <Tooltip title={text} placement="right">
+      <Tooltip
+        title={
+          typeof text === 'string' ? (
+            <div dangerouslySetInnerHTML={{ __html: text }} />
+          ) : (
+            text
+          )
+        }
+        placement="right"
+      >
         <button type="button" className="pr-form-description__button">
           <InfoCircleOutlined />
         </button>

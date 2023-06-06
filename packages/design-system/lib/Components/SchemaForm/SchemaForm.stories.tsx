@@ -53,7 +53,7 @@ Default.args = {
   schema: {
     type: 'object',
     title: 'Title',
-    description: 'This is a description',
+    description: 'This is a <strong>description</strong>',
     properties: {
       string: {
         type: 'string',
