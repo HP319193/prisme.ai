@@ -17,6 +17,9 @@ import QueryStringProvider from '../providers/QueryStringProvider';
 import WorkspacesProvider from '../providers/Workspaces/WorkspacesProvider';
 import { PublicBlocksProvider } from '../components/BlocksProvider';
 import OnBoarding from '../components/OnBoarding';
+import Storage from '../utils/Storage';
+import QueryString from 'qs';
+import InstallWorkspace from '../components/InstallWorkspace';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -32,6 +35,15 @@ type AppPropsWithLayout = AppProps & {
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
+  if (typeof window !== 'undefined' && window.location.search) {
+    const qs = QueryString.parse(window.location.search.replace(/^\?/, ''));
+    if (qs.email) {
+      Storage.set('__email', qs.email);
+    }
+    if (qs.install) {
+      Storage.set('__install', qs.install);
+    }
+  }
 
   if (i18n.language === 'default' && typeof window !== 'undefined') {
     const availableLanguages: string[] = (i18n.options as any).locales;
@@ -77,8 +89,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <link rel="icon" href="/favicon.png" />
               </Head>
               <Sentry />
-              {getLayout(<Component {...pageProps} />)}
-              <OnBoarding />
+              <InstallWorkspace>
+                {getLayout(<Component {...pageProps} />)}
+                <OnBoarding />
+              </InstallWorkspace>
             </PermissionsProvider>
           </WorkspacesUsageProvider>
         </WorkspacesProvider>
