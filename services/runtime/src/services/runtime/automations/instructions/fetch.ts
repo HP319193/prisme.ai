@@ -123,6 +123,7 @@ export async function fetch(
       error = responseBody;
     }
   } else {
+    let chunkIndex = 0;
     await streamResponse(result.body, async (chunk: StreamChunk) => {
       try {
         if (result.status >= 400 && result.status < 600) {
@@ -132,6 +133,7 @@ export async function fetch(
           await broker.send(
             stream?.event!,
             {
+              index: chunkIndex,
               chunk,
               additionalPayload: stream?.payload,
             },
@@ -140,6 +142,7 @@ export async function fetch(
             },
             { target: stream?.target, options: stream?.options }
           );
+          chunkIndex++;
         }
       } catch (err) {
         logger.warn({ msg: `Could not stream fetch response chunk`, err });

@@ -1,3 +1,5 @@
+import { Schema } from '@prisme.ai/design-system';
+
 export const types = ['string', 'number', 'boolean', 'date', 'tags'] as const;
 
 export type DataType = typeof types[number];
@@ -30,4 +32,5 @@ export interface ColumnDefinition {
       }
     | true
   >;
+  schemaForm?: Schema;
 }

@@ -3,6 +3,7 @@ import { Input, InputRef, Form, Switch } from 'antd';
 import { useEditable } from './EditableContext';
 import { ColumnDefinition, DataType } from './types';
 import tw from '../../tw';
+import { SchemaForm } from '@prisme.ai/design-system';
 
 interface Item {
   key: string;
@@ -19,6 +20,7 @@ interface EditableCellProps {
   handleSave: (record: Item) => void;
   value: any;
   validators?: ColumnDefinition['validators'];
+  schemaForm: ColumnDefinition['schemaForm'];
 }
 
 const TypesAutoEdit = ['boolean'];
@@ -81,6 +83,7 @@ const EditableCell: FC<EditableCellProps> = ({
   handleSave,
   type,
   validators,
+  schemaForm,
   ...restProps
 }) => {
   const [editing, setEditing] = useState(TypesAutoEdit.includes(type));
@@ -112,17 +115,32 @@ const EditableCell: FC<EditableCellProps> = ({
 
   const childNode = useMemo(() => {
     if (canEdit && editable) {
-      return editing ? (
-        <CellInput
-          value={record[dataIndex]}
-          title={title}
-          ref={inputRef}
-          dataIndex={dataIndex}
-          type={type}
-          save={save}
-          validators={validators}
-        />
-      ) : (
+      if (editing) {
+        if (schemaForm) {
+          return (
+            <SchemaForm
+              schema={schemaForm}
+              initialValues={record[dataIndex]}
+              onSubmit={(v) => {
+                toggleEdit();
+                handleSave({ ...record, [dataIndex]: v });
+              }}
+            />
+          );
+        }
+        return (
+          <CellInput
+            value={record[dataIndex]}
+            title={title}
+            ref={inputRef}
+            dataIndex={dataIndex}
+            type={type}
+            save={save}
+            validators={validators}
+          />
+        );
+      }
+      return (
         <div
           className={tw`cursor-pointer py-2 px-3 min-w-[145px]`}
           onClick={toggleEdit}

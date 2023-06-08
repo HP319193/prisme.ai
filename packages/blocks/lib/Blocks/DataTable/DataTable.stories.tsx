@@ -356,3 +356,46 @@ WithEventBasedPagination.args = {
     },
   } as DataTableConfig,
 };
+
+export const WithSchemaForm = Template.bind({});
+WithSchemaForm.args = {
+  defaultConfig: {
+    data: [
+      {
+        _id: '62b1cc7ee806595bf47ed230',
+        title: 'Foo',
+        foo: {
+          bar: true,
+        },
+      },
+    ],
+    columns: [
+      {
+        key: 'title',
+        label: 'Title',
+        schemaForm: {
+          type: 'string',
+          title: 'Title',
+          description: 'Title',
+          required: true,
+        },
+        onEdit: 'editCol',
+      },
+      {
+        key: 'foo',
+        label: 'Foo',
+        schemaForm: {
+          type: 'object',
+          title: 'Foo',
+          description: 'Foo',
+          properties: {
+            bar: {
+              type: 'boolean',
+            },
+          },
+        },
+        onEdit: 'editCol',
+      },
+    ],
+  } as DataTableConfig,
+};
