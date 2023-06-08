@@ -100,6 +100,7 @@ export const DataTable: BlockComponent = () => {
         onEdit,
         format,
         validators,
+        schemaForm,
       }) => ({
         title: localize(label),
         dataIndex: key,
@@ -121,6 +122,7 @@ export const DataTable: BlockComponent = () => {
           handleSave: onEdit ? handleSave(onEdit) : null,
           type,
           validators,
+          schemaForm,
         }),
         render: renderValue({
           key,
@@ -129,6 +131,7 @@ export const DataTable: BlockComponent = () => {
           format,
           onEdit,
           validators,
+          schemaForm,
           actions:
             actions && Array.isArray(actions)
               ? actions.map((action) => ({
