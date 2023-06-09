@@ -2336,6 +2336,9 @@ declare namespace Prismeai {
             };
         };
         mfa?: SupportedMFA;
+        meta?: {
+            [key: string]: any;
+        };
         /**
          * Name
          */
@@ -2601,6 +2604,9 @@ declare namespace PrismeaiAPI {
                     };
                 };
                 mfa?: Prismeai.SupportedMFA;
+                meta?: {
+                    [key: string]: any;
+                };
                 /**
                  * Name
                  */
@@ -2758,6 +2764,9 @@ declare namespace PrismeaiAPI {
                     };
                 };
                 mfa?: Prismeai.SupportedMFA;
+                meta?: {
+                    [key: string]: any;
+                };
                 /**
                  * Name
                  */
@@ -2862,6 +2871,21 @@ declare namespace PrismeaiAPI {
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace DeleteMeta {
+        namespace Parameters {
+            export type Key = string;
+        }
+        export interface PathParameters {
+            key: Parameters.Key;
+        }
+        namespace Responses {
+            export interface $200 {
+                [name: string]: any;
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace DeletePage {
@@ -3137,6 +3161,9 @@ declare namespace PrismeaiAPI {
                     };
                 };
                 mfa?: Prismeai.SupportedMFA;
+                meta?: {
+                    [key: string]: any;
+                };
                 /**
                  * Name
                  */
@@ -3670,6 +3697,18 @@ declare namespace PrismeaiAPI {
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace SetMeta {
+        export interface RequestBody {
+            [name: string]: any;
+        }
+        namespace Responses {
+            export interface $200 {
+                [name: string]: any;
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace SetupMFA {

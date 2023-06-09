@@ -16,6 +16,7 @@ import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';
 import QueryStringProvider from '../providers/QueryStringProvider';
 import WorkspacesProvider from '../providers/Workspaces/WorkspacesProvider';
 import { PublicBlocksProvider } from '../components/BlocksProvider';
+import OnBoarding from '../components/OnBoarding';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -77,6 +78,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
               </Head>
               <Sentry />
               {getLayout(<Component {...pageProps} />)}
+              <OnBoarding />
             </PermissionsProvider>
           </WorkspacesUsageProvider>
         </WorkspacesProvider>

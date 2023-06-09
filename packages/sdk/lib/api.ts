@@ -5,6 +5,7 @@ import { Events } from './events';
 import { removedUndefinedProperties } from './utils';
 import WorkspacesEndpoint from './endpoints/workspaces';
 import ApiError from './ApiError';
+import UsersEndpoint from './endpoints/users';
 
 interface PageWithMetadata extends Prismeai.Page {
   createdAt: string;
@@ -702,6 +703,12 @@ export class Api extends Fetcher {
     return this.get(`/workspaces/${workspaceId}/usage?${params.toString()}`);
   }
 
+  users(id: string = this.user?.id || '') {
+    if (!id) {
+      throw new Error();
+    }
+    return new UsersEndpoint(id, this);
+  }
   workspaces(id: string) {
     return new WorkspacesEndpoint(id, this);
   }

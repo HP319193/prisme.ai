@@ -1569,5 +1569,27 @@
         "description": "Choose a Block among those proposed by Prisme.ai and those from the Apps you have installed on your Workspace."
       }
     }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Ready to use the next level of IA low-code platform ?",
+      "text": "Firstable you can find help in the Prisme.ai chat just here, please go to the next step or skip this to begin your project"
+    },
+    "step2": {
+      "title": "You can choose a template or dedicated workspace",
+      "text": "Feel free to use some of our workspace to accelerate the creation of your project"
+    },
+    "step3": {
+      "title": "You can choose a template or dedicated workspace",
+      "text": "Or you can create from scratch your workspace and follow the documentation"
+    },
+    "step4": {
+      "title": "Welcome in your first workspace",
+      "text": "On the left you can find the sidebar with the different content"
+    },
+    "step5": {
+      "title": "Welcome in your first workspace",
+      "text": "On the center you can find in the first tab the activity, you can find more information if you <a href=\"{{link}}\">click here</a>."
+    }
   }
 }

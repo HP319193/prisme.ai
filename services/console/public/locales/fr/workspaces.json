@@ -1569,5 +1569,27 @@
         "description": "Choisissez un Block parmi ceux proposés par Prisme.ai et ceux provenant des Apps que vous avez installés sur votre Workspace."
       }
     }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Prêt à utiliser la prochaine étape de la plateforme IA low-code ?",
+      "text": "Vous pouvez d'abord trouver de l'aide dans le chat de Prisme.ai juste ici, passez à l'étape suivante ou sautez cette étape pour commencer votre projet."
+    },
+    "step2": {
+      "title": "Vous pouvez choisir un modèle ou un espace de travail dédié",
+      "text": "N'hésitez pas à utiliser certains de nos espaces de travail pour accélérer la création de votre projet."
+    },
+    "step3": {
+      "title": "Vous pouvez choisir un modèle ou un espace de travail dédié",
+      "text": "Vous pouvez également créer votre espace de travail à partir de zéro et suivre la documentation."
+    },
+    "step4": {
+      "title": "Bienvenue dans votre premier espace de travail",
+      "text": "Sur la gauche, vous trouverez la barre latérale avec les différents contenus."
+    },
+    "step5": {
+      "title": "Bienvenue dans votre premier espace de travail",
+      "text": "Au centre, vous pouvez trouver dans le premier onglet l'activité, vous pouvez trouver plus d'informations si vous <a href=\"{{link5}}\">cliquez ici</a>."
+    }
   }
 }

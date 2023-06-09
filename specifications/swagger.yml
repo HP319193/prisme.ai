@@ -94,6 +94,8 @@ components:
               additionalProperties: true
             mfa:
               $ref: '#/components/schemas/SupportedMFA'
+            meta:
+              type: object
         - $ref: '#/components/schemas/Contact'
 
     App:
@@ -289,11 +291,11 @@ components:
       properties:
         roles:
           additionalProperties:
-            $ref: "#/components/schemas/WorkspaceRole"
+            $ref: '#/components/schemas/WorkspaceRole'
         rules:
           type: array
           items:
-            $ref: "#/components/schemas/PermissionRule"
+            $ref: '#/components/schemas/PermissionRule'
 
     WorkspaceRole:
       type: object
@@ -350,7 +352,6 @@ components:
         - aggregate_search
         - execute
 
-
     PermissionRule:
       type: object
       additionalProperties: false
@@ -359,7 +360,7 @@ components:
         - subject
       properties:
         role:
-          description: "The roles to which this rule is restricted"
+          description: 'The roles to which this rule is restricted'
           oneOf:
             - type: array
               items:
@@ -367,27 +368,26 @@ components:
             - type: string
         inverted:
           type: boolean
-          description:  "If true, will forbid instead of allow"
+          description: 'If true, will forbid instead of allow'
         reason:
           type: string
         action:
-          description: "The actions that we want to allow/deny"
+          description: 'The actions that we want to allow/deny'
           oneOf:
-            - $ref: "#/components/schemas/ActionTypes"
+            - $ref: '#/components/schemas/ActionTypes'
             - type: array
               items:
-                $ref: "#/components/schemas/ActionTypes"
+                $ref: '#/components/schemas/ActionTypes'
         subject:
           oneOf:
-            - $ref: "#/components/schemas/SubjectTypes"
+            - $ref: '#/components/schemas/SubjectTypes'
             - type: array
               items:
-                $ref: "#/components/schemas/SubjectTypes"
+                $ref: '#/components/schemas/SubjectTypes'
         conditions:
           type: object
-          description: "Matching conditions written using a subset of MongoDB queries. This rule will take effect only if conditions match (or are empty). See https://casl.js.org/v5/en/guide/conditions-in-depth"
+          description: 'Matching conditions written using a subset of MongoDB queries. This rule will take effect only if conditions match (or are empty). See https://casl.js.org/v5/en/guide/conditions-in-depth'
           additionalProperties: true
-
 
     WorkspaceVersion:
       type: object
@@ -1081,7 +1081,7 @@ components:
               description: Name of the variable which will hold the result
             stream:
               type: object
-              description: "Instead of blocking until we can output the entire response, emit individual response parts through events"
+              description: 'Instead of blocking until we can output the entire response, emit individual response parts through events'
               required:
                 - event
               properties:
@@ -1194,7 +1194,7 @@ components:
         - permissions
       properties: &UserPermissions
         target:
-          $ref: "#/components/schemas/UserPermissionsTarget"
+          $ref: '#/components/schemas/UserPermissionsTarget'
         permissions:
           type: object
           properties:
@@ -1248,7 +1248,7 @@ components:
         rules:
           type: array
           items:
-            $ref: "#/components/schemas/PermissionRule"
+            $ref: '#/components/schemas/PermissionRule'
 
     ################################################################################################################################
     ############################################################ Workspace Usage ############################################################
@@ -1594,7 +1594,7 @@ components:
             rules:
               type: array
               items:
-                $ref: "#/components/schemas/PermissionRule"
+                $ref: '#/components/schemas/PermissionRule'
 
     UpdatedApiKey:
       type: object
@@ -1954,7 +1954,7 @@ components:
             - security
           properties:
             security:
-              $ref: "#/components/schemas/WorkspaceSecurity"
+              $ref: '#/components/schemas/WorkspaceSecurity'
 
     PublishedWorkspaceVersion:
       type: object
@@ -3018,6 +3018,64 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
         '401': *AuthenticationError
+  /v2/user/meta:
+    post:
+      description: Set meta data in User
+      operationId: setMeta
+      tags:
+        - API Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '401': *AuthenticationError
+  /v2/user/meta/{key}:
+    delete:
+      description: Delete meta data in User
+      operationId: deleteMeta
+      tags:
+        - API Gateway
+      parameters:
+        - name: 'key'
+          in: 'path'
+          description: 'Key to delete'
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '401': *AuthenticationError
 
   /v2/contacts:
     post:
@@ -3031,8 +3089,8 @@ paths:
           application/json:
             schema:
               oneOf:
-                - required: ["email"]
-                - required: ["ids"]
+                - required: ['email']
+                - required: ['ids']
               properties:
                 email:
                   type: string
@@ -3242,7 +3300,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            $ref: "#/components/schemas/SharableSubjectTypes"
+            $ref: '#/components/schemas/SharableSubjectTypes'
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -3298,7 +3356,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            $ref: "#/components/schemas/SharableSubjectTypes"
+            $ref: '#/components/schemas/SharableSubjectTypes'
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -3355,7 +3413,7 @@ paths:
           description: 'The target subject type'
           required: true
           schema:
-            $ref: "#/components/schemas/SharableSubjectTypes"
+            $ref: '#/components/schemas/SharableSubjectTypes'
         - name: subjectId
           in: path
           description: The target subject id (i.e workspaceId if subjectType is 'workspace')
@@ -5119,7 +5177,7 @@ paths:
                 rules:
                   type: array
                   items:
-                    $ref: "#/components/schemas/PermissionRule"
+                    $ref: '#/components/schemas/PermissionRule'
       responses:
         '200':
           description: Success Response
@@ -5263,7 +5321,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticationError'
-
 
   ## apps
   /v2/apps:

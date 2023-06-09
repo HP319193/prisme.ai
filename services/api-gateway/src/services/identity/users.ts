@@ -256,6 +256,7 @@ const filterUserFields = (user: User): Prismeai.User => {
     language,
     mfa,
     id,
+    meta,
   } = user;
   return {
     email,
@@ -267,6 +268,7 @@ const filterUserFields = (user: User): Prismeai.User => {
     authData,
     language,
     mfa,
+    meta,
   };
 };
 
