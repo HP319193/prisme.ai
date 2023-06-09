@@ -52,7 +52,7 @@ Array [
     className="h-full flex flex-row"
   >
     <div
-      className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden"
+      className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden onboarding-step-4"
     >
       <div
         className="flex justify-end bg-white"
@@ -71,7 +71,7 @@ Array [
       </div>
     </div>
     <div
-      className="flex h-full flex-col flex-1 min-w-[1px] max-w-full"
+      className="flex h-full flex-col flex-1 min-w-[1px] max-w-full onboarding-step-5"
     >
       <div
         className="flex flex-row justify-between bg-ultra-light-accent pt-[0.55rem] -mb-[1px]"
@@ -162,7 +162,7 @@ Array [
     className="h-full flex flex-row"
   >
     <div
-      className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden"
+      className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden onboarding-step-4"
     >
       <div
         className="flex justify-end bg-white"
@@ -181,7 +181,7 @@ Array [
       </div>
     </div>
     <div
-      className="flex h-full flex-col flex-1 min-w-[1px] max-w-full"
+      className="flex h-full flex-col flex-1 min-w-[1px] max-w-full onboarding-step-5"
     >
       <div
         className="flex flex-row justify-between bg-ultra-light-accent pt-[0.55rem] -mb-[1px]"

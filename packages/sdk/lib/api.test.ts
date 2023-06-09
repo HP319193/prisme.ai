@@ -1,5 +1,6 @@
 import api, { Api } from './api';
 import ApiError from './ApiError';
+import UsersEndpoint from './endpoints/users';
 import WorkspacesEndpoint from './endpoints/workspaces';
 import WorkspacesVersionsEndpoint from './endpoints/workspacesVersions';
 
@@ -753,5 +754,29 @@ describe('Workspaces', () => {
         '/workspaces/42/versions/v1.0.0/rollback'
       );
     });
+  });
+});
+
+describe('User', () => {
+  it('should access user methods', () => {
+    expect(api.users('42')).toBeInstanceOf(UsersEndpoint);
+  });
+  it('should access user methods with current user', () => {
+    // @ts-ignore
+    api._user = { id: '42' } as any;
+    expect(api.users()).toBeInstanceOf(UsersEndpoint);
+  });
+
+  it('should set meta data', () => {
+    api.post = jest.fn();
+    api.users().setMeta('foo', 'bar');
+    expect(api.post).toHaveBeenCalledWith('/user/meta', {
+      foo: 'bar',
+    });
+  });
+  it('should delete meta data', () => {
+    api.delete = jest.fn();
+    api.users().deleteMeta('foo');
+    expect(api.delete).toHaveBeenCalledWith('/user/meta/foo');
   });
 });

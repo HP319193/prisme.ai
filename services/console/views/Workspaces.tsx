@@ -187,7 +187,7 @@ export const WorkspacesView = () => {
               autoFocus
             />
           </div>
-          <div className="pt-10">
+          <div className="pt-10 onboarding-step-2">
             <div className="text-xl py-3 font-bold">
               {t('workspaces.suggestions.title')}
             </div>
@@ -195,7 +195,7 @@ export const WorkspacesView = () => {
               <CardButton
                 onClick={handleCreateWorkspace}
                 disabled={creating}
-                className="p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start"
+                className="p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start onboarding-step-3"
                 ref={ref}
               >
                 <span className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center">

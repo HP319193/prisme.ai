@@ -26,7 +26,7 @@ Array [
       className="pt-6"
     />
     <div
-      className="pt-10"
+      className="pt-10 onboarding-step-2"
     >
       <div
         className="text-xl py-3 font-bold"
@@ -46,7 +46,7 @@ Array [
             className="flex m-2 h-full justify-between overflow-hidden rounded border
           transition-all
           hover:-translate-y-1 hover:shadow-lg
-          p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start"
+          p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start onboarding-step-3"
             onClick={[Function]}
           >
             <span
@@ -127,7 +127,7 @@ Array [
       className="pt-6"
     />
     <div
-      className="pt-10"
+      className="pt-10 onboarding-step-2"
     >
       <div
         className="text-xl py-3 font-bold"
@@ -147,7 +147,7 @@ Array [
             className="flex m-2 h-full justify-between overflow-hidden rounded border
           transition-all
           hover:-translate-y-1 hover:shadow-lg
-          p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start"
+          p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start onboarding-step-3"
             onClick={[Function]}
           >
             <span

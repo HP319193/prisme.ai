@@ -116,7 +116,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       });
     }
     setSaving(false);
-  }, [newSource, saveWorkspace, t]);
+  }, [newSource, saveWorkspace, sourceDisplayed, t, workspace.id]);
 
   const onSave = useCallback(
     async (workspace: Prismeai.Workspace) => {
@@ -251,7 +251,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
                 fullSidebar ? 'max-w-xs' : 'max-w-[4.2rem]'
               } transition-all p-0`}
             >
-              <div className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden">
+              <div className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden onboarding-step-4">
                 <Navigation
                   onCreateAutomation={createAutomationHandler}
                   onCreatePage={createPageHandler}
@@ -265,7 +265,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
                 />
               </div>
             </Layout>
-            <div className="flex h-full flex-col flex-1 min-w-[1px] max-w-full">
+            <div className="flex h-full flex-col flex-1 min-w-[1px] max-w-full onboarding-step-5">
               <Tabs />
               {creatingAutomation || creatingPage ? <Loading /> : children}
             </div>
