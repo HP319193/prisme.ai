@@ -35,15 +35,6 @@ type AppPropsWithLayout = AppProps & {
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
-  if (typeof window !== 'undefined' && window.location.search) {
-    const qs = QueryString.parse(window.location.search.replace(/^\?/, ''));
-    if (qs.email) {
-      Storage.set('__email', qs.email);
-    }
-    if (qs.install) {
-      Storage.set('__install', qs.install);
-    }
-  }
 
   if (i18n.language === 'default' && typeof window !== 'undefined') {
     const availableLanguages: string[] = (i18n.options as any).locales;
