@@ -15,7 +15,11 @@
     },
     "sectionTitle": "Mes Workspaces",
     "defaultDescription": "Créé par vous",
-    "search": "Recherche un workspace"
+    "search": "Recherche un workspace",
+    "install": {
+      "ok": "Votre workspace a bien été deployé !",
+      "error": "Le workspace n'a pas pu être installé. Son identifiant est invalide."
+    }
   },
   "workspace": {
     "title": "\"{{name}}\" workspace — $t(common:main.title)",
