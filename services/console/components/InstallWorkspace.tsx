@@ -33,6 +33,9 @@ export const InstallWorkspace = ({ children }: InstallWorkspaceProps) => {
         });
       }
     }
+    if (!user.meta?.onboarded) {
+      Storage.set('__onboardingstep', 3);
+    }
     installWorkspace();
     Storage.remove('__install');
   }, [install, push, t, user]);
