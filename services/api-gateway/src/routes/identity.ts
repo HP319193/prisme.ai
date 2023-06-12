@@ -19,7 +19,6 @@ const loginHandler = (strategy: string) =>
     res: Response<PrismeaiAPI.CredentialsAuth.Responses.$200>,
     next: NextFunction
   ) {
-    console.log('req');
     passport.authenticate(
       strategy,
       { session: true },
@@ -289,6 +288,57 @@ async function findContactsHandler(
   });
 }
 
+async function setMetaHandler(
+  req: Request<any, any, PrismeaiAPI.SetMeta.RequestBody>,
+  res: Response<PrismeaiAPI.SetMeta.Responses.$200>
+) {
+  const { context, logger, user } = req;
+  if (!user || !user.id || user?.authData?.anonymous) {
+    throw new AuthenticationError();
+  }
+  const identity = services.identity(context, logger);
+
+  const meta = {
+    ...(user.meta || {}),
+    ...req.body,
+  };
+  await identity.updateUser({
+    id: user.id,
+    meta,
+  });
+  res.send(meta);
+}
+
+async function deleteMetaHandler(
+  req: Request<any, any, PrismeaiAPI.DeleteMeta.PathParameters>,
+  res: Response<PrismeaiAPI.DeleteMeta.Responses.$200>
+) {
+  const {
+    context,
+    logger,
+    user,
+    params: { key },
+  } = req;
+  if (!user || !user.id || user?.authData?.anonymous) {
+    throw new AuthenticationError();
+  }
+  const identity = services.identity(context, logger);
+
+  const meta = Object.entries(user.meta || {}).reduce((prev, [k, v]) => {
+    if (k === key) return prev;
+    return {
+      ...prev,
+      [k]: v,
+    };
+  }, {});
+
+  await identity.updateUser({
+    id: user.id,
+    meta,
+  });
+  res.send(meta);
+}
+
 const app = express.Router();
 
 app.get(`/me`, isAuthenticated, meHandler);
@@ -315,5 +365,6 @@ app.delete(
   isAuthenticated,
   deleteAccessTokenHandler
 );
-
+app.post('/user/meta', isAuthenticated, setMetaHandler);
+app.delete('/user/meta/:key', isAuthenticated, deleteMetaHandler);
 export default app;

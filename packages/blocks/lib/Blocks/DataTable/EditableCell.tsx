@@ -3,7 +3,7 @@ import { Input, InputRef, Form, Switch } from 'antd';
 import { useEditable } from './EditableContext';
 import { ColumnDefinition, DataType } from './types';
 import tw from '../../tw';
-import { SchemaForm } from '@prisme.ai/design-system';
+import { useBlocks } from '../../Provider/blocksContext';
 
 interface Item {
   key: string;
@@ -90,6 +90,9 @@ const EditableCell: FC<EditableCellProps> = ({
   const inputRef = useRef<InputRef>(null);
   const form = useEditable();
   const canEdit = TypesEditable.includes(type);
+  const {
+    components: { SchemaForm },
+  } = useBlocks();
 
   useEffect(() => {
     if (editing) {
