@@ -14,7 +14,6 @@ import { useField } from 'react-final-form';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import components, { FieldAny } from '../../SchemaForm/schemaFormComponents';
 import { useTranslation } from 'next-i18next';
-import FieldContainerWithRaw from '../../FieldContainerWithRaw';
 
 export interface InstructionValueSetProps extends SchemaFormProps {}
 
