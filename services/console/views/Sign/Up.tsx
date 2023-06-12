@@ -15,6 +15,7 @@ import {
 } from '@prisme.ai/design-system';
 import { SignLayout, SignType } from '../../components/SignLayout';
 import LinkInTrans from '../../components/LinkInTrans';
+import Storage from '../../utils/Storage';
 
 interface Values {
   email: string;
@@ -96,7 +97,7 @@ export const SignIn = () => {
                   />
                 )}
               </Field>
-              <Field name="email">
+              <Field name="email" initialValue={Storage.get('__email')}>
                 {({ input: { type, ...inputProps }, className }) => (
                   <Input
                     placeholder={t('up.email')}

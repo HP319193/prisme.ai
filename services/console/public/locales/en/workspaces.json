@@ -15,7 +15,11 @@
     },
     "sectionTitle": "Your workspaces gallery",
     "defaultDescription": "Created by you",
-    "search": "Search a workspace"
+    "search": "Search a workspace",
+    "install": {
+      "ok": "Your workspace has been deployed!",
+      "error": "The workspace could not be installed. Its identifier is invalid."
+    }
   },
   "workspace": {
     "title": "\"{{name}}\" Workspace — $t(common:main.title)",

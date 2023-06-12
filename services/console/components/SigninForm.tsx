@@ -6,6 +6,7 @@ import { useUser } from './UserProvider';
 import { Trans, useTranslation } from 'next-i18next';
 import LinkInTrans from './LinkInTrans';
 import getConfig from 'next/config';
+import Storage from '../utils/Storage';
 
 const {
   publicRuntimeConfig: { CONSOLE_HOST = '' },
@@ -42,12 +43,17 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
     }
     return errors;
   };
+
   return (
     <Form onSubmit={submit} validate={validate}>
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit} className="md:w-96 flex">
           <div className="flex flex-col flex-1">
-            <Field name="email" containerClassName="!mx-0 !mb-4">
+            <Field
+              name="email"
+              containerClassName="!mx-0 !mb-4"
+              initialValue={Storage.get('__email')}
+            >
               {({ input: { type, ...inputProps }, className }) => (
                 <Input
                   placeholder={t('in.email')}
