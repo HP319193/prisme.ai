@@ -1,7 +1,7 @@
 import { Loading, notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../utils/api';
 import Storage from '../utils/Storage';
 import { useUser } from './UserProvider';
@@ -11,7 +11,7 @@ interface InstallWorkspaceProps {
 }
 export const InstallWorkspace = ({ children }: InstallWorkspaceProps) => {
   const { user } = useUser();
-  const install = Storage.get('__install');
+  const [install, setInstall] = useState(Storage.get('__install'));
   const { push } = useRouter();
   const { t } = useTranslation('workspaces');
 
@@ -38,6 +38,7 @@ export const InstallWorkspace = ({ children }: InstallWorkspaceProps) => {
     }
     installWorkspace();
     Storage.remove('__install');
+    setInstall(null);
   }, [install, push, t, user]);
 
   if (!install || !user) return <>{children}</>;
