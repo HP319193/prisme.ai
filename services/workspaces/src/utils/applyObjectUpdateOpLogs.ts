@@ -11,26 +11,41 @@ export function applyObjectUpdateOpLogs(
       splittedPath.length > 1 ? splittedPath.slice(0, -1) : undefined;
     const lastKey = splittedPath[splittedPath.length - 1];
     const parent = parentPath ? extractSubPath(obj, parentPath) : obj;
+    if (update.type === 'delete') {
+      if (!lastKey) {
+        obj = undefined;
+      } else {
+        delete parent[lastKey];
+      }
+      continue;
+    }
+
+    const currentValue = lastKey ? parent[lastKey] : parent;
+    let updatedValue;
     if (update.type === 'replace') {
-      parent[lastKey] = update.value;
+      updatedValue = update.value;
     } else if (update.type === 'push') {
-      parent[lastKey] = Array.isArray(parent[lastKey])
-        ? [...parent[lastKey], update.value]
+      updatedValue = Array.isArray(currentValue)
+        ? [...currentValue, update.value]
         : [update.value];
     } else if (update.type === 'merge') {
       if (Array.isArray(update.value)) {
-        parent[lastKey] = [
-          ...(Array.isArray(parent[lastKey]) ? parent[lastKey] : []),
+        updatedValue = [
+          ...(Array.isArray(currentValue) ? currentValue : []),
           ...update.value,
         ];
       } else {
-        parent[lastKey] = {
-          ...(typeof parent[lastKey] === 'object' ? parent[lastKey] : {}),
+        updatedValue = {
+          ...(typeof currentValue === 'object' ? currentValue : {}),
           ...update.value,
         };
       }
-    } else if (update.type === 'delete') {
-      delete parent[lastKey];
+    }
+
+    if (lastKey) {
+      parent[lastKey] = updatedValue;
+    } else {
+      obj = updatedValue;
     }
   }
   return obj;

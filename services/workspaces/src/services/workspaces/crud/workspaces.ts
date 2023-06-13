@@ -557,14 +557,18 @@ class Workspaces {
     return workspace;
   };
 
-  configureWorkspace = async (workspaceId: string, partialConfig: any) => {
+  configureWorkspace = async (
+    workspaceId: string,
+    partialConfig: any,
+    patch: boolean = true
+  ) => {
     const currentDSUL = await this.getWorkspace(workspaceId);
     const updatedWorkspace = {
       ...currentDSUL,
       config: {
         ...currentDSUL.config,
         value: {
-          ...currentDSUL.config?.value,
+          ...(patch ? currentDSUL.config?.value : {}),
           ...partialConfig,
         },
       },
