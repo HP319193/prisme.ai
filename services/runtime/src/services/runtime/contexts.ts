@@ -436,7 +436,7 @@ export class ContextsManager {
       lastKey,
       context,
       subPath:
-        splittedPath.length > 1 && context !== ContextType.Local
+        context !== ContextType.Local // If anything else than local context, remove first part as it specifies which context
           ? splittedPath.slice(1).join('.')
           : `${splittedPath[0]}`,
     };

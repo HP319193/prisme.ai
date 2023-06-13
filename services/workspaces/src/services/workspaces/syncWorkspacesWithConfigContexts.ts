@@ -64,7 +64,11 @@ export async function initWorkspacesConfigSyncing(
             workspace?.config?.value || {},
             updates
           );
-          await workspaces.configureWorkspace(workspaceId, updatedConfig);
+          await workspaces.configureWorkspace(
+            workspaceId,
+            updatedConfig,
+            false
+          );
         }
       } catch (error) {
         logger.error(error);

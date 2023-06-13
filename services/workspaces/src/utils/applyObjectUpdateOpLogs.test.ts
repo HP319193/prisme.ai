@@ -1,7 +1,7 @@
 import { applyObjectUpdateOpLogs } from './applyObjectUpdateOpLogs';
 
 describe('Replace', () => {
-  it('Basic', () => {
+  it('Field', () => {
     const init = {
       foo: 'bar',
     };
@@ -15,6 +15,22 @@ describe('Replace', () => {
       },
     ]);
     expect(updated).toEqual({ foo: 'replaced' });
+  });
+
+  it('Entire object', () => {
+    const init = {
+      foo: 'bar',
+    };
+    const updated = applyObjectUpdateOpLogs(init, [
+      {
+        type: 'replace',
+        path: '',
+        value: { bar: 'foo' },
+        fullPath: '',
+        context: '',
+      },
+    ]);
+    expect(updated).toEqual({ bar: 'foo' });
   });
 
   it('Multiple basic in a row', () => {
