@@ -112,7 +112,15 @@ const EditableCell: FC<EditableCellProps> = ({
       if (!TypesAutoEdit.includes(type)) {
         toggleEdit();
       }
-      handleSave({ ...record, ...values });
+      const casted = Object.entries(values).reduce(
+        (prev, [k, v]) => ({
+          ...prev,
+          [k]: castValue(v, type),
+        }),
+        {}
+      );
+
+      handleSave({ ...record, ...casted });
     } catch {}
   };
 
