@@ -109,28 +109,30 @@ export const Header = ({
           )}
           {title && <H className="pr-block-header__title">{title}</H>}
         </div>
-        <div className="pr-block-header__right">
-          <button className="pr-block__menu-toggle" onClick={toggle}>
-            <MenuOutlined />
-          </button>
-          <div
-            className={`pr-block__menu ${
-              visible ? 'pr-block__menu--visible' : 'pr-block__menu--hidden'
-            }`}
-          >
-            {nav.map((item, k) => (
-              <div key={k} className="pr-block__menu-item">
-                <MenuItem item={item} events={events} Link={Link} />
-              </div>
-            ))}
-            <button
-              className="pr-block__menu-toggle pr-block__menu-toggle--close"
-              onClick={toggle}
-            >
-              <CloseOutlined />
+        {nav && nav.length > 0 && (
+          <div className="pr-block-header__right">
+            <button className="pr-block__menu-toggle" onClick={toggle}>
+              <MenuOutlined />
             </button>
+            <div
+              className={`pr-block__menu ${
+                visible ? 'pr-block__menu--visible' : 'pr-block__menu--hidden'
+              }`}
+            >
+              {nav.map((item, k) => (
+                <div key={k} className="pr-block__menu-item">
+                  <MenuItem item={item} events={events} Link={Link} />
+                </div>
+              ))}
+              <button
+                className="pr-block__menu-toggle pr-block__menu-toggle--close"
+                onClick={toggle}
+              >
+                <CloseOutlined />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -147,7 +149,7 @@ const defaultStyles = `:block {
   flex: 1 1 0%;
   justify-content: space-between;
   position: relative;
-  background-color: var(--pr-header-contrast);
+  background-color: var(--pr-header-color);
 }
 :block.pr-block-header--fixed {
   position: relative;
@@ -175,7 +177,7 @@ const defaultStyles = `:block {
 .pr-block-header__left {
   display: flex;
   margin: 1rem;
-  z-index: 1;
+  z-index: 99999999;
 }
 
 .pr-block-header__logo,
@@ -209,6 +211,7 @@ const defaultStyles = `:block {
 .pr-block__menu {
   display: flex;
   flex-direction: row;
+  z-index: 99999998;
 }
 .pr-block__menu-toggle {
   display: none;
@@ -254,17 +257,17 @@ const defaultStyles = `:block {
     font-size: 1.8rem;
   }
   .pr-block__menu-toggle svg path {
-    color: var(--accent-color);
+    color: var(--pr-header-contrast);
   }
   .pr-block__menu-toggle--close svg path {
-    color: var(--accent-contrast-color);
+    color: var(--pr-header-contrast);
   }
 }
 .pr-block__menu .pr-block-action {
   transition: color .1s ease-in;
 }
 .pr-block__menu .pr-block-action:hover {
-  color: var(--color-accent);
+  color: var(--pr-header-color);
 }
 `;
 
