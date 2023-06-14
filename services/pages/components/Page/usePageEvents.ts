@@ -36,6 +36,14 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
         }
         return events;
       });
+
+      events.once('error', (payload: any) => {
+        console.error('ERROR', payload);
+        if (payload?.error !== 'ForbiddenError') return;
+        const eventName = payload?.details?.subject?.type;
+        if (!eventName) return;
+        events.emit(eventName, payload?.details?.subject?.payload);
+      });
     }
     initEvents();
   }, [page, user]);
