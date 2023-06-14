@@ -13,9 +13,10 @@ jest.mock('next/router', () => {
     },
   };
 });
-const events = ({
+const events = {
   destroy: jest.fn(),
-} as any) as Events;
+  once: jest.fn(),
+} as any as Events;
 
 it('should set events for page', async () => {
   api.streamEvents = jest.fn(async () => events);
