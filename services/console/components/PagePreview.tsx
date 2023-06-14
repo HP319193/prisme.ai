@@ -1,7 +1,6 @@
 import { Loading } from '@prisme.ai/design-system';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePageEndpoint } from '../utils/urls';
-import { useWorkspace } from '../providers/Workspace';
 import { usePage } from '../providers/Page';
 
 interface PagePreviewProps {

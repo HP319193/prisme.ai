@@ -2,7 +2,7 @@ import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
 import useLocalizedText from '../../useLocalizedText';
 import { BaseBlock } from '../BaseBlock';
-import { BlocksList, BlocksListConfig } from '../BlocksList';
+import { BlocksListConfig } from '../BlocksList';
 import { BaseBlockConfig } from '../types';
 
 export interface HeroConfig extends BaseBlockConfig {

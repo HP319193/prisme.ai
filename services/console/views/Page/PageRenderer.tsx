@@ -3,6 +3,7 @@ import {
   EditOutlined,
   EyeOutlined,
   LoadingOutlined,
+  ReloadOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
 import { Button, FieldProps, Popover, Schema } from '@prisme.ai/design-system';
@@ -129,6 +130,24 @@ export const PageRenderer = ({
     [mergeSource, onChange]
   );
 
+  const [previewMounted, setPreviewMounted] = useState(true);
+  const reload = useCallback(() => {
+    setPreviewMounted(false);
+    setTimeout(() => setPreviewMounted(true), 1);
+  }, []);
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => {
+      if (e.code === 'KeyR' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        reload();
+      }
+    };
+    window.addEventListener('keydown', listener);
+    return () => {
+      window.removeEventListener('keydown', listener);
+    };
+  }, [reload]);
+
   return (
     <>
       <Head>
@@ -252,6 +271,13 @@ export const PageRenderer = ({
               {t('pages.save.label')}
             </Button>
           </div>,
+          <div className="ml-4 overflow-hidden" key="reload">
+            <Tooltip title={t('pages.reload')} placement="bottom">
+              <Button onClick={reload} variant="primary">
+                <ReloadOutlined />
+              </Button>
+            </Tooltip>
+          </div>,
           <div key="views">
             <div className="ml-3">
               <Segmented
@@ -285,7 +311,9 @@ export const PageRenderer = ({
       />
 
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
-        <PagePreview page={value} visible={viewMode === 0} />
+        {previewMounted && (
+          <PagePreview page={value} visible={viewMode === 0} />
+        )}
         <SourceEdit
           value={source}
           onChange={setSource}
