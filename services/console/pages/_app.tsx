@@ -17,9 +17,8 @@ import QueryStringProvider from '../providers/QueryStringProvider';
 import WorkspacesProvider from '../providers/Workspaces/WorkspacesProvider';
 import { PublicBlocksProvider } from '../components/BlocksProvider';
 import OnBoarding from '../components/OnBoarding';
-import Storage from '../utils/Storage';
-import QueryString from 'qs';
 import InstallWorkspace from '../components/InstallWorkspace';
+import Tracking from '../components/Tracking';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -48,17 +47,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     return (
       <UserProvider anonymous>
         <PublicBlocksProvider>
-          <Head>
-            <title>{t('main.title')}</title>
-            <meta name="description" content={t('main.description')} />
-            <meta
-              name="viewport"
-              content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
-            />
-            <link rel="icon" href="/favicon.png" />
-          </Head>
-          <Sentry />
-          {getLayout(<Component {...pageProps} />)}
+          <Tracking>
+            <Head>
+              <title>{t('main.title')}</title>
+              <meta name="description" content={t('main.description')} />
+              <meta
+                name="viewport"
+                content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+              />
+              <link rel="icon" href="/favicon.png" />
+            </Head>
+            <Sentry />
+            {getLayout(<Component {...pageProps} />)}
+          </Tracking>
         </PublicBlocksProvider>
       </UserProvider>
     );
@@ -70,20 +71,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <WorkspacesProvider>
           <WorkspacesUsageProvider>
             <PermissionsProvider>
-              <Head>
-                <title>{t('main.title')}</title>
-                <meta
-                  name="viewport"
-                  content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
-                />
-                <meta name="description" content={t('main.description')} />
-                <link rel="icon" href="/favicon.png" />
-              </Head>
-              <Sentry />
-              <InstallWorkspace>
-                {getLayout(<Component {...pageProps} />)}
-                <OnBoarding />
-              </InstallWorkspace>
+              <Tracking>
+                <Head>
+                  <title>{t('main.title')}</title>
+                  <meta
+                    name="viewport"
+                    content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+                  />
+                  <meta name="description" content={t('main.description')} />
+                  <link rel="icon" href="/favicon.png" />
+                </Head>
+                <Sentry />
+                <InstallWorkspace>
+                  {getLayout(<Component {...pageProps} />)}
+                  <OnBoarding />
+                </InstallWorkspace>
+              </Tracking>
             </PermissionsProvider>
           </WorkspacesUsageProvider>
         </WorkspacesProvider>

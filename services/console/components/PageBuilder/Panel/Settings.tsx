@@ -10,6 +10,7 @@ import useBlockPageConfig from '../useBlockPageConfig';
 import { useWorkspace } from '../../../providers/Workspace';
 import components from '../../SchemaForm/schemaFormComponents';
 import api from '../../../utils/api';
+import { useTracking } from '../../Tracking';
 
 interface SettingsProps {
   removeBlock: () => void;
@@ -19,6 +20,7 @@ interface SettingsProps {
 
 export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
   const { t } = useTranslation('workspaces');
+  const { trackEvent } = useTracking();
   const { value } = usePageBuilder();
   const {
     workspace: { automations, pages, id: workspaceId },
@@ -178,7 +180,13 @@ export const Settings = ({ removeBlock, schema, blockId }: SettingsProps) => {
     <div className="pr-panel-settings flex flex-1 flex-col">
       <Tabs className="flex flex-1" items={items} />
       <button
-        onClick={removeBlock}
+        onClick={() => {
+          trackEvent({
+            name: 'Remove Block',
+            action: 'click',
+          });
+          removeBlock();
+        }}
         className="border-t border-light-gray !text-pr-orange h-[4rem] font-bold text-left p-4"
       >
         {t('pages.blocks.remove')}

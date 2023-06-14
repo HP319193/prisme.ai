@@ -11,6 +11,7 @@ import { CodeEditorInline } from '../CodeEditor/lazy';
 import worskpaceSvg from '../../icons/workspace.svg';
 import components from '../SchemaForm/schemaFormComponents';
 import PlayIcon from '../../icons/play.svgr';
+import { useTracking } from '../Tracking';
 
 const PlayView = () => {
   const {
@@ -24,6 +25,7 @@ const PlayView = () => {
   const [error, setError] = useState('');
   const [correlationId, setCorrelationId] = useState('');
   const { t } = useTranslation('workspaces');
+  const { trackEvent } = useTracking();
 
   const saveValues = useCallback(
     (values: any) => {
@@ -34,6 +36,10 @@ const PlayView = () => {
   );
 
   const run = useCallback(async () => {
+    trackEvent({
+      name: 'Run automation in Play panel',
+      action: 'click',
+    });
     if (!automation.slug) return;
     setRunning(true);
     setResult('');
@@ -63,7 +69,7 @@ const PlayView = () => {
     }
 
     setRunning(false);
-  }, [automation.slug, values, wId]);
+  }, [automation.slug, trackEvent, values, wId]);
 
   const schema = useMemo(
     () =>
@@ -183,6 +189,8 @@ const PlayView = () => {
 
 export const PlayPanel = (props: any) => {
   const { t } = useTranslation('workspaces');
+  const { trackEvent } = useTracking();
+
   return (
     <Popover
       title={({ setOpen }) => (
@@ -197,6 +205,12 @@ export const PlayPanel = (props: any) => {
       content={PlayView}
       placement="bottom"
       overlayClassName="pr-popover-arrow-right"
+      onOpenChange={(open) =>
+        trackEvent({
+          name: `${open ? 'Open' : 'Close'} Play Panel`,
+          action: 'click',
+        })
+      }
       {...props}
     >
       <button className="flex text-4xl text-accent focus:outline-none">

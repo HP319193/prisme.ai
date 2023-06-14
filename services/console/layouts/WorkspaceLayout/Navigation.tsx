@@ -23,6 +23,7 @@ import ItemsGroup, {
   ItemsGroupProps,
 } from '../../components/Navigation/ItemsGroup';
 import SearchInput from '../../components/Navigation/SearchInput';
+import { useTracking } from '../../components/Tracking';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onCreateAutomation?: () => void;
@@ -56,6 +57,7 @@ export const Navigation = ({
     creatingAutomation,
     creatingPage,
   } = useWorkspace();
+  const { trackEvent } = useTracking();
   const types = ['automations', 'pages', 'apps'] as const;
 
   const [opens, setOpens] = useState<Map<typeof types[number], boolean>>(
@@ -174,6 +176,15 @@ export const Navigation = ({
       return changed ? newOpens : opens;
     });
   }, [asPath, automations, id, imports, pages, toggle]);
+
+  useEffect(() => {
+    if (!searchValue) return;
+    trackEvent({
+      category: 'Workspace',
+      name: 'Search in navigation',
+      action: 'keydown',
+    });
+  }, [searchValue, trackEvent]);
 
   return (
     <div className={`flex flex-col max-h-full ${props.className}`} {...props}>

@@ -11,6 +11,7 @@ import { usePageBuilder } from '../context';
 import { BlockInCatalog } from '../useBlocks';
 import BlockButton from './BlockButton';
 import removeAccents from 'remove-accents';
+import { useTracking } from '../../Tracking';
 
 interface PageNewBlockFormProps {
   onSubmit: (blockSlug: string) => void;
@@ -18,6 +19,7 @@ interface PageNewBlockFormProps {
 
 export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
   const { catalog } = usePageBuilder();
+  const { trackEvent } = useTracking();
 
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
@@ -78,7 +80,16 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
   const collapses = useMemo(
     () =>
       filteredCatalog.map(
-        ({ slug, name, variants, hidden, description, from, ...block }) => {
+        ({
+          slug,
+          name,
+          variants,
+          hidden,
+          description,
+          from,
+          builtIn,
+          ...block
+        }) => {
           return {
             key: slug,
             label: (
@@ -100,7 +111,13 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
                     slug={slug}
                     name={name}
                     {...block}
-                    onClick={() => onSubmit(slug)}
+                    onClick={() => {
+                      trackEvent({
+                        name: `Choose ${builtIn ? 'BuiltIn' : 'Custom'} Block`,
+                        action: 'click',
+                      });
+                      onSubmit(slug);
+                    }}
                   />
                 )}
 
@@ -110,7 +127,15 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
                     <BlockButton
                       key={block.slug}
                       {...block}
-                      onClick={() => onSubmit(block.slug)}
+                      onClick={() => {
+                        trackEvent({
+                          name: `Choose ${
+                            builtIn ? 'BuiltIn' : 'Custom'
+                          } Block`,
+                          action: 'click',
+                        });
+                        onSubmit(block.slug);
+                      }}
                       isVariant
                     />
                   ))}
@@ -119,14 +144,20 @@ export const PageNewBlockForm = ({ onSubmit }: PageNewBlockFormProps) => {
           };
         }
       ),
-    [filteredCatalog, localize, onSubmit]
+    [filteredCatalog, localize, onSubmit, trackEvent]
   );
 
   return (
     <div className="flex flex-1 h-full flex-col p-4">
       <SearchInput
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => {
+          trackEvent({
+            name: 'Search Blocks',
+            action: 'keydown',
+          });
+          setSearch(e.target.value);
+        }}
         placeholder={t('pages.blocks.search')}
         className="mb-6"
       />

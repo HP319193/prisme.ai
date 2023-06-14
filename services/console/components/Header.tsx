@@ -13,6 +13,7 @@ import logo from '../icons/icon-prisme.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTracking } from './Tracking';
 
 interface HeaderProps {
   title?: string | ReactElement;
@@ -22,6 +23,7 @@ const Header = ({ title, leftContent }: HeaderProps) => {
   const { t } = useTranslation('user');
   const { user, signout } = useUser();
   const { push } = useRouter();
+  const { trackEvent } = useTracking();
 
   const userMenu = useMemo(
     () => (
@@ -52,16 +54,26 @@ const Header = ({ title, leftContent }: HeaderProps) => {
           if (typeof item === 'string') return;
           switch (item.key) {
             case 'signout':
+              trackEvent({
+                category: 'User menu',
+                name: 'signout',
+                action: 'click',
+              });
               signout();
               break;
             case 'account':
+              trackEvent({
+                category: 'User menu',
+                name: 'Display account',
+                action: 'click',
+              });
               push('/account');
               break;
           }
         }}
       />
     ),
-    [push, signout, t]
+    [push, signout, t, trackEvent]
   );
 
   return (

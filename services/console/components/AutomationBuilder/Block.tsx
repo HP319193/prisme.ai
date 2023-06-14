@@ -15,6 +15,7 @@ import { truncate } from '../../utils/strings';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Popconfirm } from 'antd';
+import { useTracking } from '../Tracking';
 
 interface BlockProps {
   removable?: boolean;
@@ -143,6 +144,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
   const ref = useRef(null);
   const isHover = useHover(ref);
   const { icon, name, instructionName = '' } = getApp(data.label);
+  const { trackEvent } = useTracking();
 
   const getLabel = useCallback(
     ({ label, value }: { label: string; value: any }) => {
@@ -264,6 +266,10 @@ export const Block: FC<NodeProps & BlockProps> = ({
                 cancelText={t('no', { ns: 'common' })}
                 onConfirm={(e) => {
                   e?.stopPropagation();
+                  trackEvent({
+                    name: 'Delete Instruction',
+                    action: 'click',
+                  });
                   removeInstruction(data.parent, data.index);
                 }}
                 onCancel={(e) => e?.stopPropagation()}
@@ -285,7 +291,13 @@ export const Block: FC<NodeProps & BlockProps> = ({
       }
       editSection={data.component ? <data.component /> : getLabel(data)}
       selected={selected}
-      onEdit={onEdit}
+      onEdit={() => {
+        trackEvent({
+          name: 'Display Instruction Edition',
+          action: 'click',
+        });
+        onEdit?.();
+      }}
     />
   );
 };

@@ -27,6 +27,7 @@ import getConfig from 'next/config';
 import FadeScroll from '../components/FadeScroll';
 import MagnifierIcon from '../icons/magnifier.svgr';
 import { incrementName } from '../utils/incrementName';
+import { useTracking } from '../components/Tracking';
 
 const {
   publicRuntimeConfig: { SUGGESTIONS_ENDPOINT = '' },
@@ -44,6 +45,7 @@ export const WorkspacesView = () => {
     duplicateWorkspace,
     duplicating,
   } = useWorkspaces();
+  const { trackEvent } = useTracking();
 
   useEffect(() => {
     fetchWorkspaces();
@@ -75,16 +77,29 @@ export const WorkspacesView = () => {
         workspaces.map(({ name }) => name)
       )
     );
+    trackEvent({
+      name: 'Create new Workspace',
+      category: 'Workspaces',
+      action: 'click',
+    });
     push(`/workspaces/${id}`);
-  }, [createWorkspace, push, t, workspaces]);
+  }, [createWorkspace, push, t, trackEvent, workspaces]);
 
   const handleDuplicateWorkspace = useCallback(
-    (id: Workspace['id']) => async () => {
+    (id: Workspace['id'], type?: 'suggestion') => async () => {
       const workspace = await duplicateWorkspace(id);
       if (!workspace) return;
+      trackEvent({
+        name:
+          type === 'suggestion'
+            ? 'Install Workspace suggestion'
+            : 'Duplicate Workspace',
+        category: 'Workspaces',
+        action: 'click',
+      });
       push(`/workspaces/${workspace.id}`);
     },
-    [duplicateWorkspace, push]
+    [duplicateWorkspace, push, trackEvent]
   );
 
   const [suggestions, setSuggestions] = useState<Workspace[]>([]);
@@ -228,7 +243,10 @@ export const WorkspacesView = () => {
                     >
                       <WorkspaceMenu
                         className="absolute top-2 right-2 invisible group-hover:visible"
-                        onDuplicate={handleDuplicateWorkspace(workspace.id)}
+                        onDuplicate={handleDuplicateWorkspace(
+                          workspace.id,
+                          'suggestion'
+                        )}
                       />
                     </WorkspaceCardButton>
                   </div>

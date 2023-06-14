@@ -19,6 +19,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useUser } from '../UserProvider';
 import { useRouter } from 'next/router';
 import { useWorkspace } from '../../providers/Workspace';
+import { useTracking } from '../Tracking';
 
 interface SharePopoverProps {
   subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType;
@@ -46,10 +47,10 @@ const ShareWorkspacePopover = ({
   } = usePermissions();
   const { user } = useUser();
   const {
-    deleteWorkspace,
     workspace: { name },
   } = useWorkspace();
   const { push } = useRouter();
+  const { trackEvent } = useTracking();
 
   const rolesOptions = useMemo<SelectOption[]>(
     () => roles.map((role) => ({ value: role.name, label: role.name })),
@@ -99,6 +100,10 @@ const ShareWorkspacePopover = ({
         displayName: target?.displayName,
         role: permissions.role,
         actions: generateRowButtons(() => {
+          trackEvent({
+            name: 'Remove user permission',
+            action: 'click',
+          });
           removeUserPermissions(subjectType, subjectId, target);
           if (target?.id === userId) {
             // User is removing himself his access to the workspace
@@ -113,7 +118,6 @@ const ShareWorkspacePopover = ({
 
     return rows;
   }, [
-    deleteWorkspace,
     generateRowButtons,
     name,
     push,
@@ -121,11 +125,16 @@ const ShareWorkspacePopover = ({
     subjectId,
     subjectType,
     t,
+    trackEvent,
     userId,
     usersPermissions,
   ]);
 
   const onSubmit = useCallback(() => {
+    trackEvent({
+      name: 'Add user pesmission',
+      action: 'click',
+    });
     if (emailInput === user.email) {
       notification.warning({
         message: t('share.notme'),
@@ -148,6 +157,7 @@ const ShareWorkspacePopover = ({
     subjectId,
     subjectType,
     t,
+    trackEvent,
     user.email,
   ]);
 

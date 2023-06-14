@@ -17,6 +17,7 @@ import { DeleteOutlined, LinkOutlined } from '@ant-design/icons';
 import { useUser } from '../UserProvider';
 import { usePageEndpoint } from '../../utils/urls';
 import { UserPermissions } from '../../utils/api';
+import { useTracking } from '../Tracking';
 
 interface SharePageProps {
   pageId: string;
@@ -32,6 +33,7 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
   const { t } = useTranslation('workspaces');
   const pageHost = usePageEndpoint();
   const { user } = useUser();
+  const { trackEvent } = useTracking();
   const {
     usersPermissions,
     getUsersPermissions,
@@ -103,6 +105,10 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
 
   const togglePublic = useCallback(
     async (isPublic: boolean) => {
+      trackEvent({
+        name: `Set page access ${isPublic ? 'Public' : 'Restricted'}`,
+        action: 'click',
+      });
       setIsPublic(isPublic);
       if (isPublic) {
         await addUserPermissions('pages', subjectId, {
@@ -117,7 +123,7 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
         await removeUserPermissions('pages', subjectId, { public: true });
       }
     },
-    [addUserPermissions, removeUserPermissions, subjectId]
+    [addUserPermissions, removeUserPermissions, subjectId, trackEvent]
   );
 
   const onSubmit = ({ email }: userPermissionForm) => {
@@ -131,6 +137,10 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
       });
       return;
     }
+    trackEvent({
+      name: 'Add a permission',
+      action: 'click',
+    });
     addUserPermissions(subjectType, subjectId, {
       target,
       permissions: {
@@ -141,6 +151,10 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
 
   const link = `${pageHost}/${pageSlug}`;
   const copyLink = useCallback(() => {
+    trackEvent({
+      name: 'Copy link in Share Panel',
+      action: 'click',
+    });
     try {
       window.navigator.clipboard.writeText(link);
     } catch (e) {
@@ -150,7 +164,7 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
       message: t('pages.share.copied'),
       placement: 'bottomRight',
     });
-  }, [link, t]);
+  }, [link, t, trackEvent]);
 
   return (
     <div className="w-[44rem] space-y-5">

@@ -21,6 +21,7 @@ import ItemsGroup, {
 import Avatar from '../../../icons/avatar.svgr';
 import { Workspace } from '../../../utils/api';
 import WorkspaceIcon from '../../../components/Workspaces/WorkspaceIcon';
+import { useTracking } from '../../../components/Tracking';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   workspaces: Workspace[];
@@ -36,6 +37,7 @@ export const Navigation = ({
   const { localize } = useLocalizedText();
   const { asPath } = useRouter();
   const [searchValue, setSearchValue] = useState('');
+  const { trackEvent } = useTracking();
 
   const types = ['workspaces'] as const;
   const [opens, setOpens] = useState<Map<'workspaces', boolean>>(
@@ -105,7 +107,13 @@ export const Navigation = ({
     <div className={`flex flex-col max-h-full ${props.className}`} {...props}>
       <SearchInput
         value={searchValue}
-        onChange={setSearchValue}
+        onChange={(v) => {
+          trackEvent({
+            name: 'Search in sidebar',
+            action: 'click',
+          });
+          setSearchValue(v);
+        }}
         onFocus={onExpand}
       />
       <div

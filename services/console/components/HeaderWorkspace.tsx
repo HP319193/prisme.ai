@@ -32,6 +32,7 @@ import HeaderPopovers from '../views/HeaderPopovers';
 import { useWorkspace } from '../providers/Workspace';
 import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
 import api from '../utils/api';
+import { useTracking } from './Tracking';
 
 const HeaderWorkspace = () => {
   const { t } = useTranslation('workspaces');
@@ -43,6 +44,8 @@ const HeaderWorkspace = () => {
   const [publishVisible, setPublishVisible] = useState(false);
   const [versionVisible, setVersionVisible] = useState(false);
   const { displaySource, sourceDisplayed } = useWorkspaceLayout();
+
+  const { trackEvent } = useTracking();
 
   const confirmDelete = useCallback(() => {
     push('/workspaces');
@@ -102,6 +105,10 @@ const HeaderWorkspace = () => {
                 <Button
                   className="flex items-center"
                   onClick={() => {
+                    trackEvent({
+                      name: 'Display Source from Details',
+                      action: 'click',
+                    });
                     displaySource(
                       sourceDisplayed === DisplayedSourceType.Config
                         ? DisplayedSourceType.None
@@ -122,6 +129,10 @@ const HeaderWorkspace = () => {
                 <Button
                   className="flex items-center"
                   onClick={() => {
+                    trackEvent({
+                      name: 'Display Roles Edition',
+                      action: 'click',
+                    });
                     displaySource(
                       sourceDisplayed === DisplayedSourceType.Roles
                         ? DisplayedSourceType.None
@@ -144,6 +155,10 @@ const HeaderWorkspace = () => {
                 <Button
                   className="flex items-center"
                   onClick={() => {
+                    trackEvent({
+                      name: 'Display Publish as App Modal',
+                      action: 'click',
+                    });
                     setPublishVisible(true);
                     setPopoverIsVisible(false);
                   }}
@@ -153,6 +168,10 @@ const HeaderWorkspace = () => {
                 </Button>
                 <Button
                   onClick={() => {
+                    trackEvent({
+                      name: 'Display Versionning Modal',
+                      action: 'click',
+                    });
                     setVersionVisible(true);
                     setPopoverIsVisible(false);
                   }}
@@ -160,7 +179,15 @@ const HeaderWorkspace = () => {
                   <TagOutlined className="mr-2" />
                   {t('workspace.versions.create.label')}
                 </Button>
-                <Button onClick={exportWorkspace}>
+                <Button
+                  onClick={() => {
+                    trackEvent({
+                      name: 'Export',
+                      action: 'click',
+                    });
+                    exportWorkspace();
+                  }}
+                >
                   {exporting ? (
                     <LoadingOutlined className="mr-2" />
                   ) : (
@@ -174,7 +201,7 @@ const HeaderWorkspace = () => {
         },
       },
     }),
-    [displaySource, exportWorkspace, exporting, sourceDisplayed, t]
+    [displaySource, exportWorkspace, exporting, sourceDisplayed, t, trackEvent]
   );
 
   const updateDetails = useCallback(
@@ -242,6 +269,12 @@ const HeaderWorkspace = () => {
               content={() => <ShareWorkspace workspaceId={workspace.id} />}
               title={t('share.label')}
               titleClassName="!bg-white !text-black"
+              onOpenChange={(open) => {
+                trackEvent({
+                  name: `${open ? 'Open' : 'Close'} Share Panel`,
+                  action: 'click',
+                });
+              }}
             >
               <Button variant="grey" className="!text-white">
                 <Space>

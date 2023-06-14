@@ -21,7 +21,7 @@ export const Item: FC<ItemProps> = ({ href, icon: Icon, children }) => {
             selected ? 'text-accent' : ''
           } max-w-[85%]`}
         >
-          <div className="flex m-2 mr-4">
+          <div className="flex m-2 mr-5">
             {typeof Icon === 'function' ? <Icon selected={selected} /> : Icon}
           </div>
           <div className="flex flex-1 leading-7 max-w-full">{children}</div>

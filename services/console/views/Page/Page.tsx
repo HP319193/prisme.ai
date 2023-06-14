@@ -11,9 +11,11 @@ import { useTranslation } from 'next-i18next';
 import useDirtyWarning from '../../utils/useDirtyWarning';
 import { replaceSilently } from '../../utils/urls';
 import { ApiError } from '../../utils/api';
+import { TrackingCategory, useTracking } from '../../components/Tracking';
 
 const Page = () => {
   const { t } = useTranslation('workspaces');
+  const { trackEvent } = useTracking();
   const { replace, push } = useRouter();
   const { page, savePage, saving, deletePage } = usePage();
   const {
@@ -28,6 +30,10 @@ const Page = () => {
   const [duplicating, setDuplicating] = useState(false);
   const duplicate = useCallback(async () => {
     if (!page.id || !page.slug) return;
+    trackEvent({
+      name: 'Duplicate Page',
+      action: 'click',
+    });
     setDuplicating(true);
     const newSlug = incrementName(
       page.slug,
@@ -49,19 +55,27 @@ const Page = () => {
       message: t('pages.duplicate.success'),
       placement: 'bottomRight',
     });
-  }, [createPage, page, pages, push, t, workspaceId]);
+  }, [createPage, page, pages, push, t, trackEvent, workspaceId]);
 
   useEffect(() => {
     setValue(page);
   }, [page]);
 
   const onDelete = useCallback(() => {
+    trackEvent({
+      name: 'Delete Page',
+      action: 'click',
+    });
     replace(`/workspaces/${page.workspaceId}`);
     deletePage();
-  }, [deletePage, page.workspaceId, replace]);
+  }, [deletePage, page.workspaceId, replace, trackEvent]);
 
   const save = useCallback(async () => {
     const prevSlug = page.slug;
+    trackEvent({
+      name: 'Save Page',
+      action: 'click',
+    });
     try {
       const saved = await savePage(value);
       if (!saved) return;
@@ -98,7 +112,7 @@ const Page = () => {
         placement: 'bottomRight',
       });
     }
-  }, [page.slug, savePage, t, value, workspaceId]);
+  }, [page.slug, savePage, t, trackEvent, value, workspaceId]);
 
   useKeyboardShortcut([
     {
@@ -106,6 +120,10 @@ const Page = () => {
       meta: true,
       command: (e) => {
         e.preventDefault();
+        trackEvent({
+          name: 'Save Page with shortcut',
+          action: 'keydown',
+        });
         save();
       },
     },
@@ -119,7 +137,13 @@ const Page = () => {
       onSave={save}
       saving={saving}
       viewMode={viewMode}
-      setViewMode={setViewMode}
+      setViewMode={(mode) => {
+        trackEvent({
+          name: `Display mode ${mode === 0 ? 'Preview' : 'Edition'}`,
+          action: 'click',
+        });
+        setViewMode(mode);
+      }}
       duplicate={duplicate}
       duplicating={duplicating}
       dirty={dirty}
@@ -152,9 +176,11 @@ const PageWithProvider = () => {
   const slug = (Array.isArray(pageSlug) ? pageSlug : [pageSlug]).join('/');
 
   return (
-    <PageProvider workspaceId={`${workspaceId}`} slug={`${slug}`}>
-      <Page />
-    </PageProvider>
+    <TrackingCategory category="Page Builder">
+      <PageProvider workspaceId={`${workspaceId}`} slug={`${slug}`}>
+        <Page />
+      </PageProvider>
+    </TrackingCategory>
   );
 };
 PageWithProvider.getLayout = getLayout;
