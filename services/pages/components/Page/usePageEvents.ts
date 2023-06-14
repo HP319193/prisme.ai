@@ -12,6 +12,7 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
   const prevSocketWorkspaceId = useRef('');
   useEffect(() => {
     if (!user) return;
+    let off: () => void;
     async function initEvents() {
       if (
         !page ||
@@ -36,8 +37,20 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
         }
         return events;
       });
+
+      off = events.once('error', (payload: any) => {
+        console.error('ERROR', payload);
+        if (payload?.error !== 'ForbiddenError') return;
+        const eventName = payload?.details?.subject?.type;
+        if (!eventName) return;
+        events.emit(eventName, payload?.details?.subject?.payload);
+      });
     }
     initEvents();
+
+    return () => {
+      off?.();
+    };
   }, [page, user]);
 
   useEffect(() => {
