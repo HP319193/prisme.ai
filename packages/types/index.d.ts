@@ -3639,6 +3639,12 @@ declare namespace PrismeaiAPI {
             aggs?: {
                 [name: string]: any;
             };
+            /**
+             * Elasticsearch runtime_mappings executed on runtime
+             */
+            runtime_mappings?: {
+                [name: string]: any;
+            };
             sort?: {
                 [name: string]: any;
             }[];

@@ -30,8 +30,15 @@ export function initSearchRoutes(eventsStore: EventsStore) {
     if (workspaceId && workspaceId.includes('*')) {
       throw new Error('Forbidden wildcard workspaceId');
     }
-    const { limit = 100, page, query, aggs, sort } = body;
-    if (aggs) {
+    const {
+      limit = 100,
+      page,
+      query,
+      aggs,
+      sort,
+      runtime_mappings: runtimeMappings,
+    } = body;
+    if (aggs || runtimeMappings) {
       await accessManager.throwUnlessCan(
         ActionType.AggregateSearch,
         SubjectType.Workspace,
@@ -48,6 +55,7 @@ export function initSearchRoutes(eventsStore: EventsStore) {
           query,
           aggs,
           sort,
+          runtime_mappings: runtimeMappings,
         }
       );
       return res.send({
