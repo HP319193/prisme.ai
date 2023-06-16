@@ -1322,7 +1322,8 @@
           }
         }
       }
-    }
+    },
+    "reload": "Reload page"
   },
   "expert": {
     "show": "Edit the source code",

@@ -143,9 +143,10 @@ export const RichText = ({
             />
           );
         case 'pr-block':
-          const { slug, ...config } = domNode.attribs;
+          const { slug, key, ...config } = domNode.attribs;
           return (
             <BlockLoader
+              key={key}
               name={slug}
               config={{
                 ...parseConfig(keysKebabToCamel(config)),
