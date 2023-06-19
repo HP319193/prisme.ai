@@ -1481,6 +1481,9 @@ declare namespace Prismeai {
                  */
                 stream?: {
                     event: string;
+                    concatenate?: {
+                        path?: string;
+                    };
                     payload?: {
                         [name: string]: any;
                     };
@@ -1570,6 +1573,9 @@ declare namespace Prismeai {
              */
             stream?: {
                 event: string;
+                concatenate?: {
+                    path?: string;
+                };
                 payload?: {
                     [name: string]: any;
                 };

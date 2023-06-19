@@ -1,6 +1,7 @@
 import { URL, URLSearchParams } from 'url';
 import FormData from 'form-data';
 import nodeFetch, { RequestInit, Response } from 'node-fetch';
+import get from 'lodash/get';
 import { ContextsManager } from '../../contexts';
 import {
   CORRELATION_ID_HEADER,
@@ -124,17 +125,33 @@ export async function fetch(
     }
   } else {
     let chunkIndex = 0;
+    let concatenated: string | any[] | undefined;
     await streamResponse(result.body, async (chunk: StreamChunk) => {
       try {
         if (result.status >= 400 && result.status < 600) {
           error = chunk;
           responseBody = chunk;
         } else {
+          if (stream?.concatenate?.path) {
+            chunk.data.forEach((data) => {
+              try {
+                const toConcatenate = get(data, stream?.concatenate?.path!);
+                if (toConcatenate) {
+                  if (!concatenated) {
+                    concatenated = toConcatenate;
+                  } else {
+                    concatenated = concatenated.concat(toConcatenate);
+                  }
+                }
+              } catch {}
+            });
+          }
           await broker.send(
             stream?.event!,
             {
               index: chunkIndex,
               chunk,
+              concatenated: concatenated ? { value: concatenated } : undefined,
               additionalPayload: stream?.payload,
             },
             {

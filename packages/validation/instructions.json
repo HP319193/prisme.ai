@@ -372,6 +372,14 @@
               "event": {
                 "type": "string"
               },
+              "concatenate": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              },
               "payload": {
                 "type": "object",
                 "additionalProperties": true
