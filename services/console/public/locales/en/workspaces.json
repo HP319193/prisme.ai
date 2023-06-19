@@ -533,6 +533,27 @@
       "title": "Arguments",
       "description": "Specification of the parameters that can be passed to your automation when it is used as a statement of another automation. A form will be generated according to the structure you specify here.",
       "add": "Add an argument"
+    },
+    "play": {
+      "help": "Run Automation",
+      "title": "Run the Automation",
+      "parameters": "Parameters",
+      "results": "Result",
+      "label": "Run",
+      "empty": "Run your Automation here <1>Start</1>",
+      "activity": "see activity…",
+      "body": {
+        "label": "Request body",
+        "description": "Parameters passed in the request body if automation is called as Endpoint."
+      },
+      "query": {
+        "label": "URL query string",
+        "description": "Parameters passed in the request URL if automation is called as Endpoint."
+      },
+      "payload": {
+        "label": "Event payload",
+        "description": "Parameters passed in the event payload if automation is called via event."
+      }
     }
   },
   "apps": {

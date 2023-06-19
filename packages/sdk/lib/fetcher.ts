@@ -15,6 +15,7 @@ export class Fetcher {
   public token: string | null = null;
   protected _apiKey: string | null = null;
   public language: string | undefined;
+  public lastReceivedHeaders?: Record<string, any>;
 
   constructor(host: string) {
     this.host = host;
@@ -24,8 +25,7 @@ export class Fetcher {
     this._apiKey = apiKey;
   }
 
-  prepareRequest(url: string,
-    options: RequestInit = {}) {
+  prepareRequest(url: string, options: RequestInit = {}) {
     const headers = new Headers(options.headers || {});
 
     if (this.token && !headers.has('x-prismeai-token')) {
@@ -72,6 +72,7 @@ export class Fetcher {
     }
 
     const contentType = res.headers.get('content-type');
+    this.lastReceivedHeaders = headersAsObject(res.headers);
     if (contentType && contentType.includes('application/json')) {
       try {
         const response = (await res.json()) || {};

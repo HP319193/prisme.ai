@@ -109,6 +109,37 @@ export default class Runtime {
     this.startAccessManagerCacheSynchronization();
   }
 
+  async testAutomation(
+    automationSlug: string,
+    body: Record<string, any>,
+    ctx: PrismeContext,
+    logger: Logger,
+    broker: Broker
+  ) {
+    const { workspaceId, correlationId } = ctx;
+    if (!correlationId || !workspaceId) {
+      throw new Error(
+        `Can't process webhook '${automationSlug}' without source correlationId or workspaceId !`
+      );
+    }
+    const workspace = await this.workspaces.getWorkspace(workspaceId);
+
+    logger.info({
+      msg: 'Starting to process webhook ' + automationSlug,
+      endpoint: automationSlug,
+    });
+
+    const result = await this.processTriggers(
+      workspace,
+      [{ automationSlug, type: 'test', value: automationSlug, workspace }],
+      body,
+      ctx,
+      logger,
+      broker
+    );
+    return result;
+  }
+
   private startEventsProcessing() {
     this.broker.on(
       [

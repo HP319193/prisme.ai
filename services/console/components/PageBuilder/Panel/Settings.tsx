@@ -9,7 +9,6 @@ import { usePageBuilder } from '../context';
 import useBlockPageConfig from '../useBlockPageConfig';
 import { useWorkspace } from '../../../providers/Workspace';
 import components from '../../SchemaForm/schemaFormComponents';
-import { mergeAndCleanObjects } from '../../../utils/objects';
 import api from '../../../utils/api';
 
 interface SettingsProps {

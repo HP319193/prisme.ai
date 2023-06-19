@@ -7,6 +7,7 @@ import { LAST_CUSTOM_RULE_PRIORITY } from '../../config';
 export const ActionType = {
   ...NativeActionType,
   Execute: 'execute',
+  Test: 'test',
 };
 
 export enum SubjectType {
@@ -63,7 +64,7 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: [ActionType.Execute],
+          action: [ActionType.Execute, ActionType.Test],
           subject: SubjectType.Automation,
           conditions: {
             runningWorkspaceId: '${subject.id}',
@@ -77,7 +78,7 @@ export const config: PermissionsConfig<
       subjectType: SubjectType.Workspace,
       rules: [
         {
-          action: [ActionType.Execute],
+          action: [ActionType.Execute, ActionType.Test],
           subject: SubjectType.Automation,
           conditions: {
             runningWorkspaceId: '${subject.id}',

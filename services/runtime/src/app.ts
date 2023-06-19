@@ -71,7 +71,7 @@ const workspacesSynchroBroker = initEDA(`${APP_NAME}-workspaces-synchro`);
   process.on('SIGTERM', exit);
   process.on('SIGINT', exit);
 
-  const app = initAPI(runtime, broker);
+  const app = initAPI(runtime, broker, accessManager);
   const httpServer = http.createServer(app);
   httpServer.listen(PORT, function () {
     console.log(`${APP_NAME} listening on ${PORT}.`);

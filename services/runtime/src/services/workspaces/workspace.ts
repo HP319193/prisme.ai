@@ -7,7 +7,7 @@ import { findSecretValues, findSecretPaths } from '../../utils/secrets';
 import { Apps } from '../apps';
 
 export type DetailedTrigger = {
-  type: 'event' | 'endpoint' | 'schedule';
+  type: 'event' | 'endpoint' | 'schedule' | 'test';
   value: string;
   automationSlug: string;
   workspace: Workspace;
