@@ -1481,6 +1481,9 @@ declare namespace Prismeai {
                  */
                 stream?: {
                     event: string;
+                    concatenate?: {
+                        path?: string;
+                    };
                     payload?: {
                         [name: string]: any;
                     };
@@ -1570,6 +1573,9 @@ declare namespace Prismeai {
              */
             stream?: {
                 event: string;
+                concatenate?: {
+                    path?: string;
+                };
                 payload?: {
                     [name: string]: any;
                 };
@@ -3637,6 +3643,12 @@ declare namespace PrismeaiAPI {
              * Elasticsearch aggregations executed on response documents
              */
             aggs?: {
+                [name: string]: any;
+            };
+            /**
+             * Elasticsearch runtime_mappings executed on runtime
+             */
+            runtime_mappings?: {
                 [name: string]: any;
             };
             sort?: {

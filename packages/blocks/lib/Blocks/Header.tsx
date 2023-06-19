@@ -141,15 +141,18 @@ export const Header = ({
 const defaultStyles = `:block {
   min-height: 4rem;
   --pr-header-color: var(--color-accent, rgba(0,0,0,.8));
-  --pr-header-contrast: var(--color-accent-contrast, white);
+  
   --pr-header-logo-height: 3rem;
+}
+:block.pr-block-header--fixed {
+  --pr-header-contrast: var(--color-accent-contrast, white);
 }
 .pr-block-header__container {
   display: flex;
   flex: 1 1 0%;
   justify-content: space-between;
   position: relative;
-  background-color: var(--pr-header-color);
+  background-color: var(--pr-header-contrast);
 }
 :block.pr-block-header--fixed {
   position: relative;
@@ -177,7 +180,7 @@ const defaultStyles = `:block {
 .pr-block-header__left {
   display: flex;
   margin: 1rem;
-  z-index: 99999999;
+  z-index: 1;
 }
 
 .pr-block-header__logo,
@@ -211,7 +214,6 @@ const defaultStyles = `:block {
 .pr-block__menu {
   display: flex;
   flex-direction: row;
-  z-index: 99999998;
 }
 .pr-block__menu-toggle {
   display: none;
@@ -226,7 +228,7 @@ const defaultStyles = `:block {
     height: 4rem;
   }
   .pr-block-header__container {
-    padding-bottom: 2rem;
+    margin-bottom: 2rem;
   }
   .pr-block__menu {
     position: absolute;
@@ -244,6 +246,9 @@ const defaultStyles = `:block {
     padding: 10rem 2rem 0 2rem;
   }
   .pr-block-header__container *:not(svg, path) {
+    color: var(--color-text);
+  }
+  :block.pr-block-header--fixed.pr-block-header--has-scrolled .pr-block-header__container *:not(svg, path) {
     color: var(--pr-header-contrast);
   }
   .pr-block__menu--visible {
@@ -259,7 +264,16 @@ const defaultStyles = `:block {
   .pr-block__menu-toggle svg path {
     color: var(--pr-header-contrast);
   }
+  :block.pr-block-header--fixed:not(.pr-block-header--has-scrolled) .pr-block__menu-toggle svg path {
+    color: var(--accent-color);
+  }
+  :block.pr-block-header--fixed:not(.pr-block-header--has-scrolled) .pr-block__menu--visible .pr-block__menu-toggle svg path {
+    color: var(--accent-contrast-color);
+  }
   .pr-block__menu-toggle--close svg path {
+    color: var(--accent-contrast-color);
+  }
+  :block.pr-block-header--fixed .pr-block__menu-toggle--close svg path {
     color: var(--pr-header-contrast);
   }
 }
@@ -267,6 +281,9 @@ const defaultStyles = `:block {
   transition: color .1s ease-in;
 }
 .pr-block__menu .pr-block-action:hover {
+  color: var(--color-accent);
+}
+:block.pr-block-header--fixed .pr-block__menu .pr-block-action:hover {
   color: var(--pr-header-color);
 }
 `;
