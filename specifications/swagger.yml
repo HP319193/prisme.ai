@@ -3737,6 +3737,10 @@ paths:
                   type: object
                   additionalProperties: true
                   description: 'Elasticsearch aggregations executed on response documents'
+                runtime_mappings:
+                  type: object
+                  additionalProperties: true
+                  description: 'Elasticsearch runtime_mappings executed on runtime'
                 sort:
                   type: array
                   items:
