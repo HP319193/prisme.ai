@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { initCustomRoles } from '../../services/migrate';
+import { initCustomRoles, initExtractDSUL } from '../../services/migrate';
 import { asyncRoute } from '../utils/async';
 import { DSULStorage } from '../../services/DSULStorage';
 import { AccessManager } from '../../permissions';
@@ -25,10 +25,23 @@ export default function init(
     return res.status(200).send(result);
   }
 
+  async function initExtractDSULHandler(
+    { body, logger, context }: Request,
+    res: Response
+  ) {
+    const result = await initExtractDSUL(
+      workspacesStorage,
+      accessManager,
+      body
+    );
+    return res.status(200).send(result);
+  }
+
   const app = express.Router();
   app.use(protectMigrationRoutes);
 
   app.post(`/custom-roles`, asyncRoute(initCustomRolesHandler));
+  app.post(`/extract-dsul`, asyncRoute(initExtractDSULHandler));
 
   return app;
 }
