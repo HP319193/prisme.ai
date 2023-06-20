@@ -199,7 +199,7 @@ export const PlayPanel = (props: any) => {
       overlayClassName="pr-popover-arrow-right"
       {...props}
     >
-      <button className="flex text-4xl text-green-500 focus:outline-none">
+      <button className="flex text-4xl text-accent focus:outline-none">
         <PlayIcon />
       </button>
     </Popover>
