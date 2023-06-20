@@ -8,6 +8,7 @@ exports[`should render 1`] = `
     className="pr-form-raw absolute top-0 right-0 mt-[0.35rem] flex flex-1 flex-row z-[1] text-[12px] items-center"
     onClick={[Function]}
     tabIndex={-1}
+    type="button"
   />
   <button
     className="pr-form-object__label pr-form-label "

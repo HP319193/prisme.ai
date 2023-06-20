@@ -19,7 +19,13 @@ app.use(
     crossOriginResourcePolicy: false,
   })
 );
-app.use(cors({ credentials: true, origin: true }));
+app.use(
+  cors({
+    credentials: true,
+    origin: true,
+    exposedHeaders: ['X-Correlation-Id', 'X-Prismeai-Session-Id'],
+  })
+);
 
 let gtwcfg;
 try {

@@ -39,6 +39,7 @@ import { validateAutomation } from '@prisme.ai/validation';
 import { incrementName } from '../utils/incrementName';
 import useDirtyWarning from '../utils/useDirtyWarning';
 import { replaceSilently } from '../utils/urls';
+import PlayPanel from '../components/AutomationBuilder/PlayPanel';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -91,12 +92,8 @@ const cleanAutomation = (automation: Prismeai.Automation) => {
 };
 
 export const Automation = () => {
-  const {
-    automation,
-    saveAutomation,
-    saving,
-    deleteAutomation,
-  } = useAutomation();
+  const { automation, saveAutomation, saving, deleteAutomation } =
+    useAutomation();
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { workspace, createAutomation } = useWorkspace();
@@ -466,6 +463,13 @@ export const Automation = () => {
               {saving && <Loading />}
             </Space>
           </Button>,
+          <Tooltip
+            key="play"
+            title={t('automations.play.help')}
+            placement="left"
+          >
+            <PlayPanel />
+          </Tooltip>,
         ]}
       />
       <Head>

@@ -4668,7 +4668,70 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
+  /v2/workspaces/{workspaceId}/test/{automationSlug}:
+    post:
+      description: Test Automation
+      operationId: testAutomation
+      tags:
+        - 'Prisme.ai Workspaces'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'automationSlug'
+          in: 'path'
+          description: 'Automation slug'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                payload:
+                  $ref: '#/components/schemas/AnyValue'
+                  description: Entire body will be passed as a payload to the triggered automation
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/AnyValue'
+              description: Entire body will be passed as a payload to the triggered automation
 
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnyValue'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
   ## pages
   /v2/workspaces/{workspaceId}/pages:
     post:

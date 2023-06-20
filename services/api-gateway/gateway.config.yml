@@ -1,6 +1,8 @@
 endpoints:
   webhooks:
     path: '/v2/workspaces/*/webhooks/*'
+  test:
+    path: '/v2/workspaces/*/test/*'
 
   workspaces:
     path: '/v2/workspaces*'
@@ -44,6 +46,7 @@ pipelines:
   - name: runtime
     endpoints:
       - webhooks
+      - test
     policies:
       - proxy:
           service: runtime
