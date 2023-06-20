@@ -104,7 +104,7 @@ const PlayView = () => {
   const hasParam = Object.keys(schema.properties || {}).length > 0;
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row flex-1">
       {hasParam && (
         <div className="flex flex-col order-1">
           <div className="font-bold">{t('automations.play.parameters')}</div>
