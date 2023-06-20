@@ -131,7 +131,14 @@ export default class Runtime {
 
     const result = await this.processTriggers(
       workspace,
-      [{ automationSlug, type: 'test', value: automationSlug, workspace }],
+      [
+        {
+          automationSlug,
+          type: 'automation',
+          value: automationSlug,
+          workspace,
+        },
+      ],
       body,
       ctx,
       logger,
