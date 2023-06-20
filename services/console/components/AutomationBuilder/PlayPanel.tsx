@@ -9,8 +9,8 @@ import api from '../../utils/api';
 import Storage from '../../utils/Storage';
 import { CodeEditorInline } from '../CodeEditor/lazy';
 import worskpaceSvg from '../../icons/workspace.svg';
-import { Result } from 'antd';
 import components from '../SchemaForm/schemaFormComponents';
+import PlayIcon from '../../icons/play.svgr';
 
 const PlayView = () => {
   const {
@@ -104,9 +104,9 @@ const PlayView = () => {
   const hasParam = Object.keys(schema.properties || {}).length > 0;
 
   return (
-    <div className="flex flex-row flex-1">
+    <div className="flex flex-row flex-1 min-w-[40vw]">
       {hasParam && (
-        <div className="flex flex-col order-1">
+        <div className="flex flex-col">
           <div className="font-bold">{t('automations.play.parameters')}</div>
           <SchemaForm
             schema={schema}
@@ -131,7 +131,7 @@ const PlayView = () => {
             onClick={run}
             disabled={running}
           >
-            <PlayCircleOutlined className="mr-2" />
+            <PlayIcon className="mr-2" />
             {t('automations.play.label')}
           </button>
         </div>
@@ -196,11 +196,11 @@ export const PlayPanel = (props: any) => {
       destroyTooltipOnHide
       content={PlayView}
       placement="bottom"
-      overlayClassName="min-w-[40rem] pr-popover-arrow-right"
+      overlayClassName="pr-popover-arrow-right"
       {...props}
     >
       <button className="flex text-4xl text-green-500 focus:outline-none">
-        <PlayCircleOutlined />
+        <PlayIcon />
       </button>
     </Popover>
   );
