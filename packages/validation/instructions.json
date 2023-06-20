@@ -377,6 +377,9 @@
                 "properties": {
                   "path": {
                     "type": "string"
+                  },
+                  "throttle": {
+                    "type": "number"
                   }
                 }
               },

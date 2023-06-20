@@ -1,7 +1,9 @@
 import { URL, URLSearchParams } from 'url';
 import FormData from 'form-data';
 import nodeFetch, { RequestInit, Response } from 'node-fetch';
+import { DebouncedFunc } from 'lodash';
 import get from 'lodash/get';
+import throttle from 'lodash/throttle';
 import { ContextsManager } from '../../contexts';
 import {
   CORRELATION_ID_HEADER,
@@ -9,7 +11,7 @@ import {
   PUBLIC_API_URL,
   RUNTIME_EMITS_BROKER_TOPIC,
 } from '../../../../../config';
-import { Broker } from '@prisme.ai/broker';
+import { Broker, EventSource } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 import { logger } from '../../../../logger';
 
@@ -126,6 +128,16 @@ export async function fetch(
   } else {
     let chunkIndex = 0;
     let concatenated: string | any[] | undefined;
+    const send = (
+      eventType: string,
+      payload: any,
+      partialSource: Partial<EventSource> | undefined,
+      additionalFields: any
+    ) => broker.send(eventType, payload, partialSource, additionalFields);
+    const emitEvent = stream?.concatenate?.throttle
+      ? throttle(send, stream?.concatenate?.throttle)
+      : send;
+
     await streamResponse(result.body, async (chunk: StreamChunk) => {
       try {
         if (result.status >= 400 && result.status < 600) {
@@ -146,7 +158,7 @@ export async function fetch(
               } catch {}
             });
           }
-          await broker.send(
+          await emitEvent(
             stream?.event!,
             {
               index: chunkIndex,
@@ -165,6 +177,11 @@ export async function fetch(
         logger.warn({ msg: `Could not stream fetch response chunk`, err });
       }
     });
+
+    if (stream?.concatenate?.throttle) {
+      // If the events were throttled we flush at the end in order to emit the last one right away.
+      (emitEvent as DebouncedFunc<any>).flush();
+    }
   }
 
   if (error && emitErrors) {
