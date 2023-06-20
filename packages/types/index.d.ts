@@ -1483,6 +1483,7 @@ declare namespace Prismeai {
                     event: string;
                     concatenate?: {
                         path?: string;
+                        throttle?: number;
                     };
                     payload?: {
                         [name: string]: any;
@@ -1575,6 +1576,7 @@ declare namespace Prismeai {
                 event: string;
                 concatenate?: {
                     path?: string;
+                    throttle?: number;
                 };
                 payload?: {
                     [name: string]: any;

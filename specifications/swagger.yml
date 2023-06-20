@@ -1092,6 +1092,8 @@ components:
                   properties:
                     path:
                       type: string
+                    throttle:
+                      type: number
                 payload:
                   type: object
                   additionalProperties: true
