@@ -677,6 +677,20 @@ export class Api extends Fetcher {
     );
   }
 
+  async testAutomation({
+    workspaceId,
+    automation,
+    payload,
+  }: {
+    workspaceId: string;
+    automation: string;
+    payload?: Record<string, any>;
+  }): Promise<any> {
+    return this.post(`/workspaces/${workspaceId}/test/${automation}`, {
+      payload,
+    });
+  }
+
   async getWorkspaceUsage(
     workspaceId: PrismeaiAPI.WorkspaceUsage.Parameters.WorkspaceId,
     {

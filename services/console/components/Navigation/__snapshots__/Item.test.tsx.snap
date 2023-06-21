@@ -12,7 +12,7 @@ exports[`should render 1`] = `
       className="flex flex-1 flex-row items-center  max-w-[85%]"
     >
       <div
-        className="flex m-2 mr-4"
+        className="flex m-2 mr-5"
       >
         <div>
           Icon
@@ -38,7 +38,7 @@ exports[`should render selected 1`] = `
       className="flex flex-1 flex-row items-center text-accent max-w-[85%]"
     >
       <div
-        className="flex m-2 mr-4"
+        className="flex m-2 mr-5"
       >
         <div>
           Icon

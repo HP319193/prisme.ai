@@ -12,6 +12,7 @@ import IFrameLoader from '../components/IFrameLoader';
 import SourceEdit, {
   ValidationError,
 } from '../components/SourceEdit/SourceEdit';
+import { TrackingCategory, useTracking } from '../components/Tracking';
 import EditDetails from '../layouts/EditDetails';
 import getLayout from '../layouts/WorkspaceLayout';
 import AppInstanceProvider, {
@@ -25,13 +26,8 @@ import useDirtyWarning from '../utils/useDirtyWarning';
 import useLocalizedText from '../utils/useLocalizedText';
 
 export const AppInstance = () => {
-  const {
-    appInstance,
-    documentation,
-    saveAppInstance,
-    saving,
-    uninstallApp,
-  } = useAppInstance();
+  const { appInstance, documentation, saveAppInstance, saving, uninstallApp } =
+    useAppInstance();
   const { workspace } = useWorkspace();
   const { localize } = useLocalizedText();
   const { t } = useTranslation('workspaces');
@@ -44,6 +40,7 @@ export const AppInstance = () => {
   const [mountSource, setMountSource] = useState(true);
   const [viewMode, setViewMode] = useState(documentation ? 0 : 1);
   const [dirty] = useDirtyWarning(appInstance, value);
+  const { trackEvent } = useTracking();
 
   useEffect(() => {
     setValue(appInstance);
@@ -100,6 +97,10 @@ export const AppInstance = () => {
 
   const saveDetails = useCallback(
     async ({ slug = '', disabled }: Prismeai.AppInstance) => {
+      trackEvent({
+        name: 'Save Details',
+        action: 'click',
+      });
       const { config, ...prevValue } = value;
       const newValue = {
         ...prevValue,
@@ -161,8 +162,12 @@ export const AppInstance = () => {
   );
 
   const showSource = useCallback(() => {
+    trackEvent({
+      name: `${displaySource ? 'Hide' : 'Show'} source code`,
+      action: 'click',
+    });
     setDisplaySource(!displaySource);
-  }, [displaySource]);
+  }, [displaySource, trackEvent]);
 
   const mergeSource = useCallback(
     (source: any) => ({
@@ -281,7 +286,15 @@ export const AppInstance = () => {
                         icon: <EditOutlined />,
                       },
                     ]}
-                    onChange={(v) => setViewMode(+v)}
+                    onChange={(v) => {
+                      trackEvent({
+                        name: `Show ${
+                          v === 0 ? 'Documentation' : 'Configuration'
+                        } tab`,
+                        action: 'click',
+                      });
+                      setViewMode(+v);
+                    }}
                     className="pr-segmented-accent"
                   />
                 </div>
@@ -339,13 +352,15 @@ const AppInstanceWithProvider = () => {
   const { workspace, events } = useWorkspace();
 
   return (
-    <AppInstanceProvider
-      id={`${appId}`}
-      workspaceId={workspace.id}
-      events={events}
-    >
-      <AppInstance />
-    </AppInstanceProvider>
+    <TrackingCategory category="Apps">
+      <AppInstanceProvider
+        id={`${appId}`}
+        workspaceId={workspace.id}
+        events={events}
+      >
+        <AppInstance />
+      </AppInstanceProvider>
+    </TrackingCategory>
   );
 };
 AppInstanceWithProvider.getLayout = getLayout;

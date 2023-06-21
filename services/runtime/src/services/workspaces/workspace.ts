@@ -5,10 +5,9 @@ import { logger } from '../../logger';
 import { interpolate } from '../../utils';
 import { findSecretValues, findSecretPaths } from '../../utils/secrets';
 import { Apps } from '../apps';
+import { Trigger } from '../runtime/contexts';
 
-export type DetailedTrigger = {
-  type: 'event' | 'endpoint' | 'schedule';
-  value: string;
+export type DetailedTrigger = Trigger & {
   automationSlug: string;
   workspace: Workspace;
 };

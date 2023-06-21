@@ -2,6 +2,7 @@ import { Button, Popover, Space } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import getConfig from 'next/config';
 import IFrameLoader from '../components/IFrameLoader';
+import { useTracking } from '../components/Tracking';
 
 const {
   publicRuntimeConfig: { HEADER_POPOVERS },
@@ -23,6 +24,7 @@ const POPOVERS = getPopovers();
 
 export const HeaderPopovers = () => {
   const { t } = useTranslation('workspaces');
+  const { trackEvent } = useTracking();
 
   return (
     <>
@@ -35,6 +37,12 @@ export const HeaderPopovers = () => {
             </div>
           )}
           overlayClassName="pr-full-popover"
+          onOpenChange={(open) => {
+            trackEvent({
+              name: `Open header popover ${label}`,
+              action: 'click',
+            });
+          }}
         >
           <Button variant="grey" className="!text-white">
             <Space>{t(label)}</Space>

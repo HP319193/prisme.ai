@@ -39,6 +39,8 @@ import { validateAutomation } from '@prisme.ai/validation';
 import { incrementName } from '../utils/incrementName';
 import useDirtyWarning from '../utils/useDirtyWarning';
 import { replaceSilently } from '../utils/urls';
+import { TrackingCategory, useTracking } from '../components/Tracking';
+import PlayPanel from '../components/AutomationBuilder/PlayPanel';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -91,12 +93,8 @@ const cleanAutomation = (automation: Prismeai.Automation) => {
 };
 
 export const Automation = () => {
-  const {
-    automation,
-    saveAutomation,
-    saving,
-    deleteAutomation,
-  } = useAutomation();
+  const { automation, saveAutomation, saving, deleteAutomation } =
+    useAutomation();
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { workspace, createAutomation } = useWorkspace();
@@ -104,6 +102,7 @@ export const Automation = () => {
   const [displaySource, setDisplaySource] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
   const [dirty] = useDirtyWarning(automation, value);
+  const { trackEvent } = useTracking();
 
   const {
     query: { automationId },
@@ -220,6 +219,10 @@ export const Automation = () => {
       private: _private,
       disabled,
     }: Prismeai.Automation) => {
+      trackEvent({
+        name: 'Save details',
+        action: 'click',
+      });
       const { slug: prevSlug } = value;
       const cleanedArguments =
         args &&
@@ -243,7 +246,7 @@ export const Automation = () => {
       if (prevSlug === slug) return;
       replaceSilently(`/workspaces/${workspace.id}/automations/${slug}`);
     },
-    [save, value, workspace.id]
+    [save, trackEvent, value, workspace.id]
   );
 
   useKeyboardShortcut([
@@ -252,6 +255,10 @@ export const Automation = () => {
       meta: true,
       command: (e) => {
         e.preventDefault();
+        trackEvent({
+          name: 'Save with shortcut',
+          action: 'keydown',
+        });
         save();
       },
     },
@@ -296,6 +303,10 @@ export const Automation = () => {
   );
 
   const duplicate = useCallback(async () => {
+    trackEvent({
+      name: 'Duplicate',
+      action: 'click',
+    });
     if (!automationId) return;
     setDuplicating(true);
     const newName =
@@ -344,13 +355,18 @@ export const Automation = () => {
     localize,
     push,
     t,
+    trackEvent,
     workspace.automations,
     workspace.id,
   ]);
 
   const showSource = useCallback(() => {
+    trackEvent({
+      name: `${displaySource ? 'Hide' : 'Show'} source code`,
+      action: 'click',
+    });
     setDisplaySource(!displaySource);
-  }, [displaySource]);
+  }, [displaySource, trackEvent]);
   const mergeSource = useCallback(
     (source: any) => ({
       ...value,
@@ -393,6 +409,10 @@ export const Automation = () => {
                     })
                   }
                   onEnter={() => {
+                    trackEvent({
+                      name: 'Save title',
+                      action: 'keydown',
+                    });
                     // Need to wait after the onChange changed the value
                     setTimeout(() => saveAfterChange.current(), 1);
                   }}
@@ -455,7 +475,13 @@ export const Automation = () => {
         }
         extra={[
           <Button
-            onClick={() => save()}
+            onClick={() => {
+              trackEvent({
+                name: 'Save',
+                action: 'click',
+              });
+              save();
+            }}
             disabled={!dirty || saving}
             key="1"
             className="!flex flex-row"
@@ -466,6 +492,13 @@ export const Automation = () => {
               {saving && <Loading />}
             </Space>
           </Button>,
+          <Tooltip
+            key="play"
+            title={t('automations.play.help')}
+            placement="left"
+          >
+            <PlayPanel />
+          </Tooltip>,
         ]}
       />
       <Head>
@@ -505,12 +538,14 @@ export const AutomationWithProvider = () => {
   } = useRouter();
 
   return (
-    <AutomationProvider
-      workspaceId={workspace.id}
-      automationSlug={`${automationId}`}
-    >
-      <Automation />
-    </AutomationProvider>
+    <TrackingCategory category="Automation Builder">
+      <AutomationProvider
+        workspaceId={workspace.id}
+        automationSlug={`${automationId}`}
+      >
+        <Automation />
+      </AutomationProvider>
+    </TrackingCategory>
   );
 };
 AutomationWithProvider.getLayout = getLayout;

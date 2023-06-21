@@ -15,8 +15,14 @@ import {
 } from './middlewares/validation';
 import Runtime from '../services/runtime';
 import { Broker } from '@prisme.ai/broker';
+import { accessManagerMiddleware } from './middlewares/accessManager';
+import { AccessManager } from '../permissions';
 
-export function init(runtime: Runtime, broker: Broker) {
+export function init(
+  runtime: Runtime,
+  broker: Broker,
+  accessManager: AccessManager
+) {
   const app = express();
 
   /**
@@ -47,6 +53,7 @@ export function init(runtime: Runtime, broker: Broker) {
   app.set('trust proxy', true);
 
   app.use(requestDecorator(broker));
+  app.use(accessManagerMiddleware(accessManager));
 
   /**
    * Validation

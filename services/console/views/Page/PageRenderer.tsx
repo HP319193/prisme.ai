@@ -26,6 +26,7 @@ import SourceEdit, {
 } from '../../components/SourceEdit/SourceEdit';
 import { defaultStyles } from './defaultStyles';
 import useSectionsIds from '../../providers/Page/useSectionsIds';
+import { useTracking } from '../../components/Tracking';
 
 interface PageRendererProps {
   value: Prismeai.Page;
@@ -55,6 +56,7 @@ export const PageRenderer = ({
   const { localize } = useLocalizedText();
   const [displaySource, setDisplaySource] = useState(false);
   const sectionsIds = useSectionsIds();
+  const { trackEvent } = useTracking();
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -102,8 +104,12 @@ export const PageRenderer = ({
   }, [onSave]);
 
   const showSource = useCallback(() => {
+    trackEvent({
+      name: `${displaySource ? 'Hide' : 'Show'} source code`,
+      action: 'click',
+    });
     setDisplaySource(!displaySource);
-  }, [displaySource]);
+  }, [displaySource, trackEvent]);
   const mergeSource = useCallback(
     (source: any) => ({
       ...value,
@@ -129,6 +135,14 @@ export const PageRenderer = ({
     },
     [mergeSource, onChange]
   );
+
+  const [shareOpen, setShareOpen] = useState(false);
+  useEffect(() => {
+    trackEvent({
+      name: `${shareOpen ? 'Open' : 'Close'} Share Panel`,
+      action: 'click',
+    });
+  }, [shareOpen, trackEvent]);
 
   const [previewMounted, setPreviewMounted] = useState(true);
   const reload = useCallback(() => {
@@ -172,6 +186,10 @@ export const PageRenderer = ({
                     });
                   }}
                   onEnter={() => {
+                    trackEvent({
+                      name: 'Save title',
+                      action: 'keydown',
+                    });
                     // Need to wait after the onChange changed the value
                     setTimeout(() => saveAfterChange.current(), 1);
                   }}
@@ -192,6 +210,10 @@ export const PageRenderer = ({
                       value.styles === undefined ? defaultStyles : value.styles,
                   }}
                   onSave={async (v) => {
+                    trackEvent({
+                      name: 'Save Page details',
+                      action: 'click',
+                    });
                     onChange({
                       ...value,
                       ...v,
@@ -207,6 +229,7 @@ export const PageRenderer = ({
                 />
               </Tooltip>
               <Popover
+                onOpenChange={setShareOpen}
                 content={() => (
                   <SharePage
                     pageId={`${value.id}`}

@@ -1,5 +1,10 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { FieldProps, schemaFormUtils, Tooltip } from '@prisme.ai/design-system';
+import {
+  FieldProps,
+  schemaFormUtils,
+  Tooltip,
+  useSchemaForm,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
@@ -78,15 +83,22 @@ const JSONEditor = (props: any) => (
 );
 const FreeAdditionalProperties = (props: FieldProps) => {
   const { t } = useTranslation('workspaces');
+  const {
+    locales: {
+      freeAdditionalPropertiesLabel = t(
+        'automations.instruction.additionnalProperties.label'
+      ),
+    },
+  } = useSchemaForm();
   const schema = useMemo(
     () => ({
       ...props.schema,
-      title: t('automations.instruction.additionnalProperties.label'),
+      title: freeAdditionalPropertiesLabel,
       description: t(
         'automations.instruction.additionnalProperties.description'
       ),
     }),
-    [props.schema, t]
+    [freeAdditionalPropertiesLabel, props.schema, t]
   );
   return <FieldAny {...props} schema={schema} />;
 };

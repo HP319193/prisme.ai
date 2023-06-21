@@ -82,6 +82,7 @@ Array [
           <a
             className="px-4 py-[0.75rem] pb-[0.75rem] mt-1 pr-1 flex flex-nowrap items-center group rounded-t   whitespace-nowrap hover:text-base !pr-4"
             href="/workspaces/42"
+            onClick={[Function]}
           >
             <div
               className="border-l border-light-gray h-full mr-4 -ml-6"
@@ -192,6 +193,7 @@ Array [
           <a
             className="px-4 py-[0.75rem] pb-[0.75rem] mt-1 pr-1 flex flex-nowrap items-center group rounded-t   whitespace-nowrap hover:text-base !pr-4"
             href="/workspaces/undefined"
+            onClick={[Function]}
           >
             <div
               className="border-l border-light-gray h-full mr-4 -ml-6"

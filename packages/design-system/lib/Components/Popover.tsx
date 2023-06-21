@@ -68,7 +68,6 @@ const Popover: FC<PopoverProps> = ({
       open={visible}
       onOpenChange={(open) => {
         toggleVisible(open);
-        onOpenChange && onOpenChange(open);
       }}
       {...otherProps}
     >

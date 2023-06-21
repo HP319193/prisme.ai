@@ -13,6 +13,7 @@ import PageIcon from './PageIcon';
 import HomeIconOutlined from '../../icons/home-outlined.svgr';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import { useTranslation } from 'next-i18next';
+import { useTracking } from '../../components/Tracking';
 
 function getTabsFromStorage(workspaceId: string) {
   try {
@@ -97,6 +98,7 @@ const Tab = ({
   className = '',
   icon,
 }: TabProps) => {
+  const { trackEvent } = useTracking();
   return (
     <Link href={href} passHref>
       <Tooltip title={title} placement="bottom">
@@ -105,6 +107,13 @@ const Tab = ({
           className={`px-4 py-[0.75rem] pb-[0.75rem] mt-1 pr-1 flex flex-nowrap items-center group rounded-t ${
             isCurrent ? 'bg-white font-bold' : ''
           }  whitespace-nowrap hover:text-base ${className}`}
+          onClick={() => {
+            trackEvent({
+              category: 'Tabs',
+              name: 'Navigate with Tab',
+              action: 'click',
+            });
+          }}
         >
           {!isCurrent && !previousIsCurrent && (
             <div className="border-l border-light-gray h-full mr-4 -ml-6" />
@@ -132,6 +141,7 @@ export const Tabs = () => {
   const { asPath, push } = useRouter();
   const { localize } = useLocalizedText();
   const { t } = useTranslation('workspaces');
+  const { trackEvent } = useTracking();
 
   const { workspace } = useWorkspace();
   const [tabs, setTabs] = useState<Set<string>>(
@@ -196,6 +206,11 @@ export const Tabs = () => {
 
   const close = useCallback(
     (tab: string) => {
+      trackEvent({
+        category: 'Tabs',
+        name: 'Close tab',
+        action: 'click',
+      });
       setTabs((prev) => {
         const prevTabs = Array.from(prev);
         const tabIndex = prevTabs.indexOf(tab);
@@ -213,14 +228,19 @@ export const Tabs = () => {
         return new Set(newTabs);
       });
     },
-    [workspace, push, asPath]
+    [trackEvent, workspace.id, asPath, push]
   );
 
   const closeAll = useCallback(() => {
+    trackEvent({
+      category: 'Tabs',
+      name: 'Close all tabs',
+      action: 'click',
+    });
     setTabs(new Set());
     Storage.remove(`__tabs_${workspace.id}`);
     push(`/workspaces/${workspace.id}`);
-  }, [push, workspace.id]);
+  }, [push, trackEvent, workspace.id]);
 
   const getTitle = useCallback(
     (tab: string) => {

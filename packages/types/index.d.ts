@@ -3772,6 +3772,29 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.BadParametersError;
         }
     }
+    namespace TestAutomation {
+        namespace Parameters {
+            export type AutomationSlug = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            automationSlug: Parameters.AutomationSlug;
+        }
+        export interface RequestBody {
+            /**
+             * Entire body will be passed as a payload to the triggered automation
+             */
+            payload?: Prismeai.AnyValue;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.AnyValue;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace UninstallAppInstance {
         namespace Parameters {
             export type Slug = string;

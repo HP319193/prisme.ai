@@ -15,6 +15,7 @@ import AppsProvider, { useApps } from '../../providers/Apps/AppsProvider';
 import SearchInput from '../../components/Navigation/SearchInput';
 import useScrollListener from '../../components/useScrollListener';
 import { incrementName } from '../../utils/incrementName';
+import { TrackingCategory, useTracking } from '../../components/Tracking';
 
 interface AppStoreProps {
   visible: boolean;
@@ -26,23 +27,22 @@ export const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
   const { t: errorT } = useTranslation('errors');
   const { localize } = useLocalizedText();
   const { ref, bottom } = useScrollListener<HTMLDivElement>({ margin: -1 });
-  const {
-    apps,
-    loading,
-    filters,
-    setFilters,
-    hasMore,
-    fetchNextApps,
-  } = useApps();
+  const { apps, loading, filters, setFilters, hasMore, fetchNextApps } =
+    useApps();
   const {
     installApp,
     workspace,
     workspace: { id: workspaceId },
   } = useWorkspace();
   const { push } = useRouter();
+  const { trackEvent } = useTracking();
 
   const onAppClick = useCallback(
     async (id: string) => {
+      trackEvent({
+        name: 'Add App',
+        action: 'click',
+      });
       try {
         const slug = incrementName(
           id,
@@ -63,7 +63,15 @@ export const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
       }
       onCancel();
     },
-    [errorT, installApp, onCancel, push, workspace.imports, workspaceId]
+    [
+      errorT,
+      installApp,
+      onCancel,
+      push,
+      trackEvent,
+      workspace.imports,
+      workspaceId,
+    ]
   );
 
   useEffect(() => {
@@ -84,11 +92,15 @@ export const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
         <div className="flex items-center justify-between">
           <SearchInput
             value={filters.query || ''}
-            onChange={(query) =>
+            onChange={(query) => {
+              trackEvent({
+                name: 'Search App',
+                action: 'keydown',
+              });
               setFilters({
                 query,
-              })
-            }
+              });
+            }}
             placeholder={t('apps.search')}
           />
         </div>
@@ -137,9 +149,11 @@ export const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
 
 const AppStoreWithProvider = (props: AppStoreProps) => {
   return (
-    <AppsProvider>
-      <AppsStore {...props} />
-    </AppsProvider>
+    <TrackingCategory category="Apps">
+      <AppsProvider>
+        <AppsStore {...props} />
+      </AppsProvider>
+    </TrackingCategory>
   );
 };
 

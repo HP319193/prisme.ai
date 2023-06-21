@@ -4,6 +4,7 @@ import { ReactElement, ReactNode, useState } from 'react';
 import { useWorkspaces } from '../../providers/Workspaces';
 import Navigation from './Components/Navigation';
 import Expand from '../../components/Navigation/Expand';
+import { TrackingCategory, useTracking } from '../../components/Tracking';
 
 interface AccountLayoutProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ interface AccountLayoutProps {
 const AccountLayout = ({ children }: AccountLayoutProps) => {
   const { workspaces } = useWorkspaces();
   const [fullSidebar, setFullSidebar] = useState(true);
+  const { trackEvent } = useTracking();
   return (
     <Layout Header={<Header />}>
       <div className="flex flex-row h-full">
@@ -27,7 +29,13 @@ const AccountLayout = ({ children }: AccountLayoutProps) => {
             />
             <Expand
               expanded={fullSidebar}
-              onToggle={() => setFullSidebar(!fullSidebar)}
+              onToggle={() => {
+                trackEvent({
+                  name: `${fullSidebar ? 'Minimize' : 'Expand'} sidebar`,
+                  action: 'click',
+                });
+                setFullSidebar(!fullSidebar);
+              }}
             />
           </div>
         </Layout>
@@ -40,7 +48,11 @@ const AccountLayout = ({ children }: AccountLayoutProps) => {
 };
 
 export const getLayout = (page: ReactElement) => {
-  return <AccountLayout>{page}</AccountLayout>;
+  return (
+    <TrackingCategory category="User account">
+      <AccountLayout>{page}</AccountLayout>
+    </TrackingCategory>
+  );
 };
 
 export default AccountLayout;
