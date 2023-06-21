@@ -106,7 +106,7 @@ const PlayView = () => {
   return (
     <div className="flex flex-row flex-1 min-w-[40vw]">
       {hasParam && (
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-1">
           <div className="font-bold">{t('automations.play.parameters')}</div>
           <SchemaForm
             schema={schema}
@@ -186,7 +186,7 @@ export const PlayPanel = (props: any) => {
   return (
     <Popover
       title={({ setOpen }) => (
-        <div className="flex flex-1 justify-between">
+        <div className="flex flex-1 justify-between -m-6">
           {t('automations.play.title')}
           <button onClick={() => setOpen(false)}>
             <CloseCircleOutlined />
