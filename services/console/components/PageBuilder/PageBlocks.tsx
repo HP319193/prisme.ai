@@ -5,11 +5,13 @@ import AddBlock from './AddBlock';
 import { EditOutlined } from '@ant-design/icons';
 import { BlockPreview } from './BlockPreview';
 import { useTranslation } from 'next-i18next';
+import { useTracking } from '../Tracking';
 
 export const PageBlocks = () => {
   const { t } = useTranslation('workspaces');
   const { setEditBlock, value } = usePageBuilder();
   const containerEl = useRef<HTMLDivElement>(null);
+  const { trackEvent } = useTracking();
 
   return (
     <div
@@ -29,7 +31,13 @@ export const PageBlocks = () => {
                   <div className="flex flex-1 flex-col max-w-full overflow-hidden relative p-8 surface-section border-slate-100 bg-white border height-[18rem] rounded-[1rem]">
                     <button
                       className="flex font-bold flex-1 justify-between focus:outline-none"
-                      onClick={() => setEditBlock(key)}
+                      onClick={() => {
+                        trackEvent({
+                          name: 'Edit Block',
+                          action: 'click',
+                        });
+                        setEditBlock(key);
+                      }}
                     >
                       {t('pages.blocks.name', { context: slug })}
                       <EditOutlined />

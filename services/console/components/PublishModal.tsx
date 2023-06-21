@@ -9,6 +9,7 @@ import { usePrevious } from '../utils/usePrevious';
 import useLocalizedText from '../utils/useLocalizedText';
 import api from '../utils/api';
 import { useWorkspace } from '../providers/Workspace';
+import { useTracking } from './Tracking';
 
 interface PublishModalProps {
   visible: boolean;
@@ -22,6 +23,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   const [publishSlug, setPublishSlug] = useState('');
   const [alreadyPublished, setAlreadyPublished] = useState(false);
   const prevWorkspaceId = usePrevious(workspace.id);
+  const { trackEvent } = useTracking();
 
   const getCurrentlyPublishedApp = useCallback(async () => {
     const currentlyPublishedApp = await api.getApps({
@@ -49,6 +51,10 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
   }, [getCurrentlyPublishedApp, workspace.id, prevWorkspaceId]);
 
   const onConfirm = useCallback(async () => {
+    trackEvent({
+      name: 'Publish as App',
+      action: 'click',
+    });
     try {
       await api.publishApp({
         workspaceId: workspace.id,

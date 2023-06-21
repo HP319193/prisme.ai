@@ -3,9 +3,11 @@ import Image from 'next/image';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import { useAutomationBuilder } from './context';
 import plus from '../../icons/plus.svg';
+import { useTracking } from '../Tracking';
 
 export const EmptyBlock: FC<NodeProps> = ({ data = {}, id }) => {
   const { addInstruction } = useAutomationBuilder();
+  const { trackEvent } = useTracking();
 
   return (
     <>
@@ -30,6 +32,10 @@ export const EmptyBlock: FC<NodeProps> = ({ data = {}, id }) => {
             <button
               className="flex items-center justify-center bg-graph-accent text-white rounded w-[1.625rem] h-[1.625rem] !rounded-[0.3rem]"
               onClick={() => {
+                trackEvent({
+                  name: 'Add Instruction',
+                  action: 'click',
+                });
                 addInstruction(data.parent, data.index);
               }}
             >

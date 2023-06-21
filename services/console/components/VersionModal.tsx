@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../providers/Workspace';
 import api from '../utils/api';
+import { useTracking } from './Tracking';
 
 interface VersionModalProps {
   visible: boolean;
@@ -16,8 +17,13 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
   const { push } = useRouter();
+  const { trackEvent } = useTracking();
 
   const onConfirm = useCallback(async () => {
+    trackEvent({
+      name: 'Create a new Version',
+      action: 'click',
+    });
     try {
       await api.workspaces(workspace.id).versions.create({ description });
       notification.success({
@@ -34,7 +40,7 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
         },
       });
     } catch (e) {}
-  }, [description, push, t, workspace.id]);
+  }, [description, push, t, trackEvent, workspace.id]);
 
   return (
     <Modal

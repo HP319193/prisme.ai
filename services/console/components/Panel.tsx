@@ -9,6 +9,7 @@ import {
 import LeftIcon from '../icons/chevron.svgr';
 import Storage from '../utils/Storage';
 import { useTranslation } from 'next-i18next';
+import { useTracking } from './Tracking';
 
 const noop = () => null;
 interface PanelProps {
@@ -17,6 +18,7 @@ interface PanelProps {
   onVisibleChange?: (v: boolean) => void;
   className?: string;
   onBack?: () => void;
+  context?: 'automations' | 'pages';
 }
 export const Panel: FC<PanelProps> = ({
   visible,
@@ -24,11 +26,13 @@ export const Panel: FC<PanelProps> = ({
   onVisibleChange = noop,
   onBack,
   className,
+  context,
   children,
 }) => {
   const { t } = useTranslation('workspaces');
   const [hidden, setHidden] = useState(true);
   const [large, setLarge] = useState(!!Storage.get('__panel__large'));
+  const { trackEvent } = useTracking();
 
   useEffect(() => {
     if (hidden) {
@@ -47,13 +51,21 @@ export const Panel: FC<PanelProps> = ({
     setLarge((prev) => {
       const large = !prev;
       if (large) {
+        trackEvent({
+          name: 'Reduce panel width',
+          action: 'click',
+        });
         Storage.set('__panel__large', 1);
       } else {
+        trackEvent({
+          name: 'Enlarge panel width',
+          action: 'click',
+        });
         Storage.remove('__panel__large');
       }
       return large;
     });
-  }, []);
+  }, [trackEvent]);
 
   return (
     <div
@@ -76,7 +88,13 @@ export const Panel: FC<PanelProps> = ({
         <div className="flex items-center flex-row">
           {onBack && (
             <button
-              onClick={onBack}
+              onClick={() => {
+                trackEvent({
+                  name: 'Back to blocks list',
+                  action: 'click',
+                });
+                onBack();
+              }}
               className="flex mx-1 w-[20px] items-center"
             >
               <span className="flex rotate-90">
@@ -106,7 +124,13 @@ export const Panel: FC<PanelProps> = ({
             <Button
               variant="grey"
               className="flex justify-center items-center !text-white"
-              onClick={() => setHidden(true)}
+              onClick={() => {
+                trackEvent({
+                  name: 'Close panel',
+                  action: 'click',
+                });
+                setHidden(true);
+              }}
             >
               <CloseCircleOutlined />
             </Button>

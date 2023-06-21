@@ -12,6 +12,7 @@ import { useAutomationBuilder } from '../context';
 import { truncate } from '../../../utils/strings';
 import useLocalizedText from '../../../utils/useLocalizedText';
 import removeAccent from 'remove-accents';
+import { useTracking } from '../../Tracking';
 
 export interface InstructionSelectionProps {
   onSubmit: (key: string) => void;
@@ -25,6 +26,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { instructionsSchemas } = useAutomationBuilder();
+  const { trackEvent } = useTracking();
 
   const [search, setSearch] = useState('');
 
@@ -37,15 +39,16 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
           { name: string; description?: string; slug: string }[]
         ][]
       >((prev, [name, list, more]) => {
-        const matching = (search
-          ? Object.keys(list).filter((slug) =>
-              ((list[slug] || {}).search || '')
-                .toLowerCase()
-                .match(
-                  `${removeAccent(search)}`.replace(/\s/g, '.*').toLowerCase()
-                )
-            )
-          : Object.keys(list)
+        const matching = (
+          search
+            ? Object.keys(list).filter((slug) =>
+                ((list[slug] || {}).search || '')
+                  .toLowerCase()
+                  .match(
+                    `${removeAccent(search)}`.replace(/\s/g, '.*').toLowerCase()
+                  )
+              )
+            : Object.keys(list)
         ).map((name) => ({
           name: list[name]?.name || name,
           slug: name,
@@ -85,7 +88,13 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
               {instructions.map(({ name, description, slug }) => (
                 <Button
                   key={slug}
-                  onClick={() => onSubmit(slug)}
+                  onClick={() => {
+                    trackEvent({
+                      name: 'Choose Block',
+                      action: 'click',
+                    });
+                    onSubmit(slug);
+                  }}
                   className="w-full text-left !h-fit !p-0"
                 >
                   <ListItem

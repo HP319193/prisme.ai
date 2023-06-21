@@ -1,5 +1,13 @@
 const { i18n } = require('./next-i18next.config');
 
+function getTracking() {
+  try {
+    return JSON.parse(process.env.TRACKING) || {};
+  } catch {
+    return {};
+  }
+}
+
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
@@ -13,6 +21,7 @@ module.exports = {
     SUGGESTIONS_ENDPOINT: process.env.SUGGESTIONS_ENDPOINT || '',
     BILLING_HOME: process.env.BILLING_HOME || '',
     BILLING_USAGE: process.env.BILLING_USAGE || '',
+    TRACKING: getTracking(),
   },
   webpack(config) {
     config.module.rules.push({

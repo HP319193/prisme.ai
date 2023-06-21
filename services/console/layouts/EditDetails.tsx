@@ -12,7 +12,8 @@ import {
 } from '@prisme.ai/design-system';
 import { PopoverProps } from '@prisme.ai/design-system/lib/Components/Popover';
 import { useTranslation } from 'next-i18next';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTracking } from '../components/Tracking';
 import useLocalizedText from '../utils/useLocalizedText';
 
 interface EditDetailsprops extends Omit<PopoverProps, 'content'> {
@@ -31,10 +32,13 @@ export const EditDetails = ({
   onDelete,
   context,
   disabled,
+  onOpenChange,
   ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
+  const { trackEvent } = useTracking();
+  const [open, setOpen] = useState(false);
 
   const confirmDelete = useCallback(() => {
     const tOptions = {
@@ -54,12 +58,32 @@ export const EditDetails = ({
     });
   }, [context, localize, onDelete, t, value.name, value.slug]);
 
+  const initialOpenState = useRef(false);
+  useEffect(() => {
+    if (!initialOpenState.current) {
+      initialOpenState.current = true;
+      return;
+    }
+    trackEvent({
+      name: `${open ? 'Open' : 'Close'} Details Panel`,
+      action: 'click',
+    });
+  }, [open, trackEvent]);
+
   return (
     <Popover
       title={({ setOpen }) => (
         <div className="flex flex-1 justify-between">
           {t('details.title', { context })}
-          <button onClick={() => setOpen(false)}>
+          <button
+            onClick={() => {
+              trackEvent({
+                name: 'Close Details Panel by clicking button',
+                action: 'click',
+              });
+              setOpen(false);
+            }}
+          >
             <CloseCircleOutlined />
           </button>
         </div>
@@ -95,9 +119,13 @@ export const EditDetails = ({
         />
       )}
       overlayClassName="min-w-[50%]"
+      onOpenChange={(v) => {
+        setOpen(v);
+        onOpenChange?.(v);
+      }}
       {...props}
     >
-      <button className="text-lg text-gray focus:outline-none">
+      <button type="button" className="text-lg text-gray focus:outline-none">
         <SettingOutlined />
       </button>
     </Popover>

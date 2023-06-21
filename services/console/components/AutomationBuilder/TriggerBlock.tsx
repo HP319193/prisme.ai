@@ -7,6 +7,7 @@ import styles from './styles';
 import { LinkOutlined } from '@ant-design/icons';
 import { Button, notification } from '@prisme.ai/design-system';
 import { truncate } from '../../utils/strings';
+import { useTracking } from '../Tracking';
 
 interface TriggerDisplayProps {
   value: Prismeai.When;
@@ -17,6 +18,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
   endpoint = '',
 }) => {
   const { t } = useTranslation('workspaces');
+  const { trackEvent } = useTracking();
 
   const copyEndpoint = () => {
     globalThis.navigator.clipboard.writeText(endpoint);
@@ -57,6 +59,10 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
               a: (
                 <Button
                   onClick={(e) => {
+                    trackEvent({
+                      name: 'Copy endpoint',
+                      action: 'click',
+                    });
                     e.preventDefault();
                     e.stopPropagation();
                     copyEndpoint();
@@ -87,6 +93,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
 export const TriggerBlock: FC<NodeProps> = (props) => {
   const { data } = props;
   const { editTrigger } = useAutomationBuilder();
+  const { trackEvent } = useTracking();
   const triggerData = useMemo(
     () => ({
       ...data,
@@ -101,7 +108,13 @@ export const TriggerBlock: FC<NodeProps> = (props) => {
         {...props}
         data={triggerData}
         removable={false}
-        onEdit={editTrigger}
+        onEdit={() => {
+          trackEvent({
+            name: 'Display Trigger Edition',
+            action: 'click',
+          });
+          editTrigger();
+        }}
         displayAs="trigger"
       />
       {!data.withButton && (
