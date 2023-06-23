@@ -80,12 +80,14 @@
       "activity": "Activity",
       "automations": "Automations",
       "pages": "Pages",
-      "apps": "Apps"
+      "apps": "Apps",
+      "blocks": "Blocks"
     },
     "add": {
       "automation": "Add an Automation",
       "page": "Add a Page",
-      "app": "Install an App"
+      "app": "Install an App",
+      "block": "Create a Block"
     },
     "search": "Search",
     "sidebar_extend": "Extend navigation",
@@ -201,7 +203,7 @@
     "save": {
       "label": "Save",
       "toast": "Automation has been saved",
-      "error": "La sauvegarde a échoué",
+      "error": "Saving failed",
       "reason": "{{context}}",
       "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
       "reason_InvalidSlugError": "Slug contains invalid characters."
@@ -1345,6 +1347,49 @@
       }
     },
     "reload": "Reload page"
+  },
+  "blocks": {
+    "create": {
+      "defaultName": "Block"
+    },
+    "source": {
+      "label": "See code",
+      "close": "Hide code",
+      "help": "Displays the structure of the automation in raw format"
+    },
+    "details": {
+      "title": "Edit details",
+      "name": {
+        "label": "Block title"
+      },
+      "description": {
+        "label": "Description"
+      },
+      "slug": {
+        "label": "Slug"
+      }
+    },
+    "save": {
+      "label": "Save",
+      "toast": "Block has been saved",
+      "error": "Saving failed",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
+      "reason_InvalidSlugError": "Slug contains invalid characters."
+    },
+    "duplicate": {
+      "help": "Duplicate Block",
+      "success": "Block has been duplicated",
+      "error": "An error occurs while trying to duplicate Block."
+    },
+    "preview": {
+      "label": "Preview",
+      "config": {
+        "label": "Block setup",
+        "reset": "Reset to default values"
+      }
+    },
+    "edit": "Edit"
   },
   "expert": {
     "show": "Edit the source code",

@@ -548,6 +548,8 @@ components:
         properties:
           additionalProperties:
             $ref: '#/components/schemas/TypedArgument'
+        title:
+          type: string
         description:
           $ref: '#/components/schemas/LocalizedText'
         items:

@@ -23,7 +23,7 @@ export interface WorkspaceContext {
   events: Events;
   fetchWorkspace: () => void;
   saveWorkspace: (
-    workspace: Prismeai.Workspace
+    workspace: Partial<Prismeai.Workspace>
   ) => Promise<Prismeai.Workspace | null>;
   saving: boolean;
   deleteWorkspace: () => Promise<Prismeai.Workspace | null>;
@@ -33,6 +33,10 @@ export interface WorkspaceContext {
   creatingAutomation: boolean;
   createPage: (page: Prismeai.Page) => Promise<Prismeai.Page | null>;
   creatingPage: boolean;
+  createBlock: (
+    block: Prismeai.Block & { slug: string }
+  ) => Promise<Prismeai.Block | null>;
+  creatingBlock: boolean;
   installApp: (
     app: Prismeai.AppInstance
   ) => Promise<Prismeai.AppInstance | null>;
@@ -64,6 +68,8 @@ export const WorkspaceProvider = ({
     useState<WorkspaceContext['creatingAutomation']>(false);
   const [creatingPage, setCreatingPage] =
     useState<WorkspaceContext['creatingPage']>(false);
+  const [creatingBlock, setCreatingBlock] =
+    useState<WorkspaceContext['creatingBlock']>(false);
   const [events, setEvents] = useState<Events>();
   const [notFound, setNotFound] = useState(false);
 
@@ -202,6 +208,25 @@ export const WorkspaceProvider = ({
     [fetchWorkspace, workspace]
   );
 
+  const createBlock: WorkspaceContext['createBlock'] = useCallback(
+    async ({ slug, ...block }) => {
+      if (!workspace?.id) return null;
+      setCreatingBlock(true);
+      const newWorkspace = await saveWorkspace({
+        id: workspace.id,
+        blocks: { ...workspace.blocks, [slug]: block },
+      });
+      if (!newWorkspace) {
+        throw new Error('Fail to create block');
+      }
+      setWorkspace(newWorkspace as Workspace);
+      setTimeout(() => setCreatingBlock(false), 200);
+      fetchWorkspace();
+      return { slug, ...block };
+    },
+    [fetchWorkspace, saveWorkspace, workspace]
+  );
+
   const prevId = useRef<string>('');
   useEffect(() => {
     if (prevId.current === id) return;
@@ -237,6 +262,8 @@ export const WorkspaceProvider = ({
         createPage,
         creatingPage,
         installApp,
+        createBlock,
+        creatingBlock,
       }}
     >
       {children}
