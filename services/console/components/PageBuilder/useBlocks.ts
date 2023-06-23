@@ -60,9 +60,9 @@ export const useBlocks = () => {
         ...variant,
       })),
       ...(workspaceBlocks
-        ? Object.keys(workspaceBlocks).map((key) => ({
-            ...workspaceBlocks[key],
-            name: workspaceBlocks[key].name || key,
+        ? Object.entries(workspaceBlocks).map(([key, block]) => ({
+            ...block,
+            name: block.name || key,
             from: name,
             slug: key,
             icon: photo || workspaceIcon.src,

@@ -85,7 +85,7 @@ export async function getBlockComponent({
         {}
       ),
       ...Object.entries(apps).reduce(
-        (prev, [, { appSlug, blocks }]) => ({
+        (prev, [, { blocks }]) => ({
           ...prev,
           ...blocks.reduce(
             (appBlocks, { slug, url }) => ({
@@ -123,6 +123,7 @@ export const useBlockComponent = (blockName: string) => {
         blockName,
       });
       try {
+        // Use a setter because block is a function
         setBlock(() => block);
       } catch {}
       setLoading(false);

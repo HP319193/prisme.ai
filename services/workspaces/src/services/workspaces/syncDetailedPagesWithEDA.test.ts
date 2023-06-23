@@ -10,6 +10,7 @@ const USER_ID = 'myUserId';
 const WORKSPACE_ID = 'workspaceId';
 const WORKSPACE_SLUG = 'workspaceSlug';
 jest.mock('nanoid', () => ({ nanoid: () => WORKSPACE_ID }));
+jest.mock('heapdump', () => () => ({}));
 
 const getMockedAccessManager = (get?: any) => {
   const accessManager: any = {
@@ -24,6 +25,7 @@ const getMockedAccessManager = (get?: any) => {
     delete: jest.fn(),
     deleteMany: jest.fn(),
     findRoles: jest.fn(() => []),
+    saveRole: jest.fn(() => []),
   };
   accessManager.as = () => accessManager;
   return accessManager;
@@ -214,7 +216,9 @@ describe('Sync DetailedPages with the EDA', () => {
     ).toMatchObject(
       expect.objectContaining({
         blocks: {
-          Editor: 'updated url',
+          Editor: {
+            url: 'updated url',
+          },
         },
       })
     );

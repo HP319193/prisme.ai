@@ -9,7 +9,6 @@ import PageEditBlockForm from './Panel/PageEditBlockForm';
 import { useTranslation } from 'next-i18next';
 import useBlocks, { BlockInCatalog } from './useBlocks';
 import EmptyPage from './EmptyPage';
-import { useTracking } from '../Tracking';
 
 interface PageBuilderProps {
   value: Prismeai.Page['blocks'];
@@ -33,7 +32,6 @@ function addKeyToBlocks(
 
 export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
   const { t } = useTranslation('workspaces');
-  const { trackEvent } = useTracking();
 
   const [blocks, _setBlocks] = useState<BlocksWithKeys>(addKeyToBlocks(value));
 

@@ -169,12 +169,6 @@ const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
     return <IFrameBlock url={url} {...props} />;
   }
 
-  console.error(`Invalid Block : `, {
-    name,
-    url,
-    ...props,
-  });
-
   return null;
 };
 

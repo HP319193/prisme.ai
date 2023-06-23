@@ -41,7 +41,7 @@ export const BlockLoader: TBlockLoader = ({
   const debug = useDebug();
 
   useEffect(() => {
-    setConfig(({ blocks }: any) => ({ ...initialConfig }));
+    setConfig(initialConfig);
   }, [initialConfig]);
 
   useEffect(() => {
