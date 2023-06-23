@@ -645,14 +645,38 @@ components:
         url:
           type: string
           description: 'A block can be a javascript bundled file. Host it on the internet and put its url here.'
+          deprecated: true
         edit:
           $ref: '#/components/schemas/TypedArgument'
+          deprecated: true
         block:
           type: string
           description: A block can extends another one by giving its name here
+          deprecated: true
         config:
           $ref: '#/components/schemas/AnyValue'
           description: 'default config applied to the Block. Usefull for extended Blocks.'
+          deprecated: true
+        blocks:
+          type: array
+          items:
+            type: object
+            required:
+              - slug
+            properties:
+              slug:
+                type: string
+              appInstance:
+                type: string
+              onInit:
+                type: string
+              updateOn:
+                type: string
+              automation:
+                type: string
+            additionalProperties: true
+        schema:
+          $ref: '#/components/schemas/TypedArgument'
 
     PageMeta:
       type: object
@@ -750,11 +774,21 @@ components:
               slug:
                 type: string
               blocks:
-                description: Map block slugs to their URL
-                additionalProperties:
-                  type: string
-                example:
-                  Dialog Manager.config: https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js
+                oneOf:
+                  - type: object
+                    additionalProperties:
+                      $ref: '#/components/schemas/Block'
+                    description: Map block slugs to their specification
+                    example:
+                      Dialog Manager.config:
+                        url: https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js
+                  - type: object
+                    additionalProperties:
+                      type: string
+                    description: Map block slugs to their URL
+                    example:
+                      Dialog Manager.config: https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js
+                    deprecated: true
         public:
           type: boolean
           description: 'Indicates whether this page is public. Reflects page permissions and cannot be set directly'
