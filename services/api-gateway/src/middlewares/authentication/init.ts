@@ -29,6 +29,8 @@ export async function init(app: Application) {
     disableTouch: true, // Without this, sessions TTL are reset on every request
   });
 
+  // INSERER ICI L'INIT D'OPENID CLIENT
+
   // First check for access token to generate their session before express-session
   app.use(async function (req, res, next) {
     const token = req.headers[syscfg.SESSION_HEADER];

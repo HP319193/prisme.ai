@@ -34,6 +34,9 @@ components:
       type: apiKey
       in: header
       name: X-Prismeai-API-Key
+    OpenID:
+      type: openIdConnect
+      openIdConnectUrl: https://api.studio.prisme.ai/oidc/.well-known/openid-configuration
 
   schemas:
     AnyValue: {}

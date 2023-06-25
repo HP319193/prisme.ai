@@ -1,11 +1,14 @@
 import QueryString from 'qs';
+import crypto from 'crypto';
 import Fetcher from './fetcher';
+import base64URLEncode from 'base64url';
 import { Event, Workspace } from './types';
 import { Events } from './events';
 import { removedUndefinedProperties } from './utils';
 import WorkspacesEndpoint from './endpoints/workspaces';
 import ApiError from './ApiError';
 import UsersEndpoint from './endpoints/users';
+import HTTPError from './HTTPError';
 
 interface PageWithMetadata extends Prismeai.Page {
   createdAt: string;
@@ -25,22 +28,123 @@ export type UserPermissions = {
   };
 };
 
+export interface ApiOptions {
+  host: string;
+  oidc?: {
+    url: string;
+    clientId: string;
+    // clientSecret: string;
+    redirectUri: string;
+  };
+}
+
+export interface AccessToken {
+  access_token: string;
+  id_token: string;
+  scope: string;
+  expiresIn: number;
+  token_type: 'Bearer';
+}
+
+export interface InteractiveSignin {
+  interaction: string;
+  login: string;
+  password: string;
+  remember?: boolean;
+}
+
 export class Api extends Fetcher {
+  private opts: Required<ApiOptions>;
   private sessionId?: string;
   private _user?: Prismeai.User & { sessionId?: string };
+
+  constructor(opts: ApiOptions) {
+    super(opts.host);
+    this.opts = {
+      ...opts,
+      oidc: {
+        url: 'http://studio.local.prisme.ai:3001',
+        clientId: 'local-client-id',
+        redirectUri: 'http://studio.local.prisme.ai:3000/signin',
+        ...opts.oidc,
+      },
+    };
+  }
 
   get user() {
     return this._user;
   }
 
   async me() {
-    const me = await this.get('/me');
+    const url = new URL('/oidc/me', this.opts.oidc.url);
+    const me = await this.get(url.toString());
+    if (!me.id && me.sub) {
+      me.id = me.sub;
+    }
     this.sessionId = me.sessionId;
     this._user = me;
     return me;
   }
 
-  async signin(
+  getOIDCAuthEndpoint() {
+    const url = new URL('/oidc/auth', this.opts.oidc.url);
+    url.searchParams.set('response_type', 'code');
+    url.searchParams.set('response_mode', 'query'); // Send the final authorization code as a query param to the redirect uri
+    url.searchParams.set('redirect_uri', this.opts.oidc?.redirectUri || '');
+    url.searchParams.set('scope', 'openid profile email settings');
+    url.searchParams.set('client_id', this.opts?.oidc?.clientId || '');
+
+    url.searchParams.set('code_challenge_method', 'S256');
+    const codeVerifier = btoa(
+      encodeURIComponent(crypto.randomBytes(32).toString('base64'))
+    );
+    const codeChallenge = base64URLEncode(
+      crypto.createHash('sha256').update(codeVerifier).digest()
+    );
+    url.searchParams.set('code_challenge', codeChallenge);
+    return {
+      url: url.toString(),
+      codeVerifier,
+    };
+  }
+
+  async signin(body: InteractiveSignin): Promise<{ redirectTo: string }> {
+    const url = new URL(
+      `/oidc/interaction/${body.interaction}/login`,
+      this.opts.oidc.url
+    );
+
+    // Do not follow redirects as we need to get redirected from browser itself to save final token in local storage
+    await this.post(url.toString(), new URLSearchParams(body as any), {
+      redirect: 'manual',
+    });
+    const redirectTo = new URL(
+      `/oidc/auth/${body.interaction}`,
+      this.opts.oidc.url
+    );
+    return { redirectTo: redirectTo.toString() };
+  }
+
+  async getToken(
+    authorizationCode: string,
+    codeVerifier: string
+  ): Promise<AccessToken> {
+    this.token = null;
+    const url = new URL('/oidc/token', this.opts.oidc.url);
+    const token = await this.post<AccessToken>(
+      url.toString(),
+      new URLSearchParams({
+        grant_type: 'authorization_code',
+        code: authorizationCode,
+        code_verifier: codeVerifier,
+        client_id: this.opts.oidc.clientId,
+        redirect_uri: this.opts.oidc.redirectUri,
+      })
+    );
+    return token;
+  }
+
+  async signinOLD(
     email: string,
     password: string
   ): Promise<
@@ -728,4 +832,4 @@ export class Api extends Fetcher {
   }
 }
 
-export default new Api('https://api.eda.prisme.ai');
+export default new Api({ host: 'https://api.eda.prisme.ai' });

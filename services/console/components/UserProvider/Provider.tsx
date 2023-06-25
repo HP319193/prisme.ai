@@ -96,8 +96,8 @@ export const UserProvider: FC<UserProviderProps> = ({
     []
   );
 
-  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] = useCallback(
-    async (email: string, language: string) => {
+  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] =
+    useCallback(async (email: string, language: string) => {
       setLoading(true);
       setError(undefined);
       setSuccess(undefined);
@@ -110,9 +110,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         setError(e as ApiError);
         return null;
       }
-    },
-    []
-  );
+    }, []);
 
   const passwordReset: UserContext['passwordReset'] = useCallback(
     async (token: string, password: string) => {
@@ -142,13 +140,26 @@ export const UserProvider: FC<UserProviderProps> = ({
       setError(undefined);
       setSuccess(undefined);
       try {
-        const { token, ...user } = await api.signin(email, password);
-        api.token = token;
-        Storage.set('auth-token', token);
-        setUser(user);
-        setLoading(false);
-        return user;
+        const urlParams = new URLSearchParams(window.location.search);
+        const interaction = urlParams.get('interaction');
+        if (!interaction) {
+          throw new ApiError(
+            {
+              error: 'InvalidAuth',
+              message: 'Missing interaction uid',
+              details: {},
+            },
+            400
+          );
+        }
+        const res = await api.signin({ login: email, password, interaction });
+        if (res.redirectTo) {
+          console.log('WILL REDIRECT TO ', res.redirectTo);
+          window.location.href = res.redirectTo;
+        }
+        return true;
       } catch (e) {
+        console.log(e);
         const { error } = e as ApiError;
 
         api.token = null;
@@ -165,7 +176,7 @@ export const UserProvider: FC<UserProviderProps> = ({
             );
           }, 2000);
         }
-        return null;
+        return false;
       }
     },
     [push]
@@ -273,6 +284,53 @@ export const UserProvider: FC<UserProviderProps> = ({
     }
   }, [anonymous, push, redirectTo, route, signout]);
 
+  // 1. Initialize authentication flow
+  const initAuthentication: UserContext['initAuthentication'] =
+    useCallback(() => {
+      const { url, codeVerifier } = api.getOIDCAuthEndpoint();
+      Storage.set('code-verifier', codeVerifier);
+      window.location.href = url;
+    }, []);
+
+  // 3. Final step : exchange our authorization code with an access token
+  const completeAuthentication: UserContext['completeAuthentication'] =
+    useCallback(async (authorizationCode: string) => {
+      setLoading(true);
+      setError(undefined);
+      setSuccess(undefined);
+      try {
+        const codeVerifier = Storage.get('code-verifier');
+        const { access_token } = await api.getToken(
+          authorizationCode,
+          codeVerifier
+        );
+        api.token = access_token;
+        Storage.set('access-token', access_token);
+        const user = await api.me();
+        console.log('RECEIVED MY PROFILE', user);
+        setUser(user);
+        setLoading(false);
+        return user;
+      } catch (e) {
+        api.token = null;
+        setUser(null);
+        setLoading(false);
+        setError(e as ApiError);
+        // const { error } = e as ApiError;
+        // if (error === 'ValidateEmailError') {
+        //   setTimeout(() => {
+        //     setError(undefined);
+        //     push(
+        //       `/validate?${new URLSearchParams({
+        //         email: email,
+        //       }).toString()}`
+        //     );
+        //   }, 2000);
+        // }
+        return null;
+      }
+    }, []);
+
   const initialFetch = useRef(fetchMe);
 
   useEffect(() => {
@@ -308,6 +366,8 @@ export const UserProvider: FC<UserProviderProps> = ({
         signin,
         signup,
         signout,
+        initAuthentication,
+        completeAuthentication,
         sendPasswordResetMail,
         passwordReset,
         sendValidationMail,

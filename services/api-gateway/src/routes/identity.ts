@@ -341,6 +341,83 @@ async function deleteMetaHandler(
 
 const app = express.Router();
 
+// // Very first route to be called
+// router.get("/auth/login", function (req, res, next) {
+//   const backToPath = (req.query.backTo as string) || "/private";
+//   const state = serializeAuthState({ backToPath });
+
+//   const authUrl = req.app.authClient!.authorizationUrl({
+//     scope: "openid email profile",
+//     state,
+//   });
+
+//   debug("setting state cookie %O", state);
+//   setAuthStateCookie(res, state);
+
+//   debug("redirecting to %s", authUrl);
+//   res.redirect(authUrl);
+// });
+
+// // This is what the provider will call in order to finish the process
+// router.get("/auth/callback", async (req, res, next) => {
+//   debug("/auth/callback");
+//   try {
+//     console.log("req.cookies", req.cookies);
+//     const state = getAuthStateCookie(req);
+//     debug("state %s", state);
+//     const { backToPath } = deserializeAuthState(state);
+//     debug("state %O", deserializeAuthState(state));
+//     const client = req.app.authClient;
+
+//     const params = client!.callbackParams(req);
+//     const tokenSet = await client!.callback(
+//       `${getDomain()}/auth/callback`,
+//       params,
+//       { state }
+//     );
+//     const user = await client!.userinfo(tokenSet);
+
+//     const sessionCookie = serialize({ tokenSet, user });
+//     setSessionCookie(res, sessionCookie);
+
+//     res.redirect(backToPath);
+//   } catch (err) {
+//     console.log("SOMETHING WENT WRONG", err);
+//     return next(err);
+//   }
+// });
+
+// // This is a logout mostly local to our app, that means
+// // that your session with the identity provider will be ketp intact.
+// router.get("/auth/logout", async (req, res, next) => {
+//   const client = req.app.authClient;
+//   const tokenSet = req.session?.tokenSet;
+
+//   try {
+//     await client!.revoke(tokenSet!.access_token!);
+//   } catch (err) {
+//     console.error("error revoking access_token", err);
+//   }
+//   clearSessionCookie(res);
+
+//   res.redirect("/");
+// });
+
+// // This does not work, it looks like google doesn't provider
+// // the necessary endpoints in the Discovery doc
+// router.get("/auth/logout/sso", async (req, res, next) => {
+//   const client = req.app.authClient;
+//   const tokenSet = req.session?.tokenSet;
+
+//   clearSessionCookie(res);
+
+//   const endSessionUrl = client!.endSessionUrl();
+//   res.redirect(endSessionUrl);
+// });
+
+// return router;
+// }
+
 app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/contacts`, findContactsHandler);
 

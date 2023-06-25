@@ -22,6 +22,11 @@ module.exports = {
     BILLING_HOME: process.env.BILLING_HOME || '',
     BILLING_USAGE: process.env.BILLING_USAGE || '',
     TRACKING: getTracking(),
+    OIDC_PROVIDER_URL:
+      process.env.OIDC_PROVIDER_URL ||
+      (process.env.API_URL && process.env.API_URL.replace('/v2', '')) ||
+      'http://studio.local.prisme.ai:3001',
+    OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID || 'local-client-id',
   },
   webpack(config) {
     config.module.rules.push({
@@ -51,7 +56,25 @@ module.exports = {
       },
       {
         source: '/signin',
-        headers: [xFrameOptions],
+        headers: [
+          xFrameOptions,
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: process.env.CONSOLE_HOST || '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization',
+          },
+          {
+            key: 'Access-Control-Allow-Credentials',
+            value: 'true',
+          },
+        ],
       },
       {
         source: '/signup',

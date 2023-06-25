@@ -11,6 +11,7 @@ import {
 import identityRoutes from './identity';
 import bodyParser from 'body-parser';
 import { init as initAuthentication } from '../middlewares';
+import { initRoutes as initOidcRoutes } from '../oidc';
 
 export default async function initRoutes(
   app: express.Application,
@@ -19,6 +20,8 @@ export default async function initRoutes(
   await initAuthentication(app);
   app.use(requestDecorator);
   app.use(httpLogger);
+
+  app.use('/oidc', initOidcRoutes());
 
   await initPipelines(app, gtwcfg);
 

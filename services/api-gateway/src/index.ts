@@ -1,5 +1,5 @@
 import express from 'express';
-require('express-async-errors');
+import 'express-async-errors';
 import helmet from 'helmet';
 import cors from 'cors';
 import { syscfg, GatewayConfig } from './config';

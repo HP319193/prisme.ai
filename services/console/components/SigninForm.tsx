@@ -1,7 +1,8 @@
+import { useRouter } from 'next/router';
 import { Form } from 'react-final-form';
 import { Button, Input } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useUser } from './UserProvider';
 import { Trans, useTranslation } from 'next-i18next';
 import LinkInTrans from './LinkInTrans';
@@ -23,13 +24,14 @@ interface SigninFormProps {
 
 export const SigninForm = ({ onSignin }: SigninFormProps) => {
   const { t } = useTranslation('sign');
-  const { loading, signin } = useUser();
+  const { loading, signin, initAuthentication, completeAuthentication } =
+    useUser();
   const [error, setError] = useState(false);
   const submit = useCallback(
     async ({ email, password }: Values) => {
-      const user = await signin(email, password);
-      setError(!user);
-      onSignin(user);
+      console.log('submit ', email, password);
+      const success = await signin(email, password);
+      setError(!success);
     },
     [onSignin, signin]
   );
@@ -43,6 +45,22 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
     }
     return errors;
   };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const interactionUid = urlParams.get('interaction');
+    const code = urlParams.get('code');
+    if (code) {
+      completeAuthentication(code).then((user) => {
+        setError(!user);
+        onSignin(user);
+      });
+    } else if (!interactionUid && !urlParams.get('error')) {
+      return initAuthentication();
+    } else if (interactionUid) {
+      console.log('GOOT ', interactionUid);
+    }
+  }, []);
 
   return (
     <Form onSubmit={submit} validate={validate}>
