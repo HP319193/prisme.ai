@@ -338,7 +338,9 @@ describe('Detailed pages', () => {
         },
         {
           blocks: {
-            myBlock: 'myBlockURL',
+            myBlock: {
+              url: 'myBlockURL',
+            },
           },
           slug: '',
         },

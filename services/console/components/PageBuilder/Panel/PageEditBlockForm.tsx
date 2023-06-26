@@ -21,6 +21,7 @@ const PageEditBlockForm = ({ blockId }: PageEditBlockFormProps) => {
   const editSchema =
     (editedBlock &&
       (editedBlock.edit ||
+        editedBlock.schema ||
         blocksSchemas.get(blockId) ||
         getEditSchema(editedBlock.slug))) ||
     null;

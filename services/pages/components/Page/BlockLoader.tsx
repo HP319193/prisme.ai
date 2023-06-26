@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api from '../../../console/utils/api';
+import interpolateBlock from '../../utils/interpolateBlocks';
 import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
 
@@ -25,6 +26,7 @@ export const BlockLoader: TBlockLoader = ({
   container,
 }) => {
   const { user } = useUser();
+  const [blockName, setBlockName] = useState(name);
   const [url, setUrl] = useState('');
   const [config, setConfig] = useState<typeof initialConfig>(initialConfig);
   const [appConfig, setAppConfig] = useState<any>();
@@ -55,7 +57,18 @@ export const BlockLoader: TBlockLoader = ({
       const { blocks: workspaceBlocks } =
         (page?.appInstances || []).find(({ slug }) => slug === '') || {};
       if (workspaceBlocks && workspaceBlocks[name]) {
-        setUrl(workspaceBlocks[name]);
+        const block = workspaceBlocks[name];
+        const { url = getBlockName('BlocksList'), blocks = undefined } =
+          typeof block === 'string' ? { url: block } : block;
+
+        if (blocks) {
+          setBlockName('BlocksList');
+          setConfig({
+            ...initialConfig,
+            blocks: interpolateBlock(blocks, initialConfig),
+          });
+        }
+        setUrl(url);
         return;
       }
       setUrl(getBlockName(name));
@@ -70,11 +83,22 @@ export const BlockLoader: TBlockLoader = ({
     }
 
     const debugUrl = debug.get(name);
+    const block = app.blocks[name];
     if (debugUrl) {
-      app.blocks[name] = debugUrl;
+      typeof block === 'string' ? block : (block.url = debugUrl);
     }
-    setUrl(app.blocks[name]);
-  }, [debug, name, page]);
+    const { url = getBlockName('BlocksList'), blocks = undefined } =
+      typeof block === 'string' ? { url: block } : block;
+
+    if (blocks) {
+      setBlockName('BlocksList');
+      setConfig({
+        ...initialConfig,
+        blocks: interpolateBlock(blocks, initialConfig),
+      });
+    }
+    setUrl(url);
+  }, [debug, name, page, initialConfig]);
 
   const { onInit, updateOn, automation } = initialConfig || {};
   const onBlockLoad = useCallback(() => {
@@ -179,7 +203,7 @@ export const BlockLoader: TBlockLoader = ({
 
   return (
     <BLoader
-      name={getBlockName(name)}
+      name={getBlockName(blockName)}
       url={url}
       appConfig={appConfig}
       onAppConfigUpdate={onAppConfigUpdate}

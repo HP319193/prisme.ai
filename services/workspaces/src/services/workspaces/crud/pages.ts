@@ -227,11 +227,13 @@ class Pages {
     if (!page.public && !permissionsAlreadyChecked) {
       await this.accessManager.get(SubjectType.Page, query);
     }
+
     // Delete legacy appConfig field
     page.appInstances = (page.appInstances || []).map((appInstance) => {
       delete (<any>appInstance).appConfig;
       return appInstance;
     });
+
     return { ...page, workspaceSlug: (<any>query).workspaceSlug };
   };
 
@@ -293,9 +295,9 @@ class Pages {
       filteredAppInstances.push({
         slug: '',
         blocks: Object.entries(workspace.blocks).reduce(
-          (prev, [slug, { url = '' }]) => ({
+          (prev, [slug, block]) => ({
             ...prev,
-            [slug]: url,
+            [slug]: block,
           }),
           {}
         ),
