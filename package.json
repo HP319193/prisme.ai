@@ -78,6 +78,7 @@
     "@types/inquirer": "^8.2.0",
     "@types/jest": "^27.0.2",
     "@types/js-cookie": "^3.0.1",
+    "@types/jsonpath": "^0.2.0",
     "@types/lodash.get": "^4.4.7",
     "@types/mustache": "^4.2.2",
     "@types/node-fetch": "^2.5.12",

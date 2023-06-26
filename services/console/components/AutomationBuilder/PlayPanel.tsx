@@ -12,6 +12,7 @@ import worskpaceSvg from '../../icons/workspace.svg';
 import components from '../SchemaForm/schemaFormComponents';
 import PlayIcon from '../../icons/play.svgr';
 import { useTracking } from '../Tracking';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 const PlayView = () => {
   const {
@@ -26,6 +27,7 @@ const PlayView = () => {
   const [correlationId, setCorrelationId] = useState('');
   const { t } = useTranslation('workspaces');
   const { trackEvent } = useTracking();
+  const { localizeSchemaForm } = useLocalizedText();
 
   const saveValues = useCallback(
     (values: any) => {
@@ -73,7 +75,7 @@ const PlayView = () => {
 
   const schema = useMemo(
     () =>
-      ({
+      localizeSchemaForm({
         type: 'object',
         properties: {
           ...automation.arguments,
@@ -103,6 +105,7 @@ const PlayView = () => {
       automation.arguments,
       automation.when?.endpoint,
       automation.when?.events?.length,
+      localizeSchemaForm,
       t,
     ]
   );

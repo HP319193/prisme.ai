@@ -6,6 +6,7 @@ import { MockStorage } from '../../DSULStorage/__mocks__';
 
 const DEFAULT_ID = '123456';
 jest.mock('nanoid', () => ({ nanoid: () => DEFAULT_ID }));
+jest.mock('heapdump', () => () => ({}));
 
 const getMockedAccessManager = () => {
   const mock = {
@@ -15,6 +16,7 @@ const getMockedAccessManager = () => {
     update: jest.fn(),
     delete: jest.fn(),
     deleteMany: jest.fn(),
+    throwUnlessCan: jest.fn(),
   };
   (<any>mock).as = jest.fn(() => mock);
 

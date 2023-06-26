@@ -5,6 +5,7 @@ import { AppInstances, Workspaces } from '.';
 import { DSULType } from '../DSULStorage';
 import { EventType } from '../../eda';
 
+jest.mock('heapdump', () => () => ({}));
 jest.mock(
   '../apps/crud/apps',
   () =>
@@ -34,6 +35,8 @@ const getMockedAccessManager = (get?: any) => {
     update: jest.fn(),
     delete: jest.fn(),
     deleteMany: jest.fn(),
+    findRoles: jest.fn(() => []),
+    saveRole: jest.fn(() => new Promise((resolve) => resolve(null))),
   };
   accessManager.as = () => accessManager;
   return accessManager;

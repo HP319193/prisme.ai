@@ -97,6 +97,7 @@ export async function syncDetailedPagesWithEDA(
             dsulType: DSULType.PagesIndex,
             workspaceId,
           });
+
           if (!pagesIndex) {
             return true;
           }
@@ -104,6 +105,7 @@ export async function syncDetailedPagesWithEDA(
             const needsUpdate = (page.blocks || []).some(
               (cur) => cur.slug && cur.slug in blocks
             );
+
             if (needsUpdate) {
               await rebuildDetailedPage(
                 workspaceId!,

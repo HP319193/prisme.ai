@@ -1013,6 +1013,15 @@ declare namespace Prismeai {
          * default config applied to the Block. Usefull for extended Blocks.
          */
         config?: AnyValue;
+        blocks?: {
+            [name: string]: any;
+            slug: string;
+            appInstance?: string;
+            onInit?: string;
+            updateOn?: string;
+            automation?: string;
+        }[];
+        schema?: TypedArgument;
     }
     export interface Break {
         /**
@@ -1350,14 +1359,9 @@ declare namespace Prismeai {
         automation?: string;
         appInstances: {
             slug?: string;
-            /**
-             * Map block slugs to their URL
-             * example:
-             * {
-             *   "Dialog Manager.config": "https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js"
-             * }
-             */
             blocks?: {
+                [name: string]: /* Block */ Block;
+            } | {
                 [name: string]: string;
             };
         }[];
@@ -1751,14 +1755,9 @@ declare namespace Prismeai {
     export interface PageDetails {
         appInstances: {
             slug?: string;
-            /**
-             * Map block slugs to their URL
-             * example:
-             * {
-             *   "Dialog Manager.config": "https://cdn-assets.prisme.ai/widgets/nlu/setup-widget/main.js"
-             * }
-             */
             blocks?: {
+                [name: string]: /* Block */ Block;
+            } | {
                 [name: string]: string;
             };
         }[];
