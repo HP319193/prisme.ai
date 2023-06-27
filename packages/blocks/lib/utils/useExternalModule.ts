@@ -31,12 +31,17 @@ export async function loadModule<T = {}>(url: string) {
 
         s.innerHTML = `
     import * as module from '${url}';
-    try {
-      window['${uniqMethod}'](module);
-    } catch (e) {
-      window['${uniqMethod}_error'](e);
+    {
+      try {
+        window['${uniqMethod}'](module);
+      } catch (e) {
+        window['${uniqMethod}_error'](e);
+      }
     }
     `;
+        s.onerror = (e) => {
+          reject(e);
+        };
         s.type = 'module';
         document.body.appendChild(s);
       })
