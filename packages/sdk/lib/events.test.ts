@@ -21,7 +21,7 @@ it('should connect to Websocket', () => {
     `https://api.eda.prisme.ai/workspaces/1/events`,
     {
       extraHeaders: {
-        'x-prismeai-token': 'abcde',
+        Authorization: 'Bearer abcde',
       },
       withCredentials: true,
     }
@@ -39,7 +39,7 @@ it('should connect to Websocket with apiKey', () => {
     `https://api.eda.prisme.ai/workspaces/1/events`,
     {
       extraHeaders: {
-        'x-prismeai-token': 'abcde',
+        Authorization: 'Bearer abcde',
         'x-prismeai-api-key': 'fghij',
       },
       withCredentials: true,

@@ -10,7 +10,7 @@ import getConfig from 'next/config';
 import Storage from '../utils/Storage';
 
 const {
-  publicRuntimeConfig: { CONSOLE_HOST = '' },
+  publicRuntimeConfig: { CONSOLE_URL = '' },
 } = getConfig();
 
 interface Values {
@@ -57,8 +57,6 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
       });
     } else if (!interactionUid && !urlParams.get('error')) {
       return initAuthentication();
-    } else if (interactionUid) {
-      console.log('GOOT ', interactionUid);
     }
   }, []);
 
@@ -97,7 +95,7 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
                 components={{
                   a: (
                     <LinkInTrans
-                      href={`${CONSOLE_HOST}/forgot`}
+                      href={`${CONSOLE_URL}/forgot`}
                       className="text-link"
                     />
                   ),

@@ -1,4 +1,17 @@
 import { Configuration } from 'oidc-provider';
+const errors = require('fix-esm').require('oidc-provider').errors;
+import { syscfg } from '.';
+import { v4 as uuid } from 'uuid';
+
+export const ResourceServer = syscfg.API_URL;
+const resourceServers = {
+  [ResourceServer]: {
+    scope:
+      'workspaces:write workspaces:read events:write events:read webhooks pages:read files:write files:read',
+    audience: ResourceServer,
+    accessTokenFormat: 'jwt',
+  },
+};
 
 export default {
   // PROVIDER_URL and LOGIN_FORM must share a same parent domain for cookies to be properly transmitted between login form & OIDC provider
@@ -31,8 +44,65 @@ export default {
       devInteractions: {
         enabled: false, // Set to false when finisheds
       },
+      resourceIndicators: {
+        enabled: true,
+
+        /**
+         * Function used to determine the default resource indicator for a request when none is provided by the client during the authorization request or when multiple are provided/resolved
+         * Only a single resource server must be returned
+         */
+        defaultResource(ctx: any) {
+          return Array.isArray(ctx.oidc.params?.resource) &&
+            ctx.oidc.params?.resource?.length
+            ? ctx.oidc.params?.resource[0]
+            : ctx.oidc.params?.resource || ResourceServer;
+        },
+        useGrantedResource: async function useGrantedResource() {
+          // Allows client to not explicitly providing resource parameter during auth requests
+          return true;
+        },
+        /*
+         * Function used to load information about a Resource Server (API) and check if the client is allowed this target RS scopes
+         */
+        getResourceServerInfo(
+          ctx: any,
+          resourceIndicator: string,
+          client: any
+        ) {
+          if (!resourceIndicator || !resourceServers[resourceIndicator]) {
+            throw new errors.InvalidRequest('Invalid resource server');
+          }
+          const targetResourceServer = resourceServers[resourceIndicator];
+          if (
+            !Array.isArray(client.allowedResources) ||
+            !client.allowedResources.includes(resourceIndicator)
+          ) {
+            throw new errors.InvalidClientMetadata(
+              'Please define mandatory options allowedResources and allowedResources within calling Client configuration'
+            );
+          }
+
+          // Now ensure client get access_token for scope it not defined
+          let clientAllowedScope: string[] = [];
+          if (client.resourceScopes) {
+            const scopesList = client.resourceScopes.split(' ') as string[];
+            clientAllowedScope = scopesList.filter((scopeItem: string) => {
+              return targetResourceServer.scope.includes(scopeItem);
+            });
+          } else {
+            throw new errors.InvalidClientMetadata(
+              'Please specify at least one scope within Client resourceScopes configuration'
+            );
+          }
+
+          // Update allowed scopes within issued access token
+          targetResourceServer.scope = clientAllowedScope.join(' ');
+          return targetResourceServer;
+        },
+      },
     },
     clients: [
+      // TO DELETE
       {
         client_id: 'app',
         client_secret: 'a_secret',
@@ -40,6 +110,7 @@ export default {
         redirect_uris: [],
         response_types: [],
       },
+      // TODO separate studio & pages clients
       {
         client_id: 'local-client-id',
         client_secret: 'a_different_secret',
@@ -50,10 +121,33 @@ export default {
           'http://*.pages.local.prisme.ai:3100/signin',
         ],
         token_endpoint_auth_method: 'none',
+        allowedResources: [ResourceServer],
+        resourceScopes:
+          'workspaces:write workspaces:read events:write events:read webhooks pages:read files:write files:read',
+        isInternalClient: true,
       },
     ],
 
+    async extraTokenClaims() {
+      return {
+        prismeaiSessionId: uuid(),
+      };
+    },
+
+    extraClientMetadata: {
+      /**
+       * isInternalClient: true | false, wether the client is for first party or for third party
+       *
+       * resourceScopes: ressource scope clients is allowed to requested for
+       *
+       * allowedResources: ressource server client is allowed to request token for
+       */
+      properties: ['allowedResources', 'resourceScopes', 'isInternalClient'],
+      validator: function extraClientMetadataValidator() {},
+    },
+
     jwks: {
+      // TODO regularly rotate
       keys: [
         {
           kty: 'RSA',
@@ -71,11 +165,6 @@ export default {
         },
       ],
     },
-
-    // pkce: {
-    //   // required: true
-
-    // },
 
     // acrValues: ['session', 'urn:mace:incommon:iap:bronze'],
     cookies: {

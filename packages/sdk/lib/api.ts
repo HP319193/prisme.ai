@@ -76,28 +76,30 @@ export class Api extends Fetcher {
   }
 
   async me() {
-    const url = new URL('/oidc/me', this.opts.oidc.url);
-    const me = await this.get(url.toString());
-    if (!me.id && me.sub) {
-      me.id = me.sub;
-    }
+    const me = await this.get('/me');
     this.sessionId = me.sessionId;
     this._user = me;
     return me;
   }
 
-  getOIDCAuthEndpoint() {
+  getAuthorizationURL(overrideRedirectUri?: string) {
     const url = new URL('/oidc/auth', this.opts.oidc.url);
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('response_mode', 'query'); // Send the final authorization code as a query param to the redirect uri
-    url.searchParams.set('redirect_uri', this.opts.oidc?.redirectUri || '');
-    url.searchParams.set('scope', 'openid profile email settings');
+    url.searchParams.set(
+      'redirect_uri',
+      overrideRedirectUri || this.opts.oidc?.redirectUri || ''
+    );
+    url.searchParams.set(
+      'scope',
+      'openid profile email settings offline_access workspaces:read'
+    );
     url.searchParams.set('client_id', this.opts?.oidc?.clientId || '');
 
     url.searchParams.set('code_challenge_method', 'S256');
     const codeVerifier = btoa(
       encodeURIComponent(crypto.randomBytes(32).toString('base64'))
-    );
+    ).replace(/=/g, 'a');
     const codeChallenge = base64URLEncode(
       crypto.createHash('sha256').update(codeVerifier).digest()
     );
@@ -142,26 +144,6 @@ export class Api extends Fetcher {
       })
     );
     return token;
-  }
-
-  async signinOLD(
-    email: string,
-    password: string
-  ): Promise<
-    Prismeai.User & {
-      token: string;
-    }
-  > {
-    const user = await this.post<
-      Prismeai.User & {
-        token: string;
-      }
-    >('/login', {
-      email,
-      password,
-    });
-    this._user = user;
-    return user;
   }
 
   async createAnonymousSession(): Promise<
@@ -442,6 +424,7 @@ export class Api extends Fetcher {
     const events = new Events({
       workspaceId,
       token: this.token || '',
+      legacyToken: this.legacyToken || '',
       apiKey: this._apiKey ? this._apiKey : undefined,
       apiHost: this.host,
       filters,

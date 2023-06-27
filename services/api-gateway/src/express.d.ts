@@ -5,9 +5,11 @@ declare namespace Express {
     service: string;
     user?: Prismeai.User;
     broker: import('@prisme.ai/broker').Broker;
-    session: import('express-session').Session &
-      Partial<import('express-session').SessionData> &
-      CustomSessionFields;
+    session:
+      | (import('express-session').Session &
+          Partial<import('express-session').SessionData> &
+          CustomSessionFields)
+      | Omit<CustomSessionFields, 'passport'>;
   }
 
   interface CustomSessionFields {

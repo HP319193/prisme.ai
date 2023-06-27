@@ -1,10 +1,10 @@
 const fs = require('fs');
 
 const ENVS = [
-  'API_HOST',
+  'API_URL',
   'PAGES_HOST',
   'SENTRY_DSN',
-  'CONSOLE_HOST',
+  'CONSOLE_URL',
   'SUGGESTIONS_ENDPOINT',
   'BILLING_HOME',
   'BILLING_USAGE',

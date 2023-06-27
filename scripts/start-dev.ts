@@ -158,7 +158,7 @@ const runLocal = (services: Service[]) => {
   const command = localServices.map((s) => `"dev:${s}"`);
   const prefix = Object.keys(env).reduce(
     (prev, name) => `${prev} ${name}=${env[name]}`,
-    'API_HOST="http://studio.local.prisme.ai:3001/v2"'
+    'API_URL="http://studio.local.prisme.ai:3001/v2"'
   );
   shell(`${prefix} ./node_modules/.bin/npm-run-all -p ${command.join(' ')}`, {
     async: true,

@@ -8,7 +8,7 @@ import { Loading } from '@prisme.ai/design-system';
 import getConfig from 'next/config';
 
 const {
-  publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_HOST = '' },
+  publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_URL = '' },
 } = getConfig();
 
 const REDIRECT_IF_SIGNED = ['/forgot', '/signin', '/signup', '/'];
@@ -43,7 +43,7 @@ async function authFromConsole() {
       }
     };
     window.addEventListener('message', listener);
-    window.parent.postMessage({ type: 'askAuthToken' }, CONSOLE_HOST);
+    window.parent.postMessage({ type: 'askAuthToken' }, CONSOLE_URL);
   });
 }
 
@@ -134,100 +134,6 @@ export const UserProvider: FC<UserProviderProps> = ({
     [push]
   );
 
-  const signin: UserContext['signin'] = useCallback(
-    async (email, password) => {
-      setLoading(true);
-      setError(undefined);
-      setSuccess(undefined);
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const interaction = urlParams.get('interaction');
-        if (!interaction) {
-          throw new ApiError(
-            {
-              error: 'InvalidAuth',
-              message: 'Missing interaction uid',
-              details: {},
-            },
-            400
-          );
-        }
-        const res = await api.signin({ login: email, password, interaction });
-        if (res.redirectTo) {
-          console.log('WILL REDIRECT TO ', res.redirectTo);
-          window.location.href = res.redirectTo;
-        }
-        return true;
-      } catch (e) {
-        console.log(e);
-        const { error } = e as ApiError;
-
-        api.token = null;
-        setUser(null);
-        setLoading(false);
-        setError(e as ApiError);
-        if (error === 'ValidateEmailError') {
-          setTimeout(() => {
-            setError(undefined);
-            push(
-              `/validate?${new URLSearchParams({
-                email: email,
-              }).toString()}`
-            );
-          }, 2000);
-        }
-        return false;
-      }
-    },
-    [push]
-  );
-
-  const signup: UserContext['signup'] = useCallback(
-    async (email, password, firstName, lastName, language) => {
-      setLoading(true);
-      setError(undefined);
-      setSuccess(undefined);
-      try {
-        const { token, ...user } = await api.signup(
-          email,
-          password,
-          firstName,
-          lastName,
-          language
-        );
-        setSuccess({ type: OperationSuccess.signupSuccess });
-        setLoading(false);
-        setTimeout(() => {
-          setSuccess(undefined);
-          push(
-            `/validate?${new URLSearchParams({
-              email: email,
-              sent: 'true',
-            }).toString()}`
-          );
-        }, 2000);
-        return user;
-      } catch (e) {
-        const { error } = e as ApiError;
-        if (error === 'AlreadyUsed') {
-          // Try to log in
-          try {
-            const user = await signin(email, password);
-            return user;
-          } catch (e) {
-            setError(e as ApiError);
-          }
-        }
-        api.token = null;
-        setUser(null);
-        setLoading(false);
-        setError(e as ApiError);
-        return null;
-      }
-    },
-    [signin, push]
-  );
-
   const signout: UserContext['signout'] = useCallback(
     async (onServer: boolean = true) => {
       if (onServer) {
@@ -264,10 +170,17 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
       setUser(user);
       setLoading(false);
-      if (user.id && REDIRECT_IF_SIGNED.includes(route) && redirectTo) {
-        push(redirectTo);
+      if (user.id && REDIRECT_IF_SIGNED.includes(route)) {
+        const storedRedirectTo = Storage.get('redirect-once-authenticated');
+        if (redirectTo) {
+          push(redirectTo);
+        } else if (storedRedirectTo) {
+          Storage.remove('redirect-once-authenticated');
+          push(storedRedirectTo);
+        }
       }
       if (!user.id && !PUBLIC_URLS.includes(route)) {
+        Storage.set('redirect-once-authenticated', window.location.href);
         push('/signin');
       }
     } catch (e) {
@@ -287,10 +200,62 @@ export const UserProvider: FC<UserProviderProps> = ({
   // 1. Initialize authentication flow
   const initAuthentication: UserContext['initAuthentication'] =
     useCallback(() => {
-      const { url, codeVerifier } = api.getOIDCAuthEndpoint();
+      // Here provide a custom redirect uri if coming from a page
+      // i.E http://test.pages.local.prisme.ai/signin
+      const redirectionUrl = new URL('/signin', window.location.href);
+      const { url, codeVerifier } = api.getAuthorizationURL(
+        redirectionUrl.toString()
+      );
       Storage.set('code-verifier', codeVerifier);
-      window.location.href = url;
+      // window.location.href = url;
     }, []);
+
+  // 2. Send login form
+  const signin: UserContext['signin'] = useCallback(
+    async (email, password) => {
+      setLoading(true);
+      setError(undefined);
+      setSuccess(undefined);
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const interaction = urlParams.get('interaction');
+        if (!interaction) {
+          throw new ApiError(
+            {
+              error: 'InvalidAuth',
+              message: 'Missing interaction uid',
+              details: {},
+            },
+            400
+          );
+        }
+        const res = await api.signin({ login: email, password, interaction });
+        if (res.redirectTo) {
+          window.location.href = res.redirectTo;
+        }
+        return true;
+      } catch (e) {
+        const { error } = e as ApiError;
+
+        api.token = null;
+        setUser(null);
+        setLoading(false);
+        setError(e as ApiError);
+        if (error === 'ValidateEmailError') {
+          setTimeout(() => {
+            setError(undefined);
+            push(
+              `/validate?${new URLSearchParams({
+                email: email,
+              }).toString()}`
+            );
+          }, 2000);
+        }
+        return false;
+      }
+    },
+    [push]
+  );
 
   // 3. Final step : exchange our authorization code with an access token
   const completeAuthentication: UserContext['completeAuthentication'] =
@@ -307,7 +272,6 @@ export const UserProvider: FC<UserProviderProps> = ({
         api.token = access_token;
         Storage.set('access-token', access_token);
         const user = await api.me();
-        console.log('RECEIVED MY PROFILE', user);
         setUser(user);
         setLoading(false);
         return user;
@@ -330,6 +294,47 @@ export const UserProvider: FC<UserProviderProps> = ({
         return null;
       }
     }, []);
+
+  const signup: UserContext['signup'] = useCallback(
+    async (email, password, firstName, lastName, language) => {
+      setLoading(true);
+      setError(undefined);
+      setSuccess(undefined);
+      try {
+        const { token, ...user } = await api.signup(
+          email,
+          password,
+          firstName,
+          lastName,
+          language
+        );
+        setSuccess({ type: OperationSuccess.signupSuccess });
+        setLoading(false);
+        setTimeout(() => {
+          setSuccess(undefined);
+          push(
+            `/validate?${new URLSearchParams({
+              email: email,
+              sent: 'true',
+            }).toString()}`
+          );
+        }, 2000);
+        return user;
+      } catch (e) {
+        const { error } = e as ApiError;
+        if (error === 'AlreadyUsed') {
+          setError(e as ApiError);
+          return null;
+        }
+        api.token = null;
+        setUser(null);
+        setLoading(false);
+        setError(e as ApiError);
+        return null;
+      }
+    },
+    [signin, push]
+  );
 
   const initialFetch = useRef(fetchMe);
 

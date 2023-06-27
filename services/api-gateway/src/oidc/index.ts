@@ -6,6 +6,7 @@ import ProviderType from 'oidc-provider';
 import bodyParser from 'body-parser';
 import services from '../services';
 import { URL } from 'url';
+import { PrismeError } from '../types/errors';
 const Provider = require('fix-esm').require('oidc-provider').default;
 
 const initOidcProvider = (): ProviderType => {
@@ -61,35 +62,6 @@ const initOidcProvider = (): ProviderType => {
   });
 };
 
-const getLoginPage = (details: any, err: any = '') => `
-<html>
-  <head>
-    <title>Sign in</title>
-  </head>
-  <body>
-  <center style="color:red">${err}</center>
-  <form autocomplete="off" action="/oidc/interaction/${
-    details.uid
-  }/login" method="post">
-  <input type="hidden" name="uuid" value="${details.uid}"/>
-  <input required type="text" name="login" placeholder="Enter any login"
-    ${
-      !details.params.login_hint
-        ? 'autofocus="on"'
-        : `value="${details.params.login_hint}"`
-    }
-  />
-  <input required type="password" name="password" placeholder="and password"
-    ${details.params.login_hint ? 'autofocus="on"' : ''}
-  />
-
-  <label><input type="checkbox" name="remember" value="yes" checked="yes">Stay signed in</label>
-
-  <button type="submit" class="login login-submit">Sign-in</button>
-</form>
-  </body>
-</html>`;
-
 export function initRoutes() {
   const app = express.Router();
   const provider = initOidcProvider();
@@ -98,12 +70,14 @@ export function initRoutes() {
   app.get(
     '/interaction/:grant',
     async (req: Request, res: Response, next: NextFunction) => {
-      console.log('OULLAAOULAAAOULAA');
       const details = await provider.interactionDetails(req, res);
       const client = await provider.Client.find(
         details.params.client_id as string
       );
-      console.log('GOOOOT ', JSON.stringify(details, null, 2));
+      console.log(
+        'Called /interaction/{uid} with ',
+        JSON.stringify(details, null, 2)
+      );
       if (details.prompt.name === 'consent' && details.session && client) {
         let grant: any;
         if (details.grantId) {
@@ -119,24 +93,32 @@ export function initRoutes() {
           []) as string[];
         const missingOIDCClaims = (details.prompt.details.missingOIDCClaims ||
           []) as string[];
-        // const missingResourceScopes = (details.prompt.details.missingResourceScopes || []) as string[];
+        const missingResourceScopes = (details.prompt.details
+          .missingResourceScopes || {}) as Record<string, string[]>;
+
         if (missingOIDCScope?.length) {
           grant.addOIDCScope(missingOIDCScope.join(' '));
         }
         if (missingOIDCClaims?.length) {
           grant.addOIDCClaims(missingOIDCClaims);
         }
-        // if (missingResourceScopes?.length) {
-        //   for (const [indicator, scope] of Object.entries(missingResourceScopes)) {
-        //     grant.addResourceScope(indicator, scope.join(' '));
-        //   }
-        // }
+        if (Object.keys(missingResourceScopes).length) {
+          for (const [indicator, scopes] of Object.entries(
+            missingResourceScopes
+          )) {
+            grant.addResourceScope(indicator, scopes.join(' '));
+          }
+        }
         const result = { consent: { grantId: await grant.save() } };
         await provider.interactionFinished(req, res, result, {
           mergeWithLastSubmission: true,
         });
       } else {
-        res.send(getLoginPage(details));
+        throw new PrismeError(
+          'Login form should not be rendered from there, but redirected to instead.',
+          { interaction: details },
+          400
+        );
       }
       await next();
 
@@ -220,8 +202,6 @@ export function initRoutes() {
         return;
       } catch (err) {
         throw err;
-        const details = await provider.interactionDetails(req, res);
-        return res.send(getLoginPage(details, `${err}`));
       }
     }
   );

@@ -17,11 +17,11 @@ export default async function initRoutes(
   app: express.Application,
   gtwcfg: GatewayConfig
 ) {
+  // This needs to be called before passport.authenticate('jwt',...), dunno why
+  app.use('/oidc', initOidcRoutes());
   await initAuthentication(app);
   app.use(requestDecorator);
   app.use(httpLogger);
-
-  app.use('/oidc', initOidcRoutes());
 
   await initPipelines(app, gtwcfg);
 

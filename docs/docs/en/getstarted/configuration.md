@@ -79,9 +79,21 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>GATEWAY_API_HOST</td>
     <td>api-gateway, workspaces</td>
-    <td>api-gateway internal URL</td>
+    <td>api-gateway internal URL for internal requests</td>
     <td>http://localhost:3001/v2</td>
   </tr>          
+  <tr>
+    <td>API_URL</td>
+    <td>console, pages, api-gateway</td>
+    <td>api-gateway public URL</td>
+    <td></td>
+  </tr>  
+   <tr>
+    <td>CONSOLE_URL</td>
+    <td>api-gateway, console, pages</td>
+    <td>Studio URL, used for emails & auth redirections</td>
+    <td>3001</td>
+  </tr>       
 
   <!-- Console -->    
   <tr>
@@ -90,12 +102,6 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Listening port number</td>
     <td>3000</td>
   </tr>  
-  <tr>
-    <td>API_HOST</td>
-    <td>console</td>
-    <td>api-gateway public URL</td>
-    <td></td>
-  </tr>
 
   <!-- api-gateway -->
   <tr>

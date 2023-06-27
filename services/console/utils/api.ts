@@ -5,13 +5,13 @@ import Storage from './Storage';
 const { publicRuntimeConfig } = getConfig();
 
 const api = new Api({
-  host: publicRuntimeConfig.API_HOST,
+  host: publicRuntimeConfig.API_URL,
   oidc: {
     url: publicRuntimeConfig.OIDC_PROVIDER_URL,
     clientId: publicRuntimeConfig.OIDC_CLIENT_ID,
     redirectUri: new URL(
       '/signin',
-      publicRuntimeConfig.CONSOLE_HOST || 'http://localhost:3000'
+      publicRuntimeConfig.CONSOLE_URL || 'http://localhost:3000'
     ).toString(),
   },
 });

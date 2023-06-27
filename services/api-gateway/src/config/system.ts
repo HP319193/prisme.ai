@@ -5,6 +5,8 @@ const DEBUG = ['dev', 'development'].includes(
 );
 export default {
   PORT: process.env.PORT || 3001,
+  API_URL: process.env.API_URL || 'http://studio.local.prisme.ai:3001/v2',
+
   DEBUG,
 
   GATEWAY_CONFIG:

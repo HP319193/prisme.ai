@@ -40,7 +40,7 @@ services:
     ports:
       - '3000:3000'
     environment:
-      API_HOST: 'http://localhost:3001/v2'
+      API_URL: 'http://localhost:3001/v2'
   pages:
     entrypoint: npm start  --prefix services/pages
     restart: on-failure
@@ -48,7 +48,7 @@ services:
     ports:
       - '3000:3100'
     environment:
-      API_HOST: 'http://localhost:3001/v2'
+      API_URL: 'http://localhost:3001/v2'
   elastic:
     image: 'docker.elastic.co/elasticsearch/elasticsearch:7.14.0'
     container_name: elastic

@@ -13,8 +13,8 @@ module.exports = {
   reactStrictMode: true,
   i18n,
   publicRuntimeConfig: {
-    API_HOST: process.env.API_HOST,
-    CONSOLE_HOST: process.env.CONSOLE_HOST || '',
+    API_URL: process.env.API_URL || process.env.API_HOST, // API_HOST deprecated, to remove once deployments updated
+    CONSOLE_URL: process.env.CONSOLE_URL || process.env.CONSOLE_HOST || '', // CONSOLE_HOST deprecated, to remove once deployments updated
     PAGES_HOST: process.env.PAGES_HOST || '',
     SENTRY_DSN: process.env.SENTRY_DSN || '',
     HEADER_POPOVERS: process.env.HEADER_POPOVERS || '{}',
@@ -60,7 +60,7 @@ module.exports = {
           xFrameOptions,
           {
             key: 'Access-Control-Allow-Origin',
-            value: process.env.CONSOLE_HOST || '*',
+            value: process.env.CONSOLE_URL || '*',
           },
           {
             key: 'Access-Control-Allow-Methods',
