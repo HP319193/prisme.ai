@@ -83,12 +83,13 @@ export const BlockLoader: TBlockLoader = ({
     }
 
     const debugUrl = debug.get(name);
-    const block = app.blocks[name];
+    const b = app.blocks[name];
+    const block = typeof b === 'string' ? { url: b } : b;
     if (debugUrl) {
-      typeof block === 'string' ? block : (block.url = debugUrl);
+      block.url = debugUrl;
     }
-    const { url = getBlockName('BlocksList'), blocks = undefined } =
-      typeof block === 'string' ? { url: block } : block;
+
+    const { url = getBlockName('BlocksList'), blocks = undefined } = block;
 
     if (blocks) {
       setBlockName('BlocksList');
