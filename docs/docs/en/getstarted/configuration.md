@@ -94,6 +94,39 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Studio URL, used for emails & auth redirections</td>
     <td>3001</td>
   </tr>       
+  <tr>
+    <td>PAGES_HOST</td>
+    <td>api-gateway, console, pages</td>
+    <td>Pages base domain starting with a '.', workspace slug will be prefixed as a subdomain. Used for pages builder & pages sign in redirection from api gateway</td>
+    <td>.pages.local.prisme.ai:3100</td>  
+  </tr>
+
+
+  <!-- OIDC -->
+   <tr>
+    <td>OIDC_PROVIDER_URL</td>
+    <td>api-gateway, pages, console</td>
+    <td>OIDC Authorization server URL</td>
+    <td>API_URL env var, without any base path</td>
+  </tr>  
+   <tr>
+    <td>OIDC_STUDIO_CLIENT_ID</td>
+    <td>api-gateway, console</td>
+    <td>Studio OIDC client id</td>
+    <td>local-client-id</td>
+  </tr>         
+   <tr>
+    <td>OIDC_STUDIO_CLIENT_SECRET</td>
+    <td>api-gateway</td>
+    <td>Studio OIDC client secret, only known by api-gateway</td>
+    <td>local-client-id</td>
+  </tr>           
+   <tr>
+    <td>OIDC_PAGES_CLIENT_ID_PREFIX</td>
+    <td>api-gateway, pages</td>
+    <td>Each new workspace generates an OIDC client with a static client-id prefixed with this value</td>
+    <td>workspace-client-</td>
+  </tr>             
 
   <!-- Console -->    
   <tr>

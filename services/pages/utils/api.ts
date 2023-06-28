@@ -1,6 +1,6 @@
 import getConfig from 'next/config';
 import { Api } from '@prisme.ai/sdk';
-import Storage from './Storage';
+import Storage from '../../console/utils/Storage';
 
 const { publicRuntimeConfig } = getConfig();
 const api = new Api({
@@ -8,7 +8,9 @@ const api = new Api({
   oidc: {
     url: publicRuntimeConfig.OIDC_PROVIDER_URL,
     clientId: publicRuntimeConfig.OIDC_CLIENT_ID,
-    redirectUri: new URL(
+    pagesClientIdPrefix: publicRuntimeConfig.OIDC_PAGES_CLIENT_ID_PREFIX,
+    pagesHost: publicRuntimeConfig.PAGES_HOST,
+    redirectUri: new URL( // Also overridden for pages
       '/signin',
       publicRuntimeConfig.CONSOLE_URL || 'http://localhost:3000'
     ).toString(),

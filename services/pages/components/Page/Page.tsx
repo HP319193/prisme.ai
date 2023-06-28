@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useEffect, useMemo, useRef } from 'react';
 import useLocalizedText from '../../../console/utils/useLocalizedText';
-import api from '../../../console/utils/api';
+import api from '../../utils/api';
 import { BlockLoader } from './BlockLoader';
 import { usePage } from './PageProvider';
 import PoweredBy from '../../../console/components/PoweredBy';

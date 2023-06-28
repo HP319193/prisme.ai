@@ -3,6 +3,17 @@ const errors = require('fix-esm').require('oidc-provider').errors;
 import { syscfg } from '.';
 import { v4 as uuid } from 'uuid';
 
+export const OIDC_STUDIO_CLIENT_ID =
+  process.env.OIDC_STUDIO_CLIENT_ID || 'local-client-id';
+export const OIDC_STUDIO_CLIENT_SECRET =
+  process.env.OIDC_STUDIO_CLIENT_SECRET || 'some-secret';
+
+// Workspace pages use a static client id : `PREFIX-${workspaceSlug}`
+export const OIDC_PAGES_CLIENT_ID_PREFIX =
+  process.env.OIDC_PAGES_CLIENT_ID_PREFIX || 'workspace-client-';
+export const PAGES_HOST =
+  process.env.PAGES_HOST || '.pages.local.prisme.ai:3100';
+
 export const ResourceServer = syscfg.API_URL;
 const resourceServers = {
   [ResourceServer]: {
@@ -14,14 +25,19 @@ const resourceServers = {
 };
 
 export default {
-  // PROVIDER_URL and LOGIN_FORM must share a same parent domain for cookies to be properly transmitted between login form & OIDC provider
+  // PROVIDER_URL, STUDIO_LOGIN_FORM_URL and PAGES_HOST must share a same parent domain for cookies to be properly transmitted between login form & OIDC provider
   PROVIDER_URL:
     process.env.OIDC_PROVIDER_URL ||
     (process.env.API_URL || '').replace('/v2', '') ||
     'http://studio.local.prisme.ai:3001',
-  LOGIN_FORM: `${
+  STUDIO_LOGIN_FORM_URL: `${
     process.env.CONSOLE_URL || 'http://studio.local.prisme.ai:3000'
-  }/signin`,
+  }`,
+  LOGIN_PATH: '/signin',
+  OIDC_STUDIO_CLIENT_ID,
+  OIDC_STUDIO_CLIENT_SECRET,
+  OIDC_PAGES_CLIENT_ID_PREFIX,
+  PAGES_HOST, // Used to build login form url for workspace pages
   CONFIGURATION: <Configuration>{
     // Claims per scope
     claims: {
@@ -110,20 +126,32 @@ export default {
         redirect_uris: [],
         response_types: [],
       },
-      // TODO separate studio & pages clients
+      // Studio client
       {
-        client_id: 'local-client-id',
+        client_id: OIDC_STUDIO_CLIENT_ID,
         client_secret: 'a_different_secret',
         grant_types: ['authorization_code', 'refresh_token'],
         response_types: ['code'],
-        redirect_uris: [
-          'http://studio.local.prisme.ai:3000/signin',
-          'http://*.pages.local.prisme.ai:3100/signin',
-        ],
+        redirect_uris: ['http://studio.local.prisme.ai:3000/signin'],
         token_endpoint_auth_method: 'none',
         allowedResources: [ResourceServer],
         resourceScopes:
           'workspaces:write workspaces:read events:write events:read webhooks pages:read files:write files:read',
+        isInternalClient: true,
+      },
+
+      // Page clients : should be dynamic
+      {
+        client_id: `${OIDC_PAGES_CLIENT_ID_PREFIX}test`,
+        client_secret: 'a_different_secret',
+        grant_types: ['authorization_code', 'refresh_token'],
+        response_types: ['code'],
+        redirect_uris: ['http://test.pages.local.prisme.ai:3100/signin'],
+        workspaceSlug: 'test',
+        token_endpoint_auth_method: 'none',
+        allowedResources: [ResourceServer],
+        resourceScopes:
+          'events:write events:read webhooks pages:read files:write files:read',
         isInternalClient: true,
       },
     ],
@@ -142,7 +170,12 @@ export default {
        *
        * allowedResources: ressource server client is allowed to request token for
        */
-      properties: ['allowedResources', 'resourceScopes', 'isInternalClient'],
+      properties: [
+        'allowedResources',
+        'resourceScopes',
+        'isInternalClient',
+        'workspaceSlug',
+      ],
       validator: function extraClientMetadataValidator() {},
     },
 

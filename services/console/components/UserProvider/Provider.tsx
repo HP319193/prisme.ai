@@ -172,16 +172,16 @@ export const UserProvider: FC<UserProviderProps> = ({
       setLoading(false);
       if (user.id && REDIRECT_IF_SIGNED.includes(route)) {
         const storedRedirectTo = Storage.get('redirect-once-authenticated');
+        Storage.remove('redirect-once-authenticated');
         if (redirectTo) {
           push(redirectTo);
-        } else if (storedRedirectTo) {
-          Storage.remove('redirect-once-authenticated');
+        } else if (storedRedirectTo && !user?.authData?.anonymous) {
           push(storedRedirectTo);
         }
       }
       if (!user.id && !PUBLIC_URLS.includes(route)) {
         Storage.set('redirect-once-authenticated', window.location.href);
-        push('/signin');
+        initAuthentication();
       }
     } catch (e) {
       if (anonymous) {
@@ -199,7 +199,8 @@ export const UserProvider: FC<UserProviderProps> = ({
 
   // 1. Initialize authentication flow
   const initAuthentication: UserContext['initAuthentication'] =
-    useCallback(() => {
+    useCallback(async () => {
+      Storage.set('redirect-once-authenticated', window.location.href);
       // Here provide a custom redirect uri if coming from a page
       // i.E http://test.pages.local.prisme.ai/signin
       const redirectionUrl = new URL('/signin', window.location.href);
@@ -207,7 +208,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         redirectionUrl.toString()
       );
       Storage.set('code-verifier', codeVerifier);
-      // window.location.href = url;
+      window.location.href = url;
     }, []);
 
   // 2. Send login form
@@ -265,16 +266,15 @@ export const UserProvider: FC<UserProviderProps> = ({
       setSuccess(undefined);
       try {
         const codeVerifier = Storage.get('code-verifier');
+        const redirectionUrl = new URL('/signin', window.location.href);
         const { access_token } = await api.getToken(
           authorizationCode,
-          codeVerifier
+          codeVerifier,
+          redirectionUrl.toString()
         );
         api.token = access_token;
         Storage.set('access-token', access_token);
-        const user = await api.me();
-        setUser(user);
-        setLoading(false);
-        return user;
+        await fetchMe();
       } catch (e) {
         api.token = null;
         setUser(null);
@@ -291,7 +291,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         //     );
         //   }, 2000);
         // }
-        return null;
+        return;
       }
     }, []);
 

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
-import api, { Events } from '../../../console/utils/api';
+import api, { Events } from '../../utils/api';
 
 export const usePageEvents = (page: Prismeai.Page | null) => {
   const { user } = useUser();

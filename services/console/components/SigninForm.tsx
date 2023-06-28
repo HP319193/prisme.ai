@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { Form } from 'react-final-form';
 import { Button, Input } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
@@ -29,7 +28,6 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
   const [error, setError] = useState(false);
   const submit = useCallback(
     async ({ email, password }: Values) => {
-      console.log('submit ', email, password);
       const success = await signin(email, password);
       setError(!success);
     },
@@ -46,19 +44,28 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
     return errors;
   };
 
-  useEffect(() => {
+  // 1. Init authentication flow
+  // Execute this here & not in useEffect to avoid displaying form before redirecting
+  if (typeof window !== 'undefined') {
     const urlParams = new URLSearchParams(window.location.search);
     const interactionUid = urlParams.get('interaction');
     const code = urlParams.get('code');
+    if (!code && !interactionUid && !urlParams.get('error')) {
+      initAuthentication();
+      return null;
+    }
+  }
+
+  // 3. Handle final authorization code validation
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
     if (code) {
-      completeAuthentication(code).then((user) => {
-        setError(!user);
-        onSignin(user);
-      });
-    } else if (!interactionUid && !urlParams.get('error')) {
-      return initAuthentication();
+      completeAuthentication(code);
     }
   }, []);
+
+  // 2. Display login form
 
   return (
     <Form onSubmit={submit} validate={validate}>

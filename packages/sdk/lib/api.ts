@@ -33,7 +33,8 @@ export interface ApiOptions {
   oidc?: {
     url: string;
     clientId: string;
-    // clientSecret: string;
+    pagesClientIdPrefix?: string;
+    pagesHost?: string;
     redirectUri: string;
   };
 }
@@ -54,7 +55,7 @@ export interface InteractiveSignin {
 }
 
 export class Api extends Fetcher {
-  private opts: Required<ApiOptions>;
+  public opts: Required<ApiOptions>;
   private sessionId?: string;
   private _user?: Prismeai.User & { sessionId?: string };
 
@@ -82,6 +83,31 @@ export class Api extends Fetcher {
     return me;
   }
 
+  // For pages, compute OIDC client id from the workspaceSlug inside redirectUri/page domain
+  clientId(redirectUri?: string): string {
+    if (
+      !redirectUri ||
+      !this.opts?.oidc?.pagesClientIdPrefix ||
+      !this.opts.oidc?.pagesHost
+    ) {
+      return this.opts.oidc.clientId || '';
+    }
+    // How do we handle custom dns !!?
+    const pagesHost = this.opts.oidc?.pagesHost;
+    const parsedURL = new URL(redirectUri);
+    const hostnameWithPort = parsedURL.port
+      ? `${parsedURL.hostname}:${parsedURL.port}`
+      : parsedURL.hostname;
+    if (!hostnameWithPort.endsWith(pagesHost)) {
+      return this.opts.oidc.clientId || '';
+    }
+    const workspaceSlug = hostnameWithPort.replace(pagesHost, '');
+    if (!workspaceSlug) {
+      return this.opts.oidc.clientId || '';
+    }
+    return `${this.opts?.oidc?.pagesClientIdPrefix}${workspaceSlug}`;
+  }
+
   getAuthorizationURL(overrideRedirectUri?: string) {
     const url = new URL('/oidc/auth', this.opts.oidc.url);
     url.searchParams.set('response_type', 'code');
@@ -92,9 +118,9 @@ export class Api extends Fetcher {
     );
     url.searchParams.set(
       'scope',
-      'openid profile email settings offline_access workspaces:read'
+      'openid profile email settings offline_access events:write events:read webhooks pages:read files:write files:read'
     );
-    url.searchParams.set('client_id', this.opts?.oidc?.clientId || '');
+    url.searchParams.set('client_id', this.clientId(overrideRedirectUri));
 
     url.searchParams.set('code_challenge_method', 'S256');
     const codeVerifier = btoa(
@@ -104,6 +130,12 @@ export class Api extends Fetcher {
       crypto.createHash('sha256').update(codeVerifier).digest()
     );
     url.searchParams.set('code_challenge', codeChallenge);
+    const locale = window?.navigator?.language
+      ? window.navigator.language.substring(0, 2)
+      : undefined;
+    if (locale) {
+      url.searchParams.set('locale', locale);
+    }
     return {
       url: url.toString(),
       codeVerifier,
@@ -129,7 +161,8 @@ export class Api extends Fetcher {
 
   async getToken(
     authorizationCode: string,
-    codeVerifier: string
+    codeVerifier: string,
+    overrideRedirectUri?: string
   ): Promise<AccessToken> {
     this.token = null;
     const url = new URL('/oidc/token', this.opts.oidc.url);
@@ -139,8 +172,8 @@ export class Api extends Fetcher {
         grant_type: 'authorization_code',
         code: authorizationCode,
         code_verifier: codeVerifier,
-        client_id: this.opts.oidc.clientId,
-        redirect_uri: this.opts.oidc.redirectUri,
+        client_id: this.clientId(overrideRedirectUri),
+        redirect_uri: overrideRedirectUri || this.opts.oidc.redirectUri,
       })
     );
     return token;

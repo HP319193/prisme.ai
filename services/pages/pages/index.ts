@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import api, { HTTPError } from '../../console/utils/api';
+import api, { HTTPError } from '../utils/api';
 import { getSubmodain } from '../../console/utils/urls';
 import { computePageStyles } from '../utils/computeBlocksStyles';
 import { getBlocksConfigFromServer } from '../utils/getBlocksConfigFromServer';

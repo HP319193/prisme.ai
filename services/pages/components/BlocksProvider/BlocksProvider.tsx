@@ -2,7 +2,7 @@ import { BlocksProvider as Provider } from '@prisme.ai/blocks';
 import { FC, useCallback } from 'react';
 import externals from '../../../console/utils/externals';
 import { useWorkspace } from '../Workspace';
-import api from '../../../console/utils/api';
+import api from '../../utils/api';
 import { getPreview } from './getPreview';
 import Link from './Link';
 import DownIcon from './DownIcon';

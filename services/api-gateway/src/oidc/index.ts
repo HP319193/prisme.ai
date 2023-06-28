@@ -46,8 +46,7 @@ const initOidcProvider = (): ProviderType => {
     },
 
     interactions: {
-      url: function interactionUrl(_: any, interaction: any) {
-        console.log('HEYYY : ', JSON.stringify(interaction, null, 2));
+      url: async function interactionUrl(ctx: any, interaction: any) {
         if (interaction.prompt.name === 'consent') {
           // This is where we should instead redirect to a front end page asking for consent (which would be processed by the below url)
           const url = new URL(
@@ -56,7 +55,33 @@ const initOidcProvider = (): ProviderType => {
           );
           return url.toString();
         }
-        return `${oidcCfg.LOGIN_FORM}?interaction=${interaction.uid}`;
+        // const client = await provider.Client.find(
+        //   details.params.client_id as string
+        // );
+        // Pages client : build pages signin url
+        const requestURL = new URL(ctx.request.url, oidcCfg.PROVIDER_URL);
+        const locale = requestURL.searchParams.get('locale');
+        const signinPath = locale
+          ? `/${locale}${oidcCfg.LOGIN_PATH}`
+          : oidcCfg.LOGIN_PATH;
+        if (
+          interaction.params.client_id.startsWith(
+            oidcCfg.OIDC_PAGES_CLIENT_ID_PREFIX
+          )
+        ) {
+          const workspaceSlug = interaction.params.client_id.slice(
+            oidcCfg.OIDC_PAGES_CLIENT_ID_PREFIX.length
+          );
+          const protocol = (oidcCfg.STUDIO_LOGIN_FORM_URL || '').startsWith(
+            'http://'
+          )
+            ? 'http://'
+            : 'https://';
+          return `${protocol}${workspaceSlug}${oidcCfg.PAGES_HOST}${signinPath}?interaction=${interaction.uid}`;
+        }
+
+        // Needs credentials, redirect to login form
+        return `${oidcCfg.STUDIO_LOGIN_FORM_URL}${signinPath}?interaction=${interaction.uid}`;
       },
     },
   });
@@ -73,10 +98,6 @@ export function initRoutes() {
       const details = await provider.interactionDetails(req, res);
       const client = await provider.Client.find(
         details.params.client_id as string
-      );
-      console.log(
-        'Called /interaction/{uid} with ',
-        JSON.stringify(details, null, 2)
       );
       if (details.prompt.name === 'consent' && details.session && client) {
         let grant: any;

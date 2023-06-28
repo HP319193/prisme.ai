@@ -20,9 +20,7 @@ export interface UserContext<
   success?: ApiSuccess;
   signin: (email: string, password: string) => Promise<boolean>;
   initAuthentication: () => void;
-  completeAuthentication: (
-    authorizationCode: string
-  ) => Promise<Prismeai.User | null>;
+  completeAuthentication: (authorizationCode: string) => Promise<void>;
   signup: (
     email: string,
     password: string,
@@ -40,9 +38,9 @@ export interface UserContext<
 export const userContext = createContext<UserContext>({
   user: null,
   loading: false,
-  signin: async () => null,
+  signin: async () => false,
   initAuthentication: async () => null,
-  completeAuthentication: async () => null,
+  completeAuthentication: async () => {},
   signup: async () => null,
   signout() {},
   sendPasswordResetMail: async () => null,
