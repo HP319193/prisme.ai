@@ -60,7 +60,6 @@ export const getServerSideProps: GetServerSideProps<
       };
     }
   }
-
   return {
     props: {
       page,

@@ -180,10 +180,16 @@ export const UserProvider: FC<UserProviderProps> = ({
         }
       }
       if (!user.id && !PUBLIC_URLS.includes(route)) {
-        Storage.set('redirect-once-authenticated', window.location.href);
         initAuthentication();
       }
     } catch (e) {
+      if (
+        (e as Prismeai.GenericError).error === 'AuthenticationError' &&
+        (e as Prismeai.GenericError).message === 'jwt expired'
+      ) {
+        api.token = '';
+        Storage.remove('access-token');
+      }
       if (anonymous) {
         const { token, ...user } = await api.createAnonymousSession();
         api.token = token;
@@ -201,8 +207,7 @@ export const UserProvider: FC<UserProviderProps> = ({
   const initAuthentication: UserContext['initAuthentication'] =
     useCallback(async () => {
       Storage.set('redirect-once-authenticated', window.location.href);
-      // Here provide a custom redirect uri if coming from a page
-      // i.E http://test.pages.local.prisme.ai/signin
+      // redirect_uri must be on the same domain we want the session on (i.e current one)
       const redirectionUrl = new URL('/signin', window.location.href);
       const { url, codeVerifier } = api.getAuthorizationURL(
         redirectionUrl.toString()

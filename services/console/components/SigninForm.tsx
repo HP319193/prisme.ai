@@ -19,9 +19,10 @@ interface Values {
 
 interface SigninFormProps {
   onSignin: (user: Prismeai.User | null) => void;
+  provider?: 'prismeai';
 }
 
-export const SigninForm = ({ onSignin }: SigninFormProps) => {
+export const SigninForm = ({ onSignin, provider }: SigninFormProps) => {
   const { t } = useTranslation('sign');
   const { loading, signin, initAuthentication, completeAuthentication } =
     useUser();
@@ -44,18 +45,6 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
     return errors;
   };
 
-  // 1. Init authentication flow
-  // Execute this here & not in useEffect to avoid displaying form before redirecting
-  if (typeof window !== 'undefined') {
-    const urlParams = new URLSearchParams(window.location.search);
-    const interactionUid = urlParams.get('interaction');
-    const code = urlParams.get('code');
-    if (!code && !interactionUid && !urlParams.get('error')) {
-      initAuthentication();
-      return null;
-    }
-  }
-
   // 3. Handle final authorization code validation
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -63,10 +52,36 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
     if (code) {
       completeAuthentication(code);
     }
-  }, []);
+  }, [completeAuthentication]);
+
+  // 1. Init authentication flow
+  if (typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    const interactionUid = urlParams.get('interaction');
+    const code = urlParams.get('code');
+    if (!code && !interactionUid && !urlParams.get('error')) {
+      if (provider === 'prismeai') {
+        initAuthentication();
+        return null;
+      }
+      return (
+        <Button
+          onClick={() => {
+            initAuthentication();
+          }}
+          variant="primary"
+          className="w-full !h-12 !mb-4 !font-bold"
+        >
+          {t('in.withPrismeai')}
+        </Button>
+      );
+    } else if (code) {
+      // Authorization code processing, wait for redirection
+      return null;
+    }
+  }
 
   // 2. Display login form
-
   return (
     <Form onSubmit={submit} validate={validate}>
       {({ handleSubmit }) => (
