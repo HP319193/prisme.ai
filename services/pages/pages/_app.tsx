@@ -1,8 +1,8 @@
 import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
-import UserProvider, { useUser } from '../../console/components/UserProvider';
+import UserProvider from '../../console/components/UserProvider';
 import { NextPage } from 'next';
-import React, { ReactElement, ReactNode, useEffect } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -20,7 +20,6 @@ import BlocksProvider from '../components/BlocksProvider/BlocksProvider';
 import WorkspaceProvider from '../components/Workspace';
 import api from '../utils/api';
 import consoleApi from '../../console/utils/api';
-import { useRouter } from 'next/router';
 
 consoleApi.opts = api.opts;
 const Sentry = dynamic(import('../../console/utils/Sentry'), { ssr: false });
@@ -46,7 +45,6 @@ function MyApp({
 }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
-  const { completeAuthentication } = useUser();
 
   api.language = i18n.language;
 

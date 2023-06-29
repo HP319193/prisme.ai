@@ -152,9 +152,15 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>SESSION_COOKIES_MAX_AGE</td>
     <td>api-gateway</td>
-    <td>Session cookies expiration (in seconds)</td>
+    <td>Auth server session cookies expiration (in seconds)</td>
     <td>2592000 (1 month)</td>
   </tr>    
+  <tr>
+    <td>ACCESS_TOKENS_MAX_AGE</td>
+    <td>api-gateway</td>
+    <td>Access tokens expiration (in seconds)</td>
+    <td>2592000 (1 month)</td>
+  </tr>      
   <tr>
     <td>SESSION_COOKIES_SIGN_SECRET</td>
     <td>api-gateway</td>

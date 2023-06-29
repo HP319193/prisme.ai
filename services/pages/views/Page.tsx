@@ -8,7 +8,6 @@ import PageRenderer, {
 import { usePage } from '../components/Page/PageProvider';
 import { useWorkspace } from '../components/Workspace';
 import { useRouter } from 'next/router';
-import Storage from '../../console/utils/Storage';
 import SigninForm from '../../console/components/SigninForm';
 
 export interface PageProps extends Omit<PageRendererProps, 'page'> {

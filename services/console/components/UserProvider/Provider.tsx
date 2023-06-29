@@ -170,12 +170,16 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
       setUser(user);
       setLoading(false);
-      if (user.id && REDIRECT_IF_SIGNED.includes(route)) {
+      if (
+        user.id &&
+        REDIRECT_IF_SIGNED.includes(route) &&
+        !user?.authData?.anonymous
+      ) {
         const storedRedirectTo = Storage.get('redirect-once-authenticated');
         Storage.remove('redirect-once-authenticated');
         if (redirectTo) {
           push(redirectTo);
-        } else if (storedRedirectTo && !user?.authData?.anonymous) {
+        } else if (storedRedirectTo) {
           push(storedRedirectTo);
         }
       }

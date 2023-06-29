@@ -2,19 +2,38 @@ import { Configuration } from 'oidc-provider';
 const errors = require('fix-esm').require('oidc-provider').errors;
 import { syscfg } from '.';
 import { v4 as uuid } from 'uuid';
+import { findCommonParentDomain } from '../utils/findCommonParentDomain';
 
-export const OIDC_STUDIO_CLIENT_ID =
+const OIDC_STUDIO_CLIENT_ID =
   process.env.OIDC_STUDIO_CLIENT_ID || 'local-client-id';
-export const OIDC_STUDIO_CLIENT_SECRET =
+const OIDC_STUDIO_CLIENT_SECRET =
   process.env.OIDC_STUDIO_CLIENT_SECRET || 'some-secret';
 
 // Workspace pages use a static client id : `PREFIX-${workspaceSlug}`
-export const OIDC_PAGES_CLIENT_ID_PREFIX =
+const OIDC_PAGES_CLIENT_ID_PREFIX =
   process.env.OIDC_PAGES_CLIENT_ID_PREFIX || 'workspace-client-';
-export const PAGES_HOST =
-  process.env.PAGES_HOST || '.pages.local.prisme.ai:3100';
 
-export const ResourceServer = syscfg.API_URL;
+// PROVIDER_URL, STUDIO_LOGIN_FORM_URL and PAGES_HOST must share a same parent domain for cookies to be properly transmitted between login form & OIDC provider
+const PAGES_HOST = process.env.PAGES_HOST || '.pages.local.prisme.ai:3100';
+const PROVIDER_URL =
+  process.env.OIDC_PROVIDER_URL ||
+  (process.env.API_URL || '').replace('/v2', '') ||
+  'http://studio.local.prisme.ai:3001';
+const STUDIO_LOGIN_FORM_URL = `${
+  process.env.CONSOLE_URL || 'http://studio.local.prisme.ai:3000'
+}`;
+const cookiesDomain = findCommonParentDomain([
+  PAGES_HOST,
+  PROVIDER_URL,
+  STUDIO_LOGIN_FORM_URL,
+]);
+if (!cookiesDomain) {
+  console.warn(
+    `No shared parent domain found between pages host, OIDC provider url and studio login url. Authentication might not be working !`
+  );
+}
+
+const ResourceServer = syscfg.API_URL;
 const resourceServers = {
   [ResourceServer]: {
     scope:
@@ -24,20 +43,23 @@ const resourceServers = {
   },
 };
 
+const SESSION_COOKIES_MAX_AGE = parseInt(
+  process.env.SESSION_COOKIES_MAX_AGE || <any>(30 * 24 * 60 * 60)
+);
+const ACCESS_TOKENS_MAX_AGE = parseInt(
+  process.env.ACCESS_TOKENS_MAX_AGE || <any>(30 * 24 * 60 * 60)
+);
+
 export default {
-  // PROVIDER_URL, STUDIO_LOGIN_FORM_URL and PAGES_HOST must share a same parent domain for cookies to be properly transmitted between login form & OIDC provider
-  PROVIDER_URL:
-    process.env.OIDC_PROVIDER_URL ||
-    (process.env.API_URL || '').replace('/v2', '') ||
-    'http://studio.local.prisme.ai:3001',
-  STUDIO_LOGIN_FORM_URL: `${
-    process.env.CONSOLE_URL || 'http://studio.local.prisme.ai:3000'
-  }`,
+  PROVIDER_URL,
+  STUDIO_LOGIN_FORM_URL,
   LOGIN_PATH: '/signin',
   OIDC_STUDIO_CLIENT_ID,
   OIDC_STUDIO_CLIENT_SECRET,
   OIDC_PAGES_CLIENT_ID_PREFIX,
   PAGES_HOST, // Used to build login form url for workspace pages
+  SESSION_COOKIES_MAX_AGE,
+  ACCESS_TOKENS_MAX_AGE,
   CONFIGURATION: <Configuration>{
     // Claims per scope
     claims: {
@@ -212,20 +234,21 @@ export default {
         overwrite: true,
         sameSite: 'lax',
         path: '/',
-        // domain: 'local.prisme.ai',
+        domain: cookiesDomain,
+      },
+
+      long: {
+        maxAge: SESSION_COOKIES_MAX_AGE * 1000,
+        domain: cookiesDomain,
       },
     },
 
-    // ttl: {
-    //   AccessToken: 1 * 60 * 60, // 1 hour in seconds
-    //   AuthorizationCode: 10 * 60, // 10 minutes in seconds
-    //   ClientCredentials: 10 * 60, // 10 minutes in seconds
-    //   IdToken: 1 * 60 * 60, // 1 hour in seconds
-    //   RefreshToken: 1 * 24 * 60 * 60, // 1 day in seconds
-
-    //   // HEROKU EXAMPLE ONLY, do not use the following expiration unless you want to drop dynamic
-    //   //   registrations 24 hours after registration
-    //   RegistrationAccessToken: 1 * 24 * 60 * 60, // 1 day in seconds
-    // },
+    ttl: {
+      AccessToken: ACCESS_TOKENS_MAX_AGE,
+      AuthorizationCode: 10 * 60, // 10 minutes in seconds
+      ClientCredentials: 10 * 60, // 10 minutes in seconds
+      IdToken: 1 * 60 * 60, // 1 hour in seconds
+      RefreshToken: 1 * 24 * 60 * 60, // 1 day in seconds
+    },
   },
 };

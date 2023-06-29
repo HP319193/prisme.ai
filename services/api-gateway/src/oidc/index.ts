@@ -32,14 +32,7 @@ const initOidcProvider = (): ProviderType => {
         //   "id_token" or "userinfo" (depends on the "use" param)
         // @param rejected {Array[String]} - claim names that were rejected by the end-user, you might
         //   want to skip loading some claims from external resources or through db projection
-        async claims(
-          use: string,
-          scope: string,
-          claims: object,
-          rejected: string[]
-        ) {
-          console.log('CLAIMS FOR ', use, scope, claims, rejected);
-          console.log(user);
+        async claims() {
           return { ...user, sub };
         },
       };
@@ -142,66 +135,15 @@ export function initRoutes() {
         );
       }
       await next();
-
-      // TODO essayer de reproduire le cas du else qui renvoie direct interaction (bouton continue vers /interaction/{uid}/confirm)
-      // if (details.interaction.error === 'login_required') {
-      //   await ctx.render('login', {
-      //     client,
-      //     details,
-      //     title: 'Sign-in',
-      //     debug: querystring.stringify(details.params, ',<br/>', ' = ', {
-      //       encodeURIComponent: (value) => value,
-      //     }),
-      //     interaction: querystring.stringify(
-      //       details.interaction,
-      //       ',<br/>',
-      //       ' = ',
-      //       {
-      //         encodeURIComponent: (value) => value,
-      //       }
-      //     ),
-      //   });
-      // } else {
-      //   await ctx.render('interaction', {
-      //     client,
-      //     details,
-      //     title: 'Authorize',
-      //     debug: querystring.stringify(details.params, ',<br/>', ' = ', {
-      //       encodeURIComponent: (value) => value,
-      //     }),
-      //     interaction: querystring.stringify(
-      //       details.interaction,
-      //       ',<br/>',
-      //       ' = ',
-      //       {
-      //         encodeURIComponent: (value) => value,
-      //       }
-      //     ),
-      //   });
-      // }
-
-      // await next();
     }
   );
 
+  // Credentials form submission
   const body = bodyParser();
-  // Called by Continue button
-  // a priori useless, jamais appelé, on peut dégager
-  // app.post(
-  //   '/interaction/:grant/confirm',
-  //   body,
-  //   async (req: Request, res: Response, next: NextFunction) => {
-  //     const result = { consent: {} };
-  //     console.log('CALL INTERACTION CONFIRM ', req);
-  //     await provider.interactionFinished(req, res, result);
-  //     await next();
-  //   }
-  // );
   app.post(
     '/interaction/:grant/login',
     body,
     async (req: Request, res: Response, next: NextFunction) => {
-      console.log('CALL INTERACTION LOGIN WIh ', req.body, req.params);
       const identity = services.identity(req.context, req.logger);
       const { login, password, remember } = req.body;
       try {
@@ -217,7 +159,6 @@ export function initRoutes() {
           },
           consent: {},
         };
-        console.log('FINISH ', result);
         await provider.interactionFinished(req, res, result);
         await next();
         return;
