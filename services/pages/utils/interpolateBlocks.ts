@@ -45,7 +45,7 @@ function replaceString(value: any, data: any) {
   if (matches && matches.length) {
     matches.forEach((m: any) => {
       const [toInterpolate, formatter] = getInterpolateKey(m);
-      const newVal = jsonpath.value(data, toInterpolate);
+      const newVal = jsonpath.value(data, toInterpolate) || '';
       if (typeof newVal === 'object' && !formatter) {
         value = newVal;
         return;

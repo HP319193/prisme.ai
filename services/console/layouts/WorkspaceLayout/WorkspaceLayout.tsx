@@ -29,6 +29,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     creatingAutomation,
     createPage,
     creatingPage,
+    createBlock,
   } = useWorkspace();
 
   const router = useRouter();
@@ -227,6 +228,30 @@ export const WorkspaceLayout: FC = ({ children }) => {
     });
   }, [trackEvent]);
 
+  const createBlockHandler = useCallback(async () => {
+    trackEvent({
+      category: 'Workspace',
+      name: 'Create Block from navigation',
+      action: 'click',
+    });
+    const name = incrementName(
+      t(`blocks.create.defaultName`),
+      Object.values(workspace.blocks || {}).map(({ name }) => localize(name))
+    );
+    const createdBlock = await createBlock({ slug: name, name, blocks: [] });
+    if (createdBlock) {
+      await router.push(`/workspaces/${workspace.id}/blocks/${name}`);
+    }
+  }, [
+    createBlock,
+    localize,
+    router,
+    t,
+    trackEvent,
+    workspace.blocks,
+    workspace.id,
+  ]);
+
   return (
     <TrackingCategory category="Workspace">
       <workspaceLayoutContext.Provider
@@ -245,6 +270,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
           setFullSidebar,
           createAutomation: createAutomationHandler,
           createPage: createPageHandler,
+          createBlock: createBlockHandler,
           installApp: installAppHandler,
         }}
       >
@@ -296,6 +322,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
                     onCreateAutomation={createAutomationHandler}
                     onCreatePage={createPageHandler}
                     onInstallApp={installAppHandler}
+                    onCreateBlock={createBlockHandler}
                     onExpand={() => setFullSidebar(true)}
                     className="max-h-[calc(100%-3rem)]"
                   />

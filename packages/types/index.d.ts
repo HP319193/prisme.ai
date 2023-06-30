@@ -2190,6 +2190,7 @@ declare namespace Prismeai {
     }
     export interface TypedArgument {
         type?: "string" | "number" | "object" | "array" | "boolean" | "localized:string" | "localized:number" | "localized:boolean";
+        title?: string;
         properties?: {
             [name: string]: TypedArgument;
         };

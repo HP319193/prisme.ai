@@ -24,6 +24,7 @@ export interface WorkspaceLayoutContext {
   createAutomation: () => void;
   createPage: () => void;
   installApp: () => void;
+  createBlock: () => void;
 }
 
 export const workspaceLayoutContext = createContext<

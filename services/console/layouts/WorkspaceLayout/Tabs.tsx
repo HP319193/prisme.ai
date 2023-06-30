@@ -23,10 +23,9 @@ function getTabsFromStorage(workspaceId: string) {
     return [];
   }
 }
-
+const pathRegExp = /(^.+)(automations|pages|apps|blocks)\/(.+$)/;
 function getDocument(tab: string, workspace: WorkspaceContext['workspace']) {
-  const [, , type, slug] =
-    tab.match(/(^.+)(automations|pages|apps)\/(.+$)/) || [];
+  const [, , type, slug] = tab.match(pathRegExp) || [];
 
   switch (type) {
     case 'automations':
@@ -35,16 +34,18 @@ function getDocument(tab: string, workspace: WorkspaceContext['workspace']) {
       return (workspace.pages || {})[slug];
     case 'apps':
       return (workspace.imports || {})[slug];
+    case 'blocks':
+      return (workspace.blocks || {})[slug];
   }
   return null;
 }
 
 function getSlug(tab: string) {
-  const [, , , slug] = tab.match(/(^.+)(automations|pages|apps)\/(.+$)/) || [];
+  const [, , , slug] = tab.match(pathRegExp) || [];
   return slug;
 }
 function getType(tab: string) {
-  const [, , type] = tab.match(/(^.+)(automations|pages|apps)\/(.+$)/) || [];
+  const [, , type] = tab.match(pathRegExp) || [];
   return type;
 }
 
@@ -158,6 +159,9 @@ export const Tabs = () => {
       ),
       ...Object.keys(workspace.imports || {}).map(
         (slug) => `/workspaces/${workspace.id}/apps/${slug}`
+      ),
+      ...Object.keys(workspace.blocks || {}).map(
+        (slug) => `/workspaces/${workspace.id}/blocks/${slug}`
       ),
     ]);
   }, [workspace]);
