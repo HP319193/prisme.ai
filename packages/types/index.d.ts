@@ -1021,6 +1021,10 @@ declare namespace Prismeai {
             updateOn?: string;
             automation?: string;
         }[];
+        /**
+         * Css applied to Block
+         */
+        css?: string;
         schema?: TypedArgument;
     }
     export interface Break {
