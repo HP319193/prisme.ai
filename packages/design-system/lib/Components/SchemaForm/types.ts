@@ -70,6 +70,7 @@ export type UiOptionsUpload = {
   upload: {
     // https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input/file#accept
     accept?: string;
+    defaultPreview?: string | ReactNode;
   };
 };
 export type UiOptionsTags = {

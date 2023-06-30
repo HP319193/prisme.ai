@@ -787,6 +787,7 @@
       "name_Action": "Action",
       "name_TabsView": "Tabs view",
       "name_Carousel": "Carousel",
+      "name_Image": "Image",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -804,6 +805,7 @@
       "description_Action": "Display an action button capable of navigating to a link, a page, a section of the page or triggering an event.",
       "description_TabsView": "Display tabs",
       "description_Carousel": "Displaying Blocks in a horizontal Carousel",
+      "description_Image": "Display a picture",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
@@ -1260,14 +1262,16 @@
       },
       "blocksSplit": {
         "settings": {
-          "firstBlock": {
-            "label": "First block"
-          },
-          "secondBlock": {
-            "label": "Second block"
-          },
-          "genericBlocks": {
-            "description": "Block specification."
+          "blocks": {
+            "firstBlock": {
+              "label": "First block"
+            },
+            "secondBlock": {
+              "label": "Second block"
+            },
+            "genericBlocks": {
+              "description": "Block specification."
+            }
           }
         }
       },
@@ -1380,6 +1384,10 @@
       },
       "slug": {
         "label": "Slug"
+      },
+      "url": {
+        "label": "Javascript module URL (advanced)",
+        "description": "You can create your Block as a React component using <a href=\"https://gitlab.com/prisme.ai/block-starter\">this template</a>."
       }
     },
     "save": {
@@ -1402,7 +1410,31 @@
         "reset": "Reset to default values"
       }
     },
-    "edit": "Edit"
+    "edit": "Edit",
+    "builder": {
+      "add": {
+        "label": "Add a Block"
+      },
+      "className": {
+        "help": "Identify the Block with a CSS class.",
+        "placeholder": "unknown-block"
+      },
+      "setup": {
+        "label": "Settings"
+      },
+      "lifecycle": {
+        "label": "Lifecycle"
+      },
+      "picker": {
+        "builtIn": "Built-in",
+        "workspace": "{{from}} (this Workspace)",
+        "title": "Choose a Block. You can access new Blocks by installing their Apps."
+      },
+      "delete": {
+        "label": "Delete",
+        "confirm": "Are you sure you want to remove this Block?"
+      }
+    }
   },
   "expert": {
     "show": "Edit the source code",
@@ -1460,6 +1492,7 @@
     "title_automations": "Automation settings",
     "title_pages": "Page settings",
     "title_apps": "App settings",
+    "title_blocks": "Block settings",
     "save": "Save",
     "delete": {
       "label": "Delete",

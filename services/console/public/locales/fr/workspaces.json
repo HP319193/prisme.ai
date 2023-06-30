@@ -787,6 +787,7 @@
       "name_Action": "Action",
       "name_TabsView": "Vue en onglets",
       "name_Carousel": "Carousel",
+      "name_Image": "Image",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Hero": "Afficher un Hero de page",
@@ -804,6 +805,7 @@
       "description_Footer": "Afficher un pied de page",
       "description_TabsView": "Afficher des onglets",
       "description_Carousel": "Afficher des Blocks dans un Carousel horizontal",
+      "description_Image": "Afficher une image",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
       "header": {
@@ -1260,14 +1262,16 @@
       },
       "blocksSplit": {
         "settings": {
-          "firstBlock": {
-            "label": "Premier block"
-          },
-          "secondBlock": {
-            "label": "Second block"
-          },
-          "genericBlocks": {
-            "description": "Spécifications du block."
+          "blocks": {
+            "firstBlock": {
+              "label": "Premier block"
+            },
+            "secondBlock": {
+              "label": "Second block"
+            },
+            "genericBlocks": {
+              "description": "Spécifications du block."
+            }
           }
         }
       },
@@ -1380,6 +1384,10 @@
       },
       "slug": {
         "label": "Nom technique"
+      },
+      "url": {
+        "label": "URL du module Javascript (avancé)",
+        "description": "Vous pouvez créer votre Block sous la forme d'un composant React en utilisant <a href=\"https://gitlab.com/prisme.ai/block-starter\">ce modèle</a>."
       }
     },
     "save": {
@@ -1402,7 +1410,31 @@
         "reset": "Réinitialiser les valeurs par défaut"
       }
     },
-    "edit": "Éditer"
+    "edit": "Éditer",
+    "builder": {
+      "add": {
+        "label": "Ajouter un Block"
+      },
+      "className": {
+        "help": "Identifiez le Block à l'aide d'une classe CSS.",
+        "placeholder": "block-sans-nom"
+      },
+      "setup": {
+        "label": "Configuration"
+      },
+      "lifecycle": {
+        "label": "Cycle de vie"
+      },
+      "picker": {
+        "builtIn": "Communs",
+        "workspace": "{{from}} (ce Workspace)",
+        "title": "Choisissez un Block. Vous pouvez accéder à de nouveaux Blocks en installant leurs Apps."
+      },
+      "delete": {
+        "label": "Supprimer",
+        "confirm": "Êtes vous sur de vouloir supprimer ce Block ?"
+      }
+    }
   },
   "expert": {
     "show": "Éditer le code source",
@@ -1457,9 +1489,10 @@
   "details": {
     "title": "",
     "title_workspaces": "Réglages du Workspace",
-    "title_automations": "Réglages de l'automatisation",
-    "title_pages": "Réglages de la page",
-    "title_apps": "Détails de l'app",
+    "title_automations": "Réglages de l'Automatisation",
+    "title_pages": "Réglages de la Page",
+    "title_apps": "Détails de l'App",
+    "title_blocks": "Réglages du Block",
     "save": "Enregistrer",
     "delete": {
       "label": "Supprimer",
