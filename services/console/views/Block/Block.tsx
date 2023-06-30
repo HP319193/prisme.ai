@@ -46,7 +46,9 @@ const Block = () => {
     createBlock,
   } = useWorkspace();
   const [value, setValue] = useState(block);
-  const [viewMode, setViewMode] = useState(0);
+  const [viewMode, setViewMode] = useState(
+    (value?.blocks || []).length === 0 ? 1 : 0
+  );
   const [dirty] = useDirtyWarning(block, value);
   const [saving, setSaving] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
