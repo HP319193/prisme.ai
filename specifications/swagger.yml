@@ -675,6 +675,9 @@ components:
               automation:
                 type: string
             additionalProperties: true
+        css:
+          type: string
+          description: Css applied to Block
         schema:
           $ref: '#/components/schemas/TypedArgument'
 

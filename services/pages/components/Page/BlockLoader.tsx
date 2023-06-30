@@ -58,14 +58,18 @@ export const BlockLoader: TBlockLoader = ({
         (page?.appInstances || []).find(({ slug }) => slug === '') || {};
       if (workspaceBlocks && workspaceBlocks[name]) {
         const block = workspaceBlocks[name];
-        const { url = getBlockName('BlocksList'), blocks = undefined } =
-          typeof block === 'string' ? { url: block } : block;
+        const {
+          url = getBlockName('BlocksList'),
+          blocks = undefined,
+          css = '',
+        } = typeof block === 'string' ? { url: block } : block;
 
         if (blocks) {
           setBlockName('BlocksList');
           setConfig({
             ...initialConfig,
             blocks: interpolateBlock(blocks, initialConfig),
+            css,
           });
         }
         setUrl(url);
