@@ -54,6 +54,24 @@ body h5.ant-typography,
 body h6.ant-typography {
   font-size: 1rem;
 }
+body h1 {
+  font-size: 2rem;
+}
+body h2 {
+  font-size: 1.8rem;
+}
+body h3 {
+  font-size: 1.6rem;
+}
+body h4 {
+  font-size: 1.4rem;
+}
+body h5 {
+  font-size: 1.2rem;
+}
+body h6 {
+  font-size: 1rem;
+}
 
 a {
   color: inherit;
