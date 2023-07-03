@@ -4,6 +4,7 @@ import CodeEditor, { CodeEditorProps } from './CodeEditor';
 
 export const CodeEditorInline: React.FC<CodeEditorProps> = ({
   value,
+  className,
   ...props
 }) => {
   const singleLine = `${value}`.split(/\n/).length === 1;
@@ -26,7 +27,7 @@ export const CodeEditorInline: React.FC<CodeEditorProps> = ({
         }
         maxLines={Infinity}
         showGutter={!singleLine}
-        className={value ? 'filled' : ''}
+        className={`${value ? 'filled' : ''} ${className}`}
       />
     </React.Suspense>
   );
