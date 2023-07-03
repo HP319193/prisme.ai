@@ -227,56 +227,6 @@ export const Navigation = ({
         role="navigation"
         className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden max-h-[calc(100%-3rem)]"
       >
-        {!(searchValue && filteredBlocks.length === 0) && (
-          <ItemsGroup
-            title={t('workspace.sections.blocks')}
-            onClick={toggle('blocks')}
-            open={
-              !!opens.get('blocks') ||
-              (!!searchValue && filteredBlocks.length > 0)
-            }
-            onAdd={onCreateBlock}
-            creating={creatingBlock}
-            tooltip={t('workspace.add.block')}
-          >
-            {filteredBlocks.map(([slug, { name }]) => (
-              <Item
-                key={slug}
-                href={`/workspaces/${id}/blocks/${slug}`}
-                icon={
-                  <Tooltip title={localize(name)} placement="right">
-                    <div>
-                      <PageIcon
-                        color={`#${stringToHexaColor(localize(name))}`}
-                        width="1.6rem"
-                        height="1.6rem"
-                      />
-                    </div>
-                  </Tooltip>
-                }
-              >
-                <div className="flex flex-1 flex-col max-w-full">
-                  <div className="text-ellipsis overflow-hidden">
-                    <Highlight
-                      highlight={searchValue}
-                      component={<span className="font-bold text-accent" />}
-                    >
-                      {localize(name)}
-                    </Highlight>
-                  </div>
-                  <div className="text-ellipsis overflow-hidden text-xs text-gray">
-                    <Highlight
-                      highlight={searchValue}
-                      component={<span className="font-bold text-accent" />}
-                    >
-                      {`/${slug}`}
-                    </Highlight>
-                  </div>
-                </div>
-              </Item>
-            ))}
-          </ItemsGroup>
-        )}
         {!(searchValue && filteredPages.length === 0) && (
           <ItemsGroup
             title={t('workspace.sections.pages')}
@@ -347,6 +297,56 @@ export const Navigation = ({
                   <Tooltip title={localize(name)} placement="right">
                     <div>
                       <AutomationIcon
+                        color={`#${stringToHexaColor(localize(name))}`}
+                        width="1.6rem"
+                        height="1.6rem"
+                      />
+                    </div>
+                  </Tooltip>
+                }
+              >
+                <div className="flex flex-1 flex-col max-w-full">
+                  <div className="text-ellipsis overflow-hidden">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {localize(name)}
+                    </Highlight>
+                  </div>
+                  <div className="text-ellipsis overflow-hidden text-xs text-gray">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {`/${slug}`}
+                    </Highlight>
+                  </div>
+                </div>
+              </Item>
+            ))}
+          </ItemsGroup>
+        )}
+        {!(searchValue && filteredBlocks.length === 0) && (
+          <ItemsGroup
+            title={t('workspace.sections.blocks')}
+            onClick={toggle('blocks')}
+            open={
+              !!opens.get('blocks') ||
+              (!!searchValue && filteredBlocks.length > 0)
+            }
+            onAdd={onCreateBlock}
+            creating={creatingBlock}
+            tooltip={t('workspace.add.block')}
+          >
+            {filteredBlocks.map(([slug, { name }]) => (
+              <Item
+                key={slug}
+                href={`/workspaces/${id}/blocks/${slug}`}
+                icon={
+                  <Tooltip title={localize(name)} placement="right">
+                    <div>
+                      <PageIcon
                         color={`#${stringToHexaColor(localize(name))}`}
                         width="1.6rem"
                         height="1.6rem"
