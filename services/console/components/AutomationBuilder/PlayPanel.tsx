@@ -174,7 +174,12 @@ const PlayView = () => {
           )}
           {!running && result && (
             <>
-              <CodeEditorInline readOnly value={result} mode="json" />
+              <CodeEditorInline
+                readOnly
+                value={result}
+                mode="json"
+                className="!flex-auto"
+              />
               <Link
                 href={`/workspaces/${wId}?source.correlationId=${correlationId}`}
               >

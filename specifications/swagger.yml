@@ -549,7 +549,7 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/TypedArgument'
         title:
-          type: string
+          $ref: '#/components/schemas/LocalizedText'
         description:
           $ref: '#/components/schemas/LocalizedText'
         items:
