@@ -10,15 +10,9 @@ import { createClient } from '@redis/client';
 import expressSession from 'express-session';
 import connectRedis from 'connect-redis';
 import { storage, syscfg, eda, oidcCfg } from '../../config';
-import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as CustomStrategy } from 'passport-custom';
-import { logger } from '../../logger';
 import services from '../../services';
-import {
-  AuthenticationError,
-  NotFoundError,
-  PrismeError,
-} from '../../types/errors';
+import { AuthenticationError, NotFoundError } from '../../types/errors';
 import { UserStatus } from '../../services/identity/users';
 import { ResourceServer } from '../../config/oidc';
 
@@ -147,33 +141,6 @@ export async function init(app: Application) {
 async function initPassportStrategies(
   users: ReturnType<typeof services.identity>
 ) {
-  passport.use(
-    new LocalStrategy(
-      {
-        usernameField: 'email',
-      },
-      async function (email, password, done) {
-        try {
-          const user = await users.login(email, password);
-          return done(null, user);
-        } catch (err) {
-          if (!(err instanceof PrismeError)) {
-            done(null, false, {
-              message:
-                'Internal error. Please try again or contact us at support@prisme.ai',
-            });
-            logger.error({
-              msg: 'Unexpected error raised during passport authenticate',
-              err,
-            });
-          } else {
-            done(null, false, err);
-          }
-        }
-      }
-    )
-  );
-
   passport.use(
     'anonymous',
     new CustomStrategy(async function (req, done) {

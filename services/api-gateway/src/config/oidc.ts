@@ -33,7 +33,7 @@ if (!cookiesDomain) {
   );
 }
 
-const ResourceServer = syscfg.API_URL;
+export const ResourceServer = syscfg.API_URL;
 const resourceServers = {
   [ResourceServer]: {
     scope:
@@ -166,7 +166,11 @@ export default {
       {
         client_id: `${OIDC_PAGES_CLIENT_ID_PREFIX}test`,
         client_secret: 'a_different_secret',
-        grant_types: ['authorization_code', 'refresh_token'],
+        grant_types: [
+          'authorization_code',
+          'refresh_token',
+          'client_credentials',
+        ],
         response_types: ['code'],
         redirect_uris: ['http://test.pages.local.prisme.ai:3100/signin'],
         workspaceSlug: 'test',
@@ -177,6 +181,7 @@ export default {
         isInternalClient: true,
       },
     ],
+    acrValues: ['anonymous'],
 
     async extraTokenClaims() {
       return {

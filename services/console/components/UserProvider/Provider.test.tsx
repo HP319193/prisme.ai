@@ -18,7 +18,7 @@ jest.mock('next/router', () => ({
   }),
 }));
 beforeEach(() => {
-  Storage.remove('auth-token');
+  Storage.remove('access-token');
   jest.resetAllMocks();
 });
 

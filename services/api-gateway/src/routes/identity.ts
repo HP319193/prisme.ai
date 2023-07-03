@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
+import jose from 'node-jose';
 import services from '../services';
 import passport from 'passport';
 import {
@@ -11,7 +12,7 @@ import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
 import { v4 as uuid } from 'uuid';
-import { syscfg } from '../config';
+import { oidcCfg, syscfg } from '../config';
 
 const loginHandler = (strategy: string) =>
   async function (
@@ -40,16 +41,34 @@ const loginHandler = (strategy: string) =>
             );
           }
 
-          req.session.prismeaiSessionId = uuid();
-          req.session.mfaValidated = false;
+          const keyStore = await jose.JWK.asKeyStore(
+            oidcCfg.CONFIGURATION.jwks!
+          );
+          const [key] = keyStore.all({ use: 'sig' });
+          const opt = { compact: true, jwk: key, fields: { typ: 'jwt' } };
           const expires = new Date(
-            Date.now() + syscfg.SESSION_COOKIES_MAX_AGE * 1000
-          ).toISOString();
+            Date.now() + oidcCfg.ACCESS_TOKENS_MAX_AGE * 1000
+          );
+          // Mimic OIDC emitted JWT tokens so we can validate / handle these anonymous session exactly like for OIDC tokens
+          const payload = {
+            exp: Math.floor(expires.getTime() / 1000),
+            iat: Math.floor(Date.now() / 1000),
+            sub: user.id,
+            iss: oidcCfg.PROVIDER_URL,
+            aud: syscfg.API_URL,
+            prismeaiSessionId: uuid(),
+          };
+          const token = await jose.JWS.createSign(opt, key)
+            .update(JSON.stringify(payload))
+            .final();
+
+          req.session.prismeaiSessionId = payload.prismeaiSessionId;
+          req.session.mfaValidated = false;
           res.send({
             ...user,
-            token: req.sessionID,
+            token,
             sessionId: req.session.prismeaiSessionId,
-            expires,
+            expires: expires.toISOString(),
           });
           const provider = strategy === 'local' ? 'prismeai' : strategy;
           await req.broker.send<Prismeai.SucceededLogin['payload']>(
@@ -65,7 +84,7 @@ const loginHandler = (strategy: string) =>
                 id: req.session.prismeaiSessionId,
                 token: req.sessionID,
                 expiresIn: syscfg.SESSION_COOKIES_MAX_AGE,
-                expires,
+                expires: expires.toISOString(),
               },
             }
           );
@@ -340,83 +359,6 @@ async function deleteMetaHandler(
 }
 
 const app = express.Router();
-
-// // Very first route to be called
-// router.get("/auth/login", function (req, res, next) {
-//   const backToPath = (req.query.backTo as string) || "/private";
-//   const state = serializeAuthState({ backToPath });
-
-//   const authUrl = req.app.authClient!.authorizationUrl({
-//     scope: "openid email profile",
-//     state,
-//   });
-
-//   debug("setting state cookie %O", state);
-//   setAuthStateCookie(res, state);
-
-//   debug("redirecting to %s", authUrl);
-//   res.redirect(authUrl);
-// });
-
-// // This is what the provider will call in order to finish the process
-// router.get("/auth/callback", async (req, res, next) => {
-//   debug("/auth/callback");
-//   try {
-//     console.log("req.cookies", req.cookies);
-//     const state = getAuthStateCookie(req);
-//     debug("state %s", state);
-//     const { backToPath } = deserializeAuthState(state);
-//     debug("state %O", deserializeAuthState(state));
-//     const client = req.app.authClient;
-
-//     const params = client!.callbackParams(req);
-//     const tokenSet = await client!.callback(
-//       `${getDomain()}/auth/callback`,
-//       params,
-//       { state }
-//     );
-//     const user = await client!.userinfo(tokenSet);
-
-//     const sessionCookie = serialize({ tokenSet, user });
-//     setSessionCookie(res, sessionCookie);
-
-//     res.redirect(backToPath);
-//   } catch (err) {
-//     console.log("SOMETHING WENT WRONG", err);
-//     return next(err);
-//   }
-// });
-
-// // This is a logout mostly local to our app, that means
-// // that your session with the identity provider will be ketp intact.
-// router.get("/auth/logout", async (req, res, next) => {
-//   const client = req.app.authClient;
-//   const tokenSet = req.session?.tokenSet;
-
-//   try {
-//     await client!.revoke(tokenSet!.access_token!);
-//   } catch (err) {
-//     console.error("error revoking access_token", err);
-//   }
-//   clearSessionCookie(res);
-
-//   res.redirect("/");
-// });
-
-// // This does not work, it looks like google doesn't provider
-// // the necessary endpoints in the Discovery doc
-// router.get("/auth/logout/sso", async (req, res, next) => {
-//   const client = req.app.authClient;
-//   const tokenSet = req.session?.tokenSet;
-
-//   clearSessionCookie(res);
-
-//   const endSessionUrl = client!.endSessionUrl();
-//   res.redirect(endSessionUrl);
-// });
-
-// return router;
-// }
 
 app.get(`/me`, isAuthenticated, meHandler);
 app.post(`/contacts`, findContactsHandler);

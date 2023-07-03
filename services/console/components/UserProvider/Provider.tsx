@@ -34,10 +34,15 @@ async function authFromConsole() {
     }, 100);
     // Ask console for auth token if present
     const listener = (e: MessageEvent) => {
-      const { type, token } = e.data;
+      const { type, token, legacy } = e.data;
       if (type === 'api.token') {
-        api.token = token;
-        Storage.set('auth-token', token);
+        if (legacy) {
+          api.legacyToken = token;
+          Storage.set('auth-token', token);
+        } else {
+          api.token = token;
+          Storage.set('access-token', token);
+        }
         clearTimeout(t);
         resolve(token);
       }
@@ -197,7 +202,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       if (anonymous) {
         const { token, ...user } = await api.createAnonymousSession();
         api.token = token;
-        Storage.set('auth-token', token);
+        Storage.set('access-token', token);
         setUser(user);
         setLoading(false);
         return;
@@ -357,7 +362,14 @@ export const UserProvider: FC<UserProviderProps> = ({
       const { type } = e.data || {};
       const source = e.source as Window;
       if (type === 'askAuthToken' && e.origin.match(PAGES_HOST)) {
-        source.postMessage({ type: 'api.token', token: api.token }, e.origin);
+        source.postMessage(
+          {
+            type: 'api.token',
+            token: api.token || api.legacyToken,
+            legacy: !api.token && !!api.legacyToken,
+          },
+          e.origin
+        );
       }
     };
     window.addEventListener('message', listener);

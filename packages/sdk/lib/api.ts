@@ -108,7 +108,10 @@ export class Api extends Fetcher {
     return `${this.opts?.oidc?.pagesClientIdPrefix}${workspaceSlug}`;
   }
 
-  getAuthorizationURL(overrideRedirectUri?: string) {
+  getAuthorizationURL(
+    overrideRedirectUri?: string,
+    authParams?: { max_age?: string; acr_values?: string }
+  ) {
     const url = new URL('/oidc/auth', this.opts.oidc.url);
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('response_mode', 'query'); // Send the final authorization code as a query param to the redirect uri
@@ -136,6 +139,11 @@ export class Api extends Fetcher {
     if (locale) {
       url.searchParams.set('locale', locale);
     }
+
+    Object.entries(authParams || {}).forEach(([k, v]) => {
+      url.searchParams.set(k, v);
+    });
+
     return {
       url: url.toString(),
       codeVerifier,

@@ -2,7 +2,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { oidcCfg } from '../config';
 import RedisAdapter from './redis';
-import ProviderType from 'oidc-provider';
+import ProviderType, { InteractionResults } from 'oidc-provider';
 import bodyParser from 'body-parser';
 import services from '../services';
 import { URL } from 'url';
@@ -40,8 +40,11 @@ const initOidcProvider = (): ProviderType => {
 
     interactions: {
       url: async function interactionUrl(ctx: any, interaction: any) {
-        if (interaction.prompt.name === 'consent') {
-          // This is where we should instead redirect to a front end page asking for consent (which would be processed by the below url)
+        if (
+          interaction.prompt.name === 'consent' ||
+          interaction.params.acr_values === 'anonymous'
+        ) {
+          // In case of consent, this is where we should instead redirect to a front end page asking for consent (which would be processed by the below url)
           const url = new URL(
             `/oidc/interaction/${interaction.uid}`,
             oidcCfg.PROVIDER_URL
@@ -88,10 +91,27 @@ export function initRoutes() {
   app.get(
     '/interaction/:grant',
     async (req: Request, res: Response, next: NextFunction) => {
+      let result: InteractionResults = {};
       const details = await provider.interactionDetails(req, res);
       const client = await provider.Client.find(
         details.params.client_id as string
       );
+
+      // Anonymous login : no UI interaction needed, just create an anonymous user
+      if (details.params.acr_values === 'anonymous') {
+        const users = services.identity(req.context, req.logger);
+        const anonymousUser = await users.anonymousLogin();
+        result.login = {
+          accountId: anonymousUser.id!,
+        };
+        details.session = {
+          ...details.session,
+          accountId: anonymousUser.id!,
+        } as any;
+        details.prompt.name = 'consent';
+      }
+
+      // Consents
       if (details.prompt.name === 'consent' && details.session && client) {
         let grant: any;
         if (details.grantId) {
@@ -123,16 +143,20 @@ export function initRoutes() {
             grant.addResourceScope(indicator, scopes.join(' '));
           }
         }
-        const result = { consent: { grantId: await grant.save() } };
-        await provider.interactionFinished(req, res, result, {
-          mergeWithLastSubmission: true,
-        });
+        result.consent = { grantId: await grant.save() };
       } else {
         throw new PrismeError(
           'Login form should not be rendered from there, but redirected to instead.',
           { interaction: details },
           400
         );
+      }
+
+      // Save our updated interaction
+      if (Object.keys(result).length) {
+        await provider.interactionFinished(req, res, result, {
+          mergeWithLastSubmission: true,
+        });
       }
       await next();
     }
@@ -151,7 +175,6 @@ export function initRoutes() {
         const result = {
           login: {
             accountId: account.id!,
-            // TODO whats acr & amr ?
             acr: 'urn:mace:incommon:iap:bronze',
             amr: ['pwd'],
             remember: !!remember,

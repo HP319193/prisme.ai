@@ -43,16 +43,6 @@ it('should call /me', async () => {
   expect(api.user).toBe(me);
 });
 
-it('should call /signin', () => {
-  const api = new Api({ host: '/fake/' });
-  api.post = jest.fn();
-  api.signin('user@fake.com', 'password');
-  expect(api.post).toHaveBeenCalledWith('/login', {
-    email: 'user@fake.com',
-    password: 'password',
-  });
-});
-
 it('should call /login/anonymous', async () => {
   const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
