@@ -2118,7 +2118,7 @@ declare namespace Prismeai {
          */
         type: "gateway.login.succeeded";
         payload: {
-            ip: string;
+            ip?: string;
             email?: string;
             id: string;
             authData: {
@@ -2132,7 +2132,6 @@ declare namespace Prismeai {
             };
             session: {
                 id: string;
-                token: string;
                 /**
                  * Expires in N seconds
                  */
@@ -2652,10 +2651,10 @@ declare namespace PrismeaiAPI {
                  * Unique id
                  */
                 id?: string;
-                token: string;
                 sessionId: string;
                 expires?: string;
             }
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace AutomationWebhook {
@@ -2767,56 +2766,6 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
-        }
-    }
-    namespace CredentialsAuth {
-        export interface RequestBody {
-            email: string;
-            password: string;
-        }
-        namespace Responses {
-            export interface $200 {
-                /**
-                 * example:
-                 * foo@prisme.ai
-                 */
-                email?: string;
-                status?: "pending" | "validated" | "deactivated";
-                language?: string;
-                authData?: {
-                    [name: string]: any;
-                    facebook?: {
-                        [key: string]: any;
-                    };
-                    anonymous?: {
-                        [key: string]: any;
-                    };
-                };
-                mfa?: Prismeai.SupportedMFA;
-                meta?: {
-                    [key: string]: any;
-                };
-                /**
-                 * Name
-                 */
-                firstName: string;
-                /**
-                 * Name
-                 */
-                lastName?: string;
-                /**
-                 * Profile picture URL
-                 */
-                photo?: string;
-                /**
-                 * Unique id
-                 */
-                id?: string;
-                token: string;
-                sessionId: string;
-                expires?: string;
-            }
-            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace DeleteAccessToken {

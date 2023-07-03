@@ -145,6 +145,8 @@ export const UserProvider: FC<UserProviderProps> = ({
         try {
           api.signout();
         } catch {}
+      } else {
+        Storage.remove('access-token');
       }
       setUser(null);
       if (!PUBLIC_URLS.includes(route)) {

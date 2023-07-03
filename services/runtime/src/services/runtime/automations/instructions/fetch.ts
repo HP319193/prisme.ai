@@ -8,15 +8,16 @@ import { ContextsManager } from '../../contexts';
 import {
   CORRELATION_ID_HEADER,
   FETCH_USER_AGENT_HEADER,
-  PUBLIC_API_URL,
+  API_URL,
   RUNTIME_EMITS_BROKER_TOPIC,
 } from '../../../../../config';
 import { Broker, EventSource } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 import { logger } from '../../../../logger';
+import { getAccessToken } from '../../../../utils/jwks';
 
 const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages'].map(
-  (cur) => `${PUBLIC_API_URL}${cur}`
+  (cur) => `${API_URL}${cur}`
 );
 
 const base64Regex =
@@ -67,9 +68,17 @@ export async function fetch(
   if (
     AUTHENTICATE_PRISMEAI_URLS.some((cur) => url.startsWith(cur)) &&
     !('x-prismeai-token' in lowercasedHeaders) &&
-    ctx?.session?.token
+    !('authorization' in lowercasedHeaders) &&
+    (ctx?.session?.origin?.userId || ctx?.session?.userId) &&
+    (ctx?.session?.origin?.sessionId || ctx?.session?.sessionId)
   ) {
-    headers['x-prismeai-token'] = ctx?.session?.token;
+    const { jwt } = await getAccessToken({
+      userId: ctx?.session?.origin?.userId || ctx?.session?.userId,
+      prismeaiSessionId:
+        ctx?.session?.origin?.sessionId || ctx?.session?.sessionId,
+      expiresIn: 10,
+    });
+    headers['Authorization'] = `Bearer ${jwt}`;
   }
 
   const params: RequestInit = {

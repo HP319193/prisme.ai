@@ -432,7 +432,7 @@ Any set variable to one of these contexts is automatically synchronized with par
     </tr>           
     <tr>
       <td><b>global.apiUrl</b></td>
-      <td>Current API instance public url (fulfilled by runtime **PUBLIC_API_URL** variable)</td>
+      <td>Current API instance public url (fulfilled by runtime **API_URL** variable)</td>
     </tr>           
     <tr>
       <td><b>global.endpoints</b></td>

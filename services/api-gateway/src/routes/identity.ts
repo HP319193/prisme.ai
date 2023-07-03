@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response } from 'express';
-import jose from 'node-jose';
 import services from '../services';
 import passport from 'passport';
 import {
@@ -11,13 +10,13 @@ import {
 import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
-import { v4 as uuid } from 'uuid';
-import { oidcCfg, syscfg } from '../config';
+import { syscfg } from '../config';
+import { getAccessToken } from '../oidc/jwks';
 
 const loginHandler = (strategy: string) =>
   async function (
-    req: Request<any, any, PrismeaiAPI.CredentialsAuth.RequestBody>,
-    res: Response<PrismeaiAPI.CredentialsAuth.Responses.$200>,
+    req: Request<any, any>,
+    res: Response<PrismeaiAPI.AnonymousAuth.Responses.$200>,
     next: NextFunction
   ) {
     passport.authenticate(
@@ -41,34 +40,15 @@ const loginHandler = (strategy: string) =>
             );
           }
 
-          const keyStore = await jose.JWK.asKeyStore(
-            oidcCfg.CONFIGURATION.jwks!
-          );
-          const [key] = keyStore.all({ use: 'sig' });
-          const opt = { compact: true, jwk: key, fields: { typ: 'jwt' } };
-          const expires = new Date(
-            Date.now() + oidcCfg.ACCESS_TOKENS_MAX_AGE * 1000
-          );
           // Mimic OIDC emitted JWT tokens so we can validate / handle these anonymous session exactly like for OIDC tokens
-          const payload = {
-            exp: Math.floor(expires.getTime() / 1000),
-            iat: Math.floor(Date.now() / 1000),
-            sub: user.id,
-            iss: oidcCfg.PROVIDER_URL,
-            aud: syscfg.API_URL,
-            prismeaiSessionId: uuid(),
-          };
-          const token = await jose.JWS.createSign(opt, key)
-            .update(JSON.stringify(payload))
-            .final();
-
-          req.session.prismeaiSessionId = payload.prismeaiSessionId;
+          const { token, jwt, expires } = await getAccessToken(user.id);
+          req.session.prismeaiSessionId = token.prismeaiSessionId;
           req.session.mfaValidated = false;
           res.send({
             ...user,
-            token,
+            token: jwt,
             sessionId: req.session.prismeaiSessionId,
-            expires: expires.toISOString(),
+            expires,
           });
           const provider = strategy === 'local' ? 'prismeai' : strategy;
           await req.broker.send<Prismeai.SucceededLogin['payload']>(
@@ -82,9 +62,8 @@ const loginHandler = (strategy: string) =>
               },
               session: {
                 id: req.session.prismeaiSessionId,
-                token: req.sessionID,
                 expiresIn: syscfg.SESSION_COOKIES_MAX_AGE,
-                expires: expires.toISOString(),
+                expires,
               },
             }
           );

@@ -84,15 +84,15 @@ Then, for when you want to run this service directly from its docker image, you 
   </tr>          
   <tr>
     <td>API_URL</td>
-    <td>console, pages, api-gateway</td>
+    <td>console, pages, api-gateway, runtime</td>
     <td>api-gateway public URL</td>
-    <td></td>
+    <td>http://studio.local.prisme.ai:3001/v2</td>
   </tr>  
    <tr>
     <td>CONSOLE_URL</td>
     <td>api-gateway, console, pages</td>
     <td>Studio URL, used for emails & auth redirections</td>
-    <td>3001</td>
+    <td>http://studio.local.prisme.ai:3000</td>
   </tr>       
   <tr>
     <td>PAGES_HOST</td>
@@ -105,7 +105,7 @@ Then, for when you want to run this service directly from its docker image, you 
   <!-- OIDC -->
    <tr>
     <td>OIDC_PROVIDER_URL</td>
-    <td>api-gateway, pages, console</td>
+    <td>api-gateway, pages, console, runtime</td>
     <td>OIDC Authorization server URL</td>
     <td>API_URL env var, without any base path</td>
   </tr>  
@@ -161,6 +161,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Access tokens expiration (in seconds)</td>
     <td>2592000 (1 month)</td>
   </tr>      
+  <tr>
+    <td>JWKS_FILEPATH</td>
+    <td>api-gateway, runtime</td>
+    <td>JWKS filepath for access token JWT signing. Also used for runtime fetch instruction with current user session</td>
+    <td>root jwks.json file</td>
+  </tr> 
   <tr>
     <td>SESSION_COOKIES_SIGN_SECRET</td>
     <td>api-gateway</td>
@@ -421,12 +427,6 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>60*60 (1 hour)</td>
   </tr>       
 
-  <tr>
-    <td>PUBLIC_API_URL</td>
-    <td>runtime</td>
-    <td>Runtime public URL (with ending **/v2**), fulfills **global.apiUrl** and **global.endpoints** variables</td>
-    <td>None</td>
-  </tr>         
   <tr>
     <td>ADDITIONAL_GLOBAL_VARS_*</td>
     <td>runtime</td>

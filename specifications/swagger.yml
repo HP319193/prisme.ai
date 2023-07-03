@@ -1734,7 +1734,6 @@ components:
         payload:
           type: object
           required:
-            - ip
             - id
             - session
             - authData
@@ -1750,13 +1749,10 @@ components:
               type: object
               required:
                 - id
-                - token
                 - expiresIn
                 - expires
               properties:
                 id:
-                  type: string
-                token:
                   type: string
                 expiresIn:
                   type: number
@@ -2832,53 +2828,6 @@ components:
   ## End of schemas
 paths:
   ############################################# gateway
-  /v2/login:
-    post:
-      description: Email / Password authentication
-      operationId: credentialsAuth
-      tags:
-        - API Gateway
-      security:
-        - ApiKeyAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              required:
-                - email
-                - password
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-
-      responses:
-        '200': &LoginResponse
-          description: Success Response
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/User'
-                  - type: object
-                    required:
-                      - token
-                      - sessionId
-                    properties:
-                      token:
-                        type: string
-                      sessionId:
-                        type: string
-                      expires:
-                        type: string
-        '401': &AuthenticationError
-          description: AuthenticationError
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthenticationError'
 
   /v2/login/anonymous:
     post:
@@ -2889,7 +2838,27 @@ paths:
       security:
         - ApiKeyAuth: []
       responses:
-        '200': *LoginResponse
+        '200': &LoginResponse
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    required:
+                      - sessionId
+                    properties:
+                      sessionId:
+                        type: string
+                      expires:
+                        type: string
+        '401': &AuthenticationError
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
 
   /v2/login/mfa:
     post:

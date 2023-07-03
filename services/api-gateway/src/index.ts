@@ -36,7 +36,7 @@ try {
 }
 
 initMetrics(app);
-initRoutes(app, gtwcfg);
+initRoutes(app, gtwcfg, broker);
 
 app.listen(syscfg.PORT, () => {
   logger.info(`Running on port ${syscfg.PORT}`);
