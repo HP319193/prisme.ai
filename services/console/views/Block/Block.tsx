@@ -46,9 +46,7 @@ const Block = () => {
     createBlock,
   } = useWorkspace();
   const [value, setValue] = useState(block);
-  const [viewMode, setViewMode] = useState(
-    (value?.blocks || []).length === 0 ? 1 : 0
-  );
+  const [viewMode, setViewMode] = useState(0);
   const [dirty] = useDirtyWarning(block, value);
   const [saving, setSaving] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
@@ -328,38 +326,6 @@ const Block = () => {
               {t('blocks.save.label')}
             </Button>
           </div>,
-          <div key="views">
-            <div className="ml-3">
-              <Segmented
-                key="nav"
-                options={[
-                  {
-                    value: 0,
-                    icon: (
-                      <Tooltip
-                        title={t('blocks.preview.label')}
-                        placement="bottom"
-                      >
-                        <EyeOutlined />
-                      </Tooltip>
-                    ),
-                    disabled: (value?.blocks || []).length === 0,
-                  },
-                  {
-                    value: 1,
-                    icon: (
-                      <Tooltip title={t('blocks.edit')} placement="bottom">
-                        <EditOutlined />
-                      </Tooltip>
-                    ),
-                  },
-                ]}
-                value={(value.blocks || []).length === 0 ? 1 : viewMode}
-                className="pr-segmented-accent"
-                onChange={(v) => setViewMode(+v)}
-              />
-            </div>
-          </div>,
         ]}
       />
 
@@ -373,13 +339,6 @@ const Block = () => {
           validate={validateSource}
           error={validationError}
         />
-        {viewMode === 1 && (
-          <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">
-            <div className="m-4">
-              Block builder is not ready yet, please edit code source ☝️.
-            </div>
-          </div>
-        )}
       </div>
     </>
   );
