@@ -548,6 +548,8 @@ components:
         properties:
           additionalProperties:
             $ref: '#/components/schemas/TypedArgument'
+        title:
+          type: string
         description:
           $ref: '#/components/schemas/LocalizedText'
         items:
@@ -675,6 +677,9 @@ components:
               automation:
                 type: string
             additionalProperties: true
+        css:
+          type: string
+          description: Css applied to Block
         schema:
           $ref: '#/components/schemas/TypedArgument'
 

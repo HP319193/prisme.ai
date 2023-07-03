@@ -19,17 +19,19 @@ export const workspaceContextValue: WorkspaceContext = {
   creatingAutomation: false,
   createPage: jest.fn(),
   creatingPage: false,
+  createBlock: jest.fn(),
+  creatingBlock: false,
   deleteWorkspace: jest.fn(),
   fetchWorkspace: jest.fn(),
   installApp: jest.fn(),
   loading: false,
-  saveWorkspace: jest.fn(),
+  saveWorkspace: jest.fn((w: any) => w),
   saving: false,
-  events: ({
+  events: {
     on: jest.fn(),
     all: jest.fn(),
     destroy: jest.fn(),
-  } as unknown) as Events,
+  } as unknown as Events,
 };
 
 export default workspaceContextValue;

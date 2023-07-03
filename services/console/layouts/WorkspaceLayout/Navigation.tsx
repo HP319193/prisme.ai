@@ -29,17 +29,20 @@ interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onCreateAutomation?: () => void;
   onCreatePage?: () => void;
   onInstallApp?: () => void;
+  onCreateBlock?: () => void;
   onExpand?: () => void;
 }
 
 const EMPTY_AUTOMATIONS: Prismeai.DSULReadOnly['automations'] = {};
 const EMPTY_PAGES: Prismeai.DSULReadOnly['pages'] = {};
 const EMPTY_IMPORTS: Prismeai.DSULReadOnly['imports'] = {};
+const EMPTY_BLOCKS: Prismeai.DSULReadOnly['blocks'] = {};
 
 export const Navigation = ({
   onCreateAutomation,
   onCreatePage,
   onInstallApp,
+  onCreateBlock,
   onExpand,
   ...props
 }: NavigationProps) => {
@@ -53,12 +56,14 @@ export const Navigation = ({
       automations = EMPTY_AUTOMATIONS,
       pages = EMPTY_PAGES,
       imports = EMPTY_IMPORTS,
+      blocks = EMPTY_BLOCKS,
     },
     creatingAutomation,
     creatingPage,
+    creatingBlock,
   } = useWorkspace();
   const { trackEvent } = useTracking();
-  const types = ['automations', 'pages', 'apps'] as const;
+  const types = ['automations', 'pages', 'apps', 'blocks'] as const;
 
   const [opens, setOpens] = useState<Map<typeof types[number], boolean>>(
     new Map(
@@ -83,6 +88,13 @@ export const Navigation = ({
               type,
               Object.keys(imports).findIndex(
                 (slug) => `/workspaces/${id}/apps/${slug}` === asPath
+              ) > -1,
+            ];
+          case 'pages':
+            return [
+              type,
+              Object.keys(blocks).findIndex(
+                (slug) => `/workspaces/${id}/blocks/${slug}` === asPath
               ) > -1,
             ];
           default:
@@ -150,6 +162,21 @@ export const Navigation = ({
         }),
     [imports, localize, searchValue]
   );
+  const filteredBlocks = useMemo(
+    () =>
+      Object.entries(blocks)
+        .filter(([slug, { name, description }]) =>
+          search(searchValue)(
+            `${slug} ${localize(name)} ${localize(description)}}`
+          )
+        )
+        .sort(([a], [b]) => {
+          if (a.toLowerCase() < b.toLowerCase()) return -1;
+          if (a.toLowerCase() > b.toLowerCase()) return 1;
+          return 0;
+        }),
+    [localize, blocks, searchValue]
+  );
 
   useEffect(() => {
     const path = decodeURIComponent(asPath);
@@ -163,6 +190,9 @@ export const Navigation = ({
       apps: Object.keys(imports).map(
         (slug) => `/workspaces/${id}/apps/${slug}`
       ),
+      blocks: Object.keys(blocks).map(
+        (slug) => `/workspaces/${id}/blocks/${slug}`
+      ),
     };
     setOpens((opens) => {
       const newOpens = new Map(opens);
@@ -175,7 +205,7 @@ export const Navigation = ({
       });
       return changed ? newOpens : opens;
     });
-  }, [asPath, automations, id, imports, pages, toggle]);
+  }, [asPath, automations, blocks, id, imports, pages, toggle]);
 
   useEffect(() => {
     if (!searchValue) return;
@@ -197,6 +227,56 @@ export const Navigation = ({
         role="navigation"
         className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden max-h-[calc(100%-3rem)]"
       >
+        {!(searchValue && filteredBlocks.length === 0) && (
+          <ItemsGroup
+            title={t('workspace.sections.blocks')}
+            onClick={toggle('blocks')}
+            open={
+              !!opens.get('blocks') ||
+              (!!searchValue && filteredBlocks.length > 0)
+            }
+            onAdd={onCreateBlock}
+            creating={creatingBlock}
+            tooltip={t('workspace.add.block')}
+          >
+            {filteredBlocks.map(([slug, { name }]) => (
+              <Item
+                key={slug}
+                href={`/workspaces/${id}/blocks/${slug}`}
+                icon={
+                  <Tooltip title={localize(name)} placement="right">
+                    <div>
+                      <PageIcon
+                        color={`#${stringToHexaColor(localize(name))}`}
+                        width="1.6rem"
+                        height="1.6rem"
+                      />
+                    </div>
+                  </Tooltip>
+                }
+              >
+                <div className="flex flex-1 flex-col max-w-full">
+                  <div className="text-ellipsis overflow-hidden">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {localize(name)}
+                    </Highlight>
+                  </div>
+                  <div className="text-ellipsis overflow-hidden text-xs text-gray">
+                    <Highlight
+                      highlight={searchValue}
+                      component={<span className="font-bold text-accent" />}
+                    >
+                      {`/${slug}`}
+                    </Highlight>
+                  </div>
+                </div>
+              </Item>
+            ))}
+          </ItemsGroup>
+        )}
         {!(searchValue && filteredPages.length === 0) && (
           <ItemsGroup
             title={t('workspace.sections.pages')}

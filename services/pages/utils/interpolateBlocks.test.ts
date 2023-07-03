@@ -22,6 +22,23 @@ it('should interpolate values', () => {
     interpolateBlocks(
       [
         {
+          slug: 'RichText',
+          content: '<p>Hello {{world}}</p>',
+        },
+      ],
+      {}
+    )
+  ).toEqual([
+    {
+      slug: 'RichText',
+      content: '<p>Hello </p>',
+    },
+  ]);
+
+  expect(
+    interpolateBlocks(
+      [
+        {
           slug: 'BlocksList',
           blocks: [
             {
