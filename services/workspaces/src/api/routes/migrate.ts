@@ -1,5 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { initCustomRoles, initExtractDSUL } from '../../services/migrate';
+import {
+  initCustomRoles,
+  initExtractDSUL,
+  initEmitWorkspacesUpdated,
+} from '../../services/migrate';
 import { asyncRoute } from '../utils/async';
 import { DSULStorage } from '../../services/DSULStorage';
 import { AccessManager } from '../../permissions';
@@ -37,11 +41,28 @@ export default function init(
     return res.status(200).send(result);
   }
 
+  async function initEmitWorkspacesUpdatedHandler(
+    { body }: Request,
+    res: Response
+  ) {
+    const result = await initEmitWorkspacesUpdated(
+      workspacesStorage,
+      accessManager,
+      broker,
+      body
+    );
+    return res.status(200).send(result);
+  }
+
   const app = express.Router();
   app.use(protectMigrationRoutes);
 
   app.post(`/custom-roles`, asyncRoute(initCustomRolesHandler));
   app.post(`/extract-dsul`, asyncRoute(initExtractDSULHandler));
+  app.post(
+    `/emit-workspaces-updated`,
+    asyncRoute(initEmitWorkspacesUpdatedHandler)
+  );
 
   return app;
 }

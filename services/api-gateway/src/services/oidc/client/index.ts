@@ -1,5 +1,5 @@
 import { Broker } from '@prisme.ai/broker';
-import Provider, { ClientMetadata } from 'oidc-provider';
+import { ClientMetadata } from 'oidc-provider';
 import { EventType } from '../../../eda';
 import { storage } from '../../../config';
 import { ResourceServer } from '../../../config/oidc';
@@ -24,10 +24,7 @@ type OAuthClient = {
 };
 const OAuthClients = buildStorage<OAuthClient>('OAuthClient', storage.Users);
 
-export default async function startWorkspacesClientSync(
-  broker: Broker,
-  oidc: Provider
-) {
+export default async function startWorkspacesClientSync(broker: Broker) {
   await initClient();
   logger.info(
     'Succesfully started workspaces client synchronization with OIDC provider.'
@@ -39,26 +36,43 @@ export default async function startWorkspacesClientSync(
       EventType.DeletedWorkspace,
     ],
     async (event) => {
-      console.log(JSON.stringify(event, null, 2));
-      if (event.type === EventType.CreatedWorkspace) {
-        const { payload } = event as Prismeai.CreatedWorkspace;
-        await createWorkspaceClient(payload.workspace);
-      } else if (event.type === EventType.UpdatedWorkspace) {
-        const { payload } = event as Prismeai.UpdatedWorkspace;
-        await updateWorkspaceClient(payload.workspace);
-      } else if (event.type === EventType.DeletedWorkspace) {
-        const { payload } = event as Prismeai.DeletedWorkspace;
-        await deleteWorkspaceClients(payload.workspaceId!);
+      try {
+        if (event.type === EventType.CreatedWorkspace) {
+          const { payload } = event as Prismeai.CreatedWorkspace;
+          await createWorkspaceClient(broker, payload.workspace);
+        } else if (event.type === EventType.UpdatedWorkspace) {
+          const { payload } = event as Prismeai.UpdatedWorkspace;
+          const client = await updateWorkspaceClient(broker, payload.workspace);
+          // On migration, still emit update event to let microservices sync with this client
+          if (
+            client?.updated === false &&
+            client.client_id &&
+            payload.migrated === 'clientId'
+          ) {
+            emitClientId(broker, payload.workspace?.id!, client.client_id);
+          }
+        } else if (event.type === EventType.DeletedWorkspace) {
+          const { payload } = event as Prismeai.DeletedWorkspace;
+          await deleteWorkspaceClients(payload.workspaceId!);
+        }
+      } catch (err) {
+        logger.warn({
+          msg: 'Could not update OAuth2 workspace client !',
+          err,
+        });
       }
       return true;
     }
   );
 }
 
-async function createWorkspaceClient(workspace: Prismeai.Workspace) {
+async function createWorkspaceClient(
+  broker: Broker,
+  workspace: Prismeai.Workspace
+) {
   const client = buildWorkspaceClient(workspace);
   const createdClient = await createClient(client);
-  await saveOAuthClient(workspace, createdClient);
+  await saveOAuthClient(broker, workspace, createdClient);
   logger.info({
     msg: 'Succesfully created OAuth2 workspace client',
     workspaceID: workspace.id!,
@@ -72,14 +86,17 @@ const synchronizeClientFields = [
   'allowedResources',
   'workspaceSlug',
 ];
-async function updateWorkspaceClient(workspace: Prismeai.Workspace) {
+async function updateWorkspaceClient(
+  broker: Broker,
+  workspace: Prismeai.Workspace
+): Promise<ClientMetadata & { updated?: boolean }> {
   const client = buildWorkspaceClient(workspace);
   const existingClients = await OAuthClients.find({
     subjectType: 'workspaces',
     subjectId: workspace.id!,
   });
   if (!existingClients?.length) {
-    return await createWorkspaceClient(workspace);
+    return await createWorkspaceClient(broker, workspace);
   }
   let existingClient: ClientMetadata;
   try {
@@ -98,7 +115,7 @@ async function updateWorkspaceClient(workspace: Prismeai.Workspace) {
       workspaceId: workspace.id,
       clientId: existingClients[0].clientId,
     });
-    return await createWorkspaceClient(workspace);
+    return await createWorkspaceClient(broker, workspace);
   }
   const someUpdatedField = synchronizeClientFields.some(
     (field) =>
@@ -112,36 +129,53 @@ async function updateWorkspaceClient(workspace: Prismeai.Workspace) {
         'Nothing changed on OAuth2 workspace client ' +
         existingClient.client_id,
     });
+    existingClient.updated = false;
     return existingClient;
   }
 
-  try {
-    const updatedClient = await updateClient({
-      ...client,
-      client_id: existingClient.client_id,
-      registration_access_token: existingClient.registration_access_token,
-    });
-    await saveOAuthClient(workspace, updatedClient);
+  const updatedClient = await updateClient({
+    ...client,
+    client_id: existingClient.client_id,
+    registration_access_token: existingClient.registration_access_token,
+  });
+  await saveOAuthClient(broker, workspace, updatedClient);
 
-    logger.info({
-      msg: 'Succesfully updated OAuth2 workspace client',
-      workspaceID: workspace.id!,
-      clientId: updatedClient.client_id,
-    });
-    return updatedClient;
-  } catch (err) {
-    logger.warn({
-      msg: 'Could not update OAuth2 workspace client !',
-      err,
-    });
-    return false;
-  }
+  logger.info({
+    msg: 'Succesfully updated OAuth2 workspace client',
+    workspaceID: workspace.id!,
+    clientId: updatedClient.client_id,
+  });
+  return updatedClient;
+}
+
+async function emitClientId(
+  broker: Broker,
+  workspaceId: string,
+  clientId: string
+) {
+  broker
+    .send<Prismeai.UpdatedWorkspaceSecurity['payload']>(
+      EventType.UpdatedWorkspaceSecurity,
+      {
+        security: {
+          authentication: {
+            clientId,
+          },
+        },
+      },
+      {
+        workspaceId,
+      }
+    )
+    .catch(logger.warn);
 }
 
 async function saveOAuthClient(
+  broker: Broker,
   workspace: Prismeai.Workspace,
   client: ClientMetadata
 ) {
+  emitClientId(broker, workspace.id!, client.client_id);
   return await OAuthClients.save(
     {
       subjectType: 'workspaces',

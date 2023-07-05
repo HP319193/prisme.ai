@@ -20,6 +20,7 @@ export interface WorkspaceMetadata {
   description?: Prismeai.LocalizedText;
   labels?: string[];
   customDomains?: string[];
+  clientId?: string;
 }
 
 export type SubjectInterfaces = {
@@ -61,6 +62,7 @@ export function initAccessManager(
           slug: { type: String, index: true, unique: true, sparse: true },
           labels: [String],
           customDomains: [String],
+          clientId: String,
         },
         [SubjectType.App]: {
           workspaceId: { type: String, index: true },
@@ -119,7 +121,10 @@ export function initAccessManager(
   broker.on<Prismeai.UpdatedWorkspaceSecurity['payload']>(
     EventType.UpdatedWorkspaceSecurity,
     async (event) => {
-      if (!event.source.workspaceId) {
+      if (
+        !event.source.workspaceId ||
+        !event.payload?.security?.authorizations
+      ) {
         return true;
       }
       await superAdmin.pullRole({

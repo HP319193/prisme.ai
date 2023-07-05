@@ -52,7 +52,10 @@ export function initAccessManager(
   broker.on<Prismeai.UpdatedWorkspaceSecurity['payload']>(
     EventType.UpdatedWorkspaceSecurity,
     async (event) => {
-      if (!event.source.workspaceId) {
+      if (
+        !event.source.workspaceId ||
+        !event.payload?.security?.authorizations
+      ) {
         return true;
       }
       await superAdmin.pullRole({

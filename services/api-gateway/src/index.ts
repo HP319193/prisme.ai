@@ -46,7 +46,7 @@ let gtwcfg, oidc;
       logger.info(`Running on port ${syscfg.PORT}`);
     });
 
-    await startWorkspacesClientSync(broker, oidc);
+    await startWorkspacesClientSync(broker);
   } catch (e) {
     console.error({ ...(<object>e) });
     process.exit(1);

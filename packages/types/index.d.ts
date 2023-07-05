@@ -2328,6 +2328,7 @@ declare namespace Prismeai {
         payload: {
             workspace: Workspace;
             oldSlug?: string;
+            migrated?: string;
         };
     }
     export interface UpdatedWorkspaceSecurity {
@@ -2596,6 +2597,9 @@ declare namespace Prismeai {
     }
     export interface WorkspaceSecurity {
         authorizations?: WorkspaceAuthorizations;
+        authentication?: {
+            clientId?: string;
+        };
     }
     export interface WorkspaceUsage {
         workspaceId: string;

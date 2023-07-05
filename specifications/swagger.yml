@@ -287,6 +287,11 @@ components:
       properties:
         authorizations:
           $ref: '#/components/schemas/WorkspaceAuthorizations'
+        authentication:
+          type: object
+          properties:
+            clientId:
+              type: string
 
     WorkspaceAuthorizations:
       type: object
@@ -1949,6 +1954,8 @@ components:
             workspace:
               $ref: '#/components/schemas/Workspace'
             oldSlug:
+              type: string
+            migrated:
               type: string
 
     ImportedWorkspace:

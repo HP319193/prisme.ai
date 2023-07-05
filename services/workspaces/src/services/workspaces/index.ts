@@ -6,3 +6,7 @@ export { default as AppInstances } from './crud/appInstances';
 
 export { initWorkspacesConfigSyncing } from './syncWorkspacesWithConfigContexts';
 export { initDetailedPagesSyncing } from './syncDetailedPagesWithEDA';
+export {
+  initOAuthClientsSyncing,
+  getWorkspaceClientId,
+} from './syncWorkspacesWithOAuthClients';
