@@ -122,33 +122,17 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>local-client-id</td>
   </tr>           
    <tr>
-    <td>OIDC_PAGES_CLIENT_ID_PREFIX</td>
-    <td>api-gateway, pages</td>
-    <td>Each new workspace generates an OIDC client with a static client-id prefixed with this value</td>
-    <td>workspace-client-</td>
+    <td>OIDC_CLIENT_REGISTRATION_TOKEN</td>
+    <td>api-gateway</td>
+    <td>Access token required for OIDC clients registration API</td>
+    <td>local-client-id</td>
   </tr>             
-
-  <!-- Console -->    
   <tr>
-    <td>PORT</td>
-    <td>console</td>
-    <td>Listening port number</td>
-    <td>3000</td>
-  </tr>  
-
-  <!-- api-gateway -->
-  <tr>
-    <td>PORT</td>
+    <td>OIDC_WELL_KNOWN_URL</td>
     <td>api-gateway</td>
-    <td>Listening port number</td>
-    <td>3001</td>
+    <td>OIDC provider configuration discovery URL</td>
+    <td>OIDC_PROVIDER_URL followed by /oidc/.well-known/openid-configuration</td>
   </tr>    
-  <tr>
-    <td>GATEWAY_CONFIG_PATH</td>
-    <td>api-gateway</td>
-    <td>gateway.config.yml path</td>
-    <td>../../gateway.config.yml</td>
-  </tr>  
   <tr>
     <td>SESSION_COOKIES_MAX_AGE</td>
     <td>api-gateway</td>
@@ -172,7 +156,29 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>api-gateway</td>
     <td>Session cookies signing secret</td>
     <td></td>
-  </tr> 
+  </tr>   
+
+  <!-- Console -->    
+  <tr>
+    <td>PORT</td>
+    <td>console</td>
+    <td>Listening port number</td>
+    <td>3000</td>
+  </tr>  
+
+  <!-- api-gateway -->
+  <tr>
+    <td>PORT</td>
+    <td>api-gateway</td>
+    <td>Listening port number</td>
+    <td>3001</td>
+  </tr>    
+  <tr>
+    <td>GATEWAY_CONFIG_PATH</td>
+    <td>api-gateway</td>
+    <td>gateway.config.yml path</td>
+    <td>../../gateway.config.yml</td>
+  </tr>  
   <tr>
     <td>INTERNAL_API_KEY</td>
     <td>api-gateway</td>

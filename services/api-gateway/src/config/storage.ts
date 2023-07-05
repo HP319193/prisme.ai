@@ -2,6 +2,7 @@ import { StorageDriverType, StorageOptions } from '../storage';
 import { extractOptsFromEnv } from '../utils';
 
 export default <Record<string, StorageOptions>>{
+  // Used for both users & OAuth clients storage
   Users: {
     driver: process.env.USERS_STORAGE_TYPE || StorageDriverType.Mongodb,
     host: process.env.USERS_STORAGE_HOST || 'mongodb://localhost:27017/users',

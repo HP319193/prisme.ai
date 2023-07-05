@@ -1,13 +1,13 @@
 //@ts-ignore
 import express, { NextFunction, Request, Response } from 'express';
-import { oidcCfg } from '../config';
+import { oidcCfg } from '../../../config';
 import RedisAdapter from './redis';
 import ProviderType from 'oidc-provider';
-import services from '../services';
+import services from '../../../services';
 import { URL } from 'url';
 import { Broker } from '@prisme.ai/broker';
-import { EventType } from '../eda';
-import { logger } from '../logger';
+import { EventType } from '../../../eda';
+import { logger } from '../../../logger';
 const Provider = require('fix-esm').require('oidc-provider').default;
 
 export const initOidcProvider = (broker: Broker): ProviderType => {
@@ -49,29 +49,20 @@ export const initOidcProvider = (broker: Broker): ProviderType => {
           );
           return url.toString();
         }
-        // const client = await provider.Client.find(
-        //   details.params.client_id as string
-        // );
         // Pages client : build pages signin url
         const requestURL = new URL(ctx.request.url, oidcCfg.PROVIDER_URL);
         const locale = requestURL.searchParams.get('locale');
         const signinPath = locale
           ? `/${locale}${oidcCfg.LOGIN_PATH}`
           : oidcCfg.LOGIN_PATH;
-        if (
-          interaction.params.client_id.startsWith(
-            oidcCfg.OIDC_PAGES_CLIENT_ID_PREFIX
-          )
-        ) {
-          const workspaceSlug = interaction.params.client_id.slice(
-            oidcCfg.OIDC_PAGES_CLIENT_ID_PREFIX.length
-          );
+        const client = await provider.Client.find(interaction.params.client_id);
+        if (client.workspaceSlug) {
           const protocol = (oidcCfg.STUDIO_LOGIN_FORM_URL || '').startsWith(
             'http://'
           )
             ? 'http://'
             : 'https://';
-          return `${protocol}${workspaceSlug}${oidcCfg.PAGES_HOST}${signinPath}?interaction=${interaction.uid}`;
+          return `${protocol}${client.workspaceSlug}${oidcCfg.PAGES_HOST}${signinPath}?interaction=${interaction.uid}`;
         }
 
         // Needs credentials, redirect to login form
@@ -105,6 +96,10 @@ export const initOidcProvider = (broker: Broker): ProviderType => {
       })
       .catch(logger.warn);
   });
+
+  // provider.on('registration_update.success', (ctx: any, client: any) => {
+  //   provider.Client.cacheClear(client.clientId);
+  // });
 
   return provider;
 };

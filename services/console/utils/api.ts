@@ -8,6 +8,7 @@ const api = new Api({
   oidc: {
     url: publicRuntimeConfig.OIDC_PROVIDER_URL,
     clientId: publicRuntimeConfig.OIDC_CLIENT_ID,
+    clientIdHeader: publicRuntimeConfig.OIDC_CLIENT_ID_HEADER,
     redirectUri: new URL(
       '/signin',
       publicRuntimeConfig.CONSOLE_URL || 'http://localhost:3000'

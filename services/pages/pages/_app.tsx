@@ -41,12 +41,16 @@ if (typeof window !== 'undefined') {
 
 function MyApp({
   Component,
-  pageProps: { page, error, styles, initialConfig },
+  pageProps: { page, error, styles, initialConfig, clientId },
 }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
 
   api.language = i18n.language;
+  if (clientId) {
+    api.overwriteClientId = clientId;
+    consoleApi.overwriteClientId = clientId;
+  }
 
   if (typeof window !== 'undefined') {
     const currentURL = new URL(location.href);

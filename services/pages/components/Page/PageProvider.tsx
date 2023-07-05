@@ -23,6 +23,7 @@ export interface PageProviderProps {
   error?: number | null;
   styles?: string;
   initialConfig?: Record<string, any>[];
+  clientId?: string;
 }
 
 export const PageProvider: FC<PageProviderProps> = ({

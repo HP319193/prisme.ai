@@ -22,6 +22,10 @@ export enum EventType {
   SucceededSignup = 'gateway.signup.succeeded',
   SucceededPasswordResetRequested = 'gateway.passwordReset.requested',
   SucceededPasswordReset = 'gateway.passwordReset.succeeded',
+
+  CreatedWorkspace = 'workspaces.created',
+  UpdatedWorkspace = 'workspaces.updated',
+  DeletedWorkspace = 'workspaces.deleted',
 }
 export class CallbackContext {
   public logger: Logger;

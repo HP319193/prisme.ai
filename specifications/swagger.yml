@@ -802,6 +802,8 @@ components:
           description: 'Indicates whether this page is public. Reflects page permissions and cannot be set directly'
         apiKey:
           type: string
+        clientId:
+          type: string
 
     DetailedPage:
       type: object
@@ -1712,7 +1714,6 @@ components:
         payload:
           type: object
           required:
-            - ip
             - email
           properties:
             ip:

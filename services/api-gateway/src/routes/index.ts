@@ -11,16 +11,18 @@ import {
 import identityRoutes from './identity';
 import bodyParser from 'body-parser';
 import { init as initAuthentication } from '../middlewares';
-import { initRoutes as initOidcRoutes } from '../oidc';
+import { initRoutes as initOidcRoutes } from '../services/oidc/provider';
 import { Broker } from '@prisme.ai/broker';
+import Provider from 'oidc-provider';
 
 export default async function initRoutes(
   app: express.Application,
   gtwcfg: GatewayConfig,
-  broker: Broker
+  broker: Broker,
+  oidc: Provider
 ) {
   // This needs to be called before passport.authenticate('jwt',...), dunno why
-  app.use('/oidc', initOidcRoutes(broker));
+  app.use('/oidc', initOidcRoutes(broker, oidc));
   await initAuthentication(app);
   app.use(requestDecorator);
   app.use(httpLogger);

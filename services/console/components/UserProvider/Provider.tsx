@@ -220,10 +220,11 @@ export const UserProvider: FC<UserProviderProps> = ({
       Storage.set('redirect-once-authenticated', window.location.href);
       // redirect_uri must be on the same domain we want the session on (i.e current one)
       const redirectionUrl = new URL('/signin', window.location.href);
-      const { url, codeVerifier } = api.getAuthorizationURL(
+      const { url, codeVerifier, clientId } = api.getAuthorizationURL(
         redirectionUrl.toString()
       );
       Storage.set('code-verifier', codeVerifier);
+      Storage.set('client-id', clientId);
       window.location.href = url;
     }, []);
 
@@ -282,7 +283,9 @@ export const UserProvider: FC<UserProviderProps> = ({
       setSuccess(undefined);
       try {
         const codeVerifier = Storage.get('code-verifier');
+        const clientId = Storage.get('client-id');
         const redirectionUrl = new URL('/signin', window.location.href);
+        api.overwriteClientId = clientId;
         const { access_token } = await api.getToken(
           authorizationCode,
           codeVerifier,

@@ -67,8 +67,8 @@ export async function fetch(
 
   if (
     AUTHENTICATE_PRISMEAI_URLS.some((cur) => url.startsWith(cur)) &&
-    !('x-prismeai-token' in lowercasedHeaders) &&
-    !('authorization' in lowercasedHeaders) &&
+    !lowercasedHeaders['x-prismeai-token'] &&
+    !lowercasedHeaders['authorization'] &&
     (ctx?.session?.origin?.userId || ctx?.session?.userId) &&
     (ctx?.session?.origin?.sessionId || ctx?.session?.sessionId)
   ) {

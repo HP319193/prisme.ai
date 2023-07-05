@@ -11,7 +11,7 @@ import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
 import { syscfg } from '../config';
-import { getAccessToken } from '../oidc/jwks';
+import { getAccessToken } from '../services/oidc/provider';
 
 const loginHandler = (strategy: string) =>
   async function (

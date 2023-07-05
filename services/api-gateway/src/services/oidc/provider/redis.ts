@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty.js';
-import { storage } from '../config';
-import RedisCache from '../cache/redis';
+import { storage } from '../../../config';
+import RedisCache from '../../../cache/redis';
 
 const grantable = new Set([
   'AccessToken',

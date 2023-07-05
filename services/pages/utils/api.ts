@@ -8,7 +8,7 @@ const api = new Api({
   oidc: {
     url: publicRuntimeConfig.OIDC_PROVIDER_URL,
     clientId: publicRuntimeConfig.OIDC_CLIENT_ID,
-    pagesClientIdPrefix: publicRuntimeConfig.OIDC_PAGES_CLIENT_ID_PREFIX,
+    clientIdHeader: publicRuntimeConfig.OIDC_CLIENT_ID_HEADER,
     pagesHost: publicRuntimeConfig.PAGES_HOST,
     redirectUri: new URL( // Also overridden for pages
       '/signin',

@@ -2,24 +2,19 @@ import { Configuration } from 'oidc-provider';
 const errors = require('fix-esm').require('oidc-provider').errors;
 import { syscfg } from '.';
 import { findCommonParentDomain } from '../utils/findCommonParentDomain';
-import { getJWKS } from '../oidc';
+import { getJWKS } from '../services/oidc/provider';
 import path from 'path';
+import { URL } from 'url';
 
 const OIDC_STUDIO_CLIENT_ID =
   process.env.OIDC_STUDIO_CLIENT_ID || 'local-client-id';
 const OIDC_STUDIO_CLIENT_SECRET =
   process.env.OIDC_STUDIO_CLIENT_SECRET || 'some-secret';
 
-// Workspace pages use a static client id : `PREFIX-${workspaceSlug}`
-const OIDC_PAGES_CLIENT_ID_PREFIX =
-  process.env.OIDC_PAGES_CLIENT_ID_PREFIX || 'workspace-client-';
-
 // PROVIDER_URL, STUDIO_LOGIN_FORM_URL and PAGES_HOST must share a same parent domain for cookies to be properly transmitted between login form & OIDC provider
 const PAGES_HOST = process.env.PAGES_HOST || '.pages.local.prisme.ai:3100';
 const PROVIDER_URL =
-  process.env.OIDC_PROVIDER_URL ||
-  (process.env.API_URL || '').replace('/v2', '') ||
-  'http://studio.local.prisme.ai:3001';
+  process.env.OIDC_PROVIDER_URL || syscfg.API_URL.replace('/v2', '');
 const STUDIO_LOGIN_FORM_URL = `${
   process.env.CONSOLE_URL || 'http://studio.local.prisme.ai:3000'
 }`;
@@ -33,6 +28,10 @@ if (!cookiesDomain) {
     `No shared parent domain found between pages host, OIDC provider url and studio login url. Authentication might not be working !`
   );
 }
+
+const OIDC_WELL_KNOWN_URL =
+  process.env.OIDC_WELL_KNOWN_URL ||
+  new URL('/oidc/.well-known/openid-configuration', syscfg.API_URL).toString();
 
 export const ResourceServer = syscfg.API_URL;
 const resourceServers = {
@@ -54,16 +53,20 @@ const ACCESS_TOKENS_MAX_AGE = parseInt(
 const JWKS_FILEPATH =
   process.env.JWKS_FILEPATH || path.resolve('../../jwks.json');
 
+const OIDC_CLIENT_REGISTRATION_TOKEN =
+  process.env.OIDC_CLIENT_REGISTRATION_TOKEN || 'oidc-client-registration';
+
 export default {
   PROVIDER_URL,
   STUDIO_LOGIN_FORM_URL,
   LOGIN_PATH: '/signin',
   OIDC_STUDIO_CLIENT_ID,
   OIDC_STUDIO_CLIENT_SECRET,
-  OIDC_PAGES_CLIENT_ID_PREFIX,
   PAGES_HOST, // Used to build login form url for workspace pages
   SESSION_COOKIES_MAX_AGE,
   ACCESS_TOKENS_MAX_AGE,
+  OIDC_CLIENT_REGISTRATION_TOKEN,
+  OIDC_WELL_KNOWN_URL,
   CONFIGURATION: <Configuration>{
     // Claims per scope
     claims: {
@@ -84,7 +87,7 @@ export default {
         enabled: true,
       },
       devInteractions: {
-        enabled: false, // Set to false when finisheds
+        enabled: false, // Set to false when finished
       },
       resourceIndicators: {
         enabled: true,
@@ -124,7 +127,6 @@ export default {
             );
           }
 
-          // Now ensure client get access_token for scope it not defined
           let clientAllowedScope: string[] = [];
           if (client.resourceScopes) {
             const scopesList = client.resourceScopes.split(' ') as string[];
@@ -142,16 +144,15 @@ export default {
           return targetResourceServer;
         },
       },
+      registration: {
+        enabled: true,
+        initialAccessToken: OIDC_CLIENT_REGISTRATION_TOKEN,
+      },
+      registrationManagement: {
+        enabled: true,
+      },
     },
     clients: [
-      // TO DELETE
-      {
-        client_id: 'app',
-        client_secret: 'a_secret',
-        grant_types: ['client_credentials'],
-        redirect_uris: [],
-        response_types: [],
-      },
       // Studio client
       {
         client_id: OIDC_STUDIO_CLIENT_ID,
@@ -165,27 +166,7 @@ export default {
           'workspaces:write workspaces:read events:write events:read webhooks pages:read files:write files:read',
         isInternalClient: true,
       },
-
-      // Page clients : should be dynamic
-      {
-        client_id: `${OIDC_PAGES_CLIENT_ID_PREFIX}test`,
-        client_secret: 'a_different_secret',
-        grant_types: [
-          'authorization_code',
-          'refresh_token',
-          'client_credentials',
-        ],
-        response_types: ['code'],
-        redirect_uris: ['http://test.pages.local.prisme.ai:3100/signin'],
-        workspaceSlug: 'test',
-        token_endpoint_auth_method: 'none',
-        allowedResources: [ResourceServer],
-        resourceScopes:
-          'events:write events:read webhooks pages:read files:write files:read',
-        isInternalClient: true,
-      },
     ],
-    acrValues: ['anonymous'],
 
     async extraTokenClaims(_: any, token: any) {
       return {
@@ -206,6 +187,7 @@ export default {
         'resourceScopes',
         'isInternalClient',
         'workspaceSlug',
+        'workspaceId',
       ],
       validator: function extraClientMetadataValidator() {},
     },

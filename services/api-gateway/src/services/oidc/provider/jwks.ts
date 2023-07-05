@@ -1,9 +1,9 @@
 import fs from 'fs';
 import jose from 'node-jose';
-import { oidcCfg, syscfg } from '../config';
+import { oidcCfg, syscfg } from '../../../config';
 import { v4 as uuid } from 'uuid';
-import { ConfigurationError } from '../types/errors';
-import { logger } from '../logger';
+import { ConfigurationError } from '../../../types/errors';
+import { logger } from '../../../logger';
 
 export async function sign(payload: any) {
   const keyStore = await jose.JWK.asKeyStore(oidcCfg.CONFIGURATION.jwks!);

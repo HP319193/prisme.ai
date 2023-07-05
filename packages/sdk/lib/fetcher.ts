@@ -14,12 +14,15 @@ export class Fetcher {
   public host: string;
   public token: string | null = null;
   public legacyToken: string | null = null;
+  public overwriteClientId?: string;
+  private clientIdHeader?: string;
   protected _apiKey: string | null = null;
   public language: string | undefined;
   public lastReceivedHeaders?: Record<string, any>;
 
-  constructor(host: string) {
+  constructor(host: string, clientIdHeader?: string) {
     this.host = host;
+    this.clientIdHeader = clientIdHeader;
   }
 
   set apiKey(apiKey: string) {
@@ -74,6 +77,10 @@ export class Fetcher {
       return { redirected: true } as T;
     }
 
+    this.lastReceivedHeaders = headersAsObject(res.headers);
+    if (this.clientIdHeader && this.lastReceivedHeaders[this.clientIdHeader]) {
+      this.overwriteClientId = this.lastReceivedHeaders[this.clientIdHeader];
+    }
     if (!res.ok) {
       let error;
       try {
@@ -85,7 +92,6 @@ export class Fetcher {
     }
 
     const contentType = res.headers.get('content-type');
-    this.lastReceivedHeaders = headersAsObject(res.headers);
     if (contentType && contentType.includes('application/json')) {
       try {
         const response = (await res.json()) || {};

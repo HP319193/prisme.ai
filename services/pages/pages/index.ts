@@ -46,6 +46,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   return {
     props: {
       page,
+      clientId: api.overwriteClientId,
       error: error || null,
       initialConfig,
       styles,

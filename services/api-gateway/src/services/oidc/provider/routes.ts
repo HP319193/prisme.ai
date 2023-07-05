@@ -1,17 +1,15 @@
 //@ts-ignore
 import express, { NextFunction, Request, Response } from 'express';
-import { InteractionResults } from 'oidc-provider';
+import Provider, { InteractionResults } from 'oidc-provider';
 import bodyParser from 'body-parser';
-import services from '../services';
-import { PrismeError } from '../types/errors';
+import services from '../..';
+import { PrismeError } from '../../../types/errors';
 import { Broker } from '@prisme.ai/broker';
-import { EventType } from '../eda';
-import { logger } from '../logger';
-import { initOidcProvider } from './provider';
+import { EventType } from '../../../eda';
+import { logger } from '../../../logger';
 
-export function initRoutes(broker: Broker) {
+export function initRoutes(broker: Broker, provider: Provider) {
   const app = express.Router();
-  const provider = initOidcProvider(broker);
 
   // Implement interactive user flow
   app.get(
@@ -98,7 +96,7 @@ export function initRoutes(broker: Broker) {
         await next();
         return;
       } catch (err) {
-        req.broker
+        broker
           .send(EventType.FailedLogin, {
             email: login,
             ip: req.context?.http?.ip,

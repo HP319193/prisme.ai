@@ -8,7 +8,6 @@ import { removedUndefinedProperties } from './utils';
 import WorkspacesEndpoint from './endpoints/workspaces';
 import ApiError from './ApiError';
 import UsersEndpoint from './endpoints/users';
-import HTTPError from './HTTPError';
 
 interface PageWithMetadata extends Prismeai.Page {
   createdAt: string;
@@ -33,7 +32,7 @@ export interface ApiOptions {
   oidc?: {
     url: string;
     clientId: string;
-    pagesClientIdPrefix?: string;
+    clientIdHeader?: string;
     pagesHost?: string;
     redirectUri: string;
   };
@@ -60,7 +59,7 @@ export class Api extends Fetcher {
   private _user?: Prismeai.User & { sessionId?: string };
 
   constructor(opts: ApiOptions) {
-    super(opts.host);
+    super(opts.host, opts?.oidc?.clientIdHeader);
     this.opts = {
       ...opts,
       oidc: {
@@ -83,29 +82,8 @@ export class Api extends Fetcher {
     return me;
   }
 
-  // For pages, compute OIDC client id from the workspaceSlug inside redirectUri/page domain
-  clientId(redirectUri?: string): string {
-    if (
-      !redirectUri ||
-      !this.opts?.oidc?.pagesClientIdPrefix ||
-      !this.opts.oidc?.pagesHost
-    ) {
-      return this.opts.oidc.clientId || '';
-    }
-    // How do we handle custom dns !!?
-    const pagesHost = this.opts.oidc?.pagesHost;
-    const parsedURL = new URL(redirectUri);
-    const hostnameWithPort = parsedURL.port
-      ? `${parsedURL.hostname}:${parsedURL.port}`
-      : parsedURL.hostname;
-    if (!hostnameWithPort.endsWith(pagesHost)) {
-      return this.opts.oidc.clientId || '';
-    }
-    const workspaceSlug = hostnameWithPort.replace(pagesHost, '');
-    if (!workspaceSlug) {
-      return this.opts.oidc.clientId || '';
-    }
-    return `${this.opts?.oidc?.pagesClientIdPrefix}${workspaceSlug}`;
+  clientId(): string {
+    return this.overwriteClientId || this.opts?.oidc?.clientId;
   }
 
   getAuthorizationURL(
@@ -123,7 +101,8 @@ export class Api extends Fetcher {
       'scope',
       'openid profile email settings offline_access events:write events:read webhooks pages:read files:write files:read'
     );
-    url.searchParams.set('client_id', this.clientId(overrideRedirectUri));
+    const clientId = this.clientId();
+    url.searchParams.set('client_id', clientId);
 
     url.searchParams.set('code_challenge_method', 'S256');
     const codeVerifier = btoa(
@@ -147,6 +126,7 @@ export class Api extends Fetcher {
     return {
       url: url.toString(),
       codeVerifier,
+      clientId,
     };
   }
 
@@ -180,7 +160,7 @@ export class Api extends Fetcher {
         grant_type: 'authorization_code',
         code: authorizationCode,
         code_verifier: codeVerifier,
-        client_id: this.clientId(overrideRedirectUri),
+        client_id: this.clientId(),
         redirect_uri: overrideRedirectUri || this.opts.oidc.redirectUri,
       })
     );

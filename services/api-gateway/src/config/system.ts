@@ -35,6 +35,9 @@ export default {
 
   SESSION_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-token',
 
+  OIDC_CLIENT_ID_HEADER:
+    process.env.OIDC_CLIENT_ID_HEADER || 'x-prismeai-client-id',
+
   SESSION_COOKIES_MAX_AGE: parseInt(
     process.env.SESSION_COOKIES_MAX_AGE || <any>(30 * 24 * 60 * 60)
   ), // 1 month (seconds)

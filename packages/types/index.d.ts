@@ -1400,6 +1400,7 @@ declare namespace Prismeai {
          */
         public?: boolean;
         apiKey?: string;
+        clientId?: string;
     }
     export interface DuplicatedWorkspace {
         /**
@@ -1542,7 +1543,7 @@ declare namespace Prismeai {
          */
         type: "gateway.login.failed";
         payload: {
-            ip: string;
+            ip?: string;
             email: string;
         };
     }
@@ -1796,6 +1797,7 @@ declare namespace Prismeai {
          */
         public?: boolean;
         apiKey?: string;
+        clientId?: string;
     }
     /**
      * Page

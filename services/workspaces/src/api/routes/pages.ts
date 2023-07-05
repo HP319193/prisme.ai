@@ -5,6 +5,7 @@ import { AppInstances, Apps, Pages } from '../../services';
 import { DSULStorage } from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
+import { OIDC_CLIENT_ID_HEADER } from '../../../config';
 
 export { getServices as getPagesService };
 
@@ -172,6 +173,7 @@ export function initPagesPublic(dsulStorage: DSULStorage) {
       broker,
       dsulStorage,
     });
+    res.setHeader(OIDC_CLIENT_ID_HEADER, 'JbIp2CxflFKYtqcQ8O9Kp');
     const detailedPage = await pages.getDetailedPage({
       workspaceSlug,
       slug: pageSlug,

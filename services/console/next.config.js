@@ -27,6 +27,8 @@ module.exports = {
       (process.env.API_URL && process.env.API_URL.replace('/v2', '')) ||
       'http://studio.local.prisme.ai:3001',
     OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID || 'local-client-id',
+    OIDC_CLIENT_ID_HEADER:
+      process.env.OIDC_CLIENT_ID_HEADER || 'x-prismeai-client-id',
   },
   webpack(config) {
     config.module.rules.push({
