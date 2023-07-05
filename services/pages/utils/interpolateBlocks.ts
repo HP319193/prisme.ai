@@ -85,6 +85,12 @@ function repeat(o: any, data: any): any {
   };
 }
 
+function testCondition(condition: string, data: Record<string, any>) {
+  const [, invert, cond] = condition.match(/(^!?)(.+$)/) || [];
+  const result = jsonpath.value(data, cond);
+  return invert ? !result : result;
+}
+
 function interpolate(o: any, data: any): any {
   if (Array.isArray(o)) {
     return o.flatMap((item) => {
@@ -104,7 +110,7 @@ function interpolate(o: any, data: any): any {
       return repeat(o, data);
     }
     const _if = o[IF];
-    if (_if && !jsonpath.value(data, _if)) {
+    if (_if && !testCondition(_if, data)) {
       return [];
     }
     return Object.entries(o)
