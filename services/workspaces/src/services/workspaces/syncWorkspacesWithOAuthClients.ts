@@ -38,7 +38,7 @@ class OAuthClientCache {
         : workspaceSlug;
       workspace = await this.accessManager.get(SubjectType.Workspace, {
         customDomains: {
-          $in: [customDomain],
+          $in: [customDomain, workspaceSlug],
         },
       });
     } else {

@@ -1,7 +1,7 @@
 import { Broker } from '@prisme.ai/broker';
 import { ClientMetadata } from 'oidc-provider';
 import { EventType } from '../../../eda';
-import { storage } from '../../../config';
+import { oidcCfg, storage } from '../../../config';
 import { ResourceServer } from '../../../config/oidc';
 import { logger } from '../../../logger';
 import { buildStorage } from '../../../storage';
@@ -198,13 +198,16 @@ async function saveOAuthClient(
 function buildWorkspaceClient(
   workspace: Prismeai.Workspace
 ): Omit<ClientMetadata, 'client_id'> {
+  const protocol = (oidcCfg.STUDIO_URL || '').startsWith('http://')
+    ? 'http://'
+    : 'https://';
   return {
     grant_types: ['authorization_code'],
     response_types: ['code'],
     redirect_uris: [
-      `http://${workspace.slug!}.pages.local.prisme.ai:3100/signin`,
+      `${protocol}${workspace.slug!}.pages.local.prisme.ai:3100/signin`,
       ...(workspace.customDomains || []).map((cur) =>
-        new URL('/signin', cur).toString()
+        new URL('/signin', `${protocol}${cur}`).toString()
       ),
     ],
     workspaceSlug: workspace.slug!,
@@ -215,7 +218,7 @@ function buildWorkspaceClient(
       'events:write events:read webhooks pages:read files:write files:read',
     isInternalClient: true,
     post_logout_redirect_uris: [
-      `http://${workspace.slug!}.pages.local.prisme.ai:3100/signin`,
+      `${protocol}${workspace.slug!}.pages.local.prisme.ai:3100/signin`,
     ],
   };
 }
