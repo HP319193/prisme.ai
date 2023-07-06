@@ -67,7 +67,11 @@ export async function initEmitWorkspacesUpdated(
           {
             workspaceId: workspace.id,
           },
-          {},
+          {
+            options: {
+              persist: false,
+            },
+          },
           true
         );
         emittedWorkspaces.push(workspace);

@@ -57,16 +57,14 @@ export const initOidcProvider = (broker: Broker): ProviderType => {
           : oidcCfg.LOGIN_PATH;
         const client = await provider.Client.find(interaction.params.client_id);
         if (client.workspaceSlug) {
-          const protocol = (oidcCfg.STUDIO_LOGIN_FORM_URL || '').startsWith(
-            'http://'
-          )
+          const protocol = (oidcCfg.STUDIO_URL || '').startsWith('http://')
             ? 'http://'
             : 'https://';
           return `${protocol}${client.workspaceSlug}${oidcCfg.PAGES_HOST}${signinPath}?interaction=${interaction.uid}`;
         }
 
         // Needs credentials, redirect to login form
-        return `${oidcCfg.STUDIO_LOGIN_FORM_URL}${signinPath}?interaction=${interaction.uid}`;
+        return `${oidcCfg.STUDIO_URL}${signinPath}?interaction=${interaction.uid}`;
       },
     },
   });
@@ -96,10 +94,6 @@ export const initOidcProvider = (broker: Broker): ProviderType => {
       })
       .catch(logger.warn);
   });
-
-  // provider.on('registration_update.success', (ctx: any, client: any) => {
-  //   provider.Client.cacheClear(client.clientId);
-  // });
 
   return provider;
 };

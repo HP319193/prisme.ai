@@ -176,7 +176,13 @@ export class Api extends Fetcher {
       Prismeai.User & {
         token: string;
       }
-    >('/login/anonymous');
+    >(
+      '/login/anonymous',
+      {},
+      {
+        credentials: 'omit',
+      }
+    );
     this._user = user;
     return user;
   }
@@ -201,9 +207,17 @@ export class Api extends Fetcher {
     });
   }
 
-  async signout() {
-    await this.post('/logout');
-    this.token = null;
+  getSignoutURL(redirectUri?: string) {
+    const params = new URLSearchParams();
+    params.set('client_id', this.clientId());
+    if (redirectUri) {
+      params.set('post_logout_redirect_uri', redirectUri);
+    }
+    const url = new URL(
+      `/oidc/session/end?${params.toString()}`,
+      this.opts.oidc.url
+    );
+    return url.toString();
   }
 
   // Mail validation

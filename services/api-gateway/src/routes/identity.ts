@@ -251,11 +251,6 @@ async function deleteAccessTokenHandler(
   return res.send(accessToken);
 }
 
-async function logoutHandler(req: Request, res: Response) {
-  req.logout();
-  res.status(200).send();
-}
-
 /**
  * Internal route
  */
@@ -349,7 +344,6 @@ app.post(`/login`, loginHandler('local'));
 app.post(`/login/anonymous`, loginHandler('anonymous'));
 app.post(`/login/mfa`, isAuthenticated, mfaHandler);
 app.post(`/signup`, signupHandler);
-app.post(`/logout`, logoutHandler);
 
 // User account
 app.post(`/user/password`, resetPasswordHandler);

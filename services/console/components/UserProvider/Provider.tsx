@@ -140,17 +140,20 @@ export const UserProvider: FC<UserProviderProps> = ({
   );
 
   const signout: UserContext['signout'] = useCallback(
-    async (onServer: boolean = true) => {
-      if (onServer) {
-        try {
-          api.signout();
-        } catch {}
-      } else {
-        Storage.remove('access-token');
-      }
+    async (clearOpSession: boolean = true) => {
+      Storage.remove('access-token');
+      Storage.remove('auth-token');
       setUser(null);
-      if (!PUBLIC_URLS.includes(route)) {
-        push('/signin');
+
+      // Only redirect if api.token is set to avoid OIDC signout when we come from legacy tokens
+      if (clearOpSession && api.token) {
+        const redirectionUrl = new URL('/signin', window.location.href);
+        const signoutUrl = api.getSignoutURL(redirectionUrl.toString());
+        window.location.href = signoutUrl;
+      } else {
+        if (!PUBLIC_URLS.includes(route)) {
+          push('/signin');
+        }
       }
     },
     [push, route]
@@ -215,9 +218,12 @@ export const UserProvider: FC<UserProviderProps> = ({
   }, [anonymous, push, redirectTo, route, signout]);
 
   // 1. Initialize authentication flow
-  const initAuthentication: UserContext['initAuthentication'] =
-    useCallback(async () => {
-      Storage.set('redirect-once-authenticated', window.location.href);
+  const initAuthentication: UserContext['initAuthentication'] = useCallback(
+    (redirect: boolean = true) => {
+      const redirectOnceAuthenticated = window.location.href.includes('/signin')
+        ? new URL('/', window.location.href).toString()
+        : window.location.href;
+      Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
       // redirect_uri must be on the same domain we want the session on (i.e current one)
       const redirectionUrl = new URL('/signin', window.location.href);
       const { url, codeVerifier, clientId } = api.getAuthorizationURL(
@@ -225,8 +231,13 @@ export const UserProvider: FC<UserProviderProps> = ({
       );
       Storage.set('code-verifier', codeVerifier);
       Storage.set('client-id', clientId);
-      window.location.href = url;
-    }, []);
+      if (redirect || typeof redirect === 'undefined') {
+        window.location.href = url;
+      }
+      return url;
+    },
+    []
+  );
 
   // 2. Send login form
   const signin: UserContext['signin'] = useCallback(

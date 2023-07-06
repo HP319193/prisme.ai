@@ -62,8 +62,8 @@ export class Fetcher {
         ? url
         : `${this.host}${url}`;
     return global.fetch(fullUrl, {
-      ...options,
       credentials: 'include',
+      ...options,
       headers,
     });
   }

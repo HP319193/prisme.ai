@@ -19,7 +19,7 @@ export interface UserContext<
   error?: ApiError;
   success?: ApiSuccess;
   signin: (email: string, password: string) => Promise<boolean>;
-  initAuthentication: () => void;
+  initAuthentication: (redirect?: boolean) => string;
   completeAuthentication: (authorizationCode: string) => Promise<void>;
   signup: (
     email: string,
@@ -28,7 +28,7 @@ export interface UserContext<
     lastName: string,
     language: string
   ) => Promise<Prismeai.User | null>;
-  signout: (onServer?: boolean) => void;
+  signout: (clearOpSession?: boolean) => void;
   sendPasswordResetMail: (email: string, language: string) => Promise<any>;
   passwordReset: (token: string, password: string) => Promise<any>;
   sendValidationMail: (email: string, language: string) => Promise<any>;
@@ -39,7 +39,7 @@ export const userContext = createContext<UserContext>({
   user: null,
   loading: false,
   signin: async () => false,
-  initAuthentication: async () => null,
+  initAuthentication: () => 'url',
   completeAuthentication: async () => {},
   signup: async () => null,
   signout() {},

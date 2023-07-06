@@ -3202,16 +3202,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
 
-  /v2/logout:
-    post:
-      description: Log out
-      operationId: logout
-      tags:
-        - API Gateway
-      responses:
-        '200':
-          description: Success Response
-
   /v2/user/password:
     post:
       description: Ask to reset a password for a specific user given an email. If the email is unknown, the API call will not fail.

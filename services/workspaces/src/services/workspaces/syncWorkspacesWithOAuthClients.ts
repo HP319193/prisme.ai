@@ -28,7 +28,6 @@ class OAuthClientCache {
 
   async getClientId(workspaceSlug: string) {
     if (this.clientIdsByWorkspaceSlug[workspaceSlug]) {
-      console.log('CAAACHE : ', this.clientIdsByWorkspaceSlug[workspaceSlug]);
       return this.clientIdsByWorkspaceSlug[workspaceSlug];
     }
     let workspace: WorkspaceMetadata;
@@ -52,7 +51,6 @@ class OAuthClientCache {
     }
     // Index with workspaceSlug and not workspace.slug to keep custom domains cached !
     this.clientIdsByWorkspaceSlug[workspaceSlug] = workspace.clientId;
-    console.log('FOUND : ', this.clientIdsByWorkspaceSlug[workspaceSlug]);
     return this.clientIdsByWorkspaceSlug[workspaceSlug];
   }
 }

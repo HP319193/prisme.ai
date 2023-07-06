@@ -3483,12 +3483,6 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
-    namespace Logout {
-        namespace Responses {
-            export interface $200 {
-            }
-        }
-    }
     namespace MFA {
         export interface RequestBody {
             totp: string;

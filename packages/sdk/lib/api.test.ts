@@ -64,14 +64,6 @@ it('should call /signup', () => {
   });
 });
 
-it('should call /signout', () => {
-  const api = new Api({ host: '/fake/' });
-  api.post = jest.fn();
-  api.signout();
-  expect(api.post).toHaveBeenCalledWith('/logout');
-  expect(api.token).toBeNull();
-});
-
 it('should call get /workspaces', () => {
   const api = new Api({ host: '/fake/' });
   api.get = jest.fn();

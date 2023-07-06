@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Configuration } from 'oidc-provider';
 const errors = require('fix-esm').require('oidc-provider').errors;
 import { syscfg } from '.';
@@ -11,17 +12,19 @@ const OIDC_STUDIO_CLIENT_ID =
 const OIDC_STUDIO_CLIENT_SECRET =
   process.env.OIDC_STUDIO_CLIENT_SECRET || 'some-secret';
 
-// PROVIDER_URL, STUDIO_LOGIN_FORM_URL and PAGES_HOST must share a same parent domain for cookies to be properly transmitted between login form & OIDC provider
+// PROVIDER_URL, STUDIO_URL and PAGES_HOST must share a same parent domain for cookies to be properly transmitted between login form & OIDC provider
 const PAGES_HOST = process.env.PAGES_HOST || '.pages.local.prisme.ai:3100';
 const PROVIDER_URL =
   process.env.OIDC_PROVIDER_URL || syscfg.API_URL.replace('/v2', '');
-const STUDIO_LOGIN_FORM_URL = `${
+const STUDIO_URL = `${
   process.env.CONSOLE_URL || 'http://studio.local.prisme.ai:3000'
 }`;
+const LOGIN_PATH = '/signin';
+
 const cookiesDomain = findCommonParentDomain([
   PAGES_HOST,
   PROVIDER_URL,
-  STUDIO_LOGIN_FORM_URL,
+  STUDIO_URL,
 ]);
 if (!cookiesDomain) {
   console.warn(
@@ -58,8 +61,8 @@ const OIDC_CLIENT_REGISTRATION_TOKEN =
 
 export default {
   PROVIDER_URL,
-  STUDIO_LOGIN_FORM_URL,
-  LOGIN_PATH: '/signin',
+  STUDIO_URL,
+  LOGIN_PATH,
   OIDC_STUDIO_CLIENT_ID,
   OIDC_STUDIO_CLIENT_SECRET,
   PAGES_HOST, // Used to build login form url for workspace pages
@@ -151,6 +154,36 @@ export default {
       registrationManagement: {
         enabled: true,
       },
+      rpInitiatedLogout: {
+        enabled: true,
+        async logoutSource(ctx, form) {
+          const nonce = await crypto.randomBytes(16).toString('base64');
+
+          // Custom JS to auto submit confirm form
+          ctx.body = `<!DOCTYPE HTML>
+            <head>
+              <title>Logout</title>
+              <meta http-equiv="content-security-policy"
+               content="
+                 script-src 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline';
+                 default-src 'self';
+              ">
+            </head>
+            <body>
+              ${form}
+              <script nonce="${nonce}">
+                var form = document.forms[0];
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'logout';
+                input.value = 'yes';
+                form.appendChild(input);
+                form.submit();
+              </script>
+            </body>
+          </html>`;
+        },
+      },
     },
     clients: [
       // Studio client
@@ -159,12 +192,13 @@ export default {
         client_secret: 'a_different_secret',
         grant_types: ['authorization_code', 'refresh_token'],
         response_types: ['code'],
-        redirect_uris: ['http://studio.local.prisme.ai:3000/signin'],
+        redirect_uris: [new URL(LOGIN_PATH, STUDIO_URL).toString()],
         token_endpoint_auth_method: 'none',
         allowedResources: [ResourceServer],
         resourceScopes:
           'workspaces:write workspaces:read events:write events:read webhooks pages:read files:write files:read',
         isInternalClient: true,
+        post_logout_redirect_uris: [new URL(LOGIN_PATH, STUDIO_URL).toString()],
       },
     ],
 
@@ -214,6 +248,12 @@ export default {
       long: {
         maxAge: SESSION_COOKIES_MAX_AGE * 1000,
         domain: cookiesDomain,
+      },
+
+      names: {
+        interaction: '_interaction',
+        resume: '_interaction_resume',
+        session: '_session',
       },
     },
 

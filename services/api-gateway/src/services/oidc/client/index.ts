@@ -85,6 +85,7 @@ const synchronizeClientFields = [
   'redirect_uris',
   'allowedResources',
   'workspaceSlug',
+  'post_logout_redirect_uris',
 ];
 async function updateWorkspaceClient(
   broker: Broker,
@@ -213,6 +214,9 @@ function buildWorkspaceClient(
     resourceScopes:
       'events:write events:read webhooks pages:read files:write files:read',
     isInternalClient: true,
+    post_logout_redirect_uris: [
+      `http://${workspace.slug!}.pages.local.prisme.ai:3100/signin`,
+    ],
   };
 }
 
