@@ -146,7 +146,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       setUser(null);
 
       // Only redirect if api.token is set to avoid OIDC signout when we come from legacy tokens
-      if (clearOpSession && api.token) {
+      if (clearOpSession && !api.legacyToken) {
         const redirectionUrl = new URL('/signin', window.location.href);
         const signoutUrl = api.getSignoutURL(redirectionUrl.toString());
         window.location.href = signoutUrl;
@@ -279,6 +279,9 @@ export const UserProvider: FC<UserProviderProps> = ({
               }).toString()}`
             );
           }, 2000);
+        } else if (error == 'Internal') {
+          // Corrupted session cookies or invalid interaction id cause 500, clean cookies & restart from fresh state
+          signout();
         }
         return false;
       }
@@ -306,21 +309,15 @@ export const UserProvider: FC<UserProviderProps> = ({
         Storage.set('access-token', access_token);
         await fetchMe();
       } catch (e) {
+        const { error } = e as ApiError;
+        if (error === 'invalid_grant') {
+          // Corrupted session cookies or invalid interaction id cause 500, clean cookies & restart from fresh state
+          return signout();
+        }
         api.token = null;
         setUser(null);
         setLoading(false);
         setError(e as ApiError);
-        // const { error } = e as ApiError;
-        // if (error === 'ValidateEmailError') {
-        //   setTimeout(() => {
-        //     setError(undefined);
-        //     push(
-        //       `/validate?${new URLSearchParams({
-        //         email: email,
-        //       }).toString()}`
-        //     );
-        //   }, 2000);
-        // }
         return;
       }
     }, []);
