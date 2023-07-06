@@ -40,7 +40,7 @@ export const FieldTextUpload = ({
       const value = await uploadFile(
         target.result.replace(
           /base64/,
-          `filename:${file.name.replace(/;/g, '-')}; base64`
+          `filename:${file.name.replace(/[;\s]/g, '-')}; base64`
         )
       );
       setPreviewLabel('');
