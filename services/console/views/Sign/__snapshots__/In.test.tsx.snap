@@ -65,33 +65,6 @@ exports[`should have error 1`] = `
           className="text-center"
         />
       </div>
-      <form
-        className="md:w-96 flex"
-        onSubmit={[Function]}
-      >
-        <div
-          className="flex flex-col flex-1"
-        >
-          <div
-            className="m-2 mb-5 flex-grow !mx-0 !mb-4"
-          >
-            <span
-              className="flex flex-col "
-            />
-          </div>
-          <div
-            className="m-2 mb-5 flex-grow !mx-0 !mb-2"
-          >
-            <span
-              className="flex flex-col "
-            />
-          </div>
-          <div
-            className="!mx-0 !mb-8 text-right text-xs"
-          />
-          in.submit
-        </div>
-      </form>
     </div>
   </div>
 </div>
@@ -162,33 +135,6 @@ exports[`should load 1`] = `
           className="text-center"
         />
       </div>
-      <form
-        className="md:w-96 flex"
-        onSubmit={[Function]}
-      >
-        <div
-          className="flex flex-col flex-1"
-        >
-          <div
-            className="m-2 mb-5 flex-grow !mx-0 !mb-4"
-          >
-            <span
-              className="flex flex-col "
-            />
-          </div>
-          <div
-            className="m-2 mb-5 flex-grow !mx-0 !mb-2"
-          >
-            <span
-              className="flex flex-col "
-            />
-          </div>
-          <div
-            className="!mx-0 !mb-8 text-right text-xs"
-          />
-          in.submit
-        </div>
-      </form>
     </div>
   </div>
 </div>
@@ -259,33 +205,6 @@ exports[`should render 1`] = `
           className="text-center"
         />
       </div>
-      <form
-        className="md:w-96 flex"
-        onSubmit={[Function]}
-      >
-        <div
-          className="flex flex-col flex-1"
-        >
-          <div
-            className="m-2 mb-5 flex-grow !mx-0 !mb-4"
-          >
-            <span
-              className="flex flex-col "
-            />
-          </div>
-          <div
-            className="m-2 mb-5 flex-grow !mx-0 !mb-2"
-          >
-            <span
-              className="flex flex-col "
-            />
-          </div>
-          <div
-            className="!mx-0 !mb-8 text-right text-xs"
-          />
-          in.submit
-        </div>
-      </form>
     </div>
   </div>
 </div>

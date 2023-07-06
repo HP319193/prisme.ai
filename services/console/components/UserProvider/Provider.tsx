@@ -149,7 +149,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       if (clearOpSession && !api.legacyToken) {
         const redirectionUrl = new URL('/signin', window.location.href);
         const signoutUrl = api.getSignoutURL(redirectionUrl.toString());
-        window.location.href = signoutUrl;
+        window.location.assign(signoutUrl);
       } else {
         if (!PUBLIC_URLS.includes(route)) {
           push('/signin');
@@ -232,7 +232,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       Storage.set('code-verifier', codeVerifier);
       Storage.set('client-id', clientId);
       if (redirect || typeof redirect === 'undefined') {
-        window.location.href = url;
+        window.location.assign(url);
       }
       return url;
     },
@@ -260,7 +260,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         }
         const res = await api.signin({ login: email, password, interaction });
         if (res.redirectTo) {
-          window.location.href = res.redirectTo;
+          window.location.assign(res.redirectTo);
         }
         return true;
       } catch (e) {

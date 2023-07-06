@@ -3,6 +3,7 @@ import { LogLevel } from '../logger';
 
 export * from './handlers';
 
+console.log('==> ', LogLevel);
 export enum ErrorSeverity {
   Fatal = LogLevel.Fatal,
   Error = LogLevel.Error,

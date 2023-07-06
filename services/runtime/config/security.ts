@@ -3,7 +3,8 @@ import { getJWKS } from '../src/utils/jwks';
 import { API_URL } from './api';
 
 export const JWKS_FILEPATH =
-  process.env.JWKS_FILEPATH || path.resolve('../../jwks.json');
+  process.env.NODE_ENV !== 'test' &&
+  (process.env.JWKS_FILEPATH || path.resolve('../../jwks.json'));
 
 export const JWKS =
   JWKS_FILEPATH && JWKS_FILEPATH !== 'disabled' && JWKS_FILEPATH !== 'false'

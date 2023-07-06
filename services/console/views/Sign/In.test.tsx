@@ -7,7 +7,9 @@ import { useRouter } from 'next/router';
 import SigninForm from '../../components/SigninForm';
 
 jest.mock('../../components/UserProvider', () => {
-  const mock: any = {};
+  const mock: any = {
+    initAuthentication: () => {},
+  };
   mock.mock = mock;
   return {
     useUser: () => mock,
@@ -59,6 +61,8 @@ it('should have error', () => {
 });
 
 it('should submit form', async () => {
+  delete (window as any).location;
+  (window as any).location = new URL('http://test?interaction=interaction');
   const root = renderer.create(<SignIn />);
   await act(async () => {
     await root.root
@@ -69,6 +73,8 @@ it('should submit form', async () => {
 });
 
 it('should validate form', async () => {
+  delete (window as any).location;
+  (window as any).location = new URL('http://test?interaction=interaction');
   const root = renderer.create(<SignIn />);
   expect(
     root.root.findByType(Form).props.validate({ email: '', password: '' })
