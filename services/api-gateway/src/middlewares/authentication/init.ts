@@ -26,7 +26,8 @@ export async function init(app: Application) {
       (_: Error, user: Prismeai.User, info: any) => {
         if (
           info instanceof Error &&
-          !(info.message || '').includes('No auth token')
+          !(info.message || '').includes('No auth token') &&
+          !(info.message || '').includes('jwt malformed')
         ) {
           return next(new AuthenticationError(info.message));
         } else if (user) {
@@ -52,7 +53,10 @@ export async function init(app: Application) {
 
   // First check for access token to generate their session before express-session
   app.use(async function (req, res, next) {
-    const token = req.headers[syscfg.SESSION_HEADER];
+    const bearer = (req.headers['authorization'] ||
+      req.headers[syscfg.SESSION_HEADER] ||
+      '') as string;
+    const token = bearer.startsWith('Bearer ') ? bearer.slice(7) : bearer;
     if (typeof token === 'string' && token.startsWith('at:')) {
       const identity = services.identity();
       req.session = (await identity.validateAccessToken(
