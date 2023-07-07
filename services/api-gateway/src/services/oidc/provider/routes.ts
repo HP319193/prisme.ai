@@ -99,7 +99,7 @@ export function initRoutes(broker: Broker, provider: Provider) {
         broker
           .send(EventType.FailedLogin, {
             email: login,
-            ip: req.context?.http?.ip,
+            ip: req.ip || req.context?.http?.ip,
           })
           .catch(logger.warn);
         throw err;
