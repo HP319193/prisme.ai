@@ -205,7 +205,7 @@ function buildWorkspaceClient(
     grant_types: ['authorization_code'],
     response_types: ['code'],
     redirect_uris: [
-      `${protocol}${workspace.slug!}.pages.local.prisme.ai:3100/signin`,
+      `${protocol}${workspace.slug!}${oidcCfg.PAGES_HOST}/signin`,
       ...(workspace.customDomains || []).map((cur) =>
         new URL('/signin', `${protocol}${cur}`).toString()
       ),
@@ -218,7 +218,7 @@ function buildWorkspaceClient(
       'events:write events:read webhooks pages:read files:write files:read',
     isInternalClient: true,
     post_logout_redirect_uris: [
-      `${protocol}${workspace.slug!}.pages.local.prisme.ai:3100/signin`,
+      `${protocol}${workspace.slug!}${oidcCfg.PAGES_HOST}/signin`,
     ],
   };
 }
