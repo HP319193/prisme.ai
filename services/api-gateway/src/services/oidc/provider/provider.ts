@@ -98,6 +98,6 @@ export const initOidcProvider = (broker: Broker): ProviderType => {
       })
       .catch(logger.warn);
   });
-
+  provider.proxy = true;
   return provider;
 };
