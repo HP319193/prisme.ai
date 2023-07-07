@@ -1,6 +1,6 @@
 import renderer, { act } from 'react-test-renderer';
 import { userContext } from '../../../console/components/UserProvider';
-import api, { Events } from '../../utils/api';
+import api, { Events } from '../../../console/utils/api';
 import usePageEvents from './usePageEvents';
 
 jest.mock('next/router', () => {

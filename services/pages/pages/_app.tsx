@@ -18,10 +18,9 @@ import {
 } from '../components/Page/PageProvider';
 import BlocksProvider from '../components/BlocksProvider/BlocksProvider';
 import WorkspaceProvider from '../components/Workspace';
-import api from '../utils/api';
-import consoleApi from '../../console/utils/api';
+import api from '../../console/utils/api';
 
-consoleApi.opts = api.opts;
+api.opts = api.opts;
 const Sentry = dynamic(import('../../console/utils/Sentry'), { ssr: false });
 
 type NextPageWithLayout = NextPage & {
@@ -49,7 +48,7 @@ function MyApp({
   api.language = i18n.language;
   if (clientId) {
     api.overwriteClientId = clientId;
-    consoleApi.overwriteClientId = clientId;
+    api.overwriteClientId = clientId;
   }
 
   if (typeof window !== 'undefined') {

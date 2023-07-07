@@ -75,25 +75,26 @@ export const EventsProvider = ({
     [workspaceId]
   );
 
-  const fetchNextEvents: EventsContext['fetchNextEvents'] = useCallback(async () => {
-    try {
-      if (fetching.current) {
-        throw new Error();
-      }
+  const fetchNextEvents: EventsContext['fetchNextEvents'] =
+    useCallback(async () => {
+      try {
+        if (fetching.current) {
+          throw new Error();
+        }
 
-      const next = await fetchEvents(filters);
+        const next = await fetchEvents(filters);
 
-      if (next.size === 0) {
-        throw new Error();
+        if (next.size === 0) {
+          throw new Error();
+        }
+        setEvents(
+          (events) => new Set([...Array.from(events), ...Array.from(next)])
+        );
+        return next;
+      } catch {
+        return new Set();
       }
-      setEvents(
-        (events) => new Set([...Array.from(events), ...Array.from(next)])
-      );
-      return next;
-    } catch {
-      return new Set();
-    }
-  }, [fetchEvents, fetching, filters]);
+    }, [fetchEvents, fetching, filters]);
 
   const isRead: EventsContext['isRead'] = useCallback(
     (id) => eventsRead.has(id),

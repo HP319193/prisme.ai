@@ -33,7 +33,6 @@ export interface ApiOptions {
     url: string;
     clientId: string;
     clientIdHeader?: string;
-    pagesHost?: string;
     redirectUri: string;
   };
 }

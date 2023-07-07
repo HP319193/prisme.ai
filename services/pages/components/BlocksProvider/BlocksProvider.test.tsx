@@ -1,6 +1,6 @@
 import { BlocksProvider } from './BlocksProvider';
 import renderer from 'react-test-renderer';
-import api from '../../utils/api';
+import api from '../../../console/utils/api';
 
 jest.mock('@prisme.ai/blocks', () => ({
   BlocksProvider: function BlocksProvider() {

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import api from '../../utils/api';
+import api from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
 import { usePreview } from '../usePreview';
 

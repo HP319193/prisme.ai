@@ -1,7 +1,7 @@
 import DefaultErrorPage from 'next/error';
 import React, { useEffect, useState } from 'react';
 import { Loading } from '@prisme.ai/design-system';
-import api from '../utils/api';
+import api from '../../console/utils/api';
 import PageRenderer, {
   PageProps as PageRendererProps,
 } from '../components/Page/Page';
