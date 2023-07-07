@@ -13,7 +13,7 @@ export interface BlocksListConfig extends BaseBlockConfig {
 export const BlocksList = ({
   blocks = [],
   className,
-  tag: Tag = 'div',
+  tag = 'div',
 }: BlocksListConfig) => {
   const {
     utils: { BlockLoader },
@@ -40,6 +40,8 @@ export const BlocksList = ({
   }, [blocks]);
 
   if (!Array.isArray(blocks)) return null;
+
+  const Tag = tag || 'div';
 
   return (
     <Tag className={`pr-block-blocks-list ${className ? className : ''}`}>

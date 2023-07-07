@@ -21,6 +21,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
   const storageKey = `__block_${wId}_${slug}`;
   const [values, setValues] = useState(Storage.get(storageKey));
   const { t } = useTranslation('workspaces');
+  const { workspace } = useWorkspace();
 
   useEffect(() => {
     Storage.set(storageKey, values);
@@ -28,9 +29,13 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
 
   const update = useCallback(() => {
     if (!iframeRef.current) return;
+
     iframeRef.current?.contentWindow?.postMessage(
       {
         type: 'previewblock.update',
+        page: {
+          appInstances: [{ slug: '', blocks: workspace.blocks }],
+        },
         config: {
           blocks: blocks,
           css,
@@ -40,7 +45,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
       },
       '*'
     );
-  }, [blocks, css, schema, values]);
+  }, [blocks, css, schema, values, workspace]);
 
   useEffect(() => {
     update();

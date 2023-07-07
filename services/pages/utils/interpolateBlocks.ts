@@ -92,6 +92,7 @@ function testCondition(condition: string, data: Record<string, any>) {
 }
 
 function interpolate(o: any, data: any): any {
+  if (!o) return o;
   if (Array.isArray(o)) {
     return o.flatMap((item) => {
       if (typeof item !== 'string') {

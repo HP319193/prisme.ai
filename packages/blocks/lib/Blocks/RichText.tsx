@@ -51,7 +51,7 @@ class ScriptsLoader {
     ...attrs
   }: HTMLScriptElement & { script?: string }) {
     const s = document.createElement('script');
-    script && (s.innerText = script);
+    script && (s.innerHTML = script);
     Object.entries(attrs).forEach(([k, v]) => s.setAttribute(k, `${v}`));
     if (s.hasAttribute('async')) {
       document.body.appendChild(s);
@@ -67,7 +67,7 @@ const Script = ({
 }: Omit<HTMLScriptElement, 'children'> & { children: ReactNode }) => {
   useEffect(() => {
     const s = document.createElement('script');
-    s.innerText = typeof children === 'string' ? children : '';
+    s.innerHTML = typeof children === 'string' ? children : '';
     Object.entries(props).forEach(([k, v]) => s.setAttribute(k, `${v}`));
     if (s.hasAttribute('async')) {
       document.body.appendChild(s);
@@ -126,11 +126,10 @@ export const RichText = ({
       switch (domNode.name) {
         case 'script':
           if (!allowScripts) return <NoScript />;
-
           return (
             <Script
               {...(domNode.attribs as unknown as HTMLScriptElement)}
-              children={domToReact(domNode.children, options)}
+              children={(domNode.children as any)[0]?.data}
             />
           );
         case 'a':

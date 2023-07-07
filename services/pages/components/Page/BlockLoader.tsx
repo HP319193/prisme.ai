@@ -53,28 +53,29 @@ export const BlockLoader: TBlockLoader = ({
 
     const parts = name.split(/\./);
 
-    if (parts.length === 1) {
-      const { blocks: workspaceBlocks } =
-        (page?.appInstances || []).find(({ slug }) => slug === '') || {};
-      if (workspaceBlocks && workspaceBlocks[name]) {
-        const block = workspaceBlocks[name];
-        const {
-          url = getBlockName('BlocksList'),
-          blocks = undefined,
-          css = '',
-        } = typeof block === 'string' ? { url: block } : block;
+    const { blocks: workspaceBlocks } =
+      (page?.appInstances || []).find(({ slug }) => slug === '') || {};
 
-        if (blocks) {
-          setBlockName('BlocksList');
-          setConfig({
-            ...initialConfig,
-            blocks: interpolateBlock(blocks, initialConfig),
-            css,
-          });
-        }
-        setUrl(url);
-        return;
+    if (workspaceBlocks && workspaceBlocks[name]) {
+      const block = workspaceBlocks[name];
+      const {
+        url = getBlockName('BlocksList'),
+        blocks = undefined,
+        ...props
+      } = typeof block === 'string' ? { url: block } : block;
+
+      if (blocks) {
+        setBlockName('BlocksList');
+        setConfig({
+          ...initialConfig,
+          blocks: interpolateBlock(blocks, initialConfig),
+          ...props,
+        });
       }
+      setUrl(url);
+      return;
+    }
+    if (parts.length === 1) {
       setUrl(getBlockName(name));
       return;
     }
@@ -93,13 +94,18 @@ export const BlockLoader: TBlockLoader = ({
       block.url = debugUrl;
     }
 
-    const { url = getBlockName('BlocksList'), blocks = undefined } = block;
+    const {
+      url = getBlockName('BlocksList'),
+      blocks = undefined,
+      ...props
+    } = block;
 
     if (blocks) {
       setBlockName('BlocksList');
       setConfig({
         ...initialConfig,
         blocks: interpolateBlock(blocks, initialConfig),
+        ...props,
       });
     }
     setUrl(url);
