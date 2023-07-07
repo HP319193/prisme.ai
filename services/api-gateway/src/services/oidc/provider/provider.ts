@@ -18,7 +18,11 @@ export const initOidcProvider = (broker: Broker): ProviderType => {
     // @param sub {string} - account identifier (subject)
     // @param token - is a reference to the token used for which a given account is being loaded,
     //   is undefined in scenarios where claims are returned from authorization endpoint
-    findAccount: async function findAccount(_: any, sub: string, __: string) {
+    findAccount: async function findAccount(
+      _: any,
+      sub: string,
+      __: string | undefined
+    ) {
       const identity = services.identity();
       const user = await identity.get(sub);
       return {
