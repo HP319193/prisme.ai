@@ -8,7 +8,7 @@ jest.mock('@prisme.ai/blocks', () => ({
   },
 }));
 
-jest.mock('../../../pages/utils/api', () => ({
+jest.mock('../../../console/utils/api', () => ({
   uploadFiles: jest.fn((file: string) => [
     {
       url: 'http://thefile',
