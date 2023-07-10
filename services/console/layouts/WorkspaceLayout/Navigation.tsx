@@ -369,7 +369,7 @@ export const Navigation = ({
                       highlight={searchValue}
                       component={<span className="font-bold text-accent" />}
                     >
-                      {`/${slug}`}
+                      {slug}
                     </Highlight>
                   </div>
                 </div>

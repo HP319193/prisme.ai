@@ -75,7 +75,7 @@ export const BlockProvider = ({
             id: workspaceId,
             blocks: lastBlocks,
           })) || {};
-        console.log(blocks);
+
         const newBlock = { slug: newSlug, ...blocks[newSlug] };
         setBlock(newBlock);
         setSaving(false);

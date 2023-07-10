@@ -7,13 +7,14 @@ import { useMemo } from 'react';
 export interface BlocksListConfig extends BaseBlockConfig {
   blocks: ({ slug: string } & Record<string, any>)[];
   blocksClassName?: string;
-  tag?: keyof JSX.IntrinsicElements;
+  tag?: keyof JSX.IntrinsicElements | 'fragment';
+  fragment?: boolean;
 }
 
 export const BlocksList = ({
   blocks = [],
   className,
-  tag: Tag = 'div',
+  tag = 'div',
 }: BlocksListConfig) => {
   const {
     utils: { BlockLoader },
@@ -40,6 +41,14 @@ export const BlocksList = ({
   }, [blocks]);
 
   if (!Array.isArray(blocks)) return null;
+
+  if (tag === 'fragment') {
+    return <>{memoizedBlocks}</>;
+  }
+
+  const Tag = tag || 'div';
+
+  if (typeof Tag === 'object' && Object.keys(Tag).length === 0) return null;
 
   return (
     <Tag className={`pr-block-blocks-list ${className ? className : ''}`}>

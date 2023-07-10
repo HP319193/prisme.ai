@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import BlockLoader from '../components/Page/BlockLoader';
-import interpolateBlocks from '../utils/interpolateBlocks';
+import { usePage } from '../components/Page/PageProvider';
 
 export const BlockPreview = () => {
   const [config, setConfig] = useState({});
+  const { setPage } = usePage();
   useEffect(() => {
     const listener = (e: MessageEvent) => {
       if (e.data.type === 'previewblock.update') {
-        const { blocks, css, ...config } = e.data.config;
-        setConfig({ blocks: interpolateBlocks(blocks, config), css });
+        const { page, config: { blocks = [], css = '', ...config } = {} } =
+          e.data;
+        setPage(page);
+        setConfig({ blocks, css, ...config });
       }
     };
     window.addEventListener('message', listener);
@@ -16,7 +19,7 @@ export const BlockPreview = () => {
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, []);
+  }, [setPage]);
 
   // This make force load css at runtime
   const [mounted, setMounted] = useState(false);
