@@ -59,6 +59,9 @@ const JWKS_FILEPATH =
 const OIDC_CLIENT_REGISTRATION_TOKEN =
   process.env.OIDC_CLIENT_REGISTRATION_TOKEN || 'oidc-client-registration';
 
+const SESSION_COOKIES_SIGN_SECRET =
+  process.env.SESSION_COOKIES_SIGN_SECRET || ',s6<Mt3=dE[7a#k{)4H)C4%';
+
 export default {
   PROVIDER_URL,
   STUDIO_URL,
@@ -234,7 +237,7 @@ export default {
       // https://github.com/panva/node-oidc-provider/blob/main/docs/README.md#cookieskeys
       // Keygrip Signing keys used for cookie signing to prevent tampering.
       // Should be regularly rotated by adding new keys at the end & removing older ones
-      keys: [],
+      keys: [SESSION_COOKIES_SIGN_SECRET],
       //   long: { signed: true, maxAge: (1 * 24 * 60 * 60) * 1000 }, // 1 day in ms
       short: {
         // signed: true
