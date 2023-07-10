@@ -555,6 +555,9 @@
       "payload": {
         "label": "Données d'évènement",
         "description": "Paramètres passés dans la charge de l'évènement si l'automatisation est appellée via évènement."
+      },
+      "curl": {
+        "copy": "Copier au format cURL"
       }
     }
   },

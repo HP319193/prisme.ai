@@ -555,6 +555,9 @@
       "payload": {
         "label": "Event payload",
         "description": "Parameters passed in the event payload if automation is called via event."
+      },
+      "curl": {
+        "copy": "Copy to cURL format"
       }
     }
   },

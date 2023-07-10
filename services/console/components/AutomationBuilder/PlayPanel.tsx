@@ -1,5 +1,15 @@
-import { CloseCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { Loading, Popover, Schema, SchemaForm } from '@prisme.ai/design-system';
+import {
+  CloseCircleOutlined,
+  CopyOutlined,
+  PlayCircleOutlined,
+} from '@ant-design/icons';
+import {
+  Loading,
+  Popover,
+  Schema,
+  SchemaForm,
+  Tooltip,
+} from '@prisme.ai/design-system';
 import { Trans, useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
@@ -112,6 +122,25 @@ const PlayView = () => {
 
   const hasParam = Object.keys(schema.properties || {}).length > 0;
 
+  const copyCurl = useCallback(() => {
+    trackEvent({
+      name: 'Copy automation play as cURL',
+      action: 'click',
+    });
+    const payload = JSON.stringify(values);
+    const cmd = `curl '${api.host}/workspaces/${wId}/test/${automation.slug}' \
+  -H 'content-type: application/json' \
+  -H 'dnt: 1' \
+  -H 'x-prismeai-token: ${api.token}' \
+  --data-raw '{"payload": ${payload}}' \
+  --compressed`;
+    try {
+      window.navigator.clipboard.writeText(cmd);
+    } catch (e) {
+      console.log(cmd);
+    }
+  }, [automation.slug, trackEvent, values, wId]);
+
   return (
     <div className="flex flex-row flex-1 min-w-[40vw]">
       {hasParam && (
@@ -133,16 +162,27 @@ const PlayView = () => {
       <div className="flex flex-col w-[20rem] mr-2">
         <div className="flex flex-row justify-between">
           <div className="font-bold">{t('automations.play.results')}</div>
-          <button
-            className={`flex items-center ${
-              running ? 'text-gray' : 'text-accent'
-            }`}
-            onClick={run}
-            disabled={running}
-          >
-            <PlayIcon className="mr-2" />
-            {t('automations.play.label')}
-          </button>
+          <div className="flex flex-row">
+            <Tooltip title={t('automations.play.curl.copy')}>
+              <button
+                className="flex items-center mr-2 text-gray"
+                type="button"
+                onClick={copyCurl}
+              >
+                <CopyOutlined />
+              </button>
+            </Tooltip>
+            <button
+              className={`flex items-center ${
+                running ? 'text-gray' : 'text-accent'
+              }`}
+              onClick={run}
+              disabled={running}
+            >
+              <PlayIcon className="mr-2" />
+              {t('automations.play.label')}
+            </button>
+          </div>
         </div>
 
         <div
