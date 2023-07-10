@@ -7,7 +7,7 @@ const api = new Api({
   host: publicRuntimeConfig.API_URL,
   oidc: {
     url: publicRuntimeConfig.OIDC_PROVIDER_URL,
-    clientId: publicRuntimeConfig.OIDC_CLIENT_ID,
+    clientId: publicRuntimeConfig.OIDC_STUDIO_CLIENT_ID,
     clientIdHeader: publicRuntimeConfig.OIDC_CLIENT_ID_HEADER,
     redirectUri: new URL(
       '/signin',
