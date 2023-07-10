@@ -1,9 +1,17 @@
 import { BlockLoader as BLoader, TBlockLoader } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api from '../../../console/utils/api';
-import interpolateBlock from '../../utils/interpolateBlocks';
+import { computeBlocks } from './computeBlocks';
 import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
 
@@ -17,6 +25,25 @@ function getBlockName(name: string) {
     default:
       return name;
   }
+}
+
+const recursiveConfigContext = createContext<Record<string, any>>({});
+const useRecursiveConfigContext = () => useContext(recursiveConfigContext);
+
+const automationCache = new Map<string, Promise<any>>();
+async function callAutomation(
+  workspaceId: string,
+  automation: string,
+  query: any
+) {
+  const key = JSON.stringify({ workspaceId, automation, query });
+  if (!automationCache.has(key)) {
+    automationCache.set(
+      key,
+      await api.callAutomation(workspaceId, automation, query)
+    );
+  }
+  return automationCache.get(key);
 }
 
 export const BlockLoader: TBlockLoader = ({
@@ -37,6 +64,7 @@ export const BlockLoader: TBlockLoader = ({
   } = useTranslation();
   const lock = useRef(false);
   const [listening, setListening] = useState(false);
+  const recursiveConfig = useRecursiveConfigContext();
 
   const debug = useDebug();
 
@@ -68,7 +96,7 @@ export const BlockLoader: TBlockLoader = ({
         setBlockName('BlocksList');
         setConfig({
           ...initialConfig,
-          blocks: interpolateBlock(blocks, initialConfig),
+          blocks,
           ...props,
         });
       }
@@ -104,7 +132,7 @@ export const BlockLoader: TBlockLoader = ({
       setBlockName('BlocksList');
       setConfig({
         ...initialConfig,
-        blocks: interpolateBlock(blocks, initialConfig),
+        blocks,
         ...props,
       });
     }
@@ -125,7 +153,7 @@ export const BlockLoader: TBlockLoader = ({
         ...Object.fromEntries(urlSearchParams.entries()),
       };
 
-      const newConfig = await api.callAutomation(
+      const newConfig = await callAutomation(
         page.workspaceId,
         automation,
         query
@@ -210,24 +238,33 @@ export const BlockLoader: TBlockLoader = ({
     [name, page]
   );
 
+  const computedConfig = useMemo(() => {
+    if (!config) return config;
+    return computeBlocks(config, recursiveConfig);
+  }, [config, recursiveConfig]);
+
   if (!page) return null;
 
   return (
-    <BLoader
-      name={getBlockName(blockName)}
-      url={url}
-      appConfig={appConfig}
-      onAppConfigUpdate={onAppConfigUpdate}
-      api={api}
-      language={language}
-      workspaceId={`${page.workspaceId}`}
-      events={events}
-      config={config}
-      layout={{
-        container,
-      }}
-      onLoad={onBlockLoad}
-    />
+    <recursiveConfigContext.Provider
+      value={{ ...recursiveConfig, ...computedConfig }}
+    >
+      <BLoader
+        name={getBlockName(blockName)}
+        url={url}
+        appConfig={appConfig}
+        onAppConfigUpdate={onAppConfigUpdate}
+        api={api}
+        language={language}
+        workspaceId={`${page.workspaceId}`}
+        events={events}
+        config={computedConfig}
+        layout={{
+          container,
+        }}
+        onLoad={onBlockLoad}
+      />
+    </recursiveConfigContext.Provider>
   );
 };
 
