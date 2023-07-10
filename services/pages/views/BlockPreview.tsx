@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import BlockLoader from '../components/Page/BlockLoader';
 import { usePage } from '../components/Page/PageProvider';
-import interpolateBlocks from '../utils/interpolateBlocks';
 
 export const BlockPreview = () => {
   const [config, setConfig] = useState({});
@@ -12,7 +11,7 @@ export const BlockPreview = () => {
         const { page, config: { blocks = [], css = '', ...config } = {} } =
           e.data;
         setPage(page);
-        setConfig({ blocks: interpolateBlocks(blocks, config), css });
+        setConfig({ blocks, css, ...config });
       }
     };
     window.addEventListener('message', listener);
