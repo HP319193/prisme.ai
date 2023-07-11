@@ -1,4 +1,11 @@
 import jsonpath from 'jsonpath';
+import dayjs from 'dayjs';
+import LocalizedFormat from 'dayjs/plugin/localizedFormat';
+
+import('dayjs/locale/en');
+import('dayjs/locale/fr');
+
+dayjs.extend(LocalizedFormat);
 
 const TEMPLATE_IF = 'template.if';
 const TEMPLATE_REPEAT = 'template.repeat';
@@ -14,17 +21,52 @@ interface TemplatedBlock {
 }
 
 interface Config {
-  blocks: TemplatedBlock[];
+  blocks?: TemplatedBlock[];
   [k: string]: any;
+}
+export const cleanAttribute = (values: any) => (attribute: string) => {
+  const trimed = attribute.trim();
+  if (trimed.match(/^'.+'$/) || trimed.match(/^".+"$/)) {
+    return trimed.substring(1, trimed.length - 1);
+  }
+
+  return jsonpath.value(values, trimed);
+};
+
+export function applyFilter(filter: string, value: string, values: any) {
+  if (!filter) return value;
+  const [fn, attrs = ''] = filter.split(/\:/);
+  switch (fn) {
+    case 'date':
+      const [format = '', lang = 'en'] = attrs
+        .split(/,/)
+        .map(cleanAttribute(values));
+      return dayjs(value).locale(lang).format(format);
+    case 'if':
+      const [True, False] = attrs.split(/,/).map(cleanAttribute(values));
+      return value ? True : False;
+    default:
+      return value;
+  }
 }
 
 export function interpolateExpression(expression: string, values: any) {
   let newValue = expression;
   const matches = expression.match(/{{[^}]+}}/g);
   matches?.forEach((match) => {
-    const [, key] = match.match(/{{([^}]+)}}/) || [];
-    const interpolation =
+    const [, expr] = match.match(/{{([^}]+)}}/) || [];
+    const [_key, ...filters] = expr.split(/\|/);
+    const key = _key.trim();
+    let interpolation =
       key === '$index' ? values.$index : jsonpath.value(values, key);
+    if (filters) {
+      interpolation = filters
+        .filter(Boolean)
+        .reduce(
+          (prev, filter) => applyFilter(filter, prev, values),
+          interpolation
+        );
+    }
     newValue = newValue.replace(
       match,
       interpolation === undefined ? '' : interpolation
@@ -53,6 +95,9 @@ export function interpolate(blockConfig: any, values: any): any {
     return interpolateExpression(blockConfig, values);
   }
   return Object.entries(blockConfig || {}).reduce((prev, [k, v]) => {
+    const { [k]: ignored, ...filteredBlockConfig } = blockConfig;
+    const allValues = { ...values, ...filteredBlockConfig };
+
     if (k === 'blocks')
       return {
         ...prev,
@@ -63,19 +108,19 @@ export function interpolate(blockConfig: any, values: any): any {
     if (typeof v === 'string') {
       return {
         ...prev,
-        [k]: interpolateExpression(v, values),
+        [k]: interpolateExpression(v, allValues),
       };
     }
     if (typeof v === 'object') {
       if (Array.isArray(v)) {
         return {
           ...prev,
-          [k]: v.map((item) => interpolate(item, values)),
+          [k]: v.map((item) => interpolate(item, allValues)),
         };
       }
       return {
         ...prev,
-        [k]: interpolate(v, values),
+        [k]: interpolate(v, allValues),
       };
     }
 
@@ -110,7 +155,7 @@ export function repeatBlocks(
 
 export function computeBlocks({ blocks, ...config }: Config, values: any) {
   return {
-    ...interpolate(config, { ...values, ...config }),
+    ...interpolate(config, values),
     blocks:
       blocks && Array.isArray(blocks)
         ? blocks

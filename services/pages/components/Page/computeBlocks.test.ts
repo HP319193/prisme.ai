@@ -6,7 +6,7 @@ import {
   testCondition,
 } from './computeBlocks';
 
-it('should display conditionnaly', () => {
+it('should display conditionally', () => {
   expect(
     testCondition('{{test}}', {
       test: true,
@@ -178,5 +178,78 @@ it('should compute blocks', () => {
       },
     ],
     content: 'Hello World',
+  });
+});
+
+it('should interpolate expression with filters', () => {
+  expect(
+    interpolateExpression("{{foo|date:'LL'}}", {
+      foo: 'Tue, 11 Jul 2023 07:09:57 GMT',
+    })
+  ).toBe('July 11, 2023');
+  expect(
+    interpolateExpression("{{foo|date:'LL',lang}}", {
+      foo: 'Tue, 11 Jul 2023 07:09:57 GMT',
+      lang: 'fr',
+    })
+  ).toBe('11 juillet 2023');
+  expect(
+    interpolateExpression("{{foo|date:'LL', lang }}", {
+      foo: 'Tue, 11 Jul 2023 07:09:57 GMT',
+      lang: 'fr',
+    })
+  ).toBe('11 juillet 2023');
+
+  expect(
+    interpolateExpression("{{foo|if:'foo','bar'}}", {
+      foo: true,
+    })
+  ).toBe('foo');
+  expect(
+    interpolateExpression("{{foo|if:'foo','bar'}}", {
+      foo: false,
+    })
+  ).toBe('bar');
+  expect(
+    interpolateExpression('{{ foo | if : foo, bar }}', {
+      foo: 'FOO',
+      bar: 'BAR',
+    })
+  ).toBe('FOO');
+});
+
+it('should not read self value', () => {
+  expect(
+    computeBlocks(
+      {
+        slug: 'RichText',
+        content: '{{content}}',
+      },
+      {
+        content: 'Foo',
+      }
+    )
+  ).toEqual({
+    blocks: undefined,
+    slug: 'RichText',
+    content: 'Foo',
+  });
+});
+
+it('should read self value', () => {
+  expect(
+    computeBlocks(
+      {
+        slug: 'RichText',
+        content: '{{foo}}',
+        foo: 'Foo',
+      },
+      {}
+    )
+  ).toEqual({
+    blocks: undefined,
+    slug: 'RichText',
+    content: 'Foo',
+    foo: 'Foo',
   });
 });
