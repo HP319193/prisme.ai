@@ -96,7 +96,7 @@ it('should parse media queries', () => {
 }`);
 });
 
-it('should not replace :parent', () => {
+it('should replace :parent', () => {
   expect(
     prefixCSS(
       `:parent {
@@ -108,6 +108,20 @@ it('should not replace :parent', () => {
       }
     )
   ).toBe(`.parent {
+  background: red;
+}`);
+
+  expect(
+    prefixCSS(
+      `:parent :block {
+  background: red;
+}`,
+      {
+        block: '.prefix',
+        parent: '.parent',
+      }
+    )
+  ).toBe(`.parent .prefix {
   background: red;
 }`);
 });
