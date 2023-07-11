@@ -217,3 +217,39 @@ it('should interpolate expression with filters', () => {
     })
   ).toBe('FOO');
 });
+
+it('should not read self value', () => {
+  expect(
+    computeBlocks(
+      {
+        slug: 'RichText',
+        content: '{{content}}',
+      },
+      {
+        content: 'Foo',
+      }
+    )
+  ).toEqual({
+    blocks: undefined,
+    slug: 'RichText',
+    content: 'Foo',
+  });
+});
+
+it('should read self value', () => {
+  expect(
+    computeBlocks(
+      {
+        slug: 'RichText',
+        content: '{{foo}}',
+        foo: 'Foo',
+      },
+      {}
+    )
+  ).toEqual({
+    blocks: undefined,
+    slug: 'RichText',
+    content: 'Foo',
+    foo: 'Foo',
+  });
+});

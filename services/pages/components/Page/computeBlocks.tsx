@@ -21,7 +21,7 @@ interface TemplatedBlock {
 }
 
 interface Config {
-  blocks: TemplatedBlock[];
+  blocks?: TemplatedBlock[];
   [k: string]: any;
 }
 export const cleanAttribute = (values: any) => (attribute: string) => {
@@ -95,6 +95,9 @@ export function interpolate(blockConfig: any, values: any): any {
     return interpolateExpression(blockConfig, values);
   }
   return Object.entries(blockConfig || {}).reduce((prev, [k, v]) => {
+    const { [k]: ignored, ...filteredBlockConfig } = blockConfig;
+    const allValues = { ...values, ...filteredBlockConfig };
+
     if (k === 'blocks')
       return {
         ...prev,
@@ -105,19 +108,19 @@ export function interpolate(blockConfig: any, values: any): any {
     if (typeof v === 'string') {
       return {
         ...prev,
-        [k]: interpolateExpression(v, values),
+        [k]: interpolateExpression(v, allValues),
       };
     }
     if (typeof v === 'object') {
       if (Array.isArray(v)) {
         return {
           ...prev,
-          [k]: v.map((item) => interpolate(item, values)),
+          [k]: v.map((item) => interpolate(item, allValues)),
         };
       }
       return {
         ...prev,
-        [k]: interpolate(v, values),
+        [k]: interpolate(v, allValues),
       };
     }
 
@@ -152,7 +155,7 @@ export function repeatBlocks(
 
 export function computeBlocks({ blocks, ...config }: Config, values: any) {
   return {
-    ...interpolate(config, { ...values, ...config }),
+    ...interpolate(config, values),
     blocks:
       blocks && Array.isArray(blocks)
         ? blocks
