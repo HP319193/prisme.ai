@@ -92,8 +92,8 @@ export async function init(app: Application) {
       {
         secretOrKeyProvider: passportJwtSecret({
           cache: true,
-          rateLimit: true,
-          jwksRequestsPerMinute: 5,
+          rateLimit: false, // Do not activate, as 1 unknown JWT-kid keeping sending requests would prevent any further request & block valid requests. This caused a downtime there ...
+          // jwksRequestsPerMinute: 5,
           jwksUri: `${oidcCfg.PROVIDER_URL}/oidc/jwks`,
           timeout: 300,
         }),
