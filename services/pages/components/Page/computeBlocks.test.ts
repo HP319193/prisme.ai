@@ -271,3 +271,19 @@ it('should interpolate an array', () => {
     images: ['Foo'],
   });
 });
+
+it('should not create a new array', () => {
+  const from = {
+    foo: [],
+  };
+  const to = computeBlocks(from, {});
+  expect(from.foo).toBe(to.foo);
+});
+
+it('should not create a new object', () => {
+  const from = {
+    foo: {},
+  };
+  const to = computeBlocks(from, {});
+  expect(from.foo).toBe(to.foo);
+});
