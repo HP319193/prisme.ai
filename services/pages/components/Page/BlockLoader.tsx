@@ -69,7 +69,9 @@ export const BlockLoader: TBlockLoader = ({
 
   const debug = useDebug();
 
+  const prevInitialConfig = useRef(initialConfig);
   useEffect(() => {
+    if (fastDeepEqual(prevInitialConfig.current, initialConfig)) return;
     setConfig(initialConfig);
   }, [initialConfig]);
 
@@ -205,6 +207,7 @@ export const BlockLoader: TBlockLoader = ({
   ]);
 
   const alreadySentInit = useRef(false);
+
   useEffect(() => {
     if (!user || !listening || !events || alreadySentInit.current || !onInit)
       return;
@@ -228,6 +231,7 @@ export const BlockLoader: TBlockLoader = ({
         {}
       );
     }
+
     events.emit(onInit, payload);
   }, [events, initialConfig, language, listening, onInit, page, user]);
 

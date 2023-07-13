@@ -39,16 +39,12 @@ export const Page = ({ page }: PageProps) => {
     );
     const {
       appInstances,
-      automation,
       id,
       labels,
       name,
-      notifyOn,
-      onInit,
       public: _public,
       slug,
       styles,
-      updateOn,
       workspaceId,
       workspaceSlug,
       ...pageConfig
