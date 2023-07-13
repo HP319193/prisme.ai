@@ -14,6 +14,7 @@ import api from '../../../console/utils/api';
 import { computeBlocks } from './computeBlocks';
 import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
+import fastDeepEqual from 'fast-deep-equal';
 
 /**
  * This function aims to replace deprecated Block names by the new one
@@ -68,7 +69,9 @@ export const BlockLoader: TBlockLoader = ({
 
   const debug = useDebug();
 
+  const prevInitialConfig = useRef(initialConfig);
   useEffect(() => {
+    if (fastDeepEqual(prevInitialConfig.current, initialConfig)) return;
     setConfig(initialConfig);
   }, [initialConfig]);
 
@@ -170,7 +173,11 @@ export const BlockLoader: TBlockLoader = ({
     if (updateOn) {
       off.push(
         events.on(updateOn, ({ payload: config }) => {
-          setConfig((prev = {}) => ({ ...prev, ...config }));
+          setConfig((prev = {}) => {
+            const newConfig = { ...prev, ...config };
+            if (fastDeepEqual(newConfig, prev)) return prev;
+            return newConfig;
+          });
           if (config.userTopics) {
             events.listenTopics({ event: updateOn, topics: config.userTopics });
           }
@@ -200,6 +207,7 @@ export const BlockLoader: TBlockLoader = ({
   ]);
 
   const alreadySentInit = useRef(false);
+
   useEffect(() => {
     if (!user || !listening || !events || alreadySentInit.current || !onInit)
       return;
@@ -223,6 +231,7 @@ export const BlockLoader: TBlockLoader = ({
         {}
       );
     }
+
     events.emit(onInit, payload);
   }, [events, initialConfig, language, listening, onInit, page, user]);
 
@@ -243,12 +252,18 @@ export const BlockLoader: TBlockLoader = ({
     return computeBlocks(config, recursiveConfig);
   }, [config, recursiveConfig]);
 
+  const cumulatedConfig = useMemo(
+    () => ({
+      ...recursiveConfig,
+      ...computedConfig,
+    }),
+    [computedConfig, recursiveConfig]
+  );
+
   if (!page) return null;
 
   return (
-    <recursiveConfigContext.Provider
-      value={{ ...recursiveConfig, ...computedConfig }}
-    >
+    <recursiveConfigContext.Provider value={cumulatedConfig}>
       <BLoader
         name={getBlockName(blockName)}
         url={url}

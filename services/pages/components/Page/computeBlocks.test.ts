@@ -253,3 +253,21 @@ it('should read self value', () => {
     foo: 'Foo',
   });
 });
+
+it('should interpolate an array', () => {
+  expect(
+    computeBlocks(
+      {
+        slug: 'Carousel',
+        images: '{{images}}',
+      },
+      {
+        images: ['Foo'],
+      }
+    )
+  ).toEqual({
+    blocks: undefined,
+    slug: 'Carousel',
+    images: ['Foo'],
+  });
+});

@@ -67,11 +67,16 @@ export function interpolateExpression(expression: string, values: any) {
           interpolation
         );
     }
+    if (typeof interpolation === 'object') {
+      newValue = interpolation;
+      return;
+    }
     newValue = newValue.replace(
       match,
       interpolation === undefined ? '' : interpolation
     );
   });
+
   return newValue;
 }
 
