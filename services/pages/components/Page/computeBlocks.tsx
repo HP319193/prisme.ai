@@ -1,6 +1,7 @@
 import jsonpath from 'jsonpath';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
+import equal from 'fast-deep-equal';
 
 import('dayjs/locale/en');
 import('dayjs/locale/fr');
@@ -118,14 +119,16 @@ export function interpolate(blockConfig: any, values: any): any {
     }
     if (typeof v === 'object') {
       if (Array.isArray(v)) {
+        const newV = v.map((item) => interpolate(item, allValues));
         return {
           ...prev,
-          [k]: v.map((item) => interpolate(item, allValues)),
+          [k]: equal(newV, v) ? v : newV,
         };
       }
+      const newV = interpolate(v, allValues);
       return {
         ...prev,
-        [k]: interpolate(v, allValues),
+        [k]: equal(newV, v) ? v : newV,
       };
     }
 
