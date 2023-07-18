@@ -79,7 +79,7 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>GATEWAY_API_HOST</td>
     <td>api-gateway, workspaces</td>
-    <td>api-gateway internal URL for internal requests</td>
+    <td>api-gateway internal URL for internal requests (i.e contact fetching)</td>
     <td>http://localhost:3001/v2</td>
   </tr>          
   <tr>
@@ -181,7 +181,7 @@ Then, for when you want to run this service directly from its docker image, you 
   </tr>  
   <tr>
     <td>INTERNAL_API_KEY</td>
-    <td>api-gateway</td>
+    <td>api-gateway, workspaces</td>
     <td>API Key allowing internal services fetching /contacts API</td>
     <td></td>
   </tr>       

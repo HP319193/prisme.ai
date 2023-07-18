@@ -33,6 +33,9 @@ services:
       SESSIONS_STORAGE_HOST: 'redis://redis/2'
       BROKER_HOST: 'redis://redis/10'
       PERMISSIONS_STORAGE_HOST: 'mongodb://mongo/permissions'
+      CONSOLE_URL: '${CONSOLE_URL}'
+      API_URL: '${API_URL}'
+      PAGES_HOST: '${PAGES_HOST}'
   console:
     entrypoint: npm start  --prefix services/console
     restart: on-failure
@@ -40,7 +43,9 @@ services:
     ports:
       - '3000:3000'
     environment:
-      API_URL: 'http://localhost:3001/v2'
+      API_URL: '${API_URL}'
+      CONSOLE_URL: '${CONSOLE_URL}'
+      PAGES_HOST: '${PAGES_HOST}'
   pages:
     entrypoint: npm start  --prefix services/pages
     restart: on-failure
@@ -48,7 +53,9 @@ services:
     ports:
       - '3000:3100'
     environment:
-      API_URL: 'http://localhost:3001/v2'
+      API_URL: '${API_URL}'
+      CONSOLE_URL: '${CONSOLE_URL}'
+      PAGES_HOST: '${PAGES_HOST}'
   elastic:
     image: 'docker.elastic.co/elasticsearch/elasticsearch:7.14.0'
     container_name: elastic
@@ -116,6 +123,7 @@ services:
       WORKSPACES_STORAGE_TYPE: FILESYSTEM
       WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
       PERMISSIONS_STORAGE_HOST: 'mongodb://mongo/permissions'
+      API_URL: '${API_URL}'
   workspaces:
     entrypoint: node --abort-on-uncaught-exception services/workspaces/dist/index.js
     image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-workspaces:latest'
@@ -135,3 +143,25 @@ services:
       WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
       PERMISSIONS_STORAGE_HOST: 'mongodb://mongo/permissions'
       GATEWAY_API_HOST: 'http://api-gateway:3001/v2'
+  # kibana:
+  #   depends_on:
+  #     elastic:
+  #       condition: service_healthy
+  #   image: docker.elastic.co/kibana/kibana:7.14.0
+  #   volumes:
+  #     - ./data/kibana:/usr/share/kibana/data
+  #   ports:
+  #     - 5601
+  #   environment:
+  #     - SERVERNAME=kibana
+  #     - ELASTICSEARCH_HOSTS=http://elastic:9200
+  #     - ELASTICSEARCH_USERNAME=elastic
+  #   healthcheck:
+  #     test:
+  #       [
+  #         'CMD-SHELL',
+  #         "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
+  #       ]
+  #     interval: 10s
+  #     timeout: 10s
+  #     retries: 120
