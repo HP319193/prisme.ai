@@ -37,20 +37,8 @@ export const Page = ({ page }: PageProps) => {
         return consolidatedConfig;
       }
     );
-    const {
-      appInstances,
-      id,
-      labels,
-      name,
-      public: _public,
-      slug,
-      styles,
-      workspaceId,
-      workspaceSlug,
-      ...pageConfig
-    } = page;
     return {
-      ...pageConfig,
+      ...page,
       blocks,
     };
   }, [page]);
