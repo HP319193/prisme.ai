@@ -74,9 +74,7 @@ const Usages = ({ appsUsages, wpId, error }: UsagesProps) => {
                   <div>{workspaceUsage.slug}</div>
                   <div className="flex flex-col items-end text-right text-[0.75rem]">
                     <div className="flex flex-row justify-center items-center">
-                      {workspaceUsage.total.transactions}
-                      &nbsp;
-                      {t('usage.interaction')}
+                      {workspaceUsage.total.custom.billing}
                     </div>
                   </div>
                 </div>
