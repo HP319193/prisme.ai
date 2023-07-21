@@ -17,8 +17,9 @@ export function prefixCSS(
 ) {
   function replaceSelectors(selectors: any) {
     return (selectors || []).map((sel: string) => {
-      if (sel.match(/:block/)) return sel.replace(/:block/, block);
-      if (sel.match(/:parent/)) return sel.replace(/:parent/, parent);
+      if (sel.match(/:block/) || sel.match(/:parent/)) {
+        return sel.replace(/:block/, block).replace(/:parent/, parent);
+      }
       return `${block} ${sel}`;
     });
   }
@@ -42,7 +43,7 @@ export function prefixCSS(
     const compiler = new Identity();
     return compiler.compile(parsed);
   } catch (e) {
-    console.trace(new Error(`Failed to get prefix css on: ${cssText}`), e)
+    console.trace(new Error(`Failed to get prefix css on: ${cssText}`), e);
     return cssText;
   }
 }
