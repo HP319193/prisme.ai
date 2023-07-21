@@ -892,10 +892,18 @@ declare namespace Prismeai {
     }
     export interface AppUsageMetrics {
         slug: string;
-        total: UsageMetrics;
+        total: {
+            custom: {
+                [name: string]: any;
+            };
+        };
         appInstances?: {
             slug: string;
-            total: UsageMetrics;
+            total: {
+                custom: {
+                    [name: string]: any;
+                };
+            };
         }[];
     }
     export interface AuthenticationError {
@@ -2310,15 +2318,11 @@ declare namespace Prismeai {
     }
     export interface UsageMetrics {
         transactions: number;
-        automationRuns: number;
         httpTransactions: number;
         eventTransactions: number;
         scheduleTransactions: number;
         sessions: number;
         users: number;
-        custom?: {
-            [name: string]: any;
-        };
     }
     export interface User {
         /**

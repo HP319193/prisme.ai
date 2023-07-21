@@ -1323,7 +1323,6 @@ components:
     UsageMetrics:
       type: object
       required:
-        - automationRuns
         - transactions
         - httpTransactions
         - eventTransactions
@@ -1333,8 +1332,6 @@ components:
       additionalProperties: false
       properties:
         transactions:
-          type: number
-        automationRuns:
           type: number
         httpTransactions:
           type: number
@@ -1346,9 +1343,6 @@ components:
           type: number
         users:
           type: number
-        custom:
-          type: object
-          additionalProperties: true
 
     AppUsageMetrics:
       type: object
@@ -1359,7 +1353,13 @@ components:
         slug:
           type: string
         total:
-          $ref: '#/components/schemas/UsageMetrics'
+          type: object
+          required:
+            - custom
+          properties:
+            custom:
+              type: object
+              additionalProperties: true
         appInstances:
           type: array
           items:
@@ -1371,7 +1371,13 @@ components:
               slug:
                 type: string
               total:
-                $ref: '#/components/schemas/UsageMetrics'
+                type: object
+                required:
+                  - custom
+                properties:
+                  custom:
+                    type: object
+                    additionalProperties: true
 
     ################################################################################################################################
     ############################################################ Events ############################################################

@@ -38,7 +38,6 @@ export function initUsageRoutes(eventsStore: EventsStore) {
         beforeDate: query.beforeDate,
         afterDate: query.afterDate,
         total: {
-          automationRuns: 0,
           transactions: 0,
           httpTransactions: 0,
           eventTransactions: 0,

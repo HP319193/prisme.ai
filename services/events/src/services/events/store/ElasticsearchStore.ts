@@ -383,7 +383,7 @@ export class ElasticsearchStore implements EventsStore {
   ): Promise<Prismeai.WorkspaceUsage> {
     const filter: any = [
       {
-        term: { 'source.serviceTopic': EventType.ExecutedAutomation },
+        term: { 'source.serviceTopic': EventType.TriggeredInteraction },
       },
     ];
     if (options.afterDate) {
@@ -406,36 +406,18 @@ export class ElasticsearchStore implements EventsStore {
       });
     }
 
-    const rootAutomationDepthFilter = {
-      bool: {
-        must_not: [
-          {
-            exists: { field: 'source.automationDepth' },
-          },
-          {
-            match: { 'payload.trigger.type': 'automation' },
-          },
-        ],
-      },
-    };
-
     const metricAggs = {
       transactions: {
         cardinality: {
           field: 'source.correlationId',
         },
       },
-      rootTriggers: {
-        filter: rootAutomationDepthFilter,
+      types: {
+        terms: { field: 'payload.trigger.type' },
         aggs: {
-          types: {
-            terms: { field: 'payload.trigger.type' },
-            aggs: {
-              transactions: {
-                cardinality: {
-                  field: 'source.correlationId',
-                },
-              },
+          transactions: {
+            cardinality: {
+              field: 'source.correlationId',
             },
           },
         },
@@ -452,18 +434,16 @@ export class ElasticsearchStore implements EventsStore {
       },
     };
     type MetricsElasticBucket = ElasticBucket<{
-      rootTriggers: ElasticBucket<{
-        types: {
-          buckets: ElasticBucket[];
-        };
-      }>;
+      types: {
+        buckets: ElasticBucket[];
+      };
       transactions: { value: number };
       users: { value: number };
     }>;
 
     const result: any = await this._search(
       workspaceId,
-      { limit: 0 },
+      { limit: 10 },
       {
         track_total_hits: true,
         query: {
@@ -472,33 +452,19 @@ export class ElasticsearchStore implements EventsStore {
           },
         },
 
-        aggs: {
-          ...metricAggs,
-          apps: {
-            terms: { field: 'source.appSlug' },
-            aggs: {
-              ...metricAggs,
-              appInstances: {
-                terms: { field: 'source.appInstanceFullSlug' },
-                aggs: metricAggs,
-              },
-            },
-          },
-        },
+        aggs: metricAggs,
       }
     );
-    const { hits, aggregations } = result;
+    const { aggregations } = result;
 
     const mapMetricsElasticBuckets = (
-      elasticBuckets: MetricsElasticBucket,
-      automationRuns: number
+      elasticBuckets: MetricsElasticBucket
     ): Prismeai.UsageMetrics => {
       const rootTriggers = mapElasticBuckets(
-        elasticBuckets.rootTriggers?.types?.buckets || []
+        elasticBuckets.types?.buckets || []
       );
       const transactions = elasticBuckets?.transactions?.value || 0;
       const metrics: Prismeai.UsageMetrics = {
-        automationRuns,
         transactions,
         httpTransactions:
           rootTriggers?.endpoint?.buckets?.transactions?.value || 0,
@@ -517,35 +483,12 @@ export class ElasticsearchStore implements EventsStore {
       workspaceId,
       beforeDate: options.beforeDate,
       afterDate: options.afterDate,
-      total: mapMetricsElasticBuckets(aggregations, hits?.total?.value || 0),
-      apps: (aggregations?.apps?.buckets || []).map(
-        ({ key: slug, doc_count, appInstances, ...metricBuckets }: any) => {
-          const appUsage: Prismeai.AppUsageMetrics = {
-            slug,
-            total: mapMetricsElasticBuckets(metricBuckets, doc_count),
-          };
-          if (options.details) {
-            appUsage.appInstances = (appInstances?.buckets || []).map(
-              ({ key: slug, doc_count, ...metricBuckets }: any) => {
-                return {
-                  slug,
-                  total: mapMetricsElasticBuckets(metricBuckets, doc_count),
-                };
-              }
-            );
-          }
-
-          return appUsage;
-        }
-      ),
+      total: mapMetricsElasticBuckets(aggregations),
+      apps: [],
     };
 
     try {
-      usage.apps = await this.getAppCustomUsage(
-        workspaceId,
-        options,
-        usage.apps
-      );
+      usage.apps = await this.getAppCustomUsage(workspaceId, options);
     } catch (err) {
       logger.warn({
         msg: 'Could not retrieve custom app usage',
@@ -559,8 +502,7 @@ export class ElasticsearchStore implements EventsStore {
 
   async getAppCustomUsage(
     workspaceId: string,
-    options: PrismeaiAPI.WorkspaceUsage.QueryParameters,
-    apps: Prismeai.WorkspaceUsage['apps']
+    options: PrismeaiAPI.WorkspaceUsage.QueryParameters
   ): Promise<Prismeai.WorkspaceUsage['apps']> {
     const filter: any = [
       { wildcard: { type: '*.usage' } },
@@ -686,58 +628,72 @@ export class ElasticsearchStore implements EventsStore {
     );
     const { aggregations } = result;
     const appsUsage = mapElasticBuckets(aggregations.apps.buckets);
-    return apps.map((cur) => {
-      const appUsage = appsUsage[cur.slug!];
-      if (!appUsage?.buckets?.appInstances?.buckets) {
-        return cur;
-      }
-      const appInstancesUsage = mapElasticBuckets(
-        appUsage?.buckets?.appInstances?.buckets
-      );
-      const metricsPerAppInstance: Record<
-        string,
-        Record<string, number>
-      > = Object.entries(appInstancesUsage).reduce(
-        (prevTotal, [appInstanceSlug, { buckets }]) => {
-          if (!buckets?.usage?.value) {
-            return prevTotal;
-          }
-          return {
-            ...prevTotal,
-            [appInstanceSlug]: buckets?.usage?.value?.metrics,
-          };
-        },
-        {}
-      );
+    return Object.entries(appsUsage).reduce(
+      (prevApps, [appSlug, { buckets }]) => {
+        if (!buckets?.appInstances?.buckets) {
+          return prevApps;
+        }
 
-      if (cur.appInstances) {
-        cur.appInstances = cur.appInstances.map((cur) => {
-          if (cur.slug && cur.slug in metricsPerAppInstance) {
-            cur.total.custom = metricsPerAppInstance[cur.slug];
-          }
-          return cur;
-        });
-      }
+        const appUsage = {
+          slug: appSlug,
+          total: {
+            custom: {},
+          },
+          appInstances: [],
+        };
 
-      cur.total.custom = Object.values(metricsPerAppInstance).reduce(
-        (prevCustom, cur) => ({
-          ...Object.entries(cur).reduce(
-            (prev, [k, v]) => ({
-              ...prev,
-              [k]: (prevCustom[k] || 0) + v,
-            }),
-            prevCustom
-          ),
-        }),
-        {}
-      );
-      if (typeof (cur.total?.custom as any).billing === 'number') {
-        (cur.total?.custom as any).billing = Math.floor(
-          (cur.total?.custom as any).billing
+        const appInstancesUsage = mapElasticBuckets(
+          buckets?.appInstances?.buckets
         );
-      }
-      return cur;
-    });
+        const metricsPerAppInstance: Record<
+          string,
+          Record<string, number>
+        > = Object.entries(appInstancesUsage).reduce(
+          (prevTotal, [appInstanceSlug, { buckets }]) => {
+            if (!buckets?.usage?.value) {
+              return prevTotal;
+            }
+            return {
+              ...prevTotal,
+              [appInstanceSlug]: buckets?.usage?.value?.metrics,
+            };
+          },
+          {}
+        );
+
+        appUsage.appInstances = buckets?.appInstances?.buckets.map(
+          (cur: any) => {
+            return {
+              slug: cur.key,
+              total: {
+                custom: metricsPerAppInstance[cur.key],
+              },
+            };
+          }
+        );
+
+        appUsage.total.custom = Object.values(metricsPerAppInstance).reduce(
+          (prevCustom, cur) => ({
+            ...Object.entries(cur).reduce(
+              (prev, [k, v]) => ({
+                ...prev,
+                [k]: (prevCustom[k] || 0) + v,
+              }),
+              prevCustom
+            ),
+          }),
+          {}
+        );
+        if (typeof (appUsage.total?.custom as any).billing === 'number') {
+          (appUsage.total?.custom as any).billing = Math.floor(
+            (appUsage.total?.custom as any).billing
+          );
+        }
+
+        return [...prevApps, appUsage];
+      },
+      [] as Prismeai.AppUsageMetrics[]
+    );
   }
 
   async closeWorkspace(workspaceId: string): Promise<any> {
