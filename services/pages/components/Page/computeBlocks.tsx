@@ -111,6 +111,12 @@ export function interpolate(blockConfig: any, values: any): any {
       };
 
     // Interpolate
+    if (!v) {
+      return {
+        ...prev,
+        [k]: v,
+      };
+    }
     if (typeof v === 'string') {
       return {
         ...prev,

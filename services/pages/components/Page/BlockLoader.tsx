@@ -72,6 +72,7 @@ export const BlockLoader: TBlockLoader = ({
   const prevInitialConfig = useRef(initialConfig);
   useEffect(() => {
     if (fastDeepEqual(prevInitialConfig.current, initialConfig)) return;
+    prevInitialConfig.current = initialConfig;
     setConfig(initialConfig);
   }, [initialConfig]);
 
