@@ -762,6 +762,11 @@ export class ElasticsearchStore implements EventsStore {
         },
       },
     });
+
+    // 3. Close index
+    await this.client.indices.close({
+      index: `.ds-${this.getWorkspaceEventsIndexName(`${workspaceId}-*`)}`,
+    });
   }
 
   async cleanupIndices(opts: { dryRun?: boolean }) {
