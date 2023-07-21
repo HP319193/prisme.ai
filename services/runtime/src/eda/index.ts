@@ -19,8 +19,7 @@ export enum EventType {
 
   ExecutedAutomation = 'runtime.automations.executed',
   ScheduledAutomation = 'runtime.automations.scheduled',
-  TriggeredWebhook = 'runtime.webhooks.triggered',
-  TriggeredSchedule = 'runtime.schedules.triggered',
+  TriggeredInteraction = 'runtime.interactions.triggered',
   UpdatedContexts = 'runtime.contexts.updated',
   PendingWait = 'runtime.waits.pending',
   FulfilledWait = 'runtime.waits.fulfilled.{{id}}',

@@ -2159,33 +2159,23 @@ declare namespace Prismeai {
             reason: string;
         };
     }
-    export interface TriggeredSchedule {
+    export type TriggerType = "event" | "endpoint" | "schedule" | "automation";
+    export interface TriggeredInteraction {
         /**
          * example:
-         * runtime.schedules.triggered
+         * runtime.interactions.triggered
          */
-        type: "runtime.schedules.triggered";
+        type: "runtime.interactions.triggered";
         payload: {
             workspaceId: string;
-            automationSlug: string;
-            schedule: string;
-            appInstanceSlug?: string;
-        };
-    }
-    export interface TriggeredWebhook {
-        /**
-         * example:
-         * runtime.webhooks.triggered
-         */
-        type: "runtime.webhooks.triggered";
-        payload: {
-            workspaceId: string;
-            automationSlug: string;
-            /**
-             * example:
-             * post
-             */
-            method: string;
+            automation: string;
+            trigger: {
+                type: TriggerType;
+                value: string;
+                id?: string;
+                appInstanceSlug?: string;
+            };
+            startedAt: string;
         };
     }
     export interface TypedArgument {

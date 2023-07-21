@@ -129,6 +129,19 @@ export default class Runtime {
       endpoint: automationSlug,
     });
 
+    broker.send<Prismeai.TriggeredInteraction['payload']>(
+      EventType.TriggeredInteraction,
+      {
+        workspaceId,
+        automation: automationSlug,
+        trigger: {
+          type: 'automation',
+          value: automationSlug,
+        },
+        startedAt: new Date().toISOString(),
+      }
+    );
+
     const result = await this.processTriggers(
       workspace,
       [
@@ -160,8 +173,7 @@ export default class Runtime {
         EventType.PublishedApp,
         EventType.ExecutedAutomation,
         EventType.FailedFetch,
-        EventType.TriggeredWebhook,
-        EventType.TriggeredSchedule,
+        EventType.TriggeredInteraction,
         EventType.PagePermissionsShared,
         EventType.PagePermissionsDeleted,
         EventType.PublishedWorkspaceVersion,
@@ -367,6 +379,34 @@ export default class Runtime {
       return;
     }
 
+    // Only count new interaction for user emitted events & other native events !
+    // Do not re emit EventType.TriggeredInteraction to avoid infinite loop
+    if (
+      (event.source.serviceTopic === RUNTIME_EMITS_BROKER_TOPIC &&
+        event.source.userId) ||
+      (event.source.serviceTopic !== RUNTIME_EMITS_BROKER_TOPIC &&
+        event.source.serviceTopic !== EventType.TriggeredInteraction)
+    ) {
+      broker.send<Prismeai.TriggeredInteraction['payload']>(
+        EventType.TriggeredInteraction,
+        {
+          workspaceId,
+          automation: triggers[0].automationSlug,
+          trigger: {
+            type: 'event',
+            value: event.type,
+            id: event.id,
+          },
+          startedAt: new Date().toISOString(),
+        },
+        {
+          userId: event.source.userId,
+          sessionId: event.source.sessionId,
+          correlationId: event.source.correlationId,
+        }
+      );
+    }
+
     return await this.processTriggers(
       workspace,
       triggers,
@@ -384,7 +424,7 @@ export default class Runtime {
     broker: Broker
   ) {
     const { workspaceId, correlationId } = ctx;
-    const { automationSlug, method } = webhook;
+    const { automationSlug } = webhook;
     if (!correlationId || !workspaceId) {
       throw new Error(
         `Can't process webhook '${automationSlug}' without source correlationId or workspaceId !`
@@ -397,15 +437,6 @@ export default class Runtime {
       endpoint: automationSlug,
     });
 
-    broker.send<Prismeai.TriggeredWebhook['payload']>(
-      EventType.TriggeredWebhook,
-      {
-        workspaceId,
-        automationSlug: decodeURIComponent(automationSlug),
-        method,
-      }
-    );
-
     const triggers = workspace.getEndpointTriggers(automationSlug);
     if (!triggers?.length) {
       throw new ObjectNotFoundError(
@@ -413,6 +444,19 @@ export default class Runtime {
         { workspaceId: workspaceId, endpoint: automationSlug }
       );
     }
+
+    broker.send<Prismeai.TriggeredInteraction['payload']>(
+      EventType.TriggeredInteraction,
+      {
+        workspaceId,
+        automation: triggers[0].automationSlug,
+        trigger: {
+          type: 'endpoint',
+          value: decodeURIComponent(automationSlug),
+        },
+        startedAt: new Date().toISOString(),
+      }
+    );
 
     const result = await this.processTriggers(
       workspace,

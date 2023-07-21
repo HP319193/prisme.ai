@@ -9,13 +9,18 @@ export const filters = ({ sessionId }: { sessionId?: string }) => ({
     type: 'workspaces.*',
   },
   webhooks: {
-    type: 'runtime.webhooks.triggered',
+    type: 'runtime.interactions.triggered',
+    'payload.trigger.type': 'endpoint',
   },
   shares: {
     type: 'workspaces*permissions.*',
   },
   application: {
     'source.serviceTopic': 'topic:runtime:emit',
+  },
+  inputEvents: {
+    'source.serviceTopic': 'topic:runtime:emit',
+    'source.userId': '*',
   },
   mySession: {
     'source.sessionId': `${sessionId}`,

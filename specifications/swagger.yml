@@ -2436,6 +2436,54 @@ components:
             workspaceId:
               type: string
 
+    TriggerType:
+      type: string
+      enum:
+        - 'event'
+        - 'endpoint'
+        - 'schedule'
+        - 'automation'
+
+    TriggeredInteraction:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.interactions.triggered
+          enum:
+            - runtime.interactions.triggered
+        payload:
+          type: object
+          required:
+            - workspaceId
+            - automation
+            - trigger
+            - startedAt
+          properties:
+            workspaceId:
+              type: string
+            automation:
+              type: string
+            trigger:
+              type: object
+              required:
+                - type
+                - value
+              properties:
+                type:
+                  $ref: "#/components/schemas/TriggerType"
+                value:
+                  type: string
+                id:
+                  type: string
+                appInstanceSlug:
+                  type: string
+            startedAt:
+              type: string
+
     ExecutedAutomation:
       type: object
       required:
@@ -2502,59 +2550,6 @@ components:
             details:
               type: object
               additionalProperties: true
-
-    TriggeredWebhook:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.webhooks.triggered
-          enum:
-            - runtime.webhooks.triggered
-        payload:
-          type: object
-          required:
-            - workspaceId
-            - automationSlug
-            - method
-          properties:
-            workspaceId:
-              type: string
-            automationSlug:
-              type: string
-            method:
-              type: string
-              example: post
-
-    TriggeredSchedule:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.schedules.triggered
-          enum:
-            - runtime.schedules.triggered
-        payload:
-          type: object
-          required:
-            - workspaceId
-            - automationSlug
-            - schedule
-          properties:
-            workspaceId:
-              type: string
-            automationSlug:
-              type: string
-            schedule:
-              type: string
-            appInstanceSlug:
-              type: string
 
     SuspendedWorkspace:
       type: object

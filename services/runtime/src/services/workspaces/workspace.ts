@@ -278,17 +278,25 @@ export class Workspace {
   }
 
   getEventTriggers(event: Prismeai.PrismeEvent): DetailedTrigger[] {
-    if (event.type === EventType.TriggeredSchedule) {
-      const { appInstanceSlug, ...payload } =
-        (event as Prismeai.TriggeredSchedule).payload || {};
+    const triggeredInteraction = (<Prismeai.TriggeredInteraction>event).payload;
+    if (
+      event.type === EventType.TriggeredInteraction &&
+      triggeredInteraction.trigger?.type == 'schedule'
+    ) {
+      const { appInstanceSlug, ...trigger } = triggeredInteraction.trigger;
       if (appInstanceSlug && appInstanceSlug in this.imports) {
+        const nestedTriggeredInteraction = {
+          ...triggeredInteraction,
+          trigger,
+        };
         return this.imports[appInstanceSlug].getEventTriggers({
           ...event,
-          payload,
+          payload: nestedTriggeredInteraction,
         });
       }
-      return this.triggers.schedules[payload.schedule] || [];
+      return this.triggers.schedules[trigger.value] || [];
     }
+
     const triggers = this.triggers.events[event.type] || [];
     const [firstAppSlug, nestedAppSlugs] = this.parseAppRef(event.type);
     if (firstAppSlug in this.imports) {

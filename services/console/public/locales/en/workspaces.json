@@ -167,6 +167,7 @@
         "label_errors": "Errors",
         "label_shares": "Workspace shares",
         "label_application": "Applications events",
+        "label_inputEvents": "User events",
         "label_mySession": "My session"
       },
       "reset": "Reset filters"
@@ -1611,6 +1612,7 @@
     "type_workspaces.permissions.deleted": "The Workspace is no longer shared with {{share}}",
     "type_apps.published": "The app {{appName}} has been published",
     "type_runtime.automations.executed": "The automation <automation>{{automation}}</automation> has been executed",
+    "type_runtime.interactions.triggered": "Interaction triggered from a {{event.payload.trigger.type}} {{event.payload.trigger.value}} on automation <automation>{{event.payload.automation}}</automation>",
     "type_runtime.automations.scheduled": "The automation <automation>{{automation}}</automation> has been scheduled",
     "type_runtime.webhooks.triggered": "The automation <automation>{{automation}}</automation> was triggered by URL",
     "type_runtime.schedules.triggered": "The automation <automation>{{automation}}</automation> was triggered according to its schedule",
