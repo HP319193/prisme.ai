@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
 import { BaseBlock } from '../BaseBlock';
-import { BlocksListConfig } from '../BlocksList';
+import { BlocksList, BlocksListConfig } from '../BlocksList';
 import { BaseBlockConfig } from '../types';
 
 export interface CarouselConfig extends BaseBlockConfig, BlocksListConfig {
