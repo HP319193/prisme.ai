@@ -6,6 +6,7 @@ import { initEventsRoutes } from './events';
 import { initUsageRoutes } from './usage';
 import { initSearchRoutes } from './search';
 import { initWebsockets } from './websockets';
+import { initCleanupRoutes } from './cleanup';
 import { Subscriptions } from '../../services/events/Subscriptions';
 import { EventsStore } from '../../services/events/store';
 import { AccessManager } from '../../permissions';
@@ -20,6 +21,7 @@ export const init = (
   initWebsockets(httpServer, eventsSubscription);
 
   const root = '/v2';
+  app.use(`/sys/cleanup`, initCleanupRoutes(eventsStore));
   app.use(`/sys`, sys);
   app.use(
     `${root}/workspaces/:workspaceId/events`,

@@ -1,6 +1,8 @@
 import elasticsearch from '@elastic/elasticsearch';
 import { StoreDriverOptions } from '.';
 import {
+  EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS,
+  EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS,
   EVENTS_RETENTION_DAYS,
   EVENTS_SCHEDULED_DELETION_DAYS,
   EVENTS_STORAGE_ES_BULK_REFRESH,
@@ -760,6 +762,86 @@ export class ElasticsearchStore implements EventsStore {
         },
       },
     });
+  }
+
+  async cleanupIndices(opts: { dryRun?: boolean }) {
+    const now = Date.now();
+    const { dryRun = false } = opts;
+
+    const { aggregations } = await this._search(
+      '*',
+      { limit: 0 },
+      {
+        aggs: {
+          group_by_workspaceId: {
+            terms: {
+              field: 'source.workspaceId',
+              min_doc_count: 0,
+              order: { _count: 'asc' },
+              size: 100,
+            },
+            aggs: {
+              max_date: { max: { field: 'createdAt' } },
+              inactive_buckets: {
+                bucket_selector: {
+                  buckets_path: {
+                    maxDate: 'max_date',
+                  },
+                  script: `
+                  Instant lastEvent = Instant.ofEpochMilli(Double.valueOf(params.maxDate).longValue());
+                  Instant now = Instant.ofEpochMilli(${now}L);
+
+                  long diffDays = ChronoUnit.DAYS.between(lastEvent, now);
+                  return diffDays > ${EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS};
+                  `,
+                },
+              },
+            },
+          },
+        },
+      }
+    );
+
+    const workspaceBuckets = aggregations?.['group_by_workspaceId']?.[
+      'buckets'
+    ] as {
+      key: string;
+      doc_count: number;
+      max_date: { value_as_string: string };
+    }[];
+    let cleanupWorkspaces: {
+      workspaceId: string;
+      lastEventDate: string;
+      eventsCount: number;
+    }[] = [];
+    for (let bucket of workspaceBuckets) {
+      if (bucket.doc_count > EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS) {
+        break;
+      }
+      cleanupWorkspaces.push({
+        workspaceId: bucket.key,
+        lastEventDate: bucket.max_date.value_as_string,
+        eventsCount: bucket.doc_count,
+      });
+    }
+
+    if (dryRun !== false && <any>dryRun != 'false' && <any>dryRun != '0') {
+      return {
+        cleanupWorkspaces,
+        dryRun,
+      };
+    }
+
+    const result = await this.client.indices.deleteDataStream({
+      name: cleanupWorkspaces.map((cur) =>
+        this.getWorkspaceEventsIndexName(cur.workspaceId)
+      ),
+    });
+
+    return {
+      cleanupWorkspaces,
+      result: result.body,
+    };
   }
 }
 
