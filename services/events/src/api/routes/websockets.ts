@@ -81,10 +81,12 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     }
     const sessionId = socket.handshake.headers[SESSION_ID_HEADER];
     const apiKey = socket.handshake.headers[API_KEY_HEADER];
+    const socketId = socket.id;
     const logsCtx = {
       userId,
       sessionId,
       workspaceId,
+      socketId,
       'user-agent': socket.handshake.headers['user-agent'],
       referer: socket.handshake.headers['referer'],
     };
@@ -95,6 +97,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
         id: userId as string,
         sessionId: sessionId as string,
         apiKey: apiKey as string,
+        socketId,
         callback: (event: PrismeEvent<any>) => {
           socket.emit(event.type, event);
         },
@@ -130,6 +133,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       workspaceId,
       userId: userId as string,
       sessionId: sessionId as string,
+      socketId,
       ip: userIp,
     });
     socket.onAny(

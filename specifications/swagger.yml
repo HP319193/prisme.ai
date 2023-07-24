@@ -1390,6 +1390,10 @@ components:
           type: string
         sessionId:
           type: string
+        currentSocket:
+          type: boolean
+          default: true
+          description: "If emitted in response to an active socket (i.e source.socketId is set), this event is only visible to this same socket. Defaults to true"
 
     PrismeEventOptions:
       type: object
@@ -1434,6 +1438,8 @@ components:
             sessionId:
               type: string
             workspaceId:
+              type: string
+            socketId:
               type: string
             host:
               type: object

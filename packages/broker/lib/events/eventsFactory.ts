@@ -21,6 +21,7 @@ export interface EventSource {
   ip?: string;
   sessionId?: string;
   workspaceId?: string;
+  socketId?: string;
   host?: Host;
   correlationId?: string;
   serviceTopic?: Topic;
@@ -34,6 +35,15 @@ export interface PrismeEvent<T extends object = object> {
   error?: { message: string } | BrokerError;
   options?: {
     persist?: boolean;
+  };
+  target?: {
+    userTopic?: string;
+    userId?: string;
+    sessionId?: string;
+    /**
+     * If emitted in response to an active socket (i.e source.socketId is set), this event is only visible to this same socket. Defaults to true
+     */
+    currentSocket?: boolean;
   };
   createdAt: string;
   id: string;

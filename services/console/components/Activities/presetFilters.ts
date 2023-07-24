@@ -24,5 +24,6 @@ export const filters = ({ sessionId }: { sessionId?: string }) => ({
   },
   mySession: {
     'source.sessionId': `${sessionId}`,
+    'source.socketId': '*',
   },
 });
