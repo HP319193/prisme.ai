@@ -39,7 +39,7 @@ export interface RunContext {
 }
 
 export interface Trigger {
-  type: 'event' | 'endpoint' | 'schedule' | 'automation';
+  type: Prismeai.TriggerType;
   value: string;
   id?: string;
 }

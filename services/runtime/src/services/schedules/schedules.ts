@@ -2,6 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../eda';
 import { Apps } from '../apps';
 import { Scheduler } from './scheduler';
+import { TriggeredSchedule } from './types';
 
 // This is the main Schedules service
 // It's role is to manage the schedules defined in DSUL.
@@ -24,23 +25,29 @@ export class Schedules {
     this.apps = apps;
   }
 
-  async scheduleSuccess(data: Prismeai.TriggeredSchedule['payload']) {
-    const payload: Prismeai.TriggeredSchedule['payload'] = {
-      ...data,
+  async scheduleSuccess(data: TriggeredSchedule) {
+    const triggeredInteraction: Prismeai.TriggeredInteraction['payload'] = {
+      workspaceId: data.workspaceId,
+      automation: data.automationSlug,
+      trigger: {
+        type: 'schedule',
+        value: data.schedule,
+      },
+      startedAt: new Date().toISOString(),
     };
-    const appInstanceSeparator = payload.automationSlug.indexOf('.');
+
+    const appInstanceSeparator = triggeredInteraction.automation.indexOf('.');
     if (appInstanceSeparator != -1) {
-      payload.appInstanceSlug = payload.automationSlug.slice(
-        0,
-        appInstanceSeparator
-      );
-      payload.automationSlug = payload.automationSlug.slice(
+      triggeredInteraction.trigger.appInstanceSlug =
+        triggeredInteraction.automation.slice(0, appInstanceSeparator);
+      triggeredInteraction.automation = triggeredInteraction.automation.slice(
         appInstanceSeparator + 1
       );
     }
-    await this.broker.send<Prismeai.TriggeredSchedule['payload']>(
-      EventType.TriggeredSchedule,
-      payload,
+
+    await this.broker.send<Prismeai.TriggeredInteraction['payload']>(
+      EventType.TriggeredInteraction,
+      triggeredInteraction,
       { workspaceId: data.workspaceId }
     );
   }

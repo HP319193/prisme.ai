@@ -8,6 +8,7 @@ import { getWorkspaceUser, WorkspaceUser } from './users';
 
 export type Subscriber = WorkspaceUser & {
   apiKey?: string;
+  socketId?: string;
   callback: (event: PrismeEvent<any>) => void;
   accessManager: Required<AccessManager>;
   searchOptions?: SearchOptions;
@@ -101,7 +102,7 @@ export class Subscriptions {
         const subscribers =
           this.subscribers[event.source.workspaceId]?.all || [];
         (subscribers || []).forEach(
-          async ({ callback, accessManager, searchOptions }) => {
+          async ({ callback, accessManager, searchOptions, socketId }) => {
             const readable = await accessManager.can(
               ActionType.Read,
               SubjectType.Event,
@@ -109,7 +110,8 @@ export class Subscriptions {
             );
             if (
               readable &&
-              (!searchOptions || this.matchSearchOptions(event, searchOptions))
+              (!searchOptions ||
+                this.matchSearchOptions(event, searchOptions, socketId))
             ) {
               callback(event);
             }
@@ -200,9 +202,31 @@ export class Subscriptions {
     );
   }
 
-  matchSearchOptions(data: PrismeEvent, searchOptions: SearchOptions) {
+  matchSearchOptions(
+    data: PrismeEvent,
+    searchOptions: SearchOptions,
+    socketId?: string
+  ) {
     if (!searchOptions || !Object.keys(searchOptions).length) {
       return true;
+    }
+    const sessionListener = Array.isArray(searchOptions['payloadQuery'])
+      ? searchOptions['payloadQuery'].find((cur) => cur['source.sessionId'])
+      : 'source.sessionId' in (searchOptions?.['payloadQuery'] || {}) &&
+        searchOptions?.['payloadQuery'];
+    // By default, events coming from a socket are not sent to others sockets listening to the same session
+    // Disable this behaviour if the event has another target (i.e userTopic)
+    const currentSocketOnly =
+      data?.target?.currentSocket === true ||
+      Object.keys(data?.target || {}).length == 0;
+    if (
+      sessionListener &&
+      !('source.socketId' in sessionListener) &&
+      data?.source?.socketId &&
+      currentSocketOnly &&
+      data?.source?.socketId !== socketId
+    ) {
+      return false; // Do not send
     }
     return Object.entries(searchOptions)
       .map(([k, v]) =>
@@ -245,6 +269,10 @@ export class Subscriptions {
       ...workspaceUser,
       accessManager: userAccessManager,
       unsubscribe: () => {
+        console.log(
+          'initial subscribers = ',
+          this.subscribers[workspaceId].all.length
+        );
         this.subscribers[workspaceId].all = this.subscribers[
           workspaceId
         ].all.filter((cur) => cur.callback !== subscriber.callback);
@@ -252,6 +280,10 @@ export class Subscriptions {
           workspaceId
         ].userIds[subscriber.id].filter(
           (cur) => cur.callback !== subscriber.callback
+        );
+        console.log(
+          ' subscribers after removal = ',
+          this.subscribers[workspaceId].all.length
         );
       },
     };

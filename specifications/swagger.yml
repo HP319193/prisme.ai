@@ -1323,7 +1323,6 @@ components:
     UsageMetrics:
       type: object
       required:
-        - automationRuns
         - transactions
         - httpTransactions
         - eventTransactions
@@ -1333,8 +1332,6 @@ components:
       additionalProperties: false
       properties:
         transactions:
-          type: number
-        automationRuns:
           type: number
         httpTransactions:
           type: number
@@ -1346,9 +1343,6 @@ components:
           type: number
         users:
           type: number
-        custom:
-          type: object
-          additionalProperties: true
 
     AppUsageMetrics:
       type: object
@@ -1359,7 +1353,13 @@ components:
         slug:
           type: string
         total:
-          $ref: '#/components/schemas/UsageMetrics'
+          type: object
+          required:
+            - custom
+          properties:
+            custom:
+              type: object
+              additionalProperties: true
         appInstances:
           type: array
           items:
@@ -1371,7 +1371,13 @@ components:
               slug:
                 type: string
               total:
-                $ref: '#/components/schemas/UsageMetrics'
+                type: object
+                required:
+                  - custom
+                properties:
+                  custom:
+                    type: object
+                    additionalProperties: true
 
     ################################################################################################################################
     ############################################################ Events ############################################################
@@ -1384,6 +1390,10 @@ components:
           type: string
         sessionId:
           type: string
+        currentSocket:
+          type: boolean
+          default: true
+          description: "If emitted in response to an active socket (i.e source.socketId is set), this event is only visible to this same socket. Defaults to true"
 
     PrismeEventOptions:
       type: object
@@ -1428,6 +1438,8 @@ components:
             sessionId:
               type: string
             workspaceId:
+              type: string
+            socketId:
               type: string
             host:
               type: object
@@ -2436,6 +2448,54 @@ components:
             workspaceId:
               type: string
 
+    TriggerType:
+      type: string
+      enum:
+        - 'event'
+        - 'endpoint'
+        - 'schedule'
+        - 'automation'
+
+    TriggeredInteraction:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: runtime.interactions.triggered
+          enum:
+            - runtime.interactions.triggered
+        payload:
+          type: object
+          required:
+            - workspaceId
+            - automation
+            - trigger
+            - startedAt
+          properties:
+            workspaceId:
+              type: string
+            automation:
+              type: string
+            trigger:
+              type: object
+              required:
+                - type
+                - value
+              properties:
+                type:
+                  $ref: "#/components/schemas/TriggerType"
+                value:
+                  type: string
+                id:
+                  type: string
+                appInstanceSlug:
+                  type: string
+            startedAt:
+              type: string
+
     ExecutedAutomation:
       type: object
       required:
@@ -2502,59 +2562,6 @@ components:
             details:
               type: object
               additionalProperties: true
-
-    TriggeredWebhook:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.webhooks.triggered
-          enum:
-            - runtime.webhooks.triggered
-        payload:
-          type: object
-          required:
-            - workspaceId
-            - automationSlug
-            - method
-          properties:
-            workspaceId:
-              type: string
-            automationSlug:
-              type: string
-            method:
-              type: string
-              example: post
-
-    TriggeredSchedule:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: runtime.schedules.triggered
-          enum:
-            - runtime.schedules.triggered
-        payload:
-          type: object
-          required:
-            - workspaceId
-            - automationSlug
-            - schedule
-          properties:
-            workspaceId:
-              type: string
-            automationSlug:
-              type: string
-            schedule:
-              type: string
-            appInstanceSlug:
-              type: string
 
     SuspendedWorkspace:
       type: object

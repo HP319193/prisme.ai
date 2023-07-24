@@ -30,6 +30,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -71,6 +72,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -112,6 +114,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -153,6 +156,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -194,6 +198,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -235,6 +240,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -276,6 +282,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -317,6 +324,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -358,6 +366,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -421,6 +430,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -462,6 +472,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -503,6 +514,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -544,6 +556,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -585,6 +598,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -626,6 +640,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -667,6 +682,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -708,6 +724,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -749,6 +766,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -892,10 +910,18 @@ declare namespace Prismeai {
     }
     export interface AppUsageMetrics {
         slug: string;
-        total: UsageMetrics;
+        total: {
+            custom: {
+                [name: string]: any;
+            };
+        };
         appInstances?: {
             slug: string;
-            total: UsageMetrics;
+            total: {
+                custom: {
+                    [name: string]: any;
+                };
+            };
         }[];
     }
     export interface AuthenticationError {
@@ -1917,6 +1943,7 @@ declare namespace Prismeai {
             ip?: string;
             sessionId?: string;
             workspaceId?: string;
+            socketId?: string;
             host: {
                 service: string;
             };
@@ -1953,6 +1980,10 @@ declare namespace Prismeai {
         userTopic?: string;
         userId?: string;
         sessionId?: string;
+        /**
+         * If emitted in response to an active socket (i.e source.socketId is set), this event is only visible to this same socket. Defaults to true
+         */
+        currentSocket?: boolean;
     }
     export interface ProcessedEvents {
         emit?: string[];
@@ -2159,33 +2190,23 @@ declare namespace Prismeai {
             reason: string;
         };
     }
-    export interface TriggeredSchedule {
+    export type TriggerType = "event" | "endpoint" | "schedule" | "automation";
+    export interface TriggeredInteraction {
         /**
          * example:
-         * runtime.schedules.triggered
+         * runtime.interactions.triggered
          */
-        type: "runtime.schedules.triggered";
+        type: "runtime.interactions.triggered";
         payload: {
             workspaceId: string;
-            automationSlug: string;
-            schedule: string;
-            appInstanceSlug?: string;
-        };
-    }
-    export interface TriggeredWebhook {
-        /**
-         * example:
-         * runtime.webhooks.triggered
-         */
-        type: "runtime.webhooks.triggered";
-        payload: {
-            workspaceId: string;
-            automationSlug: string;
-            /**
-             * example:
-             * post
-             */
-            method: string;
+            automation: string;
+            trigger: {
+                type: TriggerType;
+                value: string;
+                id?: string;
+                appInstanceSlug?: string;
+            };
+            startedAt: string;
         };
     }
     export interface TypedArgument {
@@ -2320,15 +2341,11 @@ declare namespace Prismeai {
     }
     export interface UsageMetrics {
         transactions: number;
-        automationRuns: number;
         httpTransactions: number;
         eventTransactions: number;
         scheduleTransactions: number;
         sessions: number;
         users: number;
-        custom?: {
-            [name: string]: any;
-        };
     }
     export interface User {
         /**

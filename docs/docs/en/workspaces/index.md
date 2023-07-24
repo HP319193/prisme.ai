@@ -62,7 +62,9 @@ Events can be **native** or **custom** :
 Workspaces can **emit** custom events in order to simply record that something special happened or to trigger some other automations which will be executed in parallel.  
 Workspaces can **listen** to [some **native events**](automations#supported-native-events) and [every custom events](automations#events) in order to execute any desired workflow inside theirs [automations](automations).  
 
-Events are stored up to 3 years after their creation and can ben viewed / searched at anytime from the **Activity** view of the workspace.
+Events are stored up to 3 years after their creation and can ben viewed / searched at anytime from the **Activity** view of the workspace.  
+However, events from workspaces inactive for longer than 15 days and with less than 100 events are regularly deleted.  
+Events from deleted workspaces are kept for up to 6 months after the deletion.  
 
 <a href="https://www.loom.com/share/0d60cacef42e4600aade3972050d53fe">
     <p>Activity View - Watch Video</p>

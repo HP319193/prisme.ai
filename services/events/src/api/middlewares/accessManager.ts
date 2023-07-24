@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { API_KEY_HEADER, ROLE_HEADER } from '../../../config';
+import { API_KEY_HEADER, INTERNAL_API_KEY, ROLE_HEADER } from '../../../config';
 import { Cache } from '../../cache';
 import { AccessManager } from '../../permissions';
 import { getWorkspaceUser } from '../../services/events/users';
+import { ForbiddenError } from '@prisme.ai/permissions';
 
 export function accessManagerMiddleware(
   accessManager: AccessManager,
@@ -32,4 +33,17 @@ export function accessManagerMiddleware(
 
     next();
   };
+}
+
+export function isInternallyAuthenticated(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const apiKey = API_KEY_HEADER && req.headers[API_KEY_HEADER];
+  if (apiKey && apiKey === INTERNAL_API_KEY) {
+    return next();
+  }
+
+  throw new ForbiddenError('Forbidden');
 }

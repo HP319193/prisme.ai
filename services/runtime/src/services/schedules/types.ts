@@ -1,4 +1,9 @@
+export interface TriggeredSchedule {
+  workspaceId: string;
+  automationSlug: string;
+  schedule: string;
+}
 export interface SchedulesCallbacks {
-  success(data: Prismeai.TriggeredSchedule['payload']): void;
+  success(data: TriggeredSchedule): void;
   error(data: Prismeai.GenericErrorEvent['payload']): void;
 }
