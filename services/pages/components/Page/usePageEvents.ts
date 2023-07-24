@@ -34,6 +34,7 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
           window.Prisme = window.Prisme || {};
           window.Prisme.ai = window.Prisme.ai || {};
           window.Prisme.ai.events = events;
+          window.Prisme.ai.api = api;
         }
         return events;
       });
