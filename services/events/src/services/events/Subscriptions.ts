@@ -269,10 +269,6 @@ export class Subscriptions {
       ...workspaceUser,
       accessManager: userAccessManager,
       unsubscribe: () => {
-        console.log(
-          'initial subscribers = ',
-          this.subscribers[workspaceId].all.length
-        );
         this.subscribers[workspaceId].all = this.subscribers[
           workspaceId
         ].all.filter((cur) => cur.callback !== subscriber.callback);
@@ -280,10 +276,6 @@ export class Subscriptions {
           workspaceId
         ].userIds[subscriber.id].filter(
           (cur) => cur.callback !== subscriber.callback
-        );
-        console.log(
-          ' subscribers after removal = ',
-          this.subscribers[workspaceId].all.length
         );
       },
     };

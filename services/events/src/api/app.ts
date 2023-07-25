@@ -8,6 +8,7 @@ import {
   requestDecorator,
 } from './middlewares';
 import initRoutes from './routes';
+import { Server } from 'socket.io';
 import { initMetrics } from '../metrics';
 import {
   validationErrorMiddleware,
@@ -40,11 +41,6 @@ export function initAPI(
   app.use(express.urlencoded({ extended: false }));
 
   /**
-   * Metrics
-   */
-  initMetrics(app);
-
-  /**
    * Traceability
    */
   /**
@@ -63,7 +59,7 @@ export function initAPI(
    */
   app.use(
     validationMiddleware({
-      ignorePaths: ['^/sys'],
+      ignorePaths: ['^/sys', '/metrics'],
     }),
     validationErrorMiddleware
   );
@@ -71,7 +67,18 @@ export function initAPI(
   /**
    * User routes
    */
-  initRoutes(app, httpServer, eventsSubscription, eventsStore, accessManager);
+  const { io } = initRoutes(
+    app,
+    httpServer,
+    eventsSubscription,
+    eventsStore,
+    accessManager
+  );
+
+  /**
+   * Metrics
+   */
+  initMetrics(app, io);
 
   /**
    * ERROR HANDLING
