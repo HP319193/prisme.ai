@@ -122,7 +122,6 @@
     "@ant-design/icons": "^4.7.0",
     "@types/marked": "^4.0.8",
     "antd": "^4.23.0",
-    "base64url": "^3.0.1",
     "hash-sum": "^2.0.0",
     "patch-package": "^6.4.7"
   }

@@ -1,7 +1,6 @@
 import QueryString from 'qs';
-import crypto from 'crypto';
+import pkceChallenge from 'pkce-challenge';
 import Fetcher from './fetcher';
-import base64URLEncode from 'base64url';
 import { Event, Workspace } from './types';
 import { Events } from './events';
 import { removedUndefinedProperties } from './utils';
@@ -85,7 +84,7 @@ export class Api extends Fetcher {
     return this.overwriteClientId || this.opts?.oidc?.clientId;
   }
 
-  getAuthorizationURL(
+  async getAuthorizationURL(
     overrideRedirectUri?: string,
     authParams?: { max_age?: string; acr_values?: string }
   ) {
@@ -104,12 +103,8 @@ export class Api extends Fetcher {
     url.searchParams.set('client_id', clientId);
 
     url.searchParams.set('code_challenge_method', 'S256');
-    const codeVerifier = btoa(
-      encodeURIComponent(crypto.randomBytes(32).toString('base64'))
-    ).replace(/=/g, 'a');
-    const codeChallenge = base64URLEncode(
-      crypto.createHash('sha256').update(codeVerifier).digest()
-    );
+    const { code_verifier: codeVerifier, code_challenge: codeChallenge } =
+      await pkceChallenge(64);
     url.searchParams.set('code_challenge', codeChallenge);
     const locale = window?.navigator?.language
       ? window.navigator.language.substring(0, 2)

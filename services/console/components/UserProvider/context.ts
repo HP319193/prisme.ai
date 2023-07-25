@@ -19,7 +19,7 @@ export interface UserContext<
   error?: ApiError;
   success?: ApiSuccess;
   signin: (email: string, password: string) => Promise<boolean>;
-  initAuthentication: (redirect?: boolean) => string;
+  initAuthentication: (redirect?: boolean) => Promise<string>;
   completeAuthentication: (authorizationCode: string) => Promise<void>;
   signup: (
     email: string,
@@ -39,7 +39,7 @@ export const userContext = createContext<UserContext>({
   user: null,
   loading: false,
   signin: async () => false,
-  initAuthentication: () => 'url',
+  initAuthentication: () => Promise.resolve('url'),
   completeAuthentication: async () => {},
   signup: async () => null,
   signout() {},
