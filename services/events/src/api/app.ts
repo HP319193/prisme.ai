@@ -8,7 +8,6 @@ import {
   requestDecorator,
 } from './middlewares';
 import initRoutes from './routes';
-import { Server } from 'socket.io';
 import { initMetrics } from '../metrics';
 import {
   validationErrorMiddleware,

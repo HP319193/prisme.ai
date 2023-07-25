@@ -204,5 +204,5 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
     });
   });
 
-  return workspaces;
+  return workspaces as any as Server;
 }

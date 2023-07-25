@@ -16,7 +16,7 @@ function strToBytes(str: string) {
 }
 
 function beforeHook(obj: any, methods: any, hook: any) {
-  if (!obj) return false;
+  if (!obj) return;
   if (!Array.isArray(methods)) methods = [methods];
 
   methods.forEach((meth: any) => {
@@ -138,7 +138,7 @@ export function initSocketioMetrics(io: Server, opts: SocketioMetricsOptions) {
       // get original callback function
       const origCb =
         typeof args[cbPos] === 'function' ? args[cbPos] : undefined;
-      if (!origCb) return false;
+      if (!origCb) return;
 
       args[cbPos] = function () {
         const eventStr = Array.prototype.slice.call(arguments)[0];

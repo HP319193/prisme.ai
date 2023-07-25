@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import client from 'prom-client';
 import onFinished from 'on-finished';
-import { Server } from 'socket.io';
 
 const httpMetricName = 'http_request_duration_seconds';
 const labels = ['status_code', 'path', 'method'];
