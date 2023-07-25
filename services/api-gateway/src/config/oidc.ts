@@ -73,6 +73,7 @@ export default {
   ACCESS_TOKENS_MAX_AGE,
   OIDC_CLIENT_REGISTRATION_TOKEN,
   OIDC_WELL_KNOWN_URL,
+  JWKS_URL: process.env.JWKS_URL || `${PROVIDER_URL}/oidc/jwks`,
   CONFIGURATION: <Configuration>{
     // Claims per scope
     claims: {

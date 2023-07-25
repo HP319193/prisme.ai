@@ -94,7 +94,7 @@ export async function init(app: Application) {
           cache: true,
           rateLimit: false, // Do not activate, as 1 unknown JWT-kid keeping sending requests would prevent any further request & block valid requests. This caused a downtime there ...
           // jwksRequestsPerMinute: 5,
-          jwksUri: `${oidcCfg.PROVIDER_URL}/oidc/jwks`,
+          jwksUri: oidcCfg.JWKS_URL,
           timeout: 300,
         }),
         audience: ResourceServer,
