@@ -5,6 +5,7 @@ import {
 } from '@prisme.ai/permissions';
 import { EventType } from '../eda';
 import { config, Role, SubjectType, ActionType } from './config';
+import { APP_NAME } from '../../config';
 
 export { SubjectType, Role, ActionType };
 
@@ -29,6 +30,7 @@ export function initAccessManager(
     Prismeai.Role | Role.SuperAdmin
   >(
     {
+      appName: `${process.env.HOSTNAME || APP_NAME}-permissions`,
       storage,
       rbac: {
         cacheCustomRoles: true,

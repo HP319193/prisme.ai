@@ -3,14 +3,18 @@
 ## Requirements
 
 **Docker only :**  
+
+Dependencies : 
 - git
 - Docker 20+
 - docker-compose
 
+Machine :  
+- Minimum disk space for docker images :  15GB+
+- Minimum disk space for volumes : 5GB+, ideally 50GB
+- Recommended specs : 4 vCPU / 8GB RAM
 - Wildcard DNS pointing to the Docker host machine
   - Needed by pages URL which are built with the workspace slug as a subdomain
-- Minimum disk space for docker images :  10GB+
-- Minimum disk space for volumes : 5GB+
 
 **For developers :**
 - NodeJS 16+

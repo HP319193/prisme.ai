@@ -21,6 +21,6 @@ export default <Record<string, StorageOptions>>{
     host:
       process.env.PERMISSIONS_STORAGE_HOST ||
       'mongodb://localhost:27017/permissions',
-    driverOptions: {},
+    driverOptions: extractOptsFromEnv('PERMISSIONS_STORAGE_OPT_'),
   },
 };
