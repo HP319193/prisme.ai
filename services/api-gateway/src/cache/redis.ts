@@ -16,7 +16,18 @@ export default class RedisCache implements CacheDriver {
     });
     this.opts = otherOpts;
     this.client.on('error', (err: Error) => {
-      console.error(`Error occured with cache redis driver : ${err}`);
+      console.error(
+        `Error occured with api-gateway cache redis driver : ${err}`
+      );
+    });
+    this.client.on('connect', () => {
+      console.info('api-gateway cache redis connected.');
+    });
+    this.client.on('reconnecting', () => {
+      console.info('api-gateway cache redis reconnecting ...');
+    });
+    this.client.on('ready', () => {
+      console.info('api-gateway cache redis is ready.');
     });
   }
 

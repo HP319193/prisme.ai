@@ -58,7 +58,9 @@ let gtwcfg, oidc;
     process.exit(0);
   }
 
-  process.on('uncaughtException', gracefulShutdown);
+  process.on('uncaughtException', (err: Error) => {
+    logger.error({ msg: 'Uncaught exception', err });
+  });
   process.on('SIGTERM', gracefulShutdown);
   process.on('SIGINT', gracefulShutdown);
 })();

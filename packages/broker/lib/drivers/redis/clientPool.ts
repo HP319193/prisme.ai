@@ -87,6 +87,21 @@ export class ClientPool {
     client.on('error', (err: Error) => {
       console.error(`Error occured with broker redis driver : ${err}`);
     });
+    client.on('connect', () => {
+      console.info(
+        `${this.opts?.consumer?.service} broker redis client connected.`
+      );
+    });
+    client.on('reconnecting', () => {
+      console.info(
+        `${this.opts?.consumer?.service} broker redis client reconnecting ...`
+      );
+    });
+    client.on('ready', () => {
+      console.info(
+        `${this.opts?.consumer?.service} broker redis client is ready.`
+      );
+    });
     const clientInfo: ClientInfo = {
       blocking,
       client,

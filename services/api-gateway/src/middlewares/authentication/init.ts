@@ -45,6 +45,9 @@ export async function init(app: Application) {
     name: `${eda.APP_NAME}-sessions`,
     ...storage.Sessions.driverOptions,
   });
+  redisClient.on('error', (err: Error) => {
+    console.error(`Error occured with express-session redis driver : ${err}`);
+  });
   await redisClient.connect();
   const sessionsStore = new (connectRedis(expressSession))({
     client: redisClient,
