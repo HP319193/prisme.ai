@@ -56,7 +56,8 @@ export class ElasticsearchStore implements EventsStore {
               actions: {
                 rollover: {
                   max_age: `${ROLLOVER_AT_DAYS}d`,
-                  max_size: '50GB',
+                  max_size: '40GB',
+                  max_primary_shard_size: '40GB',
                 },
               },
             },
@@ -726,82 +727,168 @@ export class ElasticsearchStore implements EventsStore {
   }
 
   async cleanupIndices(opts: { dryRun?: boolean }) {
-    const now = Date.now();
     const { dryRun = false } = opts;
 
-    const { aggregations } = await this._search(
-      '*',
-      { limit: 0 },
-      {
-        aggs: {
-          group_by_workspaceId: {
-            terms: {
-              field: 'source.workspaceId',
-              min_doc_count: 0,
-              order: { _count: 'asc' },
-              size: 100,
-            },
-            aggs: {
-              max_date: { max: { field: 'createdAt' } },
-              inactive_buckets: {
-                bucket_selector: {
-                  buckets_path: {
-                    maxDate: 'max_date',
-                  },
-                  script: `
-                  Instant lastEvent = Instant.ofEpochMilli(Double.valueOf(params.maxDate).longValue());
-                  Instant now = Instant.ofEpochMilli(${now}L);
+    // 1. List shards with their respective doc count
+    const { body: indices } = await this.client.cat.shards({
+      index: `.ds-${this.getWorkspaceEventsIndexName('*')}`,
+      format: 'json',
+    });
 
-                  long diffDays = ChronoUnit.DAYS.between(lastEvent, now);
-                  return diffDays > ${EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS};
-                  `,
-                },
+    // 2. Map doc count to workspace ids & list empty indices
+    let emptyIndices: string[] = [];
+    const indicesStats: Record<
+      string,
+      {
+        count: number;
+        lastIndex: string;
+      }
+    > = indices.reduce(
+      (
+        smallWorkspaces: Record<
+          string,
+          {
+            count: number;
+            lastIndex: string;
+          }
+        >,
+        cur: { index: string; docs: string; prirep: string; state: string }
+      ) => {
+        if (
+          cur.prirep !== 'p' ||
+          cur.state !== 'STARTED' ||
+          cur.docs === null
+        ) {
+          return smallWorkspaces;
+        }
+        const currentIndexDocsCount = parseInt(cur.docs || '0');
+        const workspaceId = cur.index.split('-')[2];
+        if (currentIndexDocsCount == 0) {
+          emptyIndices.push(cur.index);
+        }
+        const lastValues = smallWorkspaces?.[workspaceId];
+        return {
+          ...smallWorkspaces,
+          [workspaceId]: {
+            count: (lastValues?.count || 0) + currentIndexDocsCount,
+            lastIndex:
+              lastValues?.lastIndex && lastValues?.lastIndex > cur.index
+                ? lastValues?.lastIndex
+                : cur.index,
+          },
+        };
+      },
+      {}
+    );
+
+    // 3.Filter small workspace ids
+    const smallWorkspaceIds = Object.entries(indicesStats)
+      .filter(([, { count }]) => {
+        return count <= EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS;
+      })
+      .map(([workspaceId, {}]) => workspaceId);
+
+    // 4. Fetch last events from each small datastream
+    const lastEvents = await this.client.search({
+      size: smallWorkspaceIds.length,
+      index: smallWorkspaceIds.map((cur) =>
+        this.getWorkspaceEventsIndexName(cur)
+      ),
+      body: {
+        sort: [
+          {
+            '@timestamp': 'desc',
+          },
+        ],
+        query: {
+          bool: {
+            must_not: {
+              terms: {
+                type: ['error'], // Do not count error events as an 'activity' indicator, as they can come from automated tasks
               },
             },
           },
         },
-      }
+        collapse: {
+          field: 'source.workspaceId',
+        },
+      },
+    });
+
+    // 5. Calculate inactivity days from small datastreams
+    const inactivityDaysByWorkspaceId = lastEvents.body.hits.hits.reduce(
+      (lastDatesByWorkspaceId: Record<string, string>, cur: any) => {
+        const workspaceId = cur._index.split('-')[2];
+        const inactivityDays =
+          (Date.now() - new Date(cur._source.createdAt).getTime()) /
+          (1000 * 3600 * 24);
+        return {
+          ...lastDatesByWorkspaceId,
+          [workspaceId]: Math.round(inactivityDays),
+        };
+      },
+      {}
     );
 
-    const workspaceBuckets = aggregations?.['group_by_workspaceId']?.[
-      'buckets'
-    ] as {
-      key: string;
-      doc_count: number;
-      max_date: { value_as_string: string };
-    }[];
-    let cleanupWorkspaces: {
-      workspaceId: string;
-      lastEventDate: string;
-      eventsCount: number;
-    }[] = [];
-    for (let bucket of workspaceBuckets) {
-      if (bucket.doc_count > EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS) {
-        break;
-      }
-      cleanupWorkspaces.push({
-        workspaceId: bucket.key,
-        lastEventDate: bucket.max_date.value_as_string,
-        eventsCount: bucket.doc_count,
-      });
-    }
+    // 6. List small & inactive datastreams that we want to delete
+    const deleteDatastreams = smallWorkspaceIds
+      .filter((workspaceId) => {
+        // If only events are error (skipped from request), delete
+        if (!(workspaceId in inactivityDaysByWorkspaceId)) {
+          return true;
+        }
 
+        // If exceeds inactivity threshold, delete
+        if (
+          inactivityDaysByWorkspaceId[workspaceId] >
+          EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS
+        ) {
+          return true;
+        }
+        return false;
+      })
+      .map((workspaceId) => ({
+        name: this.getWorkspaceEventsIndexName(workspaceId),
+        workspaceId,
+        inactivityDays: inactivityDaysByWorkspaceId[workspaceId],
+        docsCount: indicesStats[workspaceId].count,
+      }));
+
+    const writingIndices = new Set(
+      Object.values(indicesStats).map((cur) => cur.lastIndex)
+    );
+    // Exclude writting index from empty indices as we cannot delete them
+    emptyIndices = emptyIndices.filter((cur) => !writingIndices.has(cur));
     if (dryRun !== false && <any>dryRun != 'false' && <any>dryRun != '0') {
       return {
-        cleanupWorkspaces,
+        inactiveDatastreams: { found: deleteDatastreams },
+        emptyIndices: { found: emptyIndices },
         dryRun,
       };
     }
 
-    const result = await this.client.indices.deleteDataStream({
-      name: cleanupWorkspaces.map((cur) =>
-        this.getWorkspaceEventsIndexName(cur.workspaceId)
-      ),
-    });
+    const deleteDatastreamsResult = deleteDatastreams?.length
+      ? await this.client.indices.deleteDataStream({
+          name: deleteDatastreams.map((cur) => cur.name),
+        })
+      : {};
+
+    const deleteEmptyIndicesResult = emptyIndices?.length
+      ? await this.client.indices.delete({
+          index: emptyIndices,
+          ignore_unavailable: true,
+        })
+      : {};
 
     return {
-      cleanupWorkspaces,
-      result: result.body,
+      inactiveDatastreams: {
+        found: deleteDatastreams,
+        result: deleteDatastreamsResult,
+      },
+      emptyIndices: {
+        found: emptyIndices,
+        result: deleteEmptyIndicesResult,
+      },
     };
   }
 }
