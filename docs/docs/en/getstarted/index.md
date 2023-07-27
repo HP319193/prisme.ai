@@ -1,28 +1,29 @@
 # Getting Started
 
-## Requirements
+Prismeai can be started in two ways :  
+1. With docker only, including databases images (Elasticsearch, Redis, MongoDB)
+2. With a mix of Docker & NodeJS for a developer localhost environment
 
-**Docker only :**  
-
-Dependencies : 
-- git
-- Docker 20+
-- docker-compose
-
-Machine :  
-- Minimum disk space for docker images :  15GB+
-- Minimum disk space for volumes : 5GB+, ideally 50GB
-- Recommended specs : 4 vCPU / 8GB RAM
-- Wildcard DNS pointing to the Docker host machine
-  - Needed by pages URL which are built with the workspace slug as a subdomain
-
-**For developers :**
-- NodeJS 16+
-- npm 8+
+Both ways are meant for testing only and **not for a production setup**.  
+In order to deploy Prismeai to a production ready environment, more robust tools like container orchestrators (i.e Kubernetes) must be used, enforcing horizontal scaling, monitoring, HTTPS, data encryption, ...
 
 ## Docker
 
-**Configuration :**  
+### Requirements
+
+**Dependencies :** 
+* git
+* Docker 20+
+* docker-compose
+
+**Hardware :**  
+* Minimum disk space for docker images :  15GB+
+* Minimum disk space for volumes : 5GB+, ideally 50GB
+* Recommended specs : 4 vCPU / 8GB RAM
+* Wildcard DNS pointing to the Docker host machine
+  * Needed by pages URL which are built with the workspace slug as a subdomain
+
+### Configuration 
 1. git clone https://gitlab.com/prisme.ai/prisme.ai.git  
 By default, the docker-compose.yml & .env files are configured to run on a local setup, served through 3 localhost DNS which we define in our /etc/hosts file.  
 In order for the platform to be available from whatever online network, these domains would have to be reconfigured as described below.  
@@ -46,20 +47,36 @@ On a single machine setup with Docker, this is just another domain pointing to t
 Again, on a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** and **CONSOLE_URL** do, served through a third port.    
 
 
-**Start :**  
+### Start
 ```
 docker-compose up
-```
+```  
 
-## For developers : Docker + NodeJS
-If willing to change any part of this codebase, we recommand testing your updates live using our `npm start` script, which starts the services you want to change with NodeJS, and everything else with Docker.  
-In order to do so, please make sure that `git`, `npm`, `docker` and `NodeJS 16` (**only for NodeJS start**) are installed on your system.  
+Studio will be available at the defined **CONSOLE_URL**, by default http://studio.local.prisme.ai:3000  
 
-Then, you can type the following commands :  
+
+## NodeJS
+
+Dependencies :  
+* NodeJS 16+
+* npm 8+
+* git 
+* Docker 20+
+* docker-compose
+
+**Hardware :**  
+* Minimum disk space for docker images :  15GB+
+* Minimum disk space for volumes : 5GB+, ideally 50GB
+* Recommended specs : 4 vCPU / 8GB RAM
+
+
+### Start
+
+If willing to change any part of this codebase, we recommand testing your updates live using our `npm start` script, which starts the services you want to change with NodeJS, and everything else with Docker :  
 ```
 git clone https://gitlab.com/prisme.ai/prisme.ai.git  
 npm install  
-npm start  # Type 'Enter' for Docker-mode or 'a' then 'Enter' for local NodeJS start  
+npm start  # Unselect services with spacebar & arrow keys in order to start them from NodeJS 
 ```  
 
 The `npm start` will prompt whether you want to start services from build images or local repository using NodeJS.  
@@ -68,4 +85,6 @@ In order to run Prisme.ai from its official Docker images, make sure that all se
 
 If willing to develop or simply start using NodeJS, untick all services' boxes by pressing 'a' and 'Enter' : this will start databases using Docker, and individual services with their respective `npm run dev` command.  
 
-Whether you started using Docker or NodeJS, all persistent data will be stored inside the `data/` directory at the root of your repository.
+Whether you started using Docker or NodeJS, all persistent data will be stored inside the `data/` directory at the root of your repository.  
+
+By default, studio will be available at http://studio.local.prisme.ai:3000  
