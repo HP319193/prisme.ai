@@ -1,7 +1,8 @@
 # Getting Started
 
 Prismeai can be started in two ways :  
-1. With docker only, including databases images (Elasticsearch, Redis, MongoDB)
+
+1. With docker only, including databases images (Elasticsearch, Redis, MongoDB)  
 2. With a mix of Docker & NodeJS for a developer localhost environment
 
 Both ways are meant for testing only and **not for a production setup**.  
@@ -11,12 +12,14 @@ In order to deploy Prismeai to a production ready environment, more robust tools
 
 ### Requirements
 
-**Dependencies :** 
+**Dependencies :**  
+
 * git
 * Docker 20+
 * docker-compose
 
 **Hardware :**  
+
 * Minimum disk space for docker images :  15GB+
 * Minimum disk space for volumes : 5GB+, ideally 50GB
 * Recommended specs : 4 vCPU / 8GB RAM
@@ -31,7 +34,8 @@ Databases-wise, this default local setup is also configured to use databases fro
 All available environment variables are [described here](https://docs.eda.prisme.ai/en/getstarted/configuration/).  
 
 2. Open & edit the root .env file, configuring a few shared environment variables used by `docker-compose.yml`  :  
-- **PAGES_HOST** :  Pages wildcard domain, prefixed with a beginning dot.  
+
+* **PAGES_HOST** :  Pages wildcard domain, prefixed with a beginning dot.  
 If **PAGES_HOST** = `.pages.local.prisme.ai:3100`, a page `dashboard` within a workspace `collections` will be available at `http[s]://collections.pages.local.prisme.ai:3100/dashboard`.  
 Here, both `collections.pages.local.prisme.ai` and `anyOtherWorkspace.pages.local.prisme.ai` must point to the host docker machine IP through a wildcard DNS record like this one :  
 ```
@@ -41,9 +45,9 @@ Here, both `collections.pages.local.prisme.ai` and `anyOtherWorkspace.pages.loca
 ```
 Where either `studio.local.prisme.ai` DNS or 100.100.100.100 IP point to the host docker machine.  
 
-- **CONSOLE_URL** : Public URL serving the studio itself.  
+* **CONSOLE_URL** : Public URL serving the studio itself.  
 On a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** does, which could even be the same parent domain as **PAGES_HOST** since both services (Pages & Studio) will be served through different ports anyway.  
-- **API_URL** : Public URL serving the API.  
+* **API_URL** : Public URL serving the API.  
 Again, on a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** and **CONSOLE_URL** do, served through a third port.    
 
 
@@ -57,7 +61,8 @@ Studio will be available at the defined **CONSOLE_URL**, by default http://studi
 
 ## NodeJS
 
-Dependencies :  
+**Dependencies :**  
+
 * NodeJS 16+
 * npm 8+
 * git 
@@ -65,6 +70,7 @@ Dependencies :
 * docker-compose
 
 **Hardware :**  
+
 * Minimum disk space for docker images :  15GB+
 * Minimum disk space for volumes : 5GB+, ideally 50GB
 * Recommended specs : 4 vCPU / 8GB RAM
