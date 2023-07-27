@@ -729,6 +729,16 @@ export class ElasticsearchStore implements EventsStore {
   async cleanupIndices(opts: { dryRun?: boolean }) {
     const { dryRun = false } = opts;
 
+    const extractWorkspaceIdFromindex = (index: string) => {
+      const withoutRolloutNb = index.slice(0, index.lastIndexOf('-'));
+      const withoutDate = withoutRolloutNb.slice(
+        0,
+        withoutRolloutNb.lastIndexOf('-')
+      );
+      return withoutDate.slice(
+        `.ds-${this.getWorkspaceEventsIndexName('')}`.length
+      );
+    };
     // 1. List shards with their respective doc count
     const { body: indices } = await this.client.cat.shards({
       index: `.ds-${this.getWorkspaceEventsIndexName('*')}`,
@@ -762,7 +772,7 @@ export class ElasticsearchStore implements EventsStore {
           return smallWorkspaces;
         }
         const currentIndexDocsCount = parseInt(cur.docs || '0');
-        const workspaceId = cur.index.split('-')[2];
+        const workspaceId = extractWorkspaceIdFromindex(cur.index);
         if (currentIndexDocsCount == 0) {
           emptyIndices.push(cur.index);
         }
@@ -818,7 +828,7 @@ export class ElasticsearchStore implements EventsStore {
     // 5. Calculate inactivity days from small datastreams
     const inactivityDaysByWorkspaceId = lastEvents.body.hits.hits.reduce(
       (lastDatesByWorkspaceId: Record<string, string>, cur: any) => {
-        const workspaceId = cur._index.split('-')[2];
+        const workspaceId = extractWorkspaceIdFromindex(cur._index);
         const inactivityDays =
           (Date.now() - new Date(cur._source.createdAt).getTime()) /
           (1000 * 3600 * 24);
