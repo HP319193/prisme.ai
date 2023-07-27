@@ -1,6 +1,6 @@
 import Storage from './Storage';
 import localStorage from './localStorage';
-const ls = localStorage!
+const ls = localStorage!;
 
 it('should use Local Storage', () => {
   ls.clear();
@@ -18,14 +18,14 @@ it('should use Local Storage', () => {
 
 it('should not access auth token', () => {
   window.localStorage.clear();
-  Storage.set('auth-token', 'confidential');
-  expect(window.localStorage.getItem('auth-token')).toBeNull();
-  expect(window.localStorage['auth-token']).not.toBeDefined();
-  expect(Storage.get('auth-token')).toBe('confidential');
+  Storage.set('access-token', 'confidential');
+  expect(window.localStorage.getItem('access-token')).toBeNull();
+  expect(window.localStorage['access-token']).not.toBeDefined();
+  expect(Storage.get('access-token')).toBe('confidential');
 
-  window.localStorage.removeItem('auth-token');
-  expect(Storage.get('auth-token')).toBe('confidential');
+  window.localStorage.removeItem('access-token');
+  expect(Storage.get('access-token')).toBe('confidential');
 
-  window.localStorage.setItem('auth-token', 'HACKED');
-  expect(Storage.get('auth-token')).toBe('confidential');
+  window.localStorage.setItem('access-token', 'HACKED');
+  expect(Storage.get('access-token')).toBe('confidential');
 });

@@ -1,9 +1,53 @@
 # Getting Started
 
+## Requirements
+
+**Docker only :**  
+
+Dependencies : 
+- git
+- Docker 20+
+- docker-compose
+
+Machine :  
+- Minimum disk space for docker images :  15GB+
+- Minimum disk space for volumes : 5GB+, ideally 50GB
+- Recommended specs : 4 vCPU / 8GB RAM
+- Wildcard DNS pointing to the Docker host machine
+  - Needed by pages URL which are built with the workspace slug as a subdomain
+
+**For developers :**
+- NodeJS 16+
+- npm 8+
+
 ## Docker
-A `docker-compose.yml` file is located at the root of the repository, allowing you to start the whole project with a single docker-compose command :  
+
+**Configuration :**  
+1. git clone https://gitlab.com/prisme.ai/prisme.ai.git  
+By default, the docker-compose.yml & .env files are configured to run on a local setup, served through 3 localhost DNS which we define in our /etc/hosts file.  
+In order for the platform to be available from whatever online network, these domains would have to be reconfigured as described below.  
+Databases-wise, this default local setup is also configured to use databases from the docker-compose.yml, using Docker network links and persisting data in the `data/` root directory.    
+All available environment variables are [described here](https://docs.eda.prisme.ai/en/getstarted/configuration/).  
+
+2. Open & edit the root .env file, configuring a few shared environment variables used by `docker-compose.yml`  :  
+- **PAGES_HOST** :  Pages wildcard domain, prefixed with a beginning dot.  
+If **PAGES_HOST** = `.pages.local.prisme.ai:3100`, a page `dashboard` within a workspace `collections` will be available at `http[s]://collections.pages.local.prisme.ai:3100/dashboard`.  
+Here, both `collections.pages.local.prisme.ai` and `anyOtherWorkspace.pages.local.prisme.ai` must point to the host docker machine IP through a wildcard DNS record like this one :  
 ```
-git clone https://gitlab.com/prisme.ai/prisme.ai.git  
+*.pages.local.prisme.ai 10800 IN CNAME studio.local.prisme.ai.
+# or ...
+*.pages.local.prisme.ai 10800 IN A 100.100.100.100
+```
+Where either `studio.local.prisme.ai` DNS or 100.100.100.100 IP point to the host docker machine.  
+
+- **CONSOLE_URL** : Public URL serving the studio itself.  
+On a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** does, which could even be the same parent domain as **PAGES_HOST** since both services (Pages & Studio) will be served through different ports anyway.  
+- **API_URL** : Public URL serving the API.  
+Again, on a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** and **CONSOLE_URL** do, served through a third port.    
+
+
+**Start :**  
+```
 docker-compose up
 ```
 

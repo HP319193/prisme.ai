@@ -18,7 +18,7 @@ import { executeAutomation } from './automations';
 import {
   RUNTIME_EMITS_BROKER_TOPIC,
   ADDITIONAL_GLOBAL_VARS,
-  PUBLIC_API_URL,
+  API_URL,
   SYNCHRONIZE_CONTEXTS,
 } from '../../../config';
 import { jsonPathMatches, redact } from '../../utils';
@@ -244,19 +244,17 @@ export default class Runtime {
       [EventType.SuccededLogin],
       async (event) => {
         const {
-          token,
           id: sessionId,
           expiresIn = 30 * 24 * 60 * 60,
           expires,
         } = event?.payload?.session || {};
         const userId = event?.payload?.id;
-        if (!token || !userId || !sessionId) {
+        if (!userId || !sessionId) {
           return true;
         }
         await this.cache.setSession({
           userId,
           sessionId,
-          token,
           expiresIn,
           expires,
           authData: event?.payload?.authData,
@@ -339,7 +337,7 @@ export default class Runtime {
     );
     ctx.additionalGlobals = {
       ...ADDITIONAL_GLOBAL_VARS,
-      apiUrl: PUBLIC_API_URL,
+      apiUrl: API_URL,
     };
     await ctx.fetch();
 

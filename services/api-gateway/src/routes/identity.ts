@@ -10,13 +10,13 @@ import {
 import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
-import { v4 as uuid } from 'uuid';
 import { syscfg } from '../config';
+import { getAccessToken } from '../services/oidc/provider';
 
 const loginHandler = (strategy: string) =>
   async function (
-    req: Request<any, any, PrismeaiAPI.CredentialsAuth.RequestBody>,
-    res: Response<PrismeaiAPI.CredentialsAuth.Responses.$200>,
+    req: Request<any, any>,
+    res: Response<PrismeaiAPI.AnonymousAuth.Responses.$200>,
     next: NextFunction
   ) {
     passport.authenticate(
@@ -40,14 +40,13 @@ const loginHandler = (strategy: string) =>
             );
           }
 
-          req.session.prismeaiSessionId = uuid();
+          // Mimic OIDC emitted JWT tokens so we can validate / handle these anonymous session exactly like for OIDC tokens
+          const { token, jwt, expires } = await getAccessToken(user.id);
+          req.session.prismeaiSessionId = token.prismeaiSessionId;
           req.session.mfaValidated = false;
-          const expires = new Date(
-            Date.now() + syscfg.SESSION_COOKIES_MAX_AGE * 1000
-          ).toISOString();
           res.send({
             ...user,
-            token: req.sessionID,
+            token: jwt,
             sessionId: req.session.prismeaiSessionId,
             expires,
           });
@@ -63,7 +62,6 @@ const loginHandler = (strategy: string) =>
               },
               session: {
                 id: req.session.prismeaiSessionId,
-                token: req.sessionID,
                 expiresIn: syscfg.SESSION_COOKIES_MAX_AGE,
                 expires,
               },
@@ -253,11 +251,6 @@ async function deleteAccessTokenHandler(
   return res.send(accessToken);
 }
 
-async function logoutHandler(req: Request, res: Response) {
-  req.logout();
-  res.status(200).send();
-}
-
 /**
  * Internal route
  */
@@ -351,7 +344,6 @@ app.post(`/login`, loginHandler('local'));
 app.post(`/login/anonymous`, loginHandler('anonymous'));
 app.post(`/login/mfa`, isAuthenticated, mfaHandler);
 app.post(`/signup`, signupHandler);
-app.post(`/logout`, logoutHandler);
 
 // User account
 app.post(`/user/password`, resetPasswordHandler);

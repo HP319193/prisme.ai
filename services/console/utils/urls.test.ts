@@ -9,7 +9,7 @@ import { mock } from '../providers/Workspace';
 
 jest.mock('next/config', () => () => ({
   publicRuntimeConfig: {
-    API_HOST: 'https://api',
+    API_URL: 'https://api',
     PAGES_HOST: '.pages.prisme.ai',
   },
 }));

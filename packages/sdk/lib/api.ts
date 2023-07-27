@@ -1,4 +1,5 @@
 import QueryString from 'qs';
+import pkceChallenge from 'pkce-challenge';
 import Fetcher from './fetcher';
 import { Event, Workspace } from './types';
 import { Events } from './events';
@@ -25,9 +26,48 @@ export type UserPermissions = {
   };
 };
 
+export interface ApiOptions {
+  host: string;
+  oidc?: {
+    url: string;
+    clientId: string;
+    clientIdHeader?: string;
+    redirectUri: string;
+  };
+}
+
+export interface AccessToken {
+  access_token: string;
+  id_token: string;
+  scope: string;
+  expiresIn: number;
+  token_type: 'Bearer';
+}
+
+export interface InteractiveSignin {
+  interaction: string;
+  login: string;
+  password: string;
+  remember?: boolean;
+}
+
 export class Api extends Fetcher {
+  public opts: Required<ApiOptions>;
   private sessionId?: string;
   private _user?: Prismeai.User & { sessionId?: string };
+
+  constructor(opts: ApiOptions) {
+    super(opts.host, opts?.oidc?.clientIdHeader);
+    this.opts = {
+      ...opts,
+      oidc: {
+        url: 'http://studio.local.prisme.ai:3001',
+        clientId: 'local-client-id',
+        redirectUri: 'http://studio.local.prisme.ai:3000/signin',
+        ...opts.oidc,
+      },
+    };
+  }
 
   get user() {
     return this._user;
@@ -40,24 +80,85 @@ export class Api extends Fetcher {
     return me;
   }
 
-  async signin(
-    email: string,
-    password: string
-  ): Promise<
-    Prismeai.User & {
-      token: string;
+  clientId(): string {
+    return this.overwriteClientId || this.opts?.oidc?.clientId;
+  }
+
+  async getAuthorizationURL(
+    overrideRedirectUri?: string,
+    authParams?: { max_age?: string; acr_values?: string }
+  ) {
+    const url = new URL('/oidc/auth', this.opts.oidc.url);
+    url.searchParams.set('response_type', 'code');
+    url.searchParams.set('response_mode', 'query'); // Send the final authorization code as a query param to the redirect uri
+    url.searchParams.set(
+      'redirect_uri',
+      overrideRedirectUri || this.opts.oidc?.redirectUri || ''
+    );
+    url.searchParams.set(
+      'scope',
+      'openid profile email settings offline_access events:write events:read webhooks pages:read files:write files:read'
+    );
+    const clientId = this.clientId();
+    url.searchParams.set('client_id', clientId);
+
+    url.searchParams.set('code_challenge_method', 'S256');
+    const { code_verifier: codeVerifier, code_challenge: codeChallenge } =
+      await pkceChallenge(64);
+    url.searchParams.set('code_challenge', codeChallenge);
+    const locale = window?.navigator?.language
+      ? window.navigator.language.substring(0, 2)
+      : undefined;
+    if (locale) {
+      url.searchParams.set('locale', locale);
     }
-  > {
-    const user = await this.post<
-      Prismeai.User & {
-        token: string;
-      }
-    >('/login', {
-      email,
-      password,
+
+    Object.entries(authParams || {}).forEach(([k, v]) => {
+      url.searchParams.set(k, v);
     });
-    this._user = user;
-    return user;
+
+    return {
+      url: url.toString(),
+      codeVerifier,
+      clientId,
+    };
+  }
+
+  async signin(body: InteractiveSignin): Promise<{ redirectTo: string }> {
+    const url = new URL(
+      `/oidc/interaction/${body.interaction}/login`,
+      this.opts.oidc.url
+    );
+
+    // Do not follow redirects as we need to get redirected from browser itself to save final token in local storage
+    await this.post(url.toString(), new URLSearchParams(body as any), {
+      redirect: 'manual',
+    });
+    const redirectTo = new URL(
+      `/oidc/auth/${body.interaction}`,
+      this.opts.oidc.url
+    );
+    return { redirectTo: redirectTo.toString() };
+  }
+
+  async getToken(
+    authorizationCode: string,
+    codeVerifier: string,
+    overrideRedirectUri?: string
+  ): Promise<AccessToken> {
+    this.token = null;
+    const url = new URL('/oidc/token', this.opts.oidc.url);
+    const token = await this.post<AccessToken>(
+      url.toString(),
+      new URLSearchParams({
+        grant_type: 'authorization_code',
+        code: authorizationCode,
+        code_verifier: codeVerifier,
+        client_id: this.clientId(),
+        redirect_uri: overrideRedirectUri || this.opts.oidc.redirectUri,
+      })
+    );
+    return token;
   }
 
   async createAnonymousSession(): Promise<
@@ -69,7 +170,13 @@ export class Api extends Fetcher {
       Prismeai.User & {
         token: string;
       }
-    >('/login/anonymous');
+    >(
+      '/login/anonymous',
+      {},
+      {
+        credentials: 'omit',
+      }
+    );
     this._user = user;
     return user;
   }
@@ -94,9 +201,17 @@ export class Api extends Fetcher {
     });
   }
 
-  async signout() {
-    await this.post('/logout');
-    this.token = null;
+  getSignoutURL(redirectUri?: string) {
+    const params = new URLSearchParams();
+    params.set('client_id', this.clientId());
+    if (redirectUri) {
+      params.set('post_logout_redirect_uri', redirectUri);
+    }
+    const url = new URL(
+      `/oidc/session/end?${params.toString()}`,
+      this.opts.oidc.url
+    );
+    return url.toString();
   }
 
   // Mail validation
@@ -338,6 +453,7 @@ export class Api extends Fetcher {
     const events = new Events({
       workspaceId,
       token: this.token || '',
+      legacyToken: this.legacyToken || '',
       apiKey: this._apiKey ? this._apiKey : undefined,
       apiHost: this.host,
       filters,
@@ -728,4 +844,4 @@ export class Api extends Fetcher {
   }
 }
 
-export default new Api('https://api.eda.prisme.ai');
+export default new Api({ host: 'https://api.eda.prisme.ai' });

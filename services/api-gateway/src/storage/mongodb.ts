@@ -8,6 +8,7 @@ import {
   ObjectId,
   WithId,
 } from 'mongodb';
+import { eda } from '../config';
 
 export class MongodbDriver implements StorageDriver<any> {
   private client: MongoClient;
@@ -17,7 +18,14 @@ export class MongodbDriver implements StorageDriver<any> {
 
   constructor(collectionName: string, opts: StorageOptions) {
     const { host, driverOptions } = opts;
-    this.client = new MongoClient(host, driverOptions as MongoClientOptions);
+
+    const mongoOpts = {
+      appName: `${process.env.HOSTNAME || eda.APP_NAME}-${collectionName}`,
+      socketTimeoutMS: 60 * 1000, // Close sockets after 60 secs of inactivity
+      maxPoolSize: 30,
+      ...(driverOptions as MongoClientOptions),
+    };
+    this.client = new MongoClient(host, mongoOpts);
     this.collectionName = collectionName;
   }
 

@@ -7,7 +7,8 @@ services:
     ports:
       - '3100:3100'
     environment:
-      # API_HOST: http://localhost:3001/v2
-      API_HOST: http://host.docker.internal:3001/v2
+      # API_URL: http://localhost:3001/v2
+      API_URL: http://host.docker.internal:3001/v2
+      CONSOLE_URL: http://studio.local.prisme.ai:3000
       PAGES_HOST: .pages.local.prisme.ai:3100
       PORT: 3100

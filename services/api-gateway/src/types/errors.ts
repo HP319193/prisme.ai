@@ -2,10 +2,12 @@ export class PrismeError extends Error {
   public error: string;
   public details: any;
   public httpCode: number;
+  public message: string;
 
   constructor(message: string, details: any, httpCode: number) {
     super(message);
     this.error = this.constructor.name;
+    this.message = message;
     this.details = details;
     this.httpCode = httpCode;
   }

@@ -30,11 +30,6 @@ export const ADDITIONAL_GLOBAL_VARS: Record<string, string> = Object.entries(
     {}
   );
 
-export const PUBLIC_API_URL =
-  process.env.PUBLIC_API_URL ||
-  ADDITIONAL_GLOBAL_VARS['apiUrl'] ||
-  'http://localhost:3001/v2';
-
 export const FETCH_USER_AGENT_HEADER =
   process.env.FETCH_USER_AGENT_HEADER || 'Prisme.ai Workspaces';
 

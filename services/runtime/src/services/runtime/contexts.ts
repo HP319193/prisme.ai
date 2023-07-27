@@ -49,9 +49,9 @@ export interface PrismeaiSession {
   email?: string;
   authData: Prismeai.User['authData'];
   sessionId: string;
-  token?: string;
   expiresIn?: number;
   expires?: string;
+  origin?: PrismeaiSession; // Set when session has been changed from runtime instructions
 }
 
 export interface GlobalContext {
@@ -504,7 +504,12 @@ export class ContextsManager {
           prevValue !== value
         ) {
           this.contexts.user = { id: value };
-          this.session = { userId: value, sessionId: value, authData: {} };
+          this.session = {
+            userId: value,
+            sessionId: value,
+            authData: {},
+            origin: this.session?.origin || this.session,
+          };
           this.contexts.session = { id: value };
           await this.fetch([ContextType.User, ContextType.Session]);
           this.broker.parentSource.userId = value;
@@ -517,10 +522,12 @@ export class ContextsManager {
           const targetSession = await this.cache.getSession(value);
           const userId = targetSession?.userId || value;
           this.contexts.user = { id: userId };
-          this.session = targetSession || {
+          this.session = {
             userId: value,
             sessionId: value,
             authData: {},
+            ...targetSession,
+            origin: this.session?.origin || this.session,
           };
           this.contexts.session = { id: value };
           await this.fetch([ContextType.User, ContextType.Session]);

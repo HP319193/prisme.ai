@@ -1400,6 +1400,7 @@ declare namespace Prismeai {
          */
         public?: boolean;
         apiKey?: string;
+        clientId?: string;
     }
     export interface DuplicatedWorkspace {
         /**
@@ -1542,7 +1543,7 @@ declare namespace Prismeai {
          */
         type: "gateway.login.failed";
         payload: {
-            ip: string;
+            ip?: string;
             email: string;
         };
     }
@@ -1796,6 +1797,7 @@ declare namespace Prismeai {
          */
         public?: boolean;
         apiKey?: string;
+        clientId?: string;
     }
     /**
      * Page
@@ -2118,7 +2120,7 @@ declare namespace Prismeai {
          */
         type: "gateway.login.succeeded";
         payload: {
-            ip: string;
+            ip?: string;
             email?: string;
             id: string;
             authData: {
@@ -2132,7 +2134,6 @@ declare namespace Prismeai {
             };
             session: {
                 id: string;
-                token: string;
                 /**
                  * Expires in N seconds
                  */
@@ -2327,6 +2328,7 @@ declare namespace Prismeai {
         payload: {
             workspace: Workspace;
             oldSlug?: string;
+            migrated?: string;
         };
     }
     export interface UpdatedWorkspaceSecurity {
@@ -2595,6 +2597,9 @@ declare namespace Prismeai {
     }
     export interface WorkspaceSecurity {
         authorizations?: WorkspaceAuthorizations;
+        authentication?: {
+            clientId?: string;
+        };
     }
     export interface WorkspaceUsage {
         workspaceId: string;
@@ -2652,10 +2657,10 @@ declare namespace PrismeaiAPI {
                  * Unique id
                  */
                 id?: string;
-                token: string;
                 sessionId: string;
                 expires?: string;
             }
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace AutomationWebhook {
@@ -2767,56 +2772,6 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
-        }
-    }
-    namespace CredentialsAuth {
-        export interface RequestBody {
-            email: string;
-            password: string;
-        }
-        namespace Responses {
-            export interface $200 {
-                /**
-                 * example:
-                 * foo@prisme.ai
-                 */
-                email?: string;
-                status?: "pending" | "validated" | "deactivated";
-                language?: string;
-                authData?: {
-                    [name: string]: any;
-                    facebook?: {
-                        [key: string]: any;
-                    };
-                    anonymous?: {
-                        [key: string]: any;
-                    };
-                };
-                mfa?: Prismeai.SupportedMFA;
-                meta?: {
-                    [key: string]: any;
-                };
-                /**
-                 * Name
-                 */
-                firstName: string;
-                /**
-                 * Name
-                 */
-                lastName?: string;
-                /**
-                 * Profile picture URL
-                 */
-                photo?: string;
-                /**
-                 * Unique id
-                 */
-                id?: string;
-                token: string;
-                sessionId: string;
-                expires?: string;
-            }
-            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace DeleteAccessToken {
@@ -3526,12 +3481,6 @@ declare namespace PrismeaiAPI {
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
-        }
-    }
-    namespace Logout {
-        namespace Responses {
-            export interface $200 {
-            }
         }
     }
     namespace MFA {

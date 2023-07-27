@@ -5,6 +5,7 @@ import {
 } from '@prisme.ai/permissions';
 import { EventType } from '../eda';
 import { config, Role, SubjectType, ActionType } from './config';
+import { APP_NAME } from '../../config';
 
 export { SubjectType, Role, ActionType };
 
@@ -29,6 +30,7 @@ export function initAccessManager(
     Prismeai.Role | Role.SuperAdmin
   >(
     {
+      appName: `${process.env.HOSTNAME || APP_NAME}-permissions`,
       storage,
       rbac: {
         cacheCustomRoles: true,
@@ -52,7 +54,10 @@ export function initAccessManager(
   broker.on<Prismeai.UpdatedWorkspaceSecurity['payload']>(
     EventType.UpdatedWorkspaceSecurity,
     async (event) => {
-      if (!event.source.workspaceId) {
+      if (
+        !event.source.workspaceId ||
+        !event.payload?.security?.authorizations
+      ) {
         return true;
       }
       await superAdmin.pullRole({

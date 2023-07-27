@@ -1,5 +1,5 @@
 import express from 'express';
-require('express-async-errors');
+import 'express-async-errors';
 import helmet from 'helmet';
 import cors from 'cors';
 import { syscfg, GatewayConfig } from './config';
@@ -9,6 +9,8 @@ import { logger } from './logger';
 import '@prisme.ai/types';
 import { closeStorage } from './storage';
 import { broker } from './eda';
+import { initOidcProvider } from './services/oidc/provider';
+import startWorkspacesClientSync from './services/oidc/client';
 
 const app = express();
 app.set('trust proxy', true);
@@ -23,31 +25,42 @@ app.use(
   cors({
     credentials: true,
     origin: true,
-    exposedHeaders: ['X-Correlation-Id', 'X-Prismeai-Session-Id'],
+    exposedHeaders: [
+      'X-Correlation-Id',
+      'X-Prismeai-Session-Id',
+      syscfg.OIDC_CLIENT_ID_HEADER,
+    ],
   })
 );
 
-let gtwcfg;
-try {
-  gtwcfg = new GatewayConfig(syscfg.GATEWAY_CONFIG);
-} catch (e) {
-  console.error({ ...(<object>e) });
-  process.exit(1);
-}
+let gtwcfg, oidc;
+(async function () {
+  try {
+    gtwcfg = new GatewayConfig(syscfg.GATEWAY_CONFIG);
+    oidc = initOidcProvider(broker);
 
-initMetrics(app);
-initRoutes(app, gtwcfg);
+    initMetrics(app);
+    initRoutes(app, gtwcfg, broker, oidc);
 
-app.listen(syscfg.PORT, () => {
-  logger.info(`Running on port ${syscfg.PORT}`);
-});
+    app.listen(syscfg.PORT, () => {
+      logger.info(`Running on port ${syscfg.PORT}`);
+    });
 
-async function gracefulShutdown() {
-  await closeStorage();
-  await broker.close();
-  process.exit(0);
-}
+    await startWorkspacesClientSync(broker);
+  } catch (e) {
+    console.error({ ...(<object>e) });
+    process.exit(1);
+  }
 
-process.on('uncaughtException', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
+  async function gracefulShutdown() {
+    await closeStorage();
+    await broker.close();
+    process.exit(0);
+  }
+
+  process.on('uncaughtException', (err: Error) => {
+    logger.error({ msg: 'Uncaught exception', err });
+  });
+  process.on('SIGTERM', gracefulShutdown);
+  process.on('SIGINT', gracefulShutdown);
+})();

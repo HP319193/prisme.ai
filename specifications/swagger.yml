@@ -34,6 +34,9 @@ components:
       type: apiKey
       in: header
       name: X-Prismeai-API-Key
+    OpenID:
+      type: openIdConnect
+      openIdConnectUrl: https://api.studio.prisme.ai/oidc/.well-known/openid-configuration
 
   schemas:
     AnyValue: {}
@@ -284,6 +287,11 @@ components:
       properties:
         authorizations:
           $ref: '#/components/schemas/WorkspaceAuthorizations'
+        authentication:
+          type: object
+          properties:
+            clientId:
+              type: string
 
     WorkspaceAuthorizations:
       type: object
@@ -798,6 +806,8 @@ components:
           type: boolean
           description: 'Indicates whether this page is public. Reflects page permissions and cannot be set directly'
         apiKey:
+          type: string
+        clientId:
           type: string
 
     DetailedPage:
@@ -1709,7 +1719,6 @@ components:
         payload:
           type: object
           required:
-            - ip
             - email
           properties:
             ip:
@@ -1731,7 +1740,6 @@ components:
         payload:
           type: object
           required:
-            - ip
             - id
             - session
             - authData
@@ -1747,13 +1755,10 @@ components:
               type: object
               required:
                 - id
-                - token
                 - expiresIn
                 - expires
               properties:
                 id:
-                  type: string
-                token:
                   type: string
                 expiresIn:
                   type: number
@@ -1949,6 +1954,8 @@ components:
             workspace:
               $ref: '#/components/schemas/Workspace'
             oldSlug:
+              type: string
+            migrated:
               type: string
 
     ImportedWorkspace:
@@ -2829,53 +2836,6 @@ components:
   ## End of schemas
 paths:
   ############################################# gateway
-  /v2/login:
-    post:
-      description: Email / Password authentication
-      operationId: credentialsAuth
-      tags:
-        - API Gateway
-      security:
-        - ApiKeyAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              required:
-                - email
-                - password
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-
-      responses:
-        '200': &LoginResponse
-          description: Success Response
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/User'
-                  - type: object
-                    required:
-                      - token
-                      - sessionId
-                    properties:
-                      token:
-                        type: string
-                      sessionId:
-                        type: string
-                      expires:
-                        type: string
-        '401': &AuthenticationError
-          description: AuthenticationError
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthenticationError'
 
   /v2/login/anonymous:
     post:
@@ -2886,7 +2846,27 @@ paths:
       security:
         - ApiKeyAuth: []
       responses:
-        '200': *LoginResponse
+        '200': &LoginResponse
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    required:
+                      - sessionId
+                    properties:
+                      sessionId:
+                        type: string
+                      expires:
+                        type: string
+        '401': &AuthenticationError
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
 
   /v2/login/mfa:
     post:
@@ -3221,16 +3201,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
-
-  /v2/logout:
-    post:
-      description: Log out
-      operationId: logout
-      tags:
-        - API Gateway
-      responses:
-        '200':
-          description: Success Response
 
   /v2/user/password:
     post:

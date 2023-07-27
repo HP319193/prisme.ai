@@ -27,10 +27,12 @@ type Document<T = any> = Omit<mongoose.Document<T>, 'toJSON'> &
   };
 
 export interface AccessManagerOptions<SubjectType extends string = string> {
+  appName?: string;
   storage: {
     driver?: 'mongoose';
     host: string;
     password?: string;
+    driverOptions?: Record<string, any>;
   };
   schemas: Record<
     SubjectType,
@@ -128,7 +130,13 @@ export class AccessManager<
   }
 
   async start() {
-    await mongoose.connect(this.opts.storage.host);
+    const appName = this.opts.appName || '@prismeai/permissions';
+    await mongoose.connect(this.opts.storage.host, {
+      appName,
+      socketTimeoutMS: 60 * 1000, // Close sockets after 60 secs of inactivity
+      maxPoolSize: 30,
+      ...this.opts.storage.driverOptions,
+    });
   }
 
   async as(

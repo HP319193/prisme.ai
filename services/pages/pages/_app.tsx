@@ -2,7 +2,7 @@ import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import UserProvider from '../../console/components/UserProvider';
 import { NextPage } from 'next';
-import React, { ReactElement, ReactNode, useEffect } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -20,6 +20,7 @@ import BlocksProvider from '../components/BlocksProvider/BlocksProvider';
 import WorkspaceProvider from '../components/Workspace';
 import api from '../../console/utils/api';
 
+api.opts = api.opts;
 const Sentry = dynamic(import('../../console/utils/Sentry'), { ssr: false });
 
 type NextPageWithLayout = NextPage & {
@@ -39,19 +40,31 @@ if (typeof window !== 'undefined') {
 
 function MyApp({
   Component,
-  pageProps: { page, error, styles, initialConfig },
+  pageProps: { page, error, styles, initialConfig, clientId },
 }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
 
   api.language = i18n.language;
+  if (clientId) {
+    api.overwriteClientId = clientId;
+    api.overwriteClientId = clientId;
+  }
 
-  if (i18n.language === 'default' && typeof window !== 'undefined') {
-    const availableLanguages: string[] = (i18n.options as any).locales;
-    const navLang = window.navigator.language.substring(0, 2);
-    const currentLang = availableLanguages.includes(navLang) ? navLang : 'en';
-    location.pathname = `${currentLang}/${location.pathname}`;
-    return null;
+  if (typeof window !== 'undefined') {
+    const currentURL = new URL(location.href);
+    const authCode = currentURL.searchParams.get('code');
+    const isAuthorizationCallback =
+      currentURL.pathname.includes('/signin') &&
+      authCode &&
+      currentURL.searchParams.get('iss');
+    if (i18n.language === 'default' && !isAuthorizationCallback) {
+      const availableLanguages: string[] = (i18n.options as any).locales;
+      const navLang = window.navigator.language.substring(0, 2);
+      const currentLang = availableLanguages.includes(navLang) ? navLang : 'en';
+      location.pathname = `${currentLang}/${location.pathname}`;
+      return null;
+    }
   }
 
   const serverSideStyles = typeof window === 'undefined' && styles;

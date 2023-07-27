@@ -16,7 +16,9 @@ You can set a different host by instantiating the Api class:
 
 ```
 import { Api } from '@prisme.ai/sdk';
-const api = new Api('https://my.custom.host')
+const api = new Api({
+  host: 'https://my.custom.host'
+})
 ```
 
 You are able to call un authentified methods like signin or signup, but you'll need a valid token to call the other. Just set its property:

@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisme.ai/types": "^1.0.9",
+    "pkce-challenge": "^3.1.0",
     "qs": "^6.10.3",
     "socket.io-client": "^4.4.1"
   }

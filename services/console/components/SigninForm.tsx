@@ -1,7 +1,7 @@
 import { Form } from 'react-final-form';
 import { Button, Input } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useUser } from './UserProvider';
 import { Trans, useTranslation } from 'next-i18next';
 import LinkInTrans from './LinkInTrans';
@@ -9,7 +9,7 @@ import getConfig from 'next/config';
 import Storage from '../utils/Storage';
 
 const {
-  publicRuntimeConfig: { CONSOLE_HOST = '' },
+  publicRuntimeConfig: { CONSOLE_URL = '' },
 } = getConfig();
 
 interface Values {
@@ -19,17 +19,18 @@ interface Values {
 
 interface SigninFormProps {
   onSignin: (user: Prismeai.User | null) => void;
+  provider?: 'prismeai';
 }
 
-export const SigninForm = ({ onSignin }: SigninFormProps) => {
+export const SigninForm = ({ onSignin, provider }: SigninFormProps) => {
   const { t } = useTranslation('sign');
-  const { loading, signin } = useUser();
+  const { loading, signin, initAuthentication, completeAuthentication } =
+    useUser();
   const [error, setError] = useState(false);
   const submit = useCallback(
     async ({ email, password }: Values) => {
-      const user = await signin(email, password);
-      setError(!user);
-      onSignin(user);
+      const success = await signin(email, password);
+      setError(!success);
     },
     [onSignin, signin]
   );
@@ -44,6 +45,43 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
     return errors;
   };
 
+  // 3. Handle final authorization code validation
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+      completeAuthentication(code);
+    }
+  }, [completeAuthentication]);
+
+  // 1. Init authentication flow
+  if (typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    const interactionUid = urlParams.get('interaction');
+    const code = urlParams.get('code');
+    if (!code && !interactionUid && !urlParams.get('error')) {
+      if (provider === 'prismeai') {
+        initAuthentication();
+        return null;
+      }
+      return (
+        <Button
+          onClick={() => {
+            initAuthentication();
+          }}
+          variant="primary"
+          className="w-full !h-12 !mb-4 !font-bold"
+        >
+          {t('in.withPrismeai')}
+        </Button>
+      );
+    } else if (code) {
+      // Authorization code processing, wait for redirection
+      return null;
+    }
+  }
+
+  // 2. Display login form
   return (
     <Form onSubmit={submit} validate={validate}>
       {({ handleSubmit }) => (
@@ -79,7 +117,7 @@ export const SigninForm = ({ onSignin }: SigninFormProps) => {
                 components={{
                   a: (
                     <LinkInTrans
-                      href={`${CONSOLE_HOST}/forgot`}
+                      href={`${CONSOLE_URL}/forgot`}
                       className="text-link"
                     />
                   ),
