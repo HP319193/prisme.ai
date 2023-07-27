@@ -745,8 +745,15 @@ export class ElasticsearchStore implements EventsStore {
       format: 'json',
     });
 
+    // & list data streams
+    const { body: datastreams } = await this.client.indices.dataStreamsStats();
+    const knownDatastreams = new Set(
+      datastreams.data_streams.map((cur: any) => cur.data_stream)
+    );
+
     // 2. Map doc count to workspace ids & list empty indices
     let emptyIndices: string[] = [];
+    const indicesWithoutDatastream: string[] = [];
     const indicesStats: Record<
       string,
       {
@@ -793,7 +800,12 @@ export class ElasticsearchStore implements EventsStore {
 
     // 3.Filter small workspace ids
     const smallWorkspaceIds = Object.entries(indicesStats)
-      .filter(([, { count }]) => {
+      .filter(([workspaceId, { count }]) => {
+        const datastreamName = this.getWorkspaceEventsIndexName(workspaceId);
+        if (!knownDatastreams.has(datastreamName)) {
+          indicesWithoutDatastream.push(`.ds-${datastreamName}-*`);
+          return false;
+        }
         return count <= EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS;
       })
       .map(([workspaceId, {}]) => workspaceId);
@@ -871,6 +883,7 @@ export class ElasticsearchStore implements EventsStore {
     emptyIndices = emptyIndices.filter((cur) => !writingIndices.has(cur));
     if (dryRun !== false && <any>dryRun != 'false' && <any>dryRun != '0') {
       return {
+        indicesWithoutDatastream,
         inactiveDatastreams: { found: deleteDatastreams },
         emptyIndices: { found: emptyIndices },
         dryRun,
@@ -891,6 +904,7 @@ export class ElasticsearchStore implements EventsStore {
       : {};
 
     return {
+      indicesWithoutDatastream,
       inactiveDatastreams: {
         found: deleteDatastreams,
         result: deleteDatastreamsResult,
