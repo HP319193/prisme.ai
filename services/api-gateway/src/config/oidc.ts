@@ -193,7 +193,7 @@ export default {
       // Studio client
       {
         client_id: OIDC_STUDIO_CLIENT_ID,
-        client_secret: 'a_different_secret',
+        client_secret: OIDC_STUDIO_CLIENT_SECRET,
         grant_types: ['authorization_code', 'refresh_token'],
         response_types: ['code'],
         redirect_uris: [new URL(LOGIN_PATH, STUDIO_URL).toString()],

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import initPipelines from '../pipelines';
 import { GatewayConfig, syscfg } from '../config';
 import errorHandler from '../middlewares/errorHandler';
@@ -21,6 +21,14 @@ export default async function initRoutes(
   broker: Broker,
   oidc: Provider
 ) {
+  // Drop legacy session cookies on logout as they would otherwise prevent from signing out
+  app.use(
+    '/oidc/session/end',
+    (req: Request, res: Response, next: NextFunction) => {
+      res.clearCookie('cookie.sid');
+      next();
+    }
+  );
   // This needs to be called before passport.authenticate('jwt',...), dunno why
   app.use('/oidc', initOidcRoutes(broker, oidc));
   await initAuthentication(app);
