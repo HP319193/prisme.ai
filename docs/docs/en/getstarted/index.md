@@ -22,7 +22,7 @@ In order to deploy Prismeai to a production ready environment, more robust tools
 
 * Minimum disk space for docker images :  15GB+
 * Minimum disk space for volumes : 5GB+, ideally 50GB
-* Recommended specs : 4 vCPU / 8GB RAM
+* Recommended specs : 4 vCPU / 16GB RAM
 * Wildcard DNS pointing to the Docker host machine
   * Needed by pages URL which are built with the workspace slug as a subdomain
 
@@ -73,7 +73,7 @@ Studio will be available at the defined **CONSOLE_URL**, by default http://studi
 
 * Minimum disk space for docker images :  15GB+
 * Minimum disk space for volumes : 5GB+, ideally 50GB
-* Recommended specs : 4 vCPU / 8GB RAM
+* Recommended specs : 4 vCPU / 16GB RAM
 
 
 ### Start
