@@ -4,6 +4,7 @@ import { Button as AntdButton, ButtonProps as AntdButtonProps } from 'antd';
 export interface ButtonProps extends Omit<AntdButtonProps, 'type'> {
   variant?: 'default' | 'primary' | 'grey' | 'link';
   type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
   tag?: string;
   unselected?: boolean;
 }

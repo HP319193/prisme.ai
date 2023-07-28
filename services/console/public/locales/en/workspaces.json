@@ -920,6 +920,9 @@
               "label": "Tag",
               "description": "Text to be displayed in a label on the right of the button"
             },
+            "disabled": {
+              "label": "Disabled"
+            },
             "unselected": {
               "label": "Unselected",
               "description": "Displays the button in a secondary, grayed out state. Used for example to indicate an inactive tab"

@@ -920,6 +920,9 @@
               "label": "Etiquette",
               "description": "Texte a afficher dans une étiquette à droite du bouton"
             },
+            "disabled": {
+              "label": "Désactivé"
+            },
             "unselected": {
               "label": "Désélectionné",
               "description": "Affiche le bouton dans un état secondaire, grisé. Utilisé par exemple pour indiquer un onglet inactif"
