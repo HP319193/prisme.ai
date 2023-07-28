@@ -42,6 +42,10 @@ const schema: Schema = {
               'pages.blocks.buttons.settings.items.variant.label_link',
             ],
           },
+          disabled: {
+            title: 'pages.blocks.buttons.settings.items.disabled.label',
+            type: 'boolean',
+          },
           tag: {
             type: 'string',
             title: 'pages.blocks.buttons.settings.items.tag.label',

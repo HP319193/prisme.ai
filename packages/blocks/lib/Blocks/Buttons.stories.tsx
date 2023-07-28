@@ -35,6 +35,11 @@ Default.args = {
       tag: '50',
     },
     {
+      text: 'Disabled',
+      variant: 'default',
+      disabled: true,
+    },
+    {
       text: 'Archived messages',
       variant: 'default',
       tag: '50',
