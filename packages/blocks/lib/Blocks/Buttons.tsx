@@ -9,6 +9,7 @@ import { BaseBlockConfig } from './types';
 export interface ButtonElementProps {
   text: Prismeai.LocalizedText;
   variant?: ButtonProps['variant'];
+  disabled?: ButtonProps['disabled'];
   action: Action;
   tag: string;
   unselected: boolean;
@@ -26,12 +27,23 @@ export const Buttons = ({ buttons = [], className }: ButtonsConfig) => {
   return (
     <div className={`pr-block-buttons block-buttons ${className}`}>
       {buttons.map(
-        ({ text, action, tag, unselected, variant = 'default' }, index) => (
+        (
+          {
+            text,
+            action,
+            tag,
+            unselected,
+            variant = 'default',
+            disabled = false,
+          },
+          index
+        ) => (
           <ActionOrLink action={action} key={index}>
             <Button
               variant={variant}
               tag={localize(tag)}
               unselected={unselected}
+              disabled={disabled}
               className="pr-block-buttons__button"
             >
               {localize(text)}

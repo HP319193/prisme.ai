@@ -20,8 +20,18 @@ export default {
   },
 };
 
-const Template: Story<ButtonProps> = ({ variant, unselected, tag }) => (
-  <Button variant={variant} unselected={unselected} tag={tag}>
+const Template: Story<ButtonProps> = ({
+  variant,
+  unselected,
+  disabled,
+  tag,
+}) => (
+  <Button
+    variant={variant}
+    unselected={unselected}
+    disabled={disabled}
+    tag={tag}
+  >
     I am a button !
   </Button>
 );
