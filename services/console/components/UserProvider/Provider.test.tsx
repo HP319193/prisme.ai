@@ -8,7 +8,9 @@ import Storage from '../../utils/Storage';
 jest.mock('../../utils/api', () => ({
   me: jest.fn(),
   signin: jest.fn(),
-  signout: jest.fn(),
+  getSignoutURL: jest.fn(() => {
+    return 'http://test.fr/signout';
+  }),
   signup: jest.fn(),
 }));
 
@@ -18,7 +20,7 @@ jest.mock('next/router', () => ({
   }),
 }));
 beforeEach(() => {
-  Storage.remove('auth-token');
+  Storage.remove('access-token');
   jest.resetAllMocks();
 });
 
@@ -41,7 +43,7 @@ it('should fetch me without auth', async () => {
 });
 
 it('should fetch me with auth', async () => {
-  jest.spyOn(api, 'me').mockReturnValue(Promise.resolve({}));
+  jest.spyOn(api, 'me').mockReturnValue(Promise.resolve({ id: 'id' }));
   api.token = 'token';
   let context: any = {};
   const Test = () => {
@@ -57,15 +59,14 @@ it('should fetch me with auth', async () => {
     await true;
   });
   expect(api.me).toHaveBeenCalled();
-  expect(context.user).toEqual({});
+  expect(context.user).toEqual({ id: 'id' });
 });
 
 it('should signin with success', async () => {
   jest.spyOn(api, 'me').mockRejectedValue('fail');
   jest.spyOn(api, 'signin').mockReturnValue(
     Promise.resolve({
-      id: '42',
-      token: 'token',
+      redirectTo: 'redirectTo',
     } as any)
   );
   let context: any = {};
@@ -82,13 +83,19 @@ it('should signin with success', async () => {
     await true;
   });
   await act(async () => {
+    delete (window as any).location;
+    (window as any).location = new URL(
+      'http://test.jest/signin?interaction=interaction'
+    );
+    (window as any).location.assign = jest.fn();
     await context.signin('email', 'password');
   });
-  expect(api.signin).toHaveBeenCalledWith('email', 'password');
-  expect(context.loading).toBe(false);
-  expect(context.user).toEqual({
-    id: '42',
+  expect(api.signin).toHaveBeenCalledWith({
+    login: 'email',
+    password: 'password',
+    interaction: 'interaction',
   });
+  expect(window.location.assign).toHaveBeenCalledWith('redirectTo');
 });
 
 it('should signin without success', async () => {
@@ -113,9 +120,17 @@ it('should signin without success', async () => {
     await true;
   });
   await act(async () => {
+    delete (window as any).location;
+    (window as any).location = new URL(
+      'http://test.jest/signin?interaction=interaction'
+    );
     await context.signin('email', 'password');
   });
-  expect(api.signin).toHaveBeenCalledWith('email', 'password');
+  expect(api.signin).toHaveBeenCalledWith({
+    login: 'email',
+    password: 'password',
+    interaction: 'interaction',
+  });
   expect(context.loading).toBe(false);
   expect(context.user).toEqual(null);
   expect(context.error).toEqual(
@@ -141,11 +156,14 @@ it('should signout', async () => {
   });
 
   await act(async () => {
+    api.getSignoutURL = jest.fn(() => 'http://test.fr/signout');
+    (window as any).location.assign = jest.fn();
     await context.signout();
   });
 
-  expect(api.signout).toHaveBeenCalled();
+  expect(api.getSignoutURL).toHaveBeenCalled();
   expect(context.user).toBeNull();
+  expect(window.location.assign).toHaveBeenCalledWith('http://test.fr/signout');
 });
 
 it('should not signup with a new account, as a new account should be validated', async () => {
@@ -189,32 +207,6 @@ it('should not signup with a new account, as a new account should be validated',
   expect(context.loading).toBe(false);
 
   expect(context.user).toEqual(null);
-});
-
-it('should signup with an existing account', async () => {
-  let context: any = {};
-  const Test = () => {
-    context = useUser();
-    return null;
-  };
-  const root = renderer.create(
-    <UserProvider>
-      <Test />
-    </UserProvider>
-  );
-  await act(async () => {
-    // Because of initial fetch me
-    await true;
-  });
-  (api.signup as jest.Mock).mockImplementation(async () => {
-    throw new ApiError({ error: 'AlreadyUsed', message: '' }, 401);
-  });
-
-  await act(async () => {
-    await context.signup('email', 'password', 'firstname', 'lastname');
-  });
-
-  expect(api.signin).toHaveBeenCalledWith('email', 'password');
 });
 
 it('should fail to signup', async () => {

@@ -34,3 +34,5 @@ services:
       BROKER_HOST: redis://redis/10
       PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
       SUPER_ADMIN_EMAILS: martin.caussanel@gmail.com
+      CONSOLE_URL: http://studio.local.prisme.ai:3000
+      API_URL: http://studio.local.prisme.ai:3001

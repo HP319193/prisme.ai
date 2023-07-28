@@ -20,7 +20,7 @@ if (IS_LOCAL_STORAGE_AVAILABLE) {
     configurable: true,
   });
 }
-const ls = localStorage!
+const ls = localStorage!;
 
 export const Storage = {
   get: (k: string) => {

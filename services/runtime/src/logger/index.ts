@@ -1,5 +1,6 @@
 import pino from 'pino';
-import { APP_NAME, DEBUG } from '../../config';
+import { DEBUG } from '../../config/sys';
+import { APP_NAME } from '../../config/eda';
 
 export type Logger = pino.Logger;
 

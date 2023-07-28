@@ -20,5 +20,5 @@ See https://nextjs.org/docs/ for more informations
 You can set the following env variables to customize your installation. Set it in a .env file or a .env.local file (
 see https://nextjs.org/docs/api-reference/next.config.js/environment-variables)
 
-- API_HOST: Api Gateway host
+- API_URL: Api Gateway host
 - NEXT_PUBLIC_SENTRY_DSN: If you want to trace errors on Sentry, set your Sentry DSN

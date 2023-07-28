@@ -7,6 +7,7 @@ import {
 import { ActionType, SubjectType, Role, config } from './config';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../eda';
+import { APP_NAME } from '../../config';
 
 type ApiKey = GenericApiKey<SubjectType.Workspace>;
 export { SubjectType, Role, ActionType, ApiKey };
@@ -20,6 +21,7 @@ export interface WorkspaceMetadata {
   description?: Prismeai.LocalizedText;
   labels?: string[];
   customDomains?: string[];
+  clientId?: string;
 }
 
 export type SubjectInterfaces = {
@@ -47,6 +49,7 @@ export function initAccessManager(
     Prismeai.Role | Role.SuperAdmin
   >(
     {
+      appName: `${process.env.HOSTNAME || APP_NAME}-permissions`,
       storage,
       rbac: {
         cacheCustomRoles: true,
@@ -61,6 +64,7 @@ export function initAccessManager(
           slug: { type: String, index: true, unique: true, sparse: true },
           labels: [String],
           customDomains: [String],
+          clientId: String,
         },
         [SubjectType.App]: {
           workspaceId: { type: String, index: true },
@@ -119,7 +123,10 @@ export function initAccessManager(
   broker.on<Prismeai.UpdatedWorkspaceSecurity['payload']>(
     EventType.UpdatedWorkspaceSecurity,
     async (event) => {
-      if (!event.source.workspaceId) {
+      if (
+        !event.source.workspaceId ||
+        !event.payload?.security?.authorizations
+      ) {
         return true;
       }
       await superAdmin.pullRole({

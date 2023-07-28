@@ -31,7 +31,7 @@ it('should export an instance', () => {
 });
 
 it('should call /me', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn(
     async () =>
       ({
@@ -43,18 +43,8 @@ it('should call /me', async () => {
   expect(api.user).toBe(me);
 });
 
-it('should call /signin', () => {
-  const api = new Api('/fake/');
-  api.post = jest.fn();
-  api.signin('user@fake.com', 'password');
-  expect(api.post).toHaveBeenCalledWith('/login', {
-    email: 'user@fake.com',
-    password: 'password',
-  });
-});
-
 it('should call /login/anonymous', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   const user = await api.createAnonymousSession();
   expect(api.post).toHaveBeenCalledWith('/login/anonymous');
@@ -62,7 +52,7 @@ it('should call /login/anonymous', async () => {
 });
 
 it('should call /signup', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   api.signup('user@fake.com', 'password', 'firstname', 'lastname', 'fr');
   expect(api.post).toHaveBeenCalledWith('/signup', {
@@ -74,30 +64,22 @@ it('should call /signup', () => {
   });
 });
 
-it('should call /signout', () => {
-  const api = new Api('/fake/');
-  api.post = jest.fn();
-  api.signout();
-  expect(api.post).toHaveBeenCalledWith('/logout');
-  expect(api.token).toBeNull();
-});
-
 it('should call get /workspaces', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn();
   api.getWorkspaces();
   expect(api.get).toHaveBeenCalledWith('/workspaces?limit=600');
 });
 
 it('should call get /workspaces/42', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn();
   api.getWorkspace('42');
   expect(api.get).toHaveBeenCalledWith('/workspaces/42');
 });
 
 it('should call post /workspaces', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   api.createWorkspace('foo');
   expect(api.post).toHaveBeenCalledWith('/workspaces', {
@@ -106,7 +88,7 @@ it('should call post /workspaces', () => {
 });
 
 it('should call patch /workspaces/42', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.patch = jest.fn();
   await api.updateWorkspace({
     id: '42',
@@ -125,14 +107,14 @@ it('should call patch /workspaces/42', async () => {
 });
 
 it('should call delete /workspaces/42', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.delete = jest.fn();
   await api.deleteWorkspace('42');
   expect(api.delete).toHaveBeenCalledWith('/workspaces/42');
 });
 
 it('should call post /workspaces/42/automations', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   api.createAutomation('42', {
     name: 'foo',
@@ -145,7 +127,7 @@ it('should call post /workspaces/42/automations', () => {
 });
 
 it('should call patch /workspaces/42/automations', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.patch = jest.fn();
   await api.updateAutomation('42', '42-1', {
     name: 'foo',
@@ -158,14 +140,14 @@ it('should call patch /workspaces/42/automations', async () => {
 });
 
 it('should call delete /workspaces/42/automations/42-1', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.delete = jest.fn();
   api.deleteAutomation('42', '42-1');
   expect(api.delete).toHaveBeenCalledWith('/workspaces/42/automations/42-1');
 });
 
 it('should call get /workspaces/42/events', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn(
     async (): Promise<any> => ({
       result: {
@@ -187,7 +169,7 @@ it('should call get /workspaces/42/events', async () => {
 });
 
 it('should replace all images data', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.uploadFiles = jest.fn(async () => [
     { url: 'http://image1.jpg' } as any,
     { url: 'http://image2.jpg' } as any,
@@ -231,7 +213,7 @@ it('should replace all images data', async () => {
 });
 
 it('should upload file', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   // @ts-ignore
   api._fetch = jest.fn(() => [{}]);
   await api.uploadFiles(
@@ -251,7 +233,7 @@ it('should upload file', async () => {
 });
 
 it('should generate api key', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn((): any => ({
     apiKey: 'api-key',
   }));
@@ -287,7 +269,7 @@ it('should generate api key', async () => {
 });
 
 it('should update api key', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.put = jest.fn((): any => ({
     apiKey: 'api-key',
   }));
@@ -328,7 +310,7 @@ it('should update api key', async () => {
 });
 
 it('should send validation mail', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   api.sendValidationMail('email', 'fr');
   expect(api.post).toHaveBeenCalledWith('/user/validate', {
@@ -338,7 +320,7 @@ it('should send validation mail', () => {
 });
 
 it('should validate mail', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   api.validateMail('token');
   expect(api.post).toHaveBeenCalledWith('/user/validate', {
@@ -347,7 +329,7 @@ it('should validate mail', () => {
 });
 
 it('should send password reset mail', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   api.sendPasswordResetMail('email', 'fr');
   expect(api.post).toHaveBeenCalledWith('/user/password', {
@@ -357,7 +339,7 @@ it('should send password reset mail', () => {
 });
 
 it('should reset password', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   api.passwordReset('token', 'azerty');
   expect(api.post).toHaveBeenCalledWith('/user/password', {
@@ -367,7 +349,7 @@ it('should reset password', () => {
 });
 
 it('should get pages', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn((): any => [
     {
       id: '123',
@@ -389,28 +371,28 @@ it('should get pages', async () => {
 });
 
 it('should get page', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn((): any => ({}));
   api.getPage('42', '123');
   expect(api.get).toHaveBeenCalledWith('/workspaces/42/pages/123');
 });
 
 it('should get page by slug', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn((): any => ({}));
   api.getPageBySlug('42', '123');
   expect(api.get).toHaveBeenCalledWith('/pages/42/123');
 });
 
 it('should create page', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn((): any => ({}));
   api.createPage('42', {} as Prismeai.Page);
   expect(api.post).toHaveBeenCalledWith(`/workspaces/42/pages`, {});
 });
 
 it('should update page', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.patch = jest.fn((): any => ({ slug: 'my-page' }));
   await api.updatePage('42', { id: '123', slug: 'my-page' } as Prismeai.Page);
   expect(api.patch).toHaveBeenCalledWith(`/workspaces/42/pages/my-page`, {
@@ -420,14 +402,14 @@ it('should update page', async () => {
 });
 
 it('should delete page', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.delete = jest.fn((): any => ({ id: '123' }));
   api.deletePage('42', '123');
   expect(api.delete).toHaveBeenCalledWith('/workspaces/42/pages/123');
 });
 
 it('should stream events', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
 
   const events = await api.streamEvents('42');
   expect((events.constructor as any).mockedConstructor).toHaveBeenCalledWith({
@@ -486,7 +468,7 @@ it('should stream events', async () => {
 });
 
 it('should get events', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn((): any => ({
     result: { events: [{ createdAt: '2022-01-01', id: '123' }] },
   }));
@@ -505,7 +487,7 @@ it('should get events', async () => {
 });
 
 it('should post events', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn((): any => {});
   const res = await api.postEvents('42', [
     {
@@ -536,7 +518,7 @@ it('should post events', async () => {
 });
 
 describe('permissions', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn((path: string): any => {
     if (path === '/pages/id/permissions') {
       return {
@@ -601,7 +583,7 @@ describe('permissions', () => {
 });
 
 it('should get apps', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   const get: jest.Mock = (api.get = jest.fn((): any => {}));
   api.getApps({});
   expect(api.get).toHaveBeenCalledWith('/apps?');
@@ -618,7 +600,7 @@ it('should get apps', async () => {
 });
 
 it('should install app', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn((): any => {});
   api.installApp('42', { appSlug: 'app' });
   expect(api.post).toHaveBeenCalledWith('/workspaces/42/apps', {
@@ -627,7 +609,7 @@ it('should install app', async () => {
 });
 
 it('should update app', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.patch = jest.fn((): any => {});
   api.updateApp('42', 'app', { appSlug: 'app' });
   expect(api.patch).toHaveBeenCalledWith('/workspaces/42/apps/app', {
@@ -636,49 +618,49 @@ it('should update app', async () => {
 });
 
 it('should uninstall app', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.delete = jest.fn((): any => {});
   api.uninstallApp('42', 'app');
   expect(api.delete).toHaveBeenCalledWith('/workspaces/42/apps/app');
 });
 
 it('should publish app', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn((): any => {});
   api.publishApp({ workspaceId: '42' });
   expect(api.post).toHaveBeenCalledWith('/apps', { workspaceId: '42' });
 });
 
 it('should list app instances', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn((): any => {});
   api.listAppInstances('42');
   expect(api.get).toHaveBeenCalledWith('/workspaces/42/apps');
 });
 
 it('should get app config', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.get = jest.fn((): any => {});
   api.getAppConfig('42', 'app');
   expect(api.get).toHaveBeenCalledWith('/workspaces/42/apps/app/config');
 });
 
 it('should update app config', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.patch = jest.fn((): any => {});
   api.updateAppConfig('42', 'app', {});
   expect(api.patch).toHaveBeenCalledWith('/workspaces/42/apps/app/config', {});
 });
 
 it('should save app instance', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.patch = jest.fn((): any => {});
   api.saveAppInstance('42', 'app', {});
   expect(api.patch).toHaveBeenCalledWith('/workspaces/42/apps/app', {});
 });
 
 it('should upload files', async () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   // @ts-ignore
   let fetch: jest.Mock = (api._fetch = jest.fn((): any => {}));
   api.uploadFiles('data:text/plain;base64,SGVsbG8gV29ybGQ', '42');
@@ -707,7 +689,7 @@ it('should upload files', async () => {
 });
 
 it('should call automation', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   api.post = jest.fn((): any => {});
   api.callAutomation('42', 'automation');
   expect(api.post).toHaveBeenCalledWith(
@@ -717,7 +699,7 @@ it('should call automation', () => {
 });
 
 it('should get workspace usage', () => {
-  const api = new Api('/fake/');
+  const api = new Api({ host: '/fake/' });
   const get: jest.Mock = (api.get = jest.fn((): any => {}));
   api.getWorkspaceUsage('42');
   expect(api.get).toHaveBeenCalledWith('/workspaces/42/usage?');

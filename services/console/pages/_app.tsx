@@ -35,12 +35,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
 
-  if (i18n.language === 'default' && typeof window !== 'undefined') {
-    const availableLanguages: string[] = (i18n.options as any).locales;
-    const navLang = window.navigator.language.substring(0, 2);
-    const currentLang = availableLanguages.includes(navLang) ? navLang : 'en';
-    location.pathname = `${currentLang}/${location.pathname}`;
-    return null;
+  if (typeof window !== 'undefined') {
+    const currentURL = new URL(location.href);
+    const authCode = currentURL.searchParams.get('code');
+    const isAuthorizationCallback =
+      currentURL.pathname.includes('/signin') &&
+      authCode &&
+      currentURL.searchParams.get('iss');
+    if (i18n.language === 'default' && !isAuthorizationCallback) {
+      const availableLanguages: string[] = (i18n.options as any).locales;
+      const navLang = window.navigator.language.substring(0, 2);
+      const currentLang = availableLanguages.includes(navLang) ? navLang : 'en';
+      location.pathname = `${currentLang}/${location.pathname}`;
+      return null;
+    }
   }
 
   if (Component.isPublic) {

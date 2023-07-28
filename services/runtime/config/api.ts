@@ -1,4 +1,11 @@
 import path from 'path';
+import { ADDITIONAL_GLOBAL_VARS } from './runtime';
+
+export const API_URL =
+  process.env.API_URL ||
+  process.env.PUBLIC_API_URL ||
+  ADDITIONAL_GLOBAL_VARS['apiUrl'] ||
+  'http://studio.local.prisme.ai:3001/v2';
 
 export const PORT = process.env.PORT || 3003;
 

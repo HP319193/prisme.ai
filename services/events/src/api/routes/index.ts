@@ -17,8 +17,8 @@ export const init = (
   eventsSubscription: Subscriptions,
   eventsStore: EventsStore,
   accessManager: AccessManager
-): void => {
-  initWebsockets(httpServer, eventsSubscription);
+) => {
+  const io = initWebsockets(httpServer, eventsSubscription);
 
   const root = '/v2';
   app.use(`/sys/cleanup`, initCleanupRoutes(eventsStore));
@@ -35,5 +35,7 @@ export const init = (
     `${root}/workspaces/:workspaceId/search`,
     initSearchRoutes(eventsStore)
   );
+
+  return { io };
 };
 export default init;

@@ -79,9 +79,84 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>GATEWAY_API_HOST</td>
     <td>api-gateway, workspaces</td>
-    <td>api-gateway internal URL</td>
+    <td>api-gateway internal URL for internal requests (i.e contact fetching)</td>
     <td>http://localhost:3001/v2</td>
   </tr>          
+  <tr>
+    <td>API_URL</td>
+    <td>console, pages, api-gateway, runtime</td>
+    <td>api-gateway public URL</td>
+    <td>http://studio.local.prisme.ai:3001/v2</td>
+  </tr>  
+   <tr>
+    <td>CONSOLE_URL</td>
+    <td>api-gateway, console, pages</td>
+    <td>Studio URL, used for emails & auth redirections</td>
+    <td>http://studio.local.prisme.ai:3000</td>
+  </tr>       
+  <tr>
+    <td>PAGES_HOST</td>
+    <td>api-gateway, console, pages</td>
+    <td>Pages base domain starting with a '.', workspace slug will be prefixed as a subdomain. Used for pages builder & pages sign in redirection from api gateway</td>
+    <td>.pages.local.prisme.ai:3100</td>  
+  </tr>
+
+
+  <!-- OIDC -->
+   <tr>
+    <td>OIDC_PROVIDER_URL</td>
+    <td>api-gateway, pages, console, runtime</td>
+    <td>OIDC Authorization server URL</td>
+    <td>API_URL env var, without any base path</td>
+  </tr>  
+   <tr>
+    <td>OIDC_STUDIO_CLIENT_ID</td>
+    <td>api-gateway, console</td>
+    <td>Studio OIDC client id</td>
+    <td>local-client-id</td>
+  </tr>         
+   <tr>
+    <td>OIDC_STUDIO_CLIENT_SECRET</td>
+    <td>api-gateway</td>
+    <td>Studio OIDC client secret, only known by api-gateway</td>
+    <td>local-client-id</td>
+  </tr>           
+   <tr>
+    <td>OIDC_CLIENT_REGISTRATION_TOKEN</td>
+    <td>api-gateway</td>
+    <td>Access token required for OIDC clients registration API</td>
+    <td>local-client-id</td>
+  </tr>             
+  <tr>
+    <td>OIDC_WELL_KNOWN_URL</td>
+    <td>api-gateway</td>
+    <td>OIDC provider configuration discovery URL</td>
+    <td>OIDC_PROVIDER_URL followed by /oidc/.well-known/openid-configuration</td>
+  </tr>    
+  <tr>
+    <td>SESSION_COOKIES_MAX_AGE</td>
+    <td>api-gateway</td>
+    <td>Auth server session cookies expiration (in seconds)</td>
+    <td>2592000 (1 month)</td>
+  </tr>    
+  <tr>
+    <td>ACCESS_TOKENS_MAX_AGE</td>
+    <td>api-gateway</td>
+    <td>Access tokens expiration (in seconds)</td>
+    <td>2592000 (1 month)</td>
+  </tr>      
+  <tr>
+    <td>JWKS_FILEPATH</td>
+    <td>api-gateway, runtime</td>
+    <td>JWKS filepath for access token JWT signing. Also used for runtime fetch instruction with current user session</td>
+    <td>root jwks.json file</td>
+  </tr> 
+  <tr>
+    <td>SESSION_COOKIES_SIGN_SECRET</td>
+    <td>api-gateway</td>
+    <td>Session cookies signing secret</td>
+    <td></td>
+  </tr>   
 
   <!-- Console -->    
   <tr>
@@ -90,12 +165,6 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Listening port number</td>
     <td>3000</td>
   </tr>  
-  <tr>
-    <td>API_HOST</td>
-    <td>console</td>
-    <td>api-gateway public URL</td>
-    <td></td>
-  </tr>
 
   <!-- api-gateway -->
   <tr>
@@ -111,20 +180,8 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>../../gateway.config.yml</td>
   </tr>  
   <tr>
-    <td>SESSION_COOKIES_MAX_AGE</td>
-    <td>api-gateway</td>
-    <td>Session cookies expiration (in seconds)</td>
-    <td>2592000 (1 month)</td>
-  </tr>    
-  <tr>
-    <td>SESSION_COOKIES_SIGN_SECRET</td>
-    <td>api-gateway</td>
-    <td>Session cookies signing secret</td>
-    <td></td>
-  </tr> 
-  <tr>
     <td>INTERNAL_API_KEY</td>
-    <td>api-gateway</td>
+    <td>api-gateway, workspaces</td>
     <td>API Key allowing internal services fetching /contacts API</td>
     <td></td>
   </tr>       
@@ -376,12 +433,6 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>60*60 (1 hour)</td>
   </tr>       
 
-  <tr>
-    <td>PUBLIC_API_URL</td>
-    <td>runtime</td>
-    <td>Runtime public URL (with ending **/v2**), fulfills **global.apiUrl** and **global.endpoints** variables</td>
-    <td>None</td>
-  </tr>         
   <tr>
     <td>ADDITIONAL_GLOBAL_VARS_*</td>
     <td>runtime</td>

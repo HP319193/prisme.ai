@@ -214,7 +214,7 @@ class Pages {
       const pageMeta = await this.accessManager.get(SubjectType.Page, {
         slug: (<any>query).slug,
         customDomains: {
-          $in: [customDomain],
+          $in: [customDomain, workspaceSlug], // Check with & without port
         },
       });
       permissionsAlreadyChecked = true;

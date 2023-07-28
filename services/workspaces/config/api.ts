@@ -16,6 +16,9 @@ export const API_KEY_HEADER =
 
 export const ROLE_HEADER = process.env.ROLE_HEADER || 'x-prismeai-role';
 
+export const OIDC_CLIENT_ID_HEADER =
+  process.env.OIDC_CLIENT_ID_HEADER || 'x-prismeai-client-id';
+
 export const OPENAPI_FILEPATH =
   process.env.OPENAPI_FILEPATH ||
   path.resolve(__dirname, '../specifications/swagger.yml');

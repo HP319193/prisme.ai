@@ -1,10 +1,16 @@
 import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import { AccessManager, getSuperAdmin } from '../../permissions';
-import { AppInstances, Apps, Pages } from '../../services';
+import {
+  AppInstances,
+  Apps,
+  Pages,
+  getWorkspaceClientId,
+} from '../../services';
 import { DSULStorage } from '../../services/DSULStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
+import { OIDC_CLIENT_ID_HEADER } from '../../../config';
 
 export { getServices as getPagesService };
 
@@ -172,6 +178,11 @@ export function initPagesPublic(dsulStorage: DSULStorage) {
       broker,
       dsulStorage,
     });
+    const clientId = await getWorkspaceClientId(workspaceSlug);
+    if (clientId) {
+      res.setHeader(OIDC_CLIENT_ID_HEADER, clientId);
+    }
+
     const detailedPage = await pages.getDetailedPage({
       workspaceSlug,
       slug: pageSlug,

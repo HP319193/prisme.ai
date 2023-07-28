@@ -1,22 +1,24 @@
 import DefaultErrorPage from 'next/error';
 import React, { useEffect, useState } from 'react';
 import { Loading } from '@prisme.ai/design-system';
-import SigninForm from '../../console/components/SigninForm';
 import api from '../../console/utils/api';
 import PageRenderer, {
   PageProps as PageRendererProps,
 } from '../components/Page/Page';
 import { usePage } from '../components/Page/PageProvider';
 import { useWorkspace } from '../components/Workspace';
+import { useRouter } from 'next/router';
+import SigninForm from '../../console/components/SigninForm';
 
 export interface PageProps extends Omit<PageRendererProps, 'page'> {
   page: PageRendererProps['page'] | null;
 }
 
 export const Page = () => {
-  const { page, error, loading, fetchPage } = usePage();
+  const { page, error, loading } = usePage();
   const { setId } = useWorkspace();
   const [displayError, setDisplayError] = useState(false);
+  const { replace } = useRouter();
   useEffect(() => {
     if (!page || !page.workspaceId) return;
     setId(page.workspaceId);
@@ -51,7 +53,7 @@ export const Page = () => {
 
   return (
     <div className="flex m-auto">
-      <SigninForm onSignin={(user) => user && fetchPage()} />
+      <SigninForm onSignin={(user) => {}} />
     </div>
   );
 };

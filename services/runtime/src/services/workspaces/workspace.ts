@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL } from '../../../config';
+import { API_URL } from '../../../config';
 import { EventType } from '../../eda';
 import { PrismeError } from '../../errors';
 import { logger } from '../../logger';
@@ -344,7 +344,7 @@ export class Workspace {
       );
       return {
         ...urls,
-        [slug]: `${PUBLIC_API_URL}/workspaces/${workspaceId}/webhooks/${fullEndpointSlug}`,
+        [slug]: `${API_URL}/workspaces/${workspaceId}/webhooks/${fullEndpointSlug}`,
       };
     }, {});
   }

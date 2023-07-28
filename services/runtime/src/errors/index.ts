@@ -37,6 +37,12 @@ export class PrismeError extends Error implements PrismeError {
   }
 }
 
+export class ConfigurationError extends PrismeError {
+  constructor(msg: string, details: any) {
+    super(msg, details, ErrorSeverity.Fatal);
+  }
+}
+
 export class ObjectNotFoundError extends PrismeError {
   constructor(msg: string = 'Object not found', details?: any) {
     super(msg, details);

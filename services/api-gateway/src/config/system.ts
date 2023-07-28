@@ -5,6 +5,8 @@ const DEBUG = ['dev', 'development'].includes(
 );
 export default {
   PORT: process.env.PORT || 3001,
+  API_URL: process.env.API_URL || 'http://studio.local.prisme.ai:3001/v2',
+
   DEBUG,
 
   GATEWAY_CONFIG:
@@ -32,6 +34,9 @@ export default {
   SUPER_ADMIN_EMAILS: process.env.SUPER_ADMIN_EMAILS || '',
 
   SESSION_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-token',
+
+  OIDC_CLIENT_ID_HEADER:
+    process.env.OIDC_CLIENT_ID_HEADER || 'x-prismeai-client-id',
 
   SESSION_COOKIES_MAX_AGE: parseInt(
     process.env.SESSION_COOKIES_MAX_AGE || <any>(30 * 24 * 60 * 60)

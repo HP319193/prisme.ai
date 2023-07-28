@@ -8,7 +8,7 @@ import { Loading } from '@prisme.ai/design-system';
 import getConfig from 'next/config';
 
 const {
-  publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_HOST = '' },
+  publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_URL = '' },
 } = getConfig();
 
 const REDIRECT_IF_SIGNED = ['/forgot', '/signin', '/signup', '/'];
@@ -34,16 +34,21 @@ async function authFromConsole() {
     }, 100);
     // Ask console for auth token if present
     const listener = (e: MessageEvent) => {
-      const { type, token } = e.data;
+      const { type, token, legacy } = e.data;
       if (type === 'api.token') {
-        api.token = token;
-        Storage.set('auth-token', token);
+        if (legacy) {
+          api.legacyToken = token;
+          Storage.set('auth-token', token);
+        } else {
+          api.token = token;
+          Storage.set('access-token', token);
+        }
         clearTimeout(t);
         resolve(token);
       }
     };
     window.addEventListener('message', listener);
-    window.parent.postMessage({ type: 'askAuthToken' }, CONSOLE_HOST);
+    window.parent.postMessage({ type: 'askAuthToken' }, CONSOLE_URL);
   });
 }
 
@@ -96,8 +101,8 @@ export const UserProvider: FC<UserProviderProps> = ({
     []
   );
 
-  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] = useCallback(
-    async (email: string, language: string) => {
+  const sendPasswordResetMail: UserContext['sendPasswordResetMail'] =
+    useCallback(async (email: string, language: string) => {
       setLoading(true);
       setError(undefined);
       setSuccess(undefined);
@@ -110,9 +115,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         setError(e as ApiError);
         return null;
       }
-    },
-    []
-  );
+    }, []);
 
   const passwordReset: UserContext['passwordReset'] = useCallback(
     async (token: string, password: string) => {
@@ -136,18 +139,130 @@ export const UserProvider: FC<UserProviderProps> = ({
     [push]
   );
 
+  const signout: UserContext['signout'] = useCallback(
+    async (clearOpSession: boolean = true) => {
+      Storage.remove('access-token');
+      Storage.remove('auth-token');
+      setUser(null);
+
+      // Only redirect if api.token is set to avoid OIDC signout when we come from legacy tokens
+      if (clearOpSession && !api.legacyToken) {
+        const redirectionUrl = new URL('/signin', window.location.href);
+        const signoutUrl = api.getSignoutURL(redirectionUrl.toString());
+        window.location.assign(signoutUrl);
+      } else {
+        if (!PUBLIC_URLS.includes(route)) {
+          push('/signin');
+        }
+      }
+    },
+    [push, route]
+  );
+
+  const fetchMe = useCallback(async () => {
+    setLoading(true);
+    setError(undefined);
+    try {
+      if (anonymous) {
+        try {
+          await authFromConsole();
+        } catch {}
+      }
+      const user = await api.me();
+      if (user.authData && user.authData.anonymous && !anonymous) {
+        throw {
+          message: 'Anonymous user not allowed',
+          error: 'AnonymousNotAllowed',
+        };
+      }
+      if (!user) {
+        throw { message: 'No user found', error: 'NoUserFound' };
+      }
+      setUser(user);
+      setLoading(false);
+      if (
+        user.id &&
+        REDIRECT_IF_SIGNED.includes(route) &&
+        !user?.authData?.anonymous
+      ) {
+        const storedRedirectTo = Storage.get('redirect-once-authenticated');
+        Storage.remove('redirect-once-authenticated');
+        if (redirectTo) {
+          push(redirectTo);
+        } else if (storedRedirectTo) {
+          push(storedRedirectTo);
+        }
+      }
+      if (!user.id && !PUBLIC_URLS.includes(route)) {
+        initAuthentication();
+      }
+    } catch (e) {
+      if (
+        (e as Prismeai.GenericError).error === 'AuthenticationError' &&
+        (e as Prismeai.GenericError).message === 'jwt expired'
+      ) {
+        api.token = '';
+        Storage.remove('access-token');
+      }
+      if (anonymous) {
+        const { token, ...user } = await api.createAnonymousSession();
+        api.token = token;
+        Storage.set('access-token', token);
+        setUser(user);
+        setLoading(false);
+        return;
+      }
+      signout(false);
+      setLoading(false);
+    }
+  }, [anonymous, push, redirectTo, route, signout]);
+
+  // 1. Initialize authentication flow
+  const initAuthentication: UserContext['initAuthentication'] = useCallback(
+    async (redirect: boolean = true) => {
+      const redirectOnceAuthenticated = window.location.href.includes('/signin')
+        ? new URL('/', window.location.href).toString()
+        : window.location.href;
+      Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
+      // redirect_uri must be on the same domain we want the session on (i.e current one)
+      const redirectionUrl = new URL('/signin', window.location.href);
+      const { url, codeVerifier, clientId } = await api.getAuthorizationURL(
+        redirectionUrl.toString()
+      );
+      Storage.set('code-verifier', codeVerifier);
+      Storage.set('client-id', clientId);
+      if (redirect || typeof redirect === 'undefined') {
+        window.location.assign(url);
+      }
+      return url;
+    },
+    []
+  );
+
+  // 2. Send login form
   const signin: UserContext['signin'] = useCallback(
     async (email, password) => {
       setLoading(true);
       setError(undefined);
       setSuccess(undefined);
       try {
-        const { token, ...user } = await api.signin(email, password);
-        api.token = token;
-        Storage.set('auth-token', token);
-        setUser(user);
-        setLoading(false);
-        return user;
+        const urlParams = new URLSearchParams(window.location.search);
+        const interaction = urlParams.get('interaction');
+        if (!interaction) {
+          throw new ApiError(
+            {
+              error: 'InvalidAuth',
+              message: 'Missing interaction uid',
+              details: {},
+            },
+            400
+          );
+        }
+        const res = await api.signin({ login: email, password, interaction });
+        if (res.redirectTo) {
+          window.location.assign(res.redirectTo);
+        }
+        return true;
       } catch (e) {
         const { error } = e as ApiError;
 
@@ -164,12 +279,48 @@ export const UserProvider: FC<UserProviderProps> = ({
               }).toString()}`
             );
           }, 2000);
+        } else if (error == 'Internal') {
+          // Corrupted session cookies or invalid interaction id cause 500, clean cookies & restart from fresh state
+          signout();
         }
-        return null;
+        return false;
       }
     },
     [push]
   );
+
+  // 3. Final step : exchange our authorization code with an access token
+  const completeAuthentication: UserContext['completeAuthentication'] =
+    useCallback(async (authorizationCode: string) => {
+      setLoading(true);
+      setError(undefined);
+      setSuccess(undefined);
+      try {
+        const codeVerifier = Storage.get('code-verifier');
+        const clientId = Storage.get('client-id');
+        const redirectionUrl = new URL('/signin', window.location.href);
+        api.overwriteClientId = clientId;
+        const { access_token } = await api.getToken(
+          authorizationCode,
+          codeVerifier,
+          redirectionUrl.toString()
+        );
+        api.token = access_token;
+        Storage.set('access-token', access_token);
+        await fetchMe();
+      } catch (e) {
+        const { error } = e as ApiError;
+        if (error === 'invalid_grant') {
+          // Corrupted session cookies or invalid interaction id cause 500, clean cookies & restart from fresh state
+          return signout();
+        }
+        api.token = null;
+        setUser(null);
+        setLoading(false);
+        setError(e as ApiError);
+        return;
+      }
+    }, []);
 
   const signup: UserContext['signup'] = useCallback(
     async (email, password, firstName, lastName, language) => {
@@ -199,13 +350,8 @@ export const UserProvider: FC<UserProviderProps> = ({
       } catch (e) {
         const { error } = e as ApiError;
         if (error === 'AlreadyUsed') {
-          // Try to log in
-          try {
-            const user = await signin(email, password);
-            return user;
-          } catch (e) {
-            setError(e as ApiError);
-          }
+          setError(e as ApiError);
+          return null;
         }
         api.token = null;
         setUser(null);
@@ -216,62 +362,6 @@ export const UserProvider: FC<UserProviderProps> = ({
     },
     [signin, push]
   );
-
-  const signout: UserContext['signout'] = useCallback(
-    async (onServer: boolean = true) => {
-      if (onServer) {
-        try {
-          api.signout();
-        } catch {}
-      }
-      setUser(null);
-      if (!PUBLIC_URLS.includes(route)) {
-        push('/signin');
-      }
-    },
-    [push, route]
-  );
-
-  const fetchMe = useCallback(async () => {
-    setLoading(true);
-    setError(undefined);
-    try {
-      if (anonymous) {
-        try {
-          await authFromConsole();
-        } catch {}
-      }
-      const user = await api.me();
-      if (user.authData && user.authData.anonymous && !anonymous) {
-        throw {
-          message: 'Anonymous user not allowed',
-          error: 'AnonymousNotAllowed',
-        };
-      }
-      if (!user) {
-        throw { message: 'No user found', error: 'NoUserFound' };
-      }
-      setUser(user);
-      setLoading(false);
-      if (user.id && REDIRECT_IF_SIGNED.includes(route) && redirectTo) {
-        push(redirectTo);
-      }
-      if (!user.id && !PUBLIC_URLS.includes(route)) {
-        push('/signin');
-      }
-    } catch (e) {
-      if (anonymous) {
-        const { token, ...user } = await api.createAnonymousSession();
-        api.token = token;
-        Storage.set('auth-token', token);
-        setUser(user);
-        setLoading(false);
-        return;
-      }
-      signout(false);
-      setLoading(false);
-    }
-  }, [anonymous, push, redirectTo, route, signout]);
 
   const initialFetch = useRef(fetchMe);
 
@@ -285,7 +375,14 @@ export const UserProvider: FC<UserProviderProps> = ({
       const { type } = e.data || {};
       const source = e.source as Window;
       if (type === 'askAuthToken' && e.origin.match(PAGES_HOST)) {
-        source.postMessage({ type: 'api.token', token: api.token }, e.origin);
+        source.postMessage(
+          {
+            type: 'api.token',
+            token: api.token || api.legacyToken,
+            legacy: !api.token && !!api.legacyToken,
+          },
+          e.origin
+        );
       }
     };
     window.addEventListener('message', listener);
@@ -308,6 +405,8 @@ export const UserProvider: FC<UserProviderProps> = ({
         signin,
         signup,
         signout,
+        initAuthentication,
+        completeAuthentication,
         sendPasswordResetMail,
         passwordReset,
         sendValidationMail,

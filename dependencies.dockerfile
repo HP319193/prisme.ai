@@ -30,7 +30,6 @@ FROM node:16-alpine as node_modules
 
 WORKDIR /www
 COPY --from=build /www/package*.json /www/
-COPY --from=build /www/*.config.js /www/
 COPY --from=build /www/dtsgen.json /www/
 COPY --from=build /www/node_modules/ /www/node_modules/
 COPY --from=build /www/specifications/ /www/specifications
