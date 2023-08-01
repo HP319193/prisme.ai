@@ -209,7 +209,9 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       email,
       firstName,
       lastName,
-      status: UserStatus.Pending,
+      status: mailConfig.EMAIL_VALIDATION_ENABLED
+        ? UserStatus.Pending
+        : UserStatus.Validated,
       language,
     };
     const savedUser = await Users.save({
@@ -217,13 +219,15 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       password: hash,
     });
 
-    try {
-      await sendAccountValidationLink(Users, ctx)({ email, language });
-    } catch (err) {
-      (logger || console).warn({
-        msg: 'Could not send account validation email',
-        err,
-      });
+    if (user.status === UserStatus.Pending) {
+      try {
+        await sendAccountValidationLink(Users, ctx)({ email, language });
+      } catch (err) {
+        (logger || console).warn({
+          msg: 'Could not send account validation email',
+          err,
+        });
+      }
     }
 
     return Promise.resolve({ ...user, id: savedUser.id! });

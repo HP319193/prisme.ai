@@ -1,4 +1,4 @@
-# Configuration  
+`# Configuration  
 
 Prisme.ai services can be configured through various environment variables.  
 In a **docker** setup, you can tune these variables inside the root `docker-compose.yml` file ([docker-compose configuration](https://docs.docker.com/compose/environment-variables/)).  
@@ -209,6 +209,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Password validation regexp</td>
     <td>.{8,32}</td>
   </tr>    
+  <tr>
+    <td>EMAIL_VALIDATION_ENABLED</td>
+    <td>api-gateway</td>
+    <td>Enable email validation on signup</td>
+    <td>true</td>    
+  </tr>
 
   <tr>
     <td>WORKSPACES_API_URL</td>

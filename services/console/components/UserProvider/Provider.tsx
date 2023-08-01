@@ -339,12 +339,16 @@ export const UserProvider: FC<UserProviderProps> = ({
         setLoading(false);
         setTimeout(() => {
           setSuccess(undefined);
-          push(
-            `/validate?${new URLSearchParams({
-              email: email,
-              sent: 'true',
-            }).toString()}`
-          );
+          if (user.status === 'pending') {
+            push(
+              `/validate?${new URLSearchParams({
+                email: email,
+                sent: 'true',
+              }).toString()}`
+            );
+          } else {
+            initAuthentication();
+          }
         }, 2000);
         return user;
       } catch (e) {
