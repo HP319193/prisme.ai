@@ -57,7 +57,7 @@ services:
       CONSOLE_URL: '${CONSOLE_URL}'
       PAGES_HOST: '${PAGES_HOST}'
   elastic:
-    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.14.0'
+    image: 'elasticsearch:7.14.0'
     container_name: elastic
     restart: always
     ports:
@@ -143,25 +143,16 @@ services:
       WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
       PERMISSIONS_STORAGE_HOST: 'mongodb://mongo/permissions'
       GATEWAY_API_HOST: 'http://api-gateway:3001/v2'
-  # kibana:
-  #   depends_on:
-  #     elastic:
-  #       condition: service_healthy
-  #   image: docker.elastic.co/kibana/kibana:7.14.0
-  #   volumes:
-  #     - ./data/kibana:/usr/share/kibana/data
-  #   ports:
-  #     - 5601
-  #   environment:
-  #     - SERVERNAME=kibana
-  #     - ELASTICSEARCH_HOSTS=http://elastic:9200
-  #     - ELASTICSEARCH_USERNAME=elastic
-  #   healthcheck:
-  #     test:
-  #       [
-  #         'CMD-SHELL',
-  #         "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
-  #       ]
-  #     interval: 10s
-  #     timeout: 10s
-  #     retries: 120
+  kibana:
+    depends_on:
+      elastic:
+        condition: service_healthy
+    image: kibana:7.14.0
+    volumes:
+      - ./data/kibana:/usr/share/kibana/data
+    ports:
+      - 5601
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=http://elastic:9200
+      - ELASTICSEARCH_USERNAME=elastic
