@@ -45,12 +45,20 @@ let gtwcfg, oidc;
     app.listen(syscfg.PORT, () => {
       logger.info(`Running on port ${syscfg.PORT}`);
     });
-
-    await startWorkspacesClientSync(broker);
   } catch (e) {
     console.error({ ...(<object>e) });
     process.exit(1);
   }
+
+  // Wait a bit before starting OIDC clients sync as local /oidc route might not be available yet
+  setTimeout(async () => {
+    try {
+      await startWorkspacesClientSync(broker);
+    } catch (e) {
+      console.error({ ...(<object>e) });
+      process.exit(1);
+    }
+  }, parseInt(process.env.DELAY_OIDC_WELL_KNOWN_PULL || '2000'));
 
   async function gracefulShutdown() {
     await closeStorage();
