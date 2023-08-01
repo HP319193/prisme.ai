@@ -130,8 +130,8 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>OIDC_WELL_KNOWN_URL</td>
     <td>api-gateway</td>
-    <td>OIDC provider configuration discovery URL</td>
-    <td>OIDC_PROVIDER_URL followed by /oidc/.well-known/openid-configuration</td>
+    <td>OIDC provider configuration discovery URL (only if it's an external provider)</td>
+    <td></td>
   </tr>    
   <tr>
     <td>SESSION_COOKIES_MAX_AGE</td>
