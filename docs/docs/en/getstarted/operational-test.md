@@ -53,6 +53,7 @@
      - Choose a Custom Code application and install it.
      - Verify that the application is installed successfully.
      - Add a simple function to the application that returns "Hello World."
+     - Click the 'Play' button to test the function.
      - Uninstall the application and ensure the uninstallation is successful.
 
  **Workspace Management**
