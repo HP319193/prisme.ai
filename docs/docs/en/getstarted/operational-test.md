@@ -1,4 +1,3 @@
-Sure! Here's the translated version in English and formatted in Markdown for GitLab documentation:
 
 # Prisme.ai Platform Installation Functionality Testing Guide
 
