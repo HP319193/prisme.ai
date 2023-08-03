@@ -46,7 +46,8 @@
      - Click on the generated endpoint to copy the URL.
      - Paste the URL into a browser and verify that it returns "Hello World."
 
-**Workspace Management**
+**Apps Management**
+
    - Install an Application from Prisme.ai Apps Store:
      - Go to the Prisme.ai Apps Store.
      - Choose a Custom Code application and install it.
@@ -55,9 +56,6 @@
      - Uninstall the application and ensure the uninstallation is successful.
 
  **Workspace Management**
-
-   - Reconnect:
-     - Ensure you can log back into your account after installing and uninstalling the application.
 
    - Share the Workspace:
      - Try sharing the workspace you have created with another user.
