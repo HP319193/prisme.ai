@@ -9,6 +9,7 @@ const sendEvent = async (
     type: string;
     payload?: any;
     target?: Prismeai.PrismeEventTarget;
+    options?: Prismeai.PrismeEventOptions;
     source?: { serviceTopic?: string };
   },
   accessManager: Required<AccessManager>,
@@ -21,6 +22,7 @@ const sendEvent = async (
     sessionId: accessManager.user.sessionId,
     serviceTopic: event?.source?.serviceTopic || RUNTIME_EMITS_BROKER_TOPIC,
   };
+
   await accessManager.throwUnlessCan(
     ActionType.Create,
     SubjectType.Event,
@@ -45,6 +47,7 @@ const sendEvent = async (
       },
       {
         target: event.target,
+        options: event.options,
       },
       true
     );
