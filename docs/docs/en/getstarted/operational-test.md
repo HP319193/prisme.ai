@@ -1,4 +1,3 @@
-
 # Prisme.ai Platform Installation Functionality Testing Guide
 
 1. **Account Management**
@@ -16,7 +15,7 @@
    - Logout:
      - Ensure you can successfully log out of your account.
 
-2. **Page Creation**
+2. **Page Builder**
 
    - Create a Simple Page:
      - Access the Interfaces Builder.
@@ -33,7 +32,7 @@
      - Fill in the form and submit it.
      - Verify that the custom event is emitted correctly.
 
-3. **Automation**
+3. **Automation Builder**
 
    - Create a Simple Automation:
      - Access the Automation Builder.
@@ -47,7 +46,7 @@
      - Click on the generated endpoint to copy the URL.
      - Paste the URL into a browser and verify that it returns "Hello World."
 
-4. **Application Management**
+4. **Workspace Management**
    - Install an Application from Prisme.ai Apps Store:
      - Go to the Prisme.ai Apps Store.
      - Choose a Custom Code application and install it.
