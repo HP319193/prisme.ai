@@ -34,5 +34,6 @@ export interface IStorage {
 
 export enum DriverType {
   S3_LIKE = 'S3_LIKE',
+  AZURE_BLOB = 'AZURE_BLOB',
   FILESYSTEM = 'FILESYSTEM',
 }

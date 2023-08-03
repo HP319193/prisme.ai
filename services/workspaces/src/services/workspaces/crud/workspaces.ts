@@ -776,6 +776,16 @@ class Workspaces {
 
     // Delete workspace DB entry & check permissions
     await this.accessManager.delete(SubjectType.Workspace, workspaceId);
+    // Emit this early on, as a runtime bug would recreate runtime model file during azure storage deletion & prevent if from deleting non empty workspace directory
+    this.broker.send<Prismeai.DeletedWorkspace['payload']>(
+      EventType.DeletedWorkspace,
+      {
+        workspaceId,
+        workspaceSlug: workspace.slug,
+      },
+      { workspaceId }
+    );
+
     const superAdmin = await getSuperAdmin(this.accessManager as AccessManager);
     await superAdmin.deleteMany(NativeSubjectType.Roles as any, {
       subjectType: 'workspaces',
@@ -798,14 +808,6 @@ class Workspaces {
       logger.err(err);
     }
 
-    this.broker.send<Prismeai.DeletedWorkspace['payload']>(
-      EventType.DeletedWorkspace,
-      {
-        workspaceId,
-        workspaceSlug: workspace.slug,
-      },
-      { workspaceId }
-    );
     return { id: workspaceId };
   };
 

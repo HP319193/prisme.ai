@@ -10,6 +10,7 @@
     "dev": "ts-node-dev -r dotenv/config --inspect=9230 --transpile-only --respawn ./src/app.ts"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.15.0",
     "@prisme.ai/broker": "^0.1.2",
     "@prisme.ai/permissions": "^1.0.0",
     "@prisme.ai/types": "^1.0.8",

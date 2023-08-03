@@ -2,6 +2,10 @@ export type ObjectList = {
   key: string;
 }[];
 
+export interface SaveOptions {
+  mimetype?: string;
+}
+
 export interface IStorage {
   get(id: string): any;
   find(prefix: string): Promise<ObjectList>;
@@ -13,5 +17,6 @@ export interface IStorage {
 
 export enum DriverType {
   S3_LIKE = 'S3_LIKE',
+  AZURE_BLOB = 'AZURE_BLOB',
   FILESYSTEM = 'FILESYSTEM',
 }
