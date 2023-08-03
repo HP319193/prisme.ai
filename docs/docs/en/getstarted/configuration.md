@@ -1,4 +1,4 @@
-`# Configuration  
+# Configuration  
 
 Prisme.ai services can be configured through various environment variables.  
 In a **docker** setup, you can tune these variables inside the root `docker-compose.yml` file ([docker-compose configuration](https://docs.docker.com/compose/environment-variables/)).  
