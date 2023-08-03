@@ -1,4 +1,3 @@
-
 ### Prisme.ai Studio Operational Test
 
 #### Create Account
@@ -22,6 +21,26 @@
 #### Install App from Prisme.ai Apps Store
 - Choose a Custom Code app, install it, add a simple function that returns Hello World, and uninstall the app.
 
+Certainly! My apologies for missing that part. Here's the addition to the documentation:
+
+### 5. Workspace Management
+
+#### Share and Modify the Workspace
+- Share the workspace, modify the details, and add a logo.
+
+#### Create and Manage Workspace Versions
+- Create a version, add automation, perform a rollback, and verify the changes.
+
+#### Test Activity (Audit Log)
+- Check the activity logs and filter specific events.
+
+#### Test Rollback
+- Verify the rollback functionality.
+
+### 6. Code Verification
+
+#### Verify the Code
+- Access the YAML code of each page, automation, and Apps, and ensure it syncs with the no-code changes.
 
 ### AI Knowledge Operational Test
 
