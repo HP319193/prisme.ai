@@ -94,8 +94,4 @@
    - The YAML code describes your page/automation/Apps.
    - You can edit it and verify that the no-code part changes as well.
 
-**Logout**
-
-   - Ensure you can successfully log out of your account.
-
 Please make sure to follow the steps of each task and note the results obtained as well as any issues encountered during the tests. This information will be useful for improving and addressing any potential problems on the Prisme.ai platform. Good luck with your tests!
