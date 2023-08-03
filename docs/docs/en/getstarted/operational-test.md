@@ -1,6 +1,6 @@
 # Prisme.ai Platform Installation Functionality Testing Guide
 
-1. **Account Management**
+**Account Management**
 
    - Create an Account:
      - Go to the Prisme.ai registration page.
@@ -15,7 +15,7 @@
    - Logout:
      - Ensure you can successfully log out of your account.
 
-2. **Page Builder**
+**Page Builder**
 
    - Create a Simple Page:
      - Access the Interfaces Builder.
@@ -32,7 +32,7 @@
      - Fill in the form and submit it.
      - Verify that the custom event is emitted correctly.
 
-3. **Automation Builder**
+**Automation Builder**
 
    - Create a Simple Automation:
      - Access the Automation Builder.
@@ -46,7 +46,7 @@
      - Click on the generated endpoint to copy the URL.
      - Paste the URL into a browser and verify that it returns "Hello World."
 
-4. **Workspace Management**
+**Workspace Management**
    - Install an Application from Prisme.ai Apps Store:
      - Go to the Prisme.ai Apps Store.
      - Choose a Custom Code application and install it.
@@ -54,7 +54,7 @@
      - Add a simple function to the application that returns "Hello World."
      - Uninstall the application and ensure the uninstallation is successful.
 
-5. **Workspace Management**
+ **Workspace Management**
 
    - Reconnect:
      - Ensure you can log back into your account after installing and uninstalling the application.
@@ -75,14 +75,14 @@
      - Go to the workspace settings and add a version.
      - Ensure the version is created successfully.
 
-6. **Test Activity (Audit Log)**
+**Test Activity (Audit Log)**
 
    - Check Activity Logs:
      - Go to the Activity (Audit Log) of your Workspace.
      - Verify that all the operations you have performed are logged with associated data.
      - Filter specific events, such as workspace sharing, version creation, errors, events from the created form, etc.
 
-7. **Test Rollback**
+**Test Rollback**
 
    - Test Rollback Functionality:
      - On the workspace where you have created a version, add an additional automation.
@@ -90,13 +90,13 @@
      - Verify that you have the option to rollback.
      - Perform a rollback and verify that the previously added automation has disappeared.
 
-8. **Verify Code**
+**Verify Code**
 
    - Access each page/automation/Apps and verify that you have access to the YAML code for each.
    - The YAML code describes your page/automation/Apps.
    - You can edit it and verify that the no-code part changes as well.
 
-9. **Logout**
+**Logout**
 
    - Ensure you can successfully log out of your account.
 
