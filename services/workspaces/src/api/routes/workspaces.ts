@@ -291,6 +291,30 @@ export default function init(
     await workspaces.exportWorkspace(workspaceId, versionId, format, res);
   }
 
+  async function exportMultipleWorkspacesHandler(
+    {
+      accessManager,
+      body,
+      context,
+      broker,
+    }: Request<any, any, PrismeaiAPI.ExportMultipleWorkspaces.RequestBody>,
+    res: Response<PrismeaiAPI.ExportMultipleWorkspaces.Responses.$200>
+  ) {
+    const { workspaces } = getServices({
+      context,
+      accessManager,
+      broker,
+    });
+    // Tar is also supported by underlying archiver package, but not by import package (yauzl)
+    const format: string = 'zip';
+    res.setHeader(
+      'Content-disposition',
+      `attachment; filename=bulk-export.${format}`
+    );
+    res.setHeader('Content-type', 'application/octet-stream');
+    await workspaces.exportMultipleWorkspaces(body, res);
+  }
+
   async function importWorkspaceHandler(
     {
       context,
@@ -354,6 +378,8 @@ export default function init(
     `/:workspaceId/versions/:versionId/export`,
     asyncRoute(exportWorkspaceHandler)
   );
+  app.post(`/export`, asyncRoute(exportMultipleWorkspacesHandler));
+
   const upload = multer({
     limits: {
       fieldSize: UPLOADS_MAX_SIZE,

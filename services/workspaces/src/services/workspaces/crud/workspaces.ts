@@ -49,6 +49,7 @@ import { processArchive } from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
 import { Apps } from '../../apps';
 import { Security } from '../..';
+import archiver from 'archiver';
 
 interface DSULDiff {
   type: DiffType;
@@ -809,6 +810,80 @@ class Workspaces {
     }
 
     return { id: workspaceId };
+  };
+
+  exportMultipleWorkspaces = async (
+    opts: PrismeaiAPI.ExportMultipleWorkspaces.RequestBody,
+    outStream: stream.Writable
+  ) => {
+    const workspaces = opts?.workspaces?.query
+      ? await this.accessManager.findAll(
+          SubjectType.Workspace,
+          opts?.workspaces?.query,
+          {
+            pagination: {
+              limit: 1000,
+              page: 0,
+              ...opts?.workspaces?.pagination,
+            },
+          }
+        )
+      : [];
+    let apps: Prismeai.App[] = [];
+    if (opts.includeApps) {
+      apps = await this.accessManager.findAll(
+        SubjectType.App,
+        opts?.workspaces?.query,
+        {
+          pagination: {
+            limit: 1000,
+            page: 0,
+            ...opts?.workspaces?.pagination,
+          },
+        }
+      );
+    }
+
+    const parentArchive = archiver('zip', {
+      zlib: { level: 9 }, // Sets the compression level.
+    });
+    parentArchive.pipe(outStream);
+
+    // Start building workspace archive
+    const appendWorkspaceExport = async (
+      workspaceId: string,
+      parentArchive: archiver.Archiver,
+      filename: string
+    ) => {
+      const pipeStream = new stream.PassThrough();
+      this.exportWorkspace(workspaces[0].id, 'current', 'zip', pipeStream);
+      parentArchive.append(pipeStream, {
+        name: filename,
+      });
+
+      return new Promise((resolve, reject) => {
+        pipeStream.on('close', resolve);
+        pipeStream.on('end', resolve);
+        pipeStream.on('error', reject);
+      });
+    };
+
+    for (let workspace of workspaces) {
+      await appendWorkspaceExport(
+        workspace.id,
+        parentArchive,
+        `workspaces/${workspace.id}.zip`
+      );
+    }
+    for (let app of apps) {
+      await appendWorkspaceExport(
+        app.workspaceId,
+        parentArchive,
+        `apps/${app.slug}.zip`
+      );
+    }
+
+    parentArchive.finalize();
   };
 
   exportWorkspace = async (
