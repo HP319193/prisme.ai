@@ -15,6 +15,7 @@ import { streamToBuffer } from '../../utils/streamToBuffer';
 export interface AzureBlobOptions {
   connectionString: string;
   container: string;
+  baseUrl?: string;
 }
 
 export default class AzureBlob implements IStorage {

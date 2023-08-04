@@ -471,6 +471,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Uploads Azure Blob connection string</td>
     <td></td>
   </tr>           
+  <tr>
+    <td>UPLOADS_STORAGE_AZURE_BLOB_BASE_URL</td>
+    <td>runtime & workspaces</td>
+    <td>Base public download url for uploads azure blob container</td>
+    <td></td>
+  </tr>             
 
   <!-- runtime -->          
   <tr>

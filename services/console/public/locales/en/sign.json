@@ -30,7 +30,7 @@
     "cgu": "By continuing you agree to the <a>Terms of Service</a>.",
     "submit": "Start",
     "error": "An error has occurred, please contact support",
-    "error_AuthenticationError": "An account already exists for this email, but the password is invalid.",
+    "error_AlreadyUsed": "An account already exists for this email !",
     "error_InvalidEmail": "The email is invalid.",
     "error_InvalidPassword": "The password is invalid : must be at least 8 characters long.",
     "error_ValidateEmailError": "Please verify your email",
