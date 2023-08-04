@@ -337,15 +337,8 @@ export default function init(
       throw new MissingFieldError('Missing archive');
     }
 
-    const target = workspaceId
-      ? { id: workspaceId }
-      : await workspaces.createWorkspace({ name: 'Import' });
-    const updatedDetailedWorkspace = await workspaces.importDSUL(
-      target.id,
-      'current',
-      file?.buffer
-    );
-    res.send(updatedDetailedWorkspace);
+    const result = await workspaces.importArchive(file?.buffer, workspaceId);
+    res.send(result);
   }
 
   const app = express.Router();

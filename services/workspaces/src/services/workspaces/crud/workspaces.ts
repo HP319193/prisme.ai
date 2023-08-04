@@ -45,7 +45,10 @@ import {
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { fetchUsers, NativeSubjectType } from '@prisme.ai/permissions';
-import { processArchive } from '../../../utils/processArchive';
+import {
+  getArchiveEntries,
+  processArchive,
+} from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
 import { Apps } from '../../apps';
 import { Security } from '../..';
@@ -66,6 +69,17 @@ interface DSULDiffHandler {
   handler: (diffs: DSULDiff[]) => Promise<any>;
 }
 
+type BulkExport = {
+  workspaceIds: string[];
+  publishApps: {
+    workspaceId: string;
+    slug: string;
+    name: string;
+    description: Prismeai.LocalizedText;
+    photo: string;
+    workspaceVersion?: string;
+  }[];
+};
 class Workspaces {
   private accessManager: Required<AccessManager>;
   private broker: Broker;
@@ -842,12 +856,34 @@ class Workspaces {
           },
         }
       );
+      apps = apps?.length
+        ? await this.accessManager.filterSubjectsBy(
+            ActionType.GetAppSourceCode,
+            SubjectType.App,
+            apps
+          )
+        : [];
     }
+
+    const bulkExport: BulkExport = {
+      workspaceIds: workspaces.map((cur) => cur.id),
+      publishApps: apps.map((cur) => ({
+        workspaceId: cur.workspaceId,
+        slug: cur.slug,
+        name: cur.name!,
+        description: cur.description!,
+        photo: cur.photo!,
+      })),
+    };
 
     const parentArchive = archiver('zip', {
       zlib: { level: 9 }, // Sets the compression level.
     });
     parentArchive.pipe(outStream);
+
+    parentArchive.append(JSON.stringify(bulkExport), {
+      name: 'bulkExport.json',
+    });
 
     // Start building workspace archive
     const appendWorkspaceExport = async (
@@ -856,7 +892,7 @@ class Workspaces {
       filename: string
     ) => {
       const pipeStream = new stream.PassThrough();
-      this.exportWorkspace(workspaces[0].id, 'current', 'zip', pipeStream);
+      this.exportWorkspace(workspaceId, 'current', 'zip', pipeStream);
       parentArchive.append(pipeStream, {
         name: filename,
       });
@@ -873,13 +909,6 @@ class Workspaces {
         workspace.id,
         parentArchive,
         `workspaces/${workspace.id}.zip`
-      );
-    }
-    for (let app of apps) {
-      await appendWorkspaceExport(
-        app.workspaceId,
-        parentArchive,
-        `apps/${app.slug}.zip`
       );
     }
 
@@ -910,7 +939,99 @@ class Workspaces {
     return archive;
   };
 
-  importDSUL = async (
+  importArchive = async (archive: Buffer, workspaceId?: string) => {
+    const entries = await getArchiveEntries(archive);
+    // 1. Detect if this contains multiple workspaces/apps or just a single one
+    const { workspaces, bulkExportStream } = entries.reduce(
+      ({ workspaces, bulkExportStream }, { filename, stream }) => {
+        if (filename.startsWith('workspaces/')) {
+          const workspaceId = filename.slice(11).slice(0, -4);
+          return {
+            workspaces: {
+              ...workspaces,
+              [workspaceId]: stream,
+            },
+            bulkExportStream,
+          };
+        } else if (filename === 'bulkExport.json') {
+          return {
+            bulkExportStream: stream,
+            workspaces,
+          };
+        } else {
+          return { workspaces, bulkExportStream };
+        }
+      },
+      { workspaces: {}, bulkExportStream: false as any as stream.Readable }
+    );
+
+    if (!bulkExportStream) {
+      // 2. Import a single workspace
+      const target = workspaceId
+        ? { id: workspaceId }
+        : await this.createWorkspace({ name: 'Import' });
+      const updatedDetailedWorkspace = await this.importDSUL(
+        target.id,
+        'current',
+        archive
+      );
+      return updatedDetailedWorkspace;
+    }
+
+    // 3. Import a bulk archive
+    if (workspaceId) {
+      throw new PrismeError(
+        'Cant import a bulk archive to specific workspace',
+        {}
+      );
+    }
+    const {
+      imported: importedWorkspaceFiles,
+      errors: workspaceErrors,
+      workspaceIdsMapping,
+      createdWorkspaceIds,
+      updatedWorkspaceIds,
+    } = await this.importMultipleWorkspaces(workspaces);
+
+    const bulkExport = JSON.parse(
+      (await streamToBuffer(bulkExportStream)).toString()
+    ) as BulkExport;
+    const apps = new Apps(this.accessManager, this.broker, this.storage);
+
+    // Map source workspace id to imported workspace ids
+    const publishApps = bulkExport.publishApps
+      .map((cur) => ({
+        ...cur,
+        workspaceId: workspaceIdsMapping[cur.workspaceId],
+      }))
+      .filter((cur) => cur.workspaceId);
+
+    const publishedApps: Prismeai.App[] = [];
+    for (let app of publishApps) {
+      try {
+        await apps.publishApp(app, {
+          description: 'Imported app release',
+        });
+        publishedApps.push(app);
+      } catch (err) {
+        workspaceErrors.push({
+          msg: 'Some error occured while publishing an app',
+          app,
+          err,
+        });
+      }
+    }
+
+    return {
+      createdWorkspaceIds,
+      updatedWorkspaceIds,
+      errors: workspaceErrors,
+      imported: importedWorkspaceFiles,
+      publishedApps,
+    };
+  };
+
+  private importDSUL = async (
     workspaceId: string,
     version: string,
     zipBuffer: Buffer
@@ -950,6 +1071,13 @@ class Workspaces {
     let batch: Promise<void>[] = [];
     let counter = 0;
     await processArchive(zipBuffer, async (filepath: string, stream) => {
+      if (
+        !filepath.endsWith('.yml') &&
+        !filepath.endsWith('.yaml') &&
+        !filepath.endsWith('json')
+      ) {
+        return;
+      }
       if (counter > 5000) {
         throw new PrismeError(
           'Workspace archive cannot have more than 5000 files',
@@ -1017,7 +1145,7 @@ class Workspaces {
     };
   };
 
-  async applyDSULFile(
+  private async applyDSULFile(
     path: string[],
     workspace: Prismeai.DSULReadOnly,
     content: any,
@@ -1040,7 +1168,14 @@ class Workspaces {
       case DSULType.DSULIndex:
         await this.updateWorkspace(workspace.id!, {
           ...content,
-          name: `${content.name} - Import`,
+          description: `${content.description || ''} (IMPORT)`,
+          labels: [
+            ...new Set([
+              ...(workspace.labels || []),
+              ...(content.labels || []),
+            ]),
+          ],
+          name: content.name,
           slug: workspace.slug,
           id: workspace.id,
         });
@@ -1097,6 +1232,68 @@ class Workspaces {
     }
     return true;
   }
+
+  private importMultipleWorkspaces = async (
+    workspaces: Record<string, stream.Readable>
+  ) => {
+    const superAdmin = await getSuperAdmin(this.accessManager as AccessManager);
+
+    let allImported: string[] = [],
+      allErrors: any[] = [],
+      workspaceIdsMapping: Record<string, string> = {},
+      createdWorkspaceIds: string[] = [],
+      updatedWorkspaceIds: string[] = [];
+    for (let [fromWorkspaceId, stream] of Object.entries(workspaces)) {
+      try {
+        const archive = await streamToBuffer(stream);
+        const existingWorkspace = await superAdmin.findAll(
+          SubjectType.Workspace,
+          {
+            labels: {
+              $in: [`importFrom:${fromWorkspaceId}`],
+            },
+          }
+        );
+
+        let target: { id: string };
+        if (existingWorkspace?.[0]?.id) {
+          target = { id: existingWorkspace?.[0]?.id };
+          updatedWorkspaceIds.push(target.id);
+        } else {
+          target = await this.createWorkspace({
+            name: 'Import',
+            labels: [`importFrom:${fromWorkspaceId}`],
+          });
+          createdWorkspaceIds.push(target.id);
+        }
+
+        const { imported, errors } = await this.importDSUL(
+          target.id,
+          'current',
+          archive
+        );
+        allImported = allImported.concat(
+          imported.map((path) => `${fromWorkspaceId}/${path}`)
+        );
+        allErrors = allErrors.concat(errors);
+        workspaceIdsMapping[fromWorkspaceId] = target.id!;
+      } catch (err) {
+        allErrors.push({
+          msg: 'Some error occured while importing a workspace archive',
+          fromWorkspaceId,
+          err,
+        });
+      }
+    }
+
+    return {
+      imported: allImported,
+      errors: allErrors,
+      workspaceIdsMapping,
+      createdWorkspaceIds,
+      updatedWorkspaceIds,
+    };
+  };
 }
 
 export default Workspaces;

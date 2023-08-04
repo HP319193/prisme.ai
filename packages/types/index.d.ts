@@ -3366,11 +3366,14 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export interface $200 {
+                createdWorkspaceIds?: string[];
+                updatedWorkspaceIds?: string[];
                 imported: string[];
                 errors?: {
                     [name: string]: any;
                 }[];
-                workspace: Prismeai.DSULReadOnly;
+                workspace?: Prismeai.DSULReadOnly;
+                publishedApps?: Prismeai.App[];
             }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
@@ -3387,11 +3390,14 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export interface $200 {
+                createdWorkspaceIds?: string[];
+                updatedWorkspaceIds?: string[];
                 imported: string[];
                 errors?: {
                     [name: string]: any;
                 }[];
-                workspace: Prismeai.DSULReadOnly;
+                workspace?: Prismeai.DSULReadOnly;
+                publishedApps?: Prismeai.App[];
             }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;

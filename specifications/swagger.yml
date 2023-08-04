@@ -4161,8 +4161,15 @@ paths:
                 type: object
                 required:
                   - imported
-                  - workspace
                 properties:
+                  createdWorkspaceIds:
+                    type: array
+                    items:
+                      type: string
+                  updatedWorkspaceIds:
+                    type: array
+                    items:
+                      type: string
                   imported:
                     type: array
                     items:
@@ -4174,6 +4181,10 @@ paths:
                       additionalProperties: true
                   workspace:
                     $ref: '#/components/schemas/DSULReadOnly'
+                  publishedApps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/App"
         '401':
           description: AuthenticationError
           content:
