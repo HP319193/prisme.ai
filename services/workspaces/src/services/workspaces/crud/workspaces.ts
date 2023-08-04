@@ -1223,7 +1223,7 @@ class Workspaces {
           await appInstances.configureApp(workspace.id!, content.slug, content);
         } else {
           content.slug = subfileSlug;
-          await appInstances.installApp(workspace.id!, content);
+          await appInstances.installApp(workspace.id!, content, true); // Ignore unknown app errors as it might be imported later on
         }
         break;
 
