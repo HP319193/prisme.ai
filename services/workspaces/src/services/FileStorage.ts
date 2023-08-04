@@ -5,14 +5,12 @@ import {
   UPLOADS_STORAGE_S3_LIKE_BASE_URL,
   UPLOADS_FILESYSTEM_DOWNLOAD_URL,
   UPLOADS_STORAGE_AZURE_BLOB_BASE_URL,
-  UPLOADS_STORAGE_AZURE_BLOB_CONTAINER,
 } from '../../config';
 import { logger } from '../logger';
 import { AccessManager, Role, SubjectType } from '../permissions';
 import { DriverType, IStorage } from '../storage/types';
 import { UPLOADS_MAX_SIZE, UPLOADS_ALLOWED_MIMETYPES } from '../../config';
 import { InvalidUploadError } from '../errors';
-import { URL } from 'url';
 
 const ALLOWED_MIMETYPES_REGEXP = `^(${UPLOADS_ALLOWED_MIMETYPES.map((cur) =>
   cur.replace(/[*]/g, '.*')
