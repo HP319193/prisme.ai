@@ -1072,7 +1072,7 @@ class Workspaces {
       if (
         !filepath.endsWith('.yml') &&
         !filepath.endsWith('.yaml') &&
-        !filepath.endsWith('json')
+        !filepath.endsWith('.json')
       ) {
         return;
       }
@@ -1285,6 +1285,8 @@ class Workspaces {
         allErrors = allErrors.concat(errors);
 
         if (publishApp) {
+          // How can we avoid this ugly wait & make sure the runtime updated the runtime.yml with latest updates before publishing ??
+          await new Promise((resolve) => setTimeout(resolve, 1000));
           publishApp.workspaceId = target.id;
           await apps.publishApp(publishApp, {
             description: 'Imported app release',
@@ -1300,13 +1302,18 @@ class Workspaces {
       }
     }
 
-    return {
+    const result = {
       imported: allImported,
       errors: allErrors,
       createdWorkspaceIds,
       updatedWorkspaceIds,
       publishedApps,
     };
+    logger.info({
+      msg: 'Terminated bulk import',
+      result,
+    });
+    return result;
   };
 }
 

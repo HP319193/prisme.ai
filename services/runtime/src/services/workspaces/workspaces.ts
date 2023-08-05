@@ -49,7 +49,7 @@ export class Workspaces extends Storage {
         const workspace = (event as any as Prismeai.CreatedWorkspace).payload
           .workspace;
         await this.loadWorkspace(workspace);
-        await this.saveWorkspace(workspace);
+        await this.saveWorkspace(workspace, event?.source?.correlationId);
         return true;
       }
 
@@ -66,7 +66,7 @@ export class Workspaces extends Storage {
             name: 'Workspace name has been reset',
           };
           await this.loadWorkspace(workspace);
-          await this.saveWorkspace(workspace);
+          await this.saveWorkspace(workspace, event?.source?.correlationId);
         }
       }
       const workspace = this.workspaces[workspaceId];
@@ -77,7 +77,10 @@ export class Workspaces extends Storage {
       });
       const updatedWorkspace = await this.applyWorkspaceEvent(workspace, event);
 
-      await this.saveWorkspace(updatedWorkspace.dsul);
+      await this.saveWorkspace(
+        updatedWorkspace.dsul,
+        event?.source?.correlationId
+      );
       logger.info({
         msg: 'Persisted updated runtime.yml',
         workspaceId: workspace.id,
@@ -240,7 +243,7 @@ export class Workspaces extends Storage {
                 });
               }
               resolve(undefined);
-            }, 2000); // Wait 2 seconds for other replicas to finish writting previous events & avoid any conflict that could overwrite our rebuilt model
+            }, 500); // Wait 500ms for other replicas to finish writting previous events & avoid any conflict that could overwrite our rebuilt model
           }
         );
         if (rebuiltWorkspace) {
@@ -345,7 +348,10 @@ export class Workspaces extends Storage {
     return this.workspaces[workspace.id!];
   }
 
-  async saveWorkspace(workspace: Prismeai.RuntimeModel) {
+  async saveWorkspace(
+    workspace: Prismeai.RuntimeModel,
+    correlationId?: string
+  ) {
     await this.driver.save(
       `workspaces/${workspace.id}/versions/current/runtime.yml`,
       yaml.dump(workspace)
@@ -357,6 +363,7 @@ export class Workspaces extends Storage {
       },
       {
         workspaceId: workspace.id!,
+        correlationId,
       }
     );
   }

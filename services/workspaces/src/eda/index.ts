@@ -17,6 +17,7 @@ export enum EventType {
 
   CreatedWorkspace = 'workspaces.created',
   ImportedWorkspace = 'workspaces.imported',
+  UpdatedRuntimeDSUL = 'runtime.dsul.updated',
   ConfiguredWorkspace = 'workspaces.configured',
   UpdatedWorkspace = 'workspaces.updated',
   DeletedWorkspace = 'workspaces.deleted',
