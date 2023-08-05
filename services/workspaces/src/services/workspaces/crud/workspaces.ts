@@ -847,7 +847,11 @@ class Workspaces {
     if (opts.includeApps) {
       apps = await this.accessManager.findAll(
         SubjectType.App,
-        opts?.workspaces?.query,
+        {
+          workspaceId: {
+            $in: workspaces.map((cur) => cur.id),
+          },
+        },
         {
           pagination: {
             limit: 1000,
@@ -856,13 +860,6 @@ class Workspaces {
           },
         }
       );
-      apps = apps?.length
-        ? await this.accessManager.filterSubjectsBy(
-            ActionType.GetAppSourceCode,
-            SubjectType.App,
-            apps
-          )
-        : [];
     }
 
     const appsManager = new Apps(this.accessManager, this.broker, this.storage);
@@ -948,8 +945,9 @@ class Workspaces {
     // 1. Detect if this contains multiple workspaces/apps or just a single one
     const { workspaces, bulkExportStream } = entries.reduce(
       ({ workspaces, bulkExportStream }, { filename, stream }) => {
-        if (filename.startsWith('workspaces/')) {
-          const workspaceId = filename.slice(11).slice(0, -4);
+        if (filename.includes('workspaces/') && filename.endsWith('.zip')) {
+          const folderNameIndex = filename.indexOf('workspaces/');
+          const workspaceId = filename.slice(folderNameIndex + 11).slice(0, -4);
           return {
             workspaces: {
               ...workspaces,
@@ -957,7 +955,7 @@ class Workspaces {
             },
             bulkExportStream,
           };
-        } else if (filename === 'bulkExport.json') {
+        } else if (filename.endsWith('bulkExport.json')) {
           return {
             bulkExportStream: stream,
             workspaces,
@@ -989,42 +987,38 @@ class Workspaces {
         {}
       );
     }
-    const {
-      imported: importedWorkspaceFiles,
-      errors: workspaceErrors,
-      workspaceIdsMapping,
-      createdWorkspaceIds,
-      updatedWorkspaceIds,
-    } = await this.importMultipleWorkspaces(workspaces);
-
     const bulkExport = JSON.parse(
       (await streamToBuffer(bulkExportStream)).toString()
     ) as BulkExport;
-    const apps = new Apps(this.accessManager, this.broker, this.storage);
+    // Take bulkExport.publishApps order into account during workspaces import & publish
+    const allAppWorkspaceIds = new Set(
+      (bulkExport.publishApps || []).map((cur) => cur.workspaceId)
+    );
+    const sortedWorkspaceIds = (bulkExport.publishApps || [])
+      .map((cur) => cur.workspaceId)
+      .concat(
+        Object.keys(workspaces).filter(
+          (workspaceId) => !allAppWorkspaceIds.has(workspaceId)
+        )
+      );
 
-    // Map source workspace id to imported workspace ids
-    const publishApps = bulkExport.publishApps
-      .map((cur) => ({
-        ...cur,
-        workspaceId: workspaceIdsMapping[cur.workspaceId],
+    const {
+      imported: importedWorkspaceFiles,
+      errors: workspaceErrors,
+      createdWorkspaceIds,
+      updatedWorkspaceIds,
+      publishedApps,
+    } = await this.importMultipleWorkspaces(
+      sortedWorkspaceIds.map((workspaceId) => ({
+        workspaceId,
+        stream: (<any>workspaces)[workspaceId] as stream.Readable,
+        publishApp: allAppWorkspaceIds.has(workspaceId)
+          ? (bulkExport.publishApps || []).find(
+              (cur) => cur.workspaceId == workspaceId
+            )
+          : undefined,
       }))
-      .filter((cur) => cur.workspaceId);
-
-    const publishedApps: Prismeai.App[] = [];
-    for (let app of publishApps) {
-      try {
-        await apps.publishApp(app, {
-          description: 'Imported app release',
-        });
-        publishedApps.push(app);
-      } catch (err) {
-        workspaceErrors.push({
-          msg: 'Some error occured while publishing an app',
-          app,
-          err,
-        });
-      }
-    }
+    );
 
     return {
       createdWorkspaceIds,
@@ -1238,16 +1232,25 @@ class Workspaces {
   }
 
   private importMultipleWorkspaces = async (
-    workspaces: Record<string, stream.Readable>
+    workspaces: {
+      workspaceId: string;
+      stream: stream.Readable;
+      publishApp?: Prismeai.App;
+    }[]
   ) => {
+    const apps = new Apps(this.accessManager, this.broker, this.storage);
     const superAdmin = await getSuperAdmin(this.accessManager as AccessManager);
 
     let allImported: string[] = [],
       allErrors: any[] = [],
-      workspaceIdsMapping: Record<string, string> = {},
+      publishedApps: Prismeai.App[] = [],
       createdWorkspaceIds: string[] = [],
       updatedWorkspaceIds: string[] = [];
-    for (let [fromWorkspaceId, stream] of Object.entries(workspaces)) {
+    for (let {
+      workspaceId: fromWorkspaceId,
+      stream,
+      publishApp,
+    } of workspaces) {
       try {
         const archive = await streamToBuffer(stream);
         const existingWorkspace = await superAdmin.findAll(
@@ -1280,7 +1283,14 @@ class Workspaces {
           imported.map((path) => `${fromWorkspaceId}/${path}`)
         );
         allErrors = allErrors.concat(errors);
-        workspaceIdsMapping[fromWorkspaceId] = target.id!;
+
+        if (publishApp) {
+          publishApp.workspaceId = target.id;
+          await apps.publishApp(publishApp, {
+            description: 'Imported app release',
+          });
+          publishedApps.push(publishApp);
+        }
       } catch (err) {
         allErrors.push({
           msg: 'Some error occured while importing a workspace archive',
@@ -1293,9 +1303,9 @@ class Workspaces {
     return {
       imported: allImported,
       errors: allErrors,
-      workspaceIdsMapping,
       createdWorkspaceIds,
       updatedWorkspaceIds,
+      publishedApps,
     };
   };
 }
