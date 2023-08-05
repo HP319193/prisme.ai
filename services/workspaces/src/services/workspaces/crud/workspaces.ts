@@ -865,9 +865,13 @@ class Workspaces {
         : [];
     }
 
+    const appsManager = new Apps(this.accessManager, this.broker, this.storage);
+    const appSortedByDependencyOrder =
+      await appsManager.sortAppsDependencyChain(apps);
+
     const bulkExport: BulkExport = {
       workspaceIds: workspaces.map((cur) => cur.id),
-      publishApps: apps.map((cur) => ({
+      publishApps: appSortedByDependencyOrder.map((cur) => ({
         workspaceId: cur.workspaceId,
         slug: cur.slug,
         name: cur.name!,
