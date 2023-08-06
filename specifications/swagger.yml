@@ -1093,6 +1093,14 @@ components:
               type: object
               additionalProperties:
                 type: 'string'
+            prismeaiApiKey:
+              type: object
+              description: "Only for requests towards prisme.ai API. Grants additional permissions using api keys"
+              properties:
+                name:
+                  type: string
+                  description: "Use one of the DSUL Security defined api keys, referred by its name."
+
             query:
               type: object
               description: Object defining querystring parameters

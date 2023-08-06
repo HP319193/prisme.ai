@@ -10,11 +10,13 @@ import {
   FETCH_USER_AGENT_HEADER,
   API_URL,
   RUNTIME_EMITS_BROKER_TOPIC,
+  API_KEY_HEADER,
 } from '../../../../../config';
 import { Broker, EventSource } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 import { logger } from '../../../../logger';
 import { getAccessToken } from '../../../../utils/jwks';
+import { InvalidInstructionError } from '../../../../errors';
 
 const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages'].map(
   (cur) => `${API_URL}${cur}`
@@ -45,6 +47,7 @@ export async function fetch(
     multipart,
     emitErrors = true,
     stream,
+    prismeaiApiKey,
   } = fetch;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
@@ -65,8 +68,12 @@ export async function fetch(
     };
   }
 
+  const isPrismeaiRequest = AUTHENTICATE_PRISMEAI_URLS.some((cur) =>
+    url.startsWith(cur)
+  );
+
   if (
-    AUTHENTICATE_PRISMEAI_URLS.some((cur) => url.startsWith(cur)) &&
+    isPrismeaiRequest &&
     !lowercasedHeaders['x-prismeai-token'] &&
     !lowercasedHeaders['authorization'] &&
     (ctx?.session?.origin?.userId || ctx?.session?.userId) &&
@@ -79,6 +86,12 @@ export async function fetch(
       expiresIn: 10,
     });
     headers['Authorization'] = `Bearer ${jwt}`;
+  }
+
+  if (isPrismeaiRequest && prismeaiApiKey?.name) {
+    headers[API_KEY_HEADER] = await ctx.getWorkspaceApiKey(
+      prismeaiApiKey?.name
+    );
   }
 
   const params: RequestInit = {

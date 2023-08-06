@@ -1476,6 +1476,15 @@ declare namespace Prismeai {
                     [name: string]: string;
                 };
                 /**
+                 * Only for requests towards prisme.ai API. Grants additional permissions using api keys
+                 */
+                prismeaiApiKey?: {
+                    /**
+                     * Use one of the DSUL Security defined api keys, referred by its name.
+                     */
+                    name?: string;
+                };
+                /**
                  * Object defining querystring parameters
                  */
                 query?: {
@@ -1567,6 +1576,15 @@ declare namespace Prismeai {
             method?: "get" | "post" | "put" | "patch" | "delete";
             headers?: {
                 [name: string]: string;
+            };
+            /**
+             * Only for requests towards prisme.ai API. Grants additional permissions using api keys
+             */
+            prismeaiApiKey?: {
+                /**
+                 * Use one of the DSUL Security defined api keys, referred by its name.
+                 */
+                name?: string;
             };
             /**
              * Object defining querystring parameters

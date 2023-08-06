@@ -13,6 +13,8 @@ export const Roles = new Schema({
   auth: Schema.Types.Mixed,
 });
 
+Roles.index({ 'auth.apiKey.value': 1 });
+
 export enum NativeSubjectType {
   Roles = 'roles',
 }
