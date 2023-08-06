@@ -10,6 +10,7 @@ export const Roles = new Schema({
   rules: Schema.Types.Mixed,
   casl: Schema.Types.Mixed,
   disabled: Boolean,
+  auth: Schema.Types.Mixed,
 });
 
 export enum NativeSubjectType {
@@ -25,10 +26,16 @@ export type CustomRole<SubjectType extends string> = RoleTemplate<
   type: 'apiKey' | 'casl' | 'role';
   subjectId: string;
   disabled?: boolean;
+  auth?: Prismeai.WorkspaceRole['auth'] & {
+    apiKey?: {
+      value?: string;
+    };
+  };
 };
 
 export type ApiKey<SubjectType extends string> = {
   apiKey: string;
+  name?: string;
   subjectType: SubjectType;
   subjectId: string;
   rules: Rules;

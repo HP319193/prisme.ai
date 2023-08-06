@@ -75,6 +75,9 @@ export function getObjectsDifferences<RawType>(
     __type: DiffType.ValueUnchanged,
     data: {},
   };
+  if (obj1 === undefined && obj2 === undefined) {
+    return diff;
+  }
   if (typeof obj1 === 'undefined') {
     diff.__type = DiffType.ValueCreated;
   } else if (typeof obj2 === 'undefined') {

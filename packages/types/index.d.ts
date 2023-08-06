@@ -2723,6 +2723,7 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
         }
         export interface RequestBody {
+            name: string;
             rules: Prismeai.PermissionRule[];
         }
         namespace Responses {
@@ -3819,6 +3820,7 @@ declare namespace PrismeaiAPI {
             apiKey: Parameters.ApiKey;
         }
         export interface RequestBody {
+            name: string;
             rules: Prismeai.PermissionRule[];
         }
         namespace Responses {

@@ -107,7 +107,7 @@ export default function init(dsulStorage: DSULStorage) {
     res: Response<PrismeaiAPI.CreateApiKey.Responses.$200>
   ) {
     const { security } = getServices({ context, accessManager, broker });
-    const apiKey = await security.createApiKey(workspaceId, body.rules);
+    const apiKey = await security.createApiKey(workspaceId, body);
     return res.send(apiKey as Prismeai.ApiKey);
   }
 
@@ -129,7 +129,7 @@ export default function init(dsulStorage: DSULStorage) {
     const updatedApiKey = await security.updateApiKey(
       workspaceId,
       apiKey,
-      body.rules
+      body
     );
 
     return res.send(updatedApiKey as Prismeai.ApiKey);

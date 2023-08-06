@@ -14,7 +14,6 @@ import {
   User,
   UserSubject,
   SubjectRelations,
-  Rules,
 } from '..';
 import { validateRules } from './rulesBuilder';
 import { buildSubjectRelations, getParentSubjectIds } from './utils';
@@ -638,7 +637,18 @@ export class AccessManager<
     }
     (<any>role).casl = null;
 
-    const savedApiKey = await RolesModel.findOneAndUpdate(
+    // Generate api keys
+    if (role.type === 'apiKey' && !role?.auth?.apiKey?.value) {
+      role.auth = {
+        ...role.auth,
+        apiKey: {
+          ...role.auth?.apiKey,
+          value: crypto.randomUUID(),
+        },
+      };
+    }
+
+    const savedRole = await RolesModel.findOneAndUpdate(
       {
         id: role.id,
       },
@@ -649,7 +659,7 @@ export class AccessManager<
       }
     );
 
-    return savedApiKey.toJSON();
+    return savedRole.toJSON();
   }
 
   async deleteRole(id: string): Promise<boolean> {
@@ -711,7 +721,7 @@ export class AccessManager<
   async pullApiKey(apiKey: string) {
     try {
       const roles = await this.pullRole(
-        { name: apiKey, type: 'apiKey' },
+        { 'auth.apiKey.value': apiKey, type: 'apiKey' },
         { loadRules: true }
       );
       if (!roles.length) {
@@ -727,9 +737,15 @@ export class AccessManager<
     subjectType: SubjectType,
     subjectId: string
   ): Promise<ApiKey<SubjectType>[]> {
-    const roles = await this.findRoles({ subjectType, subjectId });
+    const roles = await this.findRoles({
+      subjectType,
+      subjectId,
+      type: 'apiKey',
+    });
     return roles
-      .filter((cur) => cur.type === 'apiKey')
+      .filter((role) =>
+        role.id.startsWith(this.getApiKeyRoleId('', subjectType, subjectId))
+      )
       .map((role) => this.convertRoleToApiKey(role));
   }
 
@@ -738,33 +754,45 @@ export class AccessManager<
     subjectType: SubjectType,
     subjectId: string
   ) {
-    return `apiKey/${apiKey}/${subjectType}/${subjectId}/`;
+    return `${subjectType}/${subjectId}/apiKey/${apiKey}`;
   }
 
   private convertRoleToApiKey(
     role: CustomRole<SubjectType>
   ): ApiKey<SubjectType> {
-    let { name, rules, disabled, subjectId, subjectType } = role;
+    let { name, rules, disabled, subjectId, subjectType, auth } = role;
     if (typeof rules === 'string') {
       rules = JSON.parse(rules);
     }
 
-    return { apiKey: name, rules, disabled, subjectId, subjectType };
+    return {
+      apiKey: auth?.apiKey?.value!,
+      name,
+      rules,
+      disabled,
+      subjectId,
+      subjectType,
+    };
   }
 
   async createApiKey(
     subjectType: SubjectType,
     subjectId: string,
-    rules: Rules
+    { name, rules }: PrismeaiAPI.CreateApiKey.RequestBody
   ): Promise<ApiKey<SubjectType>> {
     const apiKey = crypto.randomUUID();
     const role = await this.saveRole({
       id: this.getApiKeyRoleId(apiKey, subjectType, subjectId),
-      name: apiKey,
+      name,
       type: 'apiKey',
       subjectType,
       subjectId,
       rules,
+      auth: {
+        apiKey: {
+          value: apiKey,
+        },
+      },
     });
     return this.convertRoleToApiKey(role);
   }
@@ -773,15 +801,20 @@ export class AccessManager<
     apiKey: string,
     subjectType: SubjectType,
     subjectId: string,
-    rules: Rules
+    { name, rules }: PrismeaiAPI.CreateApiKey.RequestBody
   ): Promise<ApiKey<SubjectType>> {
     const role = await this.saveRole({
       id: this.getApiKeyRoleId(apiKey, subjectType, subjectId),
-      name: apiKey,
+      name,
       type: 'apiKey',
       subjectType,
       subjectId,
       rules,
+      auth: {
+        apiKey: {
+          value: apiKey,
+        },
+      },
     });
     return this.convertRoleToApiKey(role);
   }

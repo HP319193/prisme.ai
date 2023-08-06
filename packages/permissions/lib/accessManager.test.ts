@@ -554,11 +554,10 @@ describe('API Keys', () => {
 
   it("Can't create an API Key on a subject without manage_permissions permission", async () => {
     await expect(
-      adminA.createApiKey(
-        SubjectType.Workspace,
-        anotherWorkspace.id,
-        ourWorkspaceAPIKey.rules
-      )
+      adminA.createApiKey(SubjectType.Workspace, anotherWorkspace.id, {
+        name: 'myApiKey',
+        rules: ourWorkspaceAPIKey.rules,
+      })
     ).rejects.toThrow();
   });
 
@@ -566,11 +565,10 @@ describe('API Keys', () => {
   it('A workspace admin can create an API key for this workspace', async () => {
     await expect(
       adminA
-        .createApiKey(
-          SubjectType.Workspace,
-          ourWorkspace.id,
-          ourWorkspaceAPIKey.rules
-        )
+        .createApiKey(SubjectType.Workspace, ourWorkspace.id, {
+          name: 'myApiKey',
+          rules: ourWorkspaceAPIKey.rules,
+        })
         .then((apiKey) => {
           ourSavedApiKey = apiKey;
           return apiKey;
@@ -584,11 +582,10 @@ describe('API Keys', () => {
     );
 
     await expect(
-      adminB.createApiKey(
-        SubjectType.Workspace,
-        anotherWorkspace.id,
-        ourWorkspaceAPIKey.rules
-      )
+      adminB.createApiKey(SubjectType.Workspace, anotherWorkspace.id, {
+        name: 'myApiKey',
+        rules: ourWorkspaceAPIKey.rules,
+      })
     ).resolves.toEqual(
       expect.objectContaining({ subjectId: anotherWorkspace.id })
     );
@@ -611,7 +608,7 @@ describe('API Keys', () => {
           ourSavedApiKey.apiKey,
           SubjectType.Workspace,
           ourWorkspace.id,
-          newPayload
+          { name: 'myApiKey', rules: newPayload }
         )
         .then((apiKey) => {
           ourSavedApiKey = apiKey;

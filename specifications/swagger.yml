@@ -5330,7 +5330,10 @@ paths:
               type: object
               required:
                 - rules
+                - name
               properties:
+                name:
+                  type: string
                 rules:
                   type: array
                   items:
