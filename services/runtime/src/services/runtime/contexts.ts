@@ -602,20 +602,24 @@ export class ContextsManager {
     if (this.workspaceApiKeys[name]) {
       return this.workspaceApiKeys[name];
     }
-    const roles = await this.accessManager.findRoles(
+    const roles = await this.accessManager.pullRole(
       {
         subjectType: SubjectType.Workspace,
         subjectId: this.workspaceId,
-        name,
+        type: 'apiKey',
       },
-      true
+      {
+        cache: true,
+        cacheKey: `subjectType:${SubjectType.Workspace},subjectId:${this.workspaceId},type:apiKey`,
+      }
     );
-    if (!roles?.[0]?.auth?.apiKey?.value) {
+    const apiKey = roles.find((cur) => cur.name === name);
+    if (!apiKey || !apiKey?.auth?.apiKey?.value) {
       throw new InvalidInstructionError('No api key found', {
         name,
       });
     }
-    this.workspaceApiKeys[name] = roles?.[0]?.auth?.apiKey?.value;
+    this.workspaceApiKeys[name] = apiKey?.auth?.apiKey?.value;
     return this.workspaceApiKeys[name];
   }
 }

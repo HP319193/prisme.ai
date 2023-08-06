@@ -564,7 +564,7 @@ export class AccessManager<
 
   async pullRole(
     query: mongoose.FilterQuery<Document<CustomRole<SubjectType>>>,
-    opts?: { loadRules?: boolean; cache?: boolean }
+    opts?: { loadRules?: boolean; cache?: boolean; cacheKey?: string }
   ) {
     if (
       query.subjectType &&
@@ -575,11 +575,13 @@ export class AccessManager<
     }
     const { permissions } = this.checkAsUser();
 
-    const cacheKey = Object.entries(query)
-      .filter(([k, v]) => k !== 'type')
-      .map(([k, v]) => `${k}:${v}`)
-      .sort()
-      .join(',');
+    const cacheKey =
+      opts?.cacheKey ||
+      Object.entries(query)
+        .filter(([k, v]) => k !== 'type')
+        .map(([k, v]) => `${k}:${v}`)
+        .sort()
+        .join(',');
     let roles =
       opts?.cache && this.customRoles ? this.customRoles[cacheKey] : undefined;
     if (!roles) {

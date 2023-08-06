@@ -60,10 +60,24 @@ export function initAccessManager(
       ) {
         return true;
       }
-      await superAdmin.pullRole({
-        subjectType: SubjectType.Workspace,
-        subjectId: event.source.workspaceId,
-      });
+
+      // Clear both role & apiKeys caches
+      await Promise.all([
+        superAdmin.pullRole({
+          subjectType: SubjectType.Workspace,
+          subjectId: event.source.workspaceId,
+        }),
+        superAdmin.pullRole(
+          {
+            subjectType: SubjectType.Workspace,
+            subjectId: event.source.workspaceId,
+            type: 'apiKey',
+          },
+          {
+            cacheKey: `subjectType:${SubjectType.Workspace},subjectId:${event.source.workspaceId},type:apiKey`,
+          }
+        ),
+      ]);
       return true;
     },
     {

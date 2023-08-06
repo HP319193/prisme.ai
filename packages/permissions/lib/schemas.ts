@@ -14,6 +14,7 @@ export const Roles = new Schema({
 });
 
 Roles.index({ 'auth.apiKey.value': 1 });
+Roles.index({ name: 1 });
 
 export enum NativeSubjectType {
   Roles = 'roles',
