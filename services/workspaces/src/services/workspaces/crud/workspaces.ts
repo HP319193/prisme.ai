@@ -1,4 +1,4 @@
-import { parse } from 'path';
+import { parse, basename } from 'path';
 import { nanoid } from 'nanoid';
 const dns = require('dns');
 import stream from 'stream';
@@ -945,7 +945,11 @@ class Workspaces {
     // 1. Detect if this contains multiple workspaces/apps or just a single one
     const { workspaces, bulkExportStream } = entries.reduce(
       ({ workspaces, bulkExportStream }, { filename, stream }) => {
-        if (filename.includes('workspaces/') && filename.endsWith('.zip')) {
+        if (
+          filename.includes('workspaces/') &&
+          filename.endsWith('.zip') &&
+          !basename(filename).startsWith('.')
+        ) {
           const folderNameIndex = filename.indexOf('workspaces/');
           const workspaceId = filename.slice(folderNameIndex + 11).slice(0, -4);
           return {
@@ -955,7 +959,7 @@ class Workspaces {
             },
             bulkExportStream,
           };
-        } else if (filename.endsWith('bulkExport.json')) {
+        } else if (filename.endsWith('/bulkExport.json')) {
           return {
             bulkExportStream: stream,
             workspaces,
@@ -987,9 +991,18 @@ class Workspaces {
         {}
       );
     }
-    const bulkExport = JSON.parse(
-      (await streamToBuffer(bulkExportStream)).toString()
-    ) as BulkExport;
+    let bulkExport: BulkExport;
+    try {
+      const bulkExportContent = (
+        await streamToBuffer(bulkExportStream)
+      ).toString();
+      bulkExport = JSON.parse(bulkExportContent) as BulkExport;
+    } catch (err) {
+      throw new PrismeError(`Could not parse bulkExport.json file`, {
+        type: (<any>err).type,
+        err: (<any>err).message,
+      });
+    }
     // Take bulkExport.publishApps order into account during workspaces import & publish
     const allAppWorkspaceIds = new Set(
       (bulkExport.publishApps || []).map((cur) => cur.workspaceId)
@@ -1318,7 +1331,6 @@ class Workspaces {
           publishedApps.push(publishApp);
         }
       } catch (err) {
-        console.error(err);
         allErrors.push({
           msg: 'Some error occured while importing a workspace archive',
           fromWorkspaceId,
