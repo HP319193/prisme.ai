@@ -21,7 +21,7 @@ export const SignIn = () => {
         initAuthentication();
       }, 2000);
     });
-  }, [token, validateMail]);
+  }, [initAuthentication, token, validateMail]);
 
   useEffect(() => {
     if (!error) return;
