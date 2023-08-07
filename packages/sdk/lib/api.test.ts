@@ -47,7 +47,11 @@ it('should call /login/anonymous', async () => {
   const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   const user = await api.createAnonymousSession();
-  expect(api.post).toHaveBeenCalledWith('/login/anonymous');
+  expect(api.post).toHaveBeenCalledWith(
+    '/login/anonymous',
+    {},
+    { credentials: 'omit' }
+  );
   expect(api.user).toBe(user);
 });
 
@@ -419,6 +423,7 @@ it('should stream events', async () => {
     apiHost: '/fake/',
     filters: undefined,
     api,
+    legacyToken: '',
   });
   expect(events.once).toHaveBeenCalled();
   (events.constructor as any).mockedConstructor.mockClear();
@@ -431,6 +436,7 @@ it('should stream events', async () => {
     apiHost: '/fake/',
     filters: {},
     api,
+    legacyToken: '',
   });
   expect(events2.once).toHaveBeenCalled();
 
@@ -448,6 +454,7 @@ it('should stream events', async () => {
       'source.sessionId': 'session id',
     },
     api,
+    legacyToken: '',
   });
   expect(events3.once).toHaveBeenCalled();
 
@@ -463,6 +470,7 @@ it('should stream events', async () => {
     apiHost: '/fake/',
     filters: undefined,
     api,
+    legacyToken: '',
   });
   expect(events3.close).toHaveBeenCalled();
 });
