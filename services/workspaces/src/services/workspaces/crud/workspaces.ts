@@ -995,7 +995,15 @@ class Workspaces {
       (bulkExport.publishApps || []).map((cur) => cur.workspaceId)
     );
     const sortedWorkspaceIds = (bulkExport.publishApps || [])
-      .map((cur) => cur.workspaceId)
+      .map((cur) => {
+        if (!(cur.workspaceId in workspaces)) {
+          throw new PrismeError(
+            `Workspace ${cur.workspaceId} specified by bulkExport.json missing from workspaces/ folder`,
+            { workspaceId: cur.workspaceId }
+          );
+        }
+        return cur.workspaceId;
+      })
       .concat(
         Object.keys(workspaces).filter(
           (workspaceId) => !allAppWorkspaceIds.has(workspaceId)
@@ -1166,7 +1174,16 @@ class Workspaces {
       case DSULType.DSULIndex:
         await this.updateWorkspace(workspace.id!, {
           ...content,
-          description: `${content.description || ''} (IMPORT)`,
+          description:
+            typeof content.description === 'object'
+              ? Object.entries(content.description).reduce(
+                  (description, [lang, text]) => ({
+                    ...description,
+                    [lang]: `${text || ''} (IMPORT)`,
+                  }),
+                  {}
+                )
+              : `${content.description || ''} (IMPORT)`,
           labels: [
             ...new Set([
               ...(workspace.labels || []),
@@ -1301,6 +1318,7 @@ class Workspaces {
           publishedApps.push(publishApp);
         }
       } catch (err) {
+        console.error(err);
         allErrors.push({
           msg: 'Some error occured while importing a workspace archive',
           fromWorkspaceId,
