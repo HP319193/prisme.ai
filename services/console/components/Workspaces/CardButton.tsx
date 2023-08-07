@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { FC, forwardRef, ReactNode } from 'react';
+import { FC, forwardRef, HTMLAttributes, ReactNode } from 'react';
 
-export interface CardButtonProps {
+export interface CardButtonProps extends HTMLAttributes<HTMLDivElement> {
   onClick?: () => void;
   href?: string;
   disabled?: boolean;

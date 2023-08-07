@@ -1,4 +1,4 @@
-import { Input, Layout, Loading, notification } from '@prisme.ai/design-system';
+import { Input, Layout, Loading } from '@prisme.ai/design-system';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -44,8 +44,11 @@ export const WorkspacesView = () => {
     createWorkspace,
     duplicateWorkspace,
     duplicating,
+    importArchive,
+    importing,
   } = useWorkspaces();
   const { trackEvent } = useTracking();
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     fetchWorkspaces();
@@ -101,6 +104,34 @@ export const WorkspacesView = () => {
     },
     [duplicateWorkspace, push, trackEvent]
   );
+
+  const handleImportArchive = useCallback(async (file: File) => {
+    const workspace = await importArchive(file);
+    if (!workspace) return;
+    push(`/workspaces/${workspace.id}`);
+  }, []);
+
+  const handlePickArchive = useCallback(async () => {
+    trackEvent({
+      name: 'Import Archive',
+      category: 'Workspaces',
+      action: 'click',
+    });
+    const filePickr = document.createElement('input');
+    filePickr.setAttribute('type', 'file');
+    filePickr.setAttribute('accept', '.zip');
+    document.body.appendChild(filePickr);
+    filePickr.addEventListener('change', async (e: any) => {
+      filePickr.parentNode?.removeChild(filePickr);
+      const { files } = e.target as HTMLInputElement;
+      if (!files) return;
+      handleImportArchive(files[0]);
+    });
+    filePickr.addEventListener('cancel', () => {
+      filePickr.parentNode?.removeChild(filePickr);
+    });
+    filePickr.click();
+  }, [importArchive, push, trackEvent]);
 
   const [suggestions, setSuggestions] = useState<Workspace[]>([]);
   useEffect(() => {
@@ -210,8 +241,31 @@ export const WorkspacesView = () => {
               <CardButton
                 onClick={handleCreateWorkspace}
                 disabled={creating}
-                className="p-6 flex border-accent border-dashed bg-ultra-light-accent items-center !justify-start onboarding-step-3"
+                className={`${dragging ? 'prout' : 'lol'}
+                p-6 flex
+                ${dragging ? '' : 'border-accent border-dashed'}
+                ${dragging ? '!outline-accent !outline-dashed !outline-3' : ''}
+                bg-ultra-light-accent items-center !justify-start
+                onboarding-step-3`}
                 ref={ref}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setDragging(true);
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setDragging(false);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setDragging(false);
+                  const file = e.dataTransfer.files[0];
+                  if (file.type !== 'application/zip') return;
+                  handleImportArchive(e.dataTransfer.files[0]);
+                }}
               >
                 <span className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center">
                   {creating ? (
@@ -225,6 +279,15 @@ export const WorkspacesView = () => {
                     context: workspaces.length === 0 ? 'first' : '',
                   })}
                 </span>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <WorkspaceMenu
+                    className="absolute top-2 right-2 invisible group-hover:visible"
+                    onCreate={handleCreateWorkspace}
+                    creating={creating}
+                    onImport={handlePickArchive}
+                    importing={importing}
+                  />
+                </div>
               </CardButton>
               <FadeScroll
                 className="flex-1 pb-4 -mb-4"
@@ -247,6 +310,7 @@ export const WorkspacesView = () => {
                           workspace.id,
                           'suggestion'
                         )}
+                        duplicating={duplicating.has(workspace.id)}
                       />
                     </WorkspaceCardButton>
                   </div>

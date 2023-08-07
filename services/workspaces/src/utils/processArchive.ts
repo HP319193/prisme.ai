@@ -35,3 +35,11 @@ export async function processArchive(
     });
   });
 }
+
+export async function getArchiveEntries(archive: Buffer) {
+  let entries: { filename: string; stream: stream.Readable }[] = [];
+  await processArchive(archive, (filename, stream) => {
+    entries.push({ filename, stream });
+  });
+  return entries;
+}

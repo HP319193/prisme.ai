@@ -7,9 +7,10 @@ export const Link = ({
   href,
   children,
   ...props
-}: { href: string; children: ReactElement } & HTMLAttributes<
-  HTMLAnchorElement
->) => {
+}: {
+  href: string;
+  children: ReactElement;
+} & HTMLAttributes<HTMLAnchorElement>) => {
   const [isPreview, setIsPreview] = useState(false);
   const { asPath } = useRouter();
   const setPreview = useCallback(() => {
@@ -22,11 +23,12 @@ export const Link = ({
   }${href || ''}`;
 
   const [, lang, url] = fullHref.match(/^\/?(\w{2})\/(.*$)/) || [, , fullHref];
-
+  const { class: _className, className = _className, ...aProps } = props as any;
   return (
     <NextLink href={url} locale={lang}>
       <a
-        {...props}
+        {...aProps}
+        className={className}
         onClick={(e) => {
           props.onClick && props.onClick(e);
           if (!isPreview) return;

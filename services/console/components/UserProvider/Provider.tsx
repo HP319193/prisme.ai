@@ -159,6 +159,28 @@ export const UserProvider: FC<UserProviderProps> = ({
     [push, route]
   );
 
+  // 1. Initialize authentication flow
+  const initAuthentication: UserContext['initAuthentication'] = useCallback(
+    async (redirect: boolean = true) => {
+      const redirectOnceAuthenticated = window.location.href.includes('/signin')
+        ? new URL('/', window.location.href).toString()
+        : window.location.href;
+      Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
+      // redirect_uri must be on the same domain we want the session on (i.e current one)
+      const redirectionUrl = new URL('/signin', window.location.href);
+      const { url, codeVerifier, clientId } = await api.getAuthorizationURL(
+        redirectionUrl.toString()
+      );
+      Storage.set('code-verifier', codeVerifier);
+      Storage.set('client-id', clientId);
+      if (redirect || typeof redirect === 'undefined') {
+        window.location.assign(url);
+      }
+      return url;
+    },
+    []
+  );
+
   const fetchMe = useCallback(async () => {
     setLoading(true);
     setError(undefined);
@@ -215,29 +237,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       signout(false);
       setLoading(false);
     }
-  }, [anonymous, push, redirectTo, route, signout]);
-
-  // 1. Initialize authentication flow
-  const initAuthentication: UserContext['initAuthentication'] = useCallback(
-    async (redirect: boolean = true) => {
-      const redirectOnceAuthenticated = window.location.href.includes('/signin')
-        ? new URL('/', window.location.href).toString()
-        : window.location.href;
-      Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
-      // redirect_uri must be on the same domain we want the session on (i.e current one)
-      const redirectionUrl = new URL('/signin', window.location.href);
-      const { url, codeVerifier, clientId } = await api.getAuthorizationURL(
-        redirectionUrl.toString()
-      );
-      Storage.set('code-verifier', codeVerifier);
-      Storage.set('client-id', clientId);
-      if (redirect || typeof redirect === 'undefined') {
-        window.location.assign(url);
-      }
-      return url;
-    },
-    []
-  );
+  }, [anonymous, initAuthentication, push, redirectTo, route, signout]);
 
   // 2. Send login form
   const signin: UserContext['signin'] = useCallback(
@@ -286,41 +286,44 @@ export const UserProvider: FC<UserProviderProps> = ({
         return false;
       }
     },
-    [push]
+    [push, signout]
   );
 
   // 3. Final step : exchange our authorization code with an access token
   const completeAuthentication: UserContext['completeAuthentication'] =
-    useCallback(async (authorizationCode: string) => {
-      setLoading(true);
-      setError(undefined);
-      setSuccess(undefined);
-      try {
-        const codeVerifier = Storage.get('code-verifier');
-        const clientId = Storage.get('client-id');
-        const redirectionUrl = new URL('/signin', window.location.href);
-        api.overwriteClientId = clientId;
-        const { access_token } = await api.getToken(
-          authorizationCode,
-          codeVerifier,
-          redirectionUrl.toString()
-        );
-        api.token = access_token;
-        Storage.set('access-token', access_token);
-        await fetchMe();
-      } catch (e) {
-        const { error } = e as ApiError;
-        if (error === 'invalid_grant') {
-          // Corrupted session cookies or invalid interaction id cause 500, clean cookies & restart from fresh state
-          return signout();
+    useCallback(
+      async (authorizationCode: string) => {
+        setLoading(true);
+        setError(undefined);
+        setSuccess(undefined);
+        try {
+          const codeVerifier = Storage.get('code-verifier');
+          const clientId = Storage.get('client-id');
+          const redirectionUrl = new URL('/signin', window.location.href);
+          api.overwriteClientId = clientId;
+          const { access_token } = await api.getToken(
+            authorizationCode,
+            codeVerifier,
+            redirectionUrl.toString()
+          );
+          api.token = access_token;
+          Storage.set('access-token', access_token);
+          await fetchMe();
+        } catch (e) {
+          const { error } = e as ApiError;
+          if (error === 'invalid_grant') {
+            // Corrupted session cookies or invalid interaction id cause 500, clean cookies & restart from fresh state
+            return signout();
+          }
+          api.token = null;
+          setUser(null);
+          setLoading(false);
+          setError(e as ApiError);
+          return;
         }
-        api.token = null;
-        setUser(null);
-        setLoading(false);
-        setError(e as ApiError);
-        return;
-      }
-    }, []);
+      },
+      [fetchMe, signout]
+    );
 
   const signup: UserContext['signup'] = useCallback(
     async (email, password, firstName, lastName, language) => {
@@ -339,12 +342,16 @@ export const UserProvider: FC<UserProviderProps> = ({
         setLoading(false);
         setTimeout(() => {
           setSuccess(undefined);
-          push(
-            `/validate?${new URLSearchParams({
-              email: email,
-              sent: 'true',
-            }).toString()}`
-          );
+          if (user.status === 'pending') {
+            push(
+              `/validate?${new URLSearchParams({
+                email: email,
+                sent: 'true',
+              }).toString()}`
+            );
+          } else {
+            initAuthentication();
+          }
         }, 2000);
         return user;
       } catch (e) {
@@ -360,7 +367,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         return null;
       }
     },
-    [signin, push]
+    [push, initAuthentication]
   );
 
   const initialFetch = useRef(fetchMe);

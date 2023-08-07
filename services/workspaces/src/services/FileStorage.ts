@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import {
   UPLOADS_STORAGE_S3_LIKE_BASE_URL,
   UPLOADS_FILESYSTEM_DOWNLOAD_URL,
+  UPLOADS_STORAGE_AZURE_BLOB_BASE_URL,
 } from '../../config';
 import { logger } from '../logger';
 import { AccessManager, Role, SubjectType } from '../permissions';
@@ -38,6 +39,9 @@ class FileStorage {
     }
     if (storageType === DriverType.S3_LIKE) {
       return `${UPLOADS_STORAGE_S3_LIKE_BASE_URL}/${path}`;
+    }
+    if (storageType === DriverType.AZURE_BLOB) {
+      return `${UPLOADS_STORAGE_AZURE_BLOB_BASE_URL}/${path}`;
     }
     throw new Error(`Unsupported upload storage type '${storageType}'`);
   }

@@ -360,7 +360,7 @@ export class Permissions<SubjectType extends string> {
                 permissionsFromParentSubjectRole?.policies || {}
               )
                 .filter(([, enabled]) => enabled)
-                .map(([policy]) => policy),
+                .map(([policy]) => policy as any),
               conditions: {
                 id: subject.id!,
               },

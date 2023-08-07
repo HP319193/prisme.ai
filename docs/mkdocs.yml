@@ -41,6 +41,7 @@ nav:
   - i18n.getstarted:
       - i18n.index: getstarted/index.md
       - i18n.configuration: getstarted/configuration.md
+      - i18n.testing: getstarted/operational-test.md
   - Workspaces:
       - i18n.index: workspaces/index.md
       - Apps: workspaces/apps.md

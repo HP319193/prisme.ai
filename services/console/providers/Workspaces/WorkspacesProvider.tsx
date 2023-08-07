@@ -21,6 +21,8 @@ export interface WorkspacesContext {
     version?: string
   ) => Promise<Workspace | null>;
   duplicating: Set<string>;
+  importArchive: (archive: File) => Promise<Prismeai.DSULReadOnly | undefined>;
+  importing: boolean;
   refreshWorkspace: (workspace: Prismeai.DSUL, deleted?: true) => void;
 }
 
@@ -41,29 +43,29 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     []
   );
   const [loading, setLoading] = useState<WorkspacesContext['loading']>(true);
-  const [creating, setCreating] = useState<WorkspacesContext['creating']>(
-    false
-  );
+  const [creating, setCreating] =
+    useState<WorkspacesContext['creating']>(false);
   const [duplicating, setDuplicating] = useState<
     WorkspacesContext['duplicating']
   >(new Set());
 
   const fetching = useRef(false);
-  const fetchWorkspaces: WorkspacesContext['fetchWorkspaces'] = useCallback(async () => {
-    if (fetching.current) return;
-    fetching.current = true;
-    const workspaces = await api.getWorkspaces();
-    setWorkspaces(
-      workspaces
-        .filter((cur) => !(cur.labels || []).includes('suggestions'))
-        .map(({ createdAt, updatedAt, ...workspace }) => ({
-          ...workspace,
-          createdAt: new Date(createdAt),
-          updatedAt: new Date(updatedAt),
-        }))
-    );
-    fetching.current = false;
-  }, [fetching]);
+  const fetchWorkspaces: WorkspacesContext['fetchWorkspaces'] =
+    useCallback(async () => {
+      if (fetching.current) return;
+      fetching.current = true;
+      const workspaces = await api.getWorkspaces();
+      setWorkspaces(
+        workspaces
+          .filter((cur) => !(cur.labels || []).includes('suggestions'))
+          .map(({ createdAt, updatedAt, ...workspace }) => ({
+            ...workspace,
+            createdAt: new Date(createdAt),
+            updatedAt: new Date(updatedAt),
+          }))
+      );
+      fetching.current = false;
+    }, [fetching]);
 
   const createWorkspace: WorkspacesContext['createWorkspace'] = useCallback(
     async (name: string) => {
@@ -83,8 +85,8 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     []
   );
 
-  const duplicateWorkspace: WorkspacesContext['duplicateWorkspace'] = useCallback(
-    async (id, version = 'current') => {
+  const duplicateWorkspace: WorkspacesContext['duplicateWorkspace'] =
+    useCallback(async (id, version = 'current') => {
       setDuplicating((prev) => new Set([...Array.from(prev), id]));
       const newWorkspace = await api.duplicateWorkspace({ id });
       if (newWorkspace) {
@@ -98,9 +100,15 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
         (prev) => new Set(Array.from(prev).filter((i) => id !== i))
       );
       return newWorkspace;
-    },
-    []
-  );
+    }, []);
+
+  const [importing, setImporting] = useState(false);
+  const importArchive = useCallback(async (file: File) => {
+    setImporting(true);
+    const { workspace } = await api.importArchive(file);
+    setImporting(false);
+    return workspace;
+  }, []);
 
   const refreshWorkspace: WorkspacesContext['refreshWorkspace'] = useCallback(
     (workspace, deleted) => {
@@ -142,6 +150,8 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
         creating,
         duplicateWorkspace,
         duplicating,
+        importArchive,
+        importing,
         refreshWorkspace,
       }}
     >

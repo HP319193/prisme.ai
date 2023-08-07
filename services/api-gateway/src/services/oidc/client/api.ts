@@ -2,21 +2,31 @@ import { ClientMetadata } from 'oidc-provider';
 import fetch from 'node-fetch';
 import { oidcCfg } from '../../../config';
 import { ConfigurationError } from '../../../types/errors';
+import { URL } from 'url';
 
 let openidConfiguration: { registration_endpoint: string };
 export async function initClient() {
-  try {
-    openidConfiguration = await fetchProvider(oidcCfg.OIDC_WELL_KNOWN_URL, {
-      method: 'GET',
-    });
-  } catch (err) {
-    throw new ConfigurationError(
-      `Could not fetch OIDC_WELL_KNOWN_URL endpoint, required for OAuth2 clients synchronization.`,
-      {
-        err,
-        msg: `Could not fetch OIDC_WELL_KNOWN_URL endpoint, required for OAuth2 clients synchronization.`,
-      }
-    );
+  if (oidcCfg.OIDC_WELL_KNOWN_URL) {
+    try {
+      openidConfiguration = await fetchProvider(oidcCfg.OIDC_WELL_KNOWN_URL, {
+        method: 'GET',
+      });
+    } catch (err) {
+      throw new ConfigurationError(
+        `Could not fetch OIDC_WELL_KNOWN_URL endpoint, required for OAuth2 clients synchronization.`,
+        {
+          err,
+          msg: `Could not fetch OIDC_WELL_KNOWN_URL endpoint, required for OAuth2 clients synchronization.`,
+        }
+      );
+    }
+  } else {
+    openidConfiguration = {
+      registration_endpoint: new URL(
+        '/oidc/reg',
+        oidcCfg.PROVIDER_URL
+      ).toString(),
+    };
   }
 }
 

@@ -18,6 +18,7 @@ import { ResourceServer } from '../../config/oidc';
 
 export async function init(app: Application) {
   app.use(cookieParser());
+  initPassportStrategies(services.identity());
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     passport.authenticate(
@@ -90,6 +91,48 @@ export async function init(app: Application) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  passport.serializeUser(function (user, done) {
+    done(null, (<Prismeai.User>user).id);
+  });
+}
+
+async function initPassportStrategies(
+  users: ReturnType<typeof services.identity>
+) {
+  async function deserializeUser(
+    id: string,
+    done: (err: Error | undefined, user: Prismeai.User | null) => void
+  ) {
+    try {
+      const users = services.identity();
+      const user = await users.get(<string>id);
+      if (user.status && user.status !== UserStatus.Validated) {
+        done(undefined, null);
+        return;
+      }
+      done(undefined, user);
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        done(undefined, null);
+        return;
+      }
+      done(err as Error, null);
+    }
+  }
+  passport.deserializeUser(deserializeUser);
+
+  passport.use(
+    'anonymous',
+    new CustomStrategy(async function (req, done) {
+      const savedUser = await users.anonymousLogin();
+      try {
+        done(null, savedUser);
+      } catch (err) {
+        done(err, null);
+      }
+    })
+  );
+
   passport.use(
     new JWTStrategy(
       {
@@ -114,49 +157,5 @@ export async function init(app: Application) {
         deserializeUser(token.sub, done as any);
       }
     )
-  );
-
-  passport.serializeUser(function (user, done) {
-    done(null, (<Prismeai.User>user).id);
-  });
-
-  async function deserializeUser(
-    id: string,
-    done: (err: Error | undefined, user: Prismeai.User | null) => void
-  ) {
-    try {
-      const users = services.identity();
-      const user = await users.get(<string>id);
-      if (user.status && user.status !== UserStatus.Validated) {
-        done(undefined, null);
-        return;
-      }
-      done(undefined, user);
-    } catch (err) {
-      if (err instanceof NotFoundError) {
-        done(undefined, null);
-        return;
-      }
-      done(err as Error, null);
-    }
-  }
-  passport.deserializeUser(deserializeUser);
-
-  initPassportStrategies(services.identity());
-}
-
-async function initPassportStrategies(
-  users: ReturnType<typeof services.identity>
-) {
-  passport.use(
-    'anonymous',
-    new CustomStrategy(async function (req, done) {
-      const savedUser = await users.anonymousLogin();
-      try {
-        done(null, savedUser);
-      } catch (err) {
-        done(err, null);
-      }
-    })
   );
 }

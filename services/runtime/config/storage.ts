@@ -3,6 +3,7 @@ import { S3Options } from '../src/storage/drivers/s3';
 import { DriverType } from '../src/storage/types';
 import { AccessManagerOptions } from '@prisme.ai/permissions';
 import { StorageOptions } from '../src/storage';
+import { AzureBlobOptions } from '../src/storage/drivers/azureblob';
 
 export const WORKSPACES_STORAGE_TYPE: DriverType =
   (process.env.WORKSPACES_STORAGE_TYPE as DriverType) || DriverType.FILESYSTEM;
@@ -48,9 +49,24 @@ export const WORKSPACES_STORAGE_S3_OPTIONS: S3Options = {
   region: WORKSPACES_STORAGE_S3_LIKE_REGION,
 };
 
+/*
+ * Azure Blob configuration
+ */
+export const WORKSPACES_STORAGE_AZURE_BLOB_CONTAINER =
+  process.env.WORKSPACES_STORAGE_AZURE_BLOB_CONTAINER || 'models';
+
+export const WORKSPACES_STORAGE_AZURE_BLOB_CONNECTION_STRING =
+  process.env.WORKSPACES_STORAGE_AZURE_BLOB_CONNECTION_STRING!!;
+
+export const WORKSPACES_STORAGE_AZURE_BLOB_OPTIONS: AzureBlobOptions = {
+  container: WORKSPACES_STORAGE_AZURE_BLOB_CONTAINER,
+  connectionString: WORKSPACES_STORAGE_AZURE_BLOB_CONNECTION_STRING,
+};
+
 export const WORKSPACES_STORAGE_OPTIONS: StorageOptions = {
   [DriverType.FILESYSTEM]: WORKSPACES_STORAGE_FILESYSTEM_OPTIONS,
   [DriverType.S3_LIKE]: WORKSPACES_STORAGE_S3_OPTIONS,
+  [DriverType.AZURE_BLOB]: WORKSPACES_STORAGE_AZURE_BLOB_OPTIONS,
 };
 
 /**

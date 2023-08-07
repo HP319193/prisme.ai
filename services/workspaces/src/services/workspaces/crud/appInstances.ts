@@ -152,7 +152,7 @@ class AppInstances {
       workspaceId
     );
 
-    // For legacy migration,, do not check that app exists as it might not be migrated yet
+    // In replace mode, do not check that app exists as it might not be migrated yet
     if (!replace) {
       await this.apps.exists(appInstance.appSlug, appInstance.appVersion);
     }
@@ -171,18 +171,15 @@ class AppInstances {
       }
     );
 
-    // For legacy migration, do not emit this event as it might reset existing apps config
-    if (!replace) {
-      this.broker.send<Prismeai.InstalledAppInstance['payload']>(
-        EventType.InstalledApp,
-        { appInstance, slug: appInstance.slug, events },
-        {
-          appSlug: appInstance.appSlug,
-          appInstanceFullSlug: appInstance.slug,
-          workspaceId,
-        }
-      );
-    }
+    this.broker.send<Prismeai.InstalledAppInstance['payload']>(
+      EventType.InstalledApp,
+      { appInstance, slug: appInstance.slug, events },
+      {
+        appSlug: appInstance.appSlug,
+        appInstanceFullSlug: appInstance.slug,
+        workspaceId,
+      }
+    );
     return appInstance;
   };
 

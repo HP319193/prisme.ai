@@ -20,7 +20,7 @@ In order to deploy Prismeai to a production ready environment, more robust tools
 
 **Hardware :**  
 
-* Minimum disk space for docker images :  15GB+
+* Minimum disk space for docker images :  20GB+
 * Minimum disk space for volumes : 5GB+, ideally 50GB
 * Recommended specs : 4 vCPU / 16GB RAM
 * Wildcard DNS pointing to the Docker host machine
@@ -47,7 +47,7 @@ Where either `studio.local.prisme.ai` DNS or 100.100.100.100 IP point to the hos
 
   * **CONSOLE_URL** : Public URL serving the studio itself.  
 On a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** does, which could even be the same parent domain as **PAGES_HOST** since both services (Pages & Studio) will be served through different ports anyway.  
-  * **API_URL** : Public URL serving the API.  
+  * **API_URL** : Public URL serving the API, ended with /v2.  
 Again, on a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** and **CONSOLE_URL** do, served through a third port.    
 
 

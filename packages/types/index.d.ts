@@ -1476,6 +1476,15 @@ declare namespace Prismeai {
                     [name: string]: string;
                 };
                 /**
+                 * Only for requests towards prisme.ai API. Grants additional permissions using api keys
+                 */
+                prismeaiApiKey?: {
+                    /**
+                     * Use one of the DSUL Security defined api keys, referred by its name.
+                     */
+                    name?: string;
+                };
+                /**
                  * Object defining querystring parameters
                  */
                 query?: {
@@ -1567,6 +1576,15 @@ declare namespace Prismeai {
             method?: "get" | "post" | "put" | "patch" | "delete";
             headers?: {
                 [name: string]: string;
+            };
+            /**
+             * Only for requests towards prisme.ai API. Grants additional permissions using api keys
+             */
+            prismeaiApiKey?: {
+                /**
+                 * Use one of the DSUL Security defined api keys, referred by its name.
+                 */
+                name?: string;
             };
             /**
              * Object defining querystring parameters
@@ -2723,6 +2741,7 @@ declare namespace PrismeaiAPI {
             workspaceId: Parameters.WorkspaceId;
         }
         export interface RequestBody {
+            name: string;
             rules: Prismeai.PermissionRule[];
         }
         namespace Responses {
@@ -2978,6 +2997,26 @@ declare namespace PrismeaiAPI {
                 };
             }
             export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace ExportMultipleWorkspaces {
+        export interface RequestBody {
+            workspaces?: {
+                query?: {
+                    [key: string]: any;
+                };
+                pagination?: {
+                    limit?: number;
+                    page?: number;
+                };
+            };
+            includeApps?: boolean;
+        }
+        namespace Responses {
+            export type $200 = string; // binary
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
@@ -3346,11 +3385,14 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export interface $200 {
+                createdWorkspaceIds?: string[];
+                updatedWorkspaceIds?: string[];
                 imported: string[];
                 errors?: {
                     [name: string]: any;
                 }[];
-                workspace: Prismeai.DSULReadOnly;
+                workspace?: Prismeai.DSULReadOnly;
+                publishedApps?: Prismeai.App[];
             }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
@@ -3367,11 +3409,14 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export interface $200 {
+                createdWorkspaceIds?: string[];
+                updatedWorkspaceIds?: string[];
                 imported: string[];
                 errors?: {
                     [name: string]: any;
                 }[];
-                workspace: Prismeai.DSULReadOnly;
+                workspace?: Prismeai.DSULReadOnly;
+                publishedApps?: Prismeai.App[];
             }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
@@ -3793,6 +3838,7 @@ declare namespace PrismeaiAPI {
             apiKey: Parameters.ApiKey;
         }
         export interface RequestBody {
+            name: string;
             rules: Prismeai.PermissionRule[];
         }
         namespace Responses {

@@ -130,8 +130,8 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>OIDC_WELL_KNOWN_URL</td>
     <td>api-gateway</td>
-    <td>OIDC provider configuration discovery URL</td>
-    <td>OIDC_PROVIDER_URL followed by /oidc/.well-known/openid-configuration</td>
+    <td>OIDC provider configuration discovery URL (only if it's an external provider)</td>
+    <td></td>
   </tr>    
   <tr>
     <td>SESSION_COOKIES_MAX_AGE</td>
@@ -209,6 +209,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Password validation regexp</td>
     <td>.{8,32}</td>
   </tr>    
+  <tr>
+    <td>EMAIL_VALIDATION_ENABLED</td>
+    <td>api-gateway</td>
+    <td>Enable email validation on signup</td>
+    <td>true</td>    
+  </tr>
 
   <tr>
     <td>WORKSPACES_API_URL</td>
@@ -349,7 +355,7 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>WORKSPACES_STORAGE_TYPE</td>
     <td>runtime & workspaces</td>
-    <td>Workspaces storage driver (FILESYSTEM | S3_LIKE). Must be the same instance for both runtime & workspaces.</td>
+    <td>Workspaces storage driver (FILESYSTEM | S3_LIKE | AZURE_BLOB). Must be the same instance for both runtime & workspaces.</td>
     <td>FILESYSTEM</td>
   </tr>     
   <tr>
@@ -357,7 +363,14 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>runtime & workspaces</td>
     <td>Workspaces filesystem storage : directory path</td>
     <td>../../data/models/</td>
-  </tr>       
+  </tr>      
+  <tr>
+    <td>UPLOADS_STORAGE_FILESYSTEM_DIRPATH</td>
+    <td>runtime & workspaces</td>
+    <td>Uploads filesystem storage : directory path</td>
+    <td>../../data/models/</td>
+  </tr>         
+
   <tr>
     <td>WORKSPACES_STORAGE_S3_LIKE_ACCESS_KEY</td>
     <td>runtime & workspaces</td>
@@ -392,6 +405,76 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>WORKSPACES_STORAGE_S3_LIKE_REGION</td>
     <td>runtime & workspaces</td>
     <td>Workspaces s3 like storage : region</td>
+    <td></td>
+  </tr>             
+
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_ACCESS_KEY</td>
+    <td>runtime & workspaces</td>
+    <td>Uploads s3 like storage : access key</td>
+    <td></td>
+  </tr>           
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_SECRET_KEY</td>
+    <td>runtime & workspaces</td>
+    <td>Uploads s3 like storage : secret key</td>
+    <td></td>
+  </tr>     
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_BASE_URL</td>
+    <td>runtime & workspaces</td>
+    <td>Uploads s3 like storage : base url</td>
+    <td></td>
+  </tr>       
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_ENDPOINT</td>
+    <td>runtime & workspaces</td>
+    <td>Uploads s3 like storage : endpoint</td>
+    <td></td>
+  </tr>       
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_BUCKET_NAME</td>
+    <td>runtime & workspaces</td>
+    <td>Uploads s3 like storage : bucket name</td>
+    <td></td>
+  </tr>       
+  <tr>
+    <td>UPLOADS_STORAGE_S3_LIKE_REGION</td>
+    <td>runtime & workspaces</td>
+    <td>Uploads s3 like storage : region</td>
+    <td></td>
+  </tr>               
+
+  <tr>
+    <td>WORKSPACES_STORAGE_AZURE_BLOB_CONTAINER</td>
+    <td>runtime & workspaces</td>
+    <td>Workspaces Azure Blob container name</td>
+    <td>models</td>
+  </tr>         
+  <tr>
+    <td>WORKSPACES_STORAGE_AZURE_BLOB_CONNECTION_STRING</td>
+    <td>runtime & workspaces</td>
+    <td>Workspaces Azure Blob connection string</td>
+    <td>models</td>
+  </tr>           
+
+
+  <tr>
+    <td>UPLOADS_STORAGE_AZURE_BLOB_CONTAINER</td>
+    <td>runtime & workspaces</td>
+    <td>Uploads Azure Blob container name</td>
+    <td>models</td>
+  </tr>         
+  <tr>
+    <td>UPLOADS_STORAGE_AZURE_BLOB_CONNECTION_STRING</td>
+    <td>runtime & workspaces</td>
+    <td>Uploads Azure Blob connection string</td>
+    <td></td>
+  </tr>           
+  <tr>
+    <td>UPLOADS_STORAGE_AZURE_BLOB_BASE_URL</td>
+    <td>runtime & workspaces</td>
+    <td>Base public download url for uploads azure blob container</td>
     <td></td>
   </tr>             
 

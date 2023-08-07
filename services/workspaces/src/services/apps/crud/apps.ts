@@ -347,6 +347,46 @@ class Apps {
     );
     return { id: appSlug };
   };
+
+  sortAppsDependencyChain = async (apps: Prismeai.App[]) => {
+    const deps: Record<string, string[]> = (
+      await Promise.all(
+        apps.map(async (cur) => {
+          const index = await this.storage.folderIndex({
+            dsulType: DSULType.ImportsIndex,
+            workspaceId: cur.workspaceId,
+          });
+          return {
+            slug: cur.slug,
+            dependsOn: index
+              ? [
+                  ...new Array(
+                    ...Object.values(index).map((cur) => cur.appSlug)
+                  ),
+                ]
+              : [],
+          };
+        })
+      )
+    ).reduce(
+      (deps, { slug, dependsOn }) => ({
+        ...deps,
+        [slug]: dependsOn,
+      }),
+      {}
+    );
+
+    return apps.sort((a, b) => {
+      const aDependsOn = deps[a.slug] || [];
+      const bDependsOn = deps[b.slug] || [];
+      if (aDependsOn.includes(b.slug)) {
+        return 1;
+      } else if (bDependsOn.includes(a.slug)) {
+        return -1;
+      }
+      return aDependsOn.length > bDependsOn.length ? 1 : -1;
+    });
+  };
 }
 
 export default Apps;

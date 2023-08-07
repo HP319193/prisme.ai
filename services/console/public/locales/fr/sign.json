@@ -30,7 +30,7 @@
     "cgu": "En continuant vous acceptez les <a>conditions générales de service</a>.",
     "submit": "Démarrer",
     "error": "Une erreur est survenue, veuillez contacter le support",
-    "error_AuthenticationError": "Un compte existe déjà pour cet email, mais le mot de passe est invalide.",
+    "error_AlreadyUsed": "Un compte existe déjà pour cet email !",
     "error_InvalidEmail": "L'email est invalide.",
     "error_InvalidPassword": "Le mot de passe est invalide : celui-ci doit avoir au moins 8 caractère.",
     "error_ValidateEmailError": "Veuillez vérifier votre email",

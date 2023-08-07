@@ -9,7 +9,7 @@ import {
   Role,
   SubjectType,
 } from '../../../permissions';
-import { CustomRole, Rule, Rules } from '@prisme.ai/permissions';
+import { CustomRole, Rule } from '@prisme.ai/permissions';
 import { InvalidSecurity } from '../../../errors';
 import { getObjectsDifferences } from '../../../utils/getObjectsDifferences';
 import { logger } from '../../../logger';
@@ -154,23 +154,26 @@ class Security {
     authorizations: Prismeai.WorkspaceAuthorizations
   ) => {
     const { editor: _, owner: __, ...roles } = authorizations?.roles || {};
-    const initRoles = Object.keys(roles).reduce<
+    const initRoles = Object.entries(roles).reduce<
       Record<string, CustomRole<SubjectType>>
-    >(
-      (initRoles, roleName) => ({
+    >((initRoles, [roleName, role]) => {
+      // Api Key value cannot be manually set
+      if (role?.auth?.apiKey?.value) {
+        delete role.auth.apiKey.value;
+      }
+      return {
         ...initRoles,
         [roleName]: {
           id: this.getRoleId(workspaceId, roleName),
-          type: 'casl',
+          type: role?.auth?.apiKey ? 'apiKey' : 'role',
           name: roleName,
           subjectType: SubjectType.Workspace,
           subjectId: workspaceId,
           rules: [],
-          casl: [],
+          auth: role.auth,
         },
-      }),
-      {}
-    );
+      };
+    }, {});
 
     const builtRoles = (authorizations?.rules || []).reduce<
       Record<string, CustomRole<SubjectType>>
@@ -195,10 +198,11 @@ class Security {
           );
         }
 
+        // Build native roles default, owner & editor only if explicitly used by rules
         if (!(roleName in builtRoles)) {
           builtRoles[roleName] = {
             id: this.getRoleId(workspaceId, roleName),
-            type: 'casl',
+            type: 'role',
             name: roleName,
             subjectType: SubjectType.Workspace,
             subjectId: workspaceId,
@@ -232,19 +236,27 @@ class Security {
     const builtRoles = this.buildRoles(workspaceId, authorizations);
 
     // Compare new roles specs with current ones
-    const currentRoles = await this.accessManager.findRoles({
-      subjectType: SubjectType.Workspace,
-      subjectId: workspaceId,
-    });
-    const currentRolesMapping = currentRoles
-      .filter((cur) => cur.type === 'casl')
-      .reduce<Record<string, CustomRole<SubjectType>>>(
-        (mapping, { _id: _, __v: __, ...role }: any) => ({
-          ...mapping,
-          [role.id]: role,
-        }),
-        {}
-      );
+    const currentRoles = (
+      await this.accessManager.findRoles({
+        subjectType: SubjectType.Workspace,
+        subjectId: workspaceId,
+      })
+    ).filter((cur) => cur.id.startsWith(this.getRoleId(workspaceId, '')));
+    const currentRolesMapping = currentRoles.reduce<
+      Record<string, CustomRole<SubjectType>>
+    >((mapping, { _id: _, __v: __, auth, ...role }: any) => {
+      // Remove apiKeys value from the serialized role as they should not live in DSUL
+      if (auth?.apiKey?.value) {
+        const { value, ...apiKey } = auth.apiKey;
+        role.auth = { ...auth, apiKey };
+      } else if (auth) {
+        role.auth = auth;
+      }
+      return {
+        ...mapping,
+        [role.id]: role,
+      };
+    }, {});
     const updatedRolesMapping = builtRoles.reduce<
       Record<string, CustomRole<SubjectType>>
     >(
@@ -264,7 +276,22 @@ class Security {
         ([_, diff]: any) =>
           diff.__type === 'updated' || diff.__type === 'created'
       )
-      .map(([id]: any) => updatedRolesMapping[id]);
+      .map(([id]: any) => {
+        // Re-inject apiKeys value, if any
+        if (updatedRolesMapping[id]?.auth?.apiKey) {
+          const previousApiKey = currentRoles.find((cur) => cur.id === id);
+          if (previousApiKey && previousApiKey?.auth?.apiKey?.value) {
+            updatedRolesMapping[id].auth = {
+              ...updatedRolesMapping[id].auth,
+              apiKey: {
+                ...updatedRolesMapping[id].auth?.apiKey,
+                value: previousApiKey?.auth?.apiKey?.value,
+              },
+            };
+          }
+        }
+        return updatedRolesMapping[id];
+      });
     const rolesToDelete = Object.entries(diffs.data)
       .filter(([_, diff]: any) => diff.__type === 'deleted')
       .map(([id]: any) => currentRolesMapping[id]);
@@ -348,10 +375,14 @@ class Security {
       [Role.Editor]: {},
       ...security?.authorizations?.roles,
     };
-    return Object.entries(roles).map(([name, role]) => ({
-      name,
-      description: (<any>role)?.description,
-    }));
+    return Object.entries(roles)
+      .filter(
+        ([_, role]: [string, Prismeai.WorkspaceRole]) => !role?.auth?.apiKey
+      )
+      .map(([name, role]) => ({
+        name,
+        description: (<any>role)?.description,
+      }));
   };
 
   /**
@@ -366,14 +397,17 @@ class Security {
     return apiKeys;
   };
 
-  createApiKey = async (workspaceId: string, rules: Rules) => {
+  createApiKey = async (
+    workspaceId: string,
+    { name, rules }: PrismeaiAPI.CreateApiKey.RequestBody
+  ) => {
     const validatedRules = rules.flatMap((rule) =>
       this.validateUserRule(workspaceId, rule)
     );
     const apiKey = await this.accessManager.createApiKey(
       SubjectType.Workspace,
       workspaceId,
-      validatedRules
+      { name, rules: validatedRules as Prismeai.PermissionRule[] }
     );
 
     this.broker.send<Prismeai.CreatedApiKey['payload']>(
@@ -384,7 +418,11 @@ class Security {
     return apiKey;
   };
 
-  updateApiKey = async (workspaceId: string, apiKey: string, rules: Rules) => {
+  updateApiKey = async (
+    workspaceId: string,
+    apiKey: string,
+    { name, rules }: PrismeaiAPI.CreateApiKey.RequestBody
+  ) => {
     const validatedRules = rules.flatMap((rule) =>
       this.validateUserRule(workspaceId, rule)
     );
@@ -392,7 +430,7 @@ class Security {
       apiKey,
       SubjectType.Workspace,
       workspaceId,
-      validatedRules
+      { name, rules: validatedRules as Prismeai.PermissionRule[] }
     );
 
     this.broker.send<Prismeai.UpdatedApiKey['payload']>(

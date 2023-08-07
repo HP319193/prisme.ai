@@ -32,9 +32,7 @@ if (!cookiesDomain) {
   );
 }
 
-const OIDC_WELL_KNOWN_URL =
-  process.env.OIDC_WELL_KNOWN_URL ||
-  new URL('/oidc/.well-known/openid-configuration', syscfg.API_URL).toString();
+const OIDC_WELL_KNOWN_URL = process.env.OIDC_WELL_KNOWN_URL;
 
 export const ResourceServer = syscfg.API_URL;
 const resourceServers = {

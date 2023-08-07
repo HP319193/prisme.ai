@@ -10,14 +10,18 @@ import { SignLayout, SignType } from '../../components/SignLayout';
 export const SignIn = () => {
   const { t } = useTranslation('sign');
   const { push, query = {} } = useRouter();
-  const { error, validateMail, success } = useUser();
+  const { error, validateMail, success, initAuthentication } = useUser();
 
   const { validationToken: token } = query;
 
   useEffect(() => {
     if (!token || typeof token !== 'string') return;
-    validateMail(token);
-  }, [token, validateMail]);
+    validateMail(token).then(() => {
+      setTimeout(() => {
+        initAuthentication();
+      }, 2000);
+    });
+  }, [initAuthentication, token, validateMail]);
 
   useEffect(() => {
     if (!error) return;
@@ -45,7 +49,7 @@ export const SignIn = () => {
 
   return (
     <SignLayout type={SignType.In} link="signup">
-      <SigninForm onSignin={signedin} provider="prismeai" />
+      {token ? null : <SigninForm onSignin={signedin} provider="prismeai" />}
     </SignLayout>
   );
 };

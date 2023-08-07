@@ -121,6 +121,7 @@ export class ContextsManager {
   private opLogs: ContextUpdateOpLog[];
   private alreadyProcessedUpdateIds: Set<string>;
   private accessManager: Required<AccessManager>;
+  private workspaceApiKeys: Record<string, string>;
 
   constructor(
     ctx: PrismeContext,
@@ -163,6 +164,7 @@ export class ContextsManager {
     this.opLogs = [];
     this.alreadyProcessedUpdateIds = new Set();
     this.accessManager = accessManager as any;
+    this.workspaceApiKeys = {};
   }
 
   async fetch(contexts?: ContextType[]) {
@@ -594,5 +596,30 @@ export class ContextsManager {
     }
     // TODO check memory usage
     this.depth++;
+  }
+
+  async getWorkspaceApiKey(name: string) {
+    if (this.workspaceApiKeys[name]) {
+      return this.workspaceApiKeys[name];
+    }
+    const roles = await this.accessManager.pullRole(
+      {
+        subjectType: SubjectType.Workspace,
+        subjectId: this.workspaceId,
+        type: 'apiKey',
+      },
+      {
+        cache: true,
+        cacheKey: `subjectType:${SubjectType.Workspace},subjectId:${this.workspaceId},type:apiKey`,
+      }
+    );
+    const apiKey = roles.find((cur) => cur.name === name);
+    if (!apiKey || !apiKey?.auth?.apiKey?.value) {
+      throw new InvalidInstructionError('No api key found', {
+        name,
+      });
+    }
+    this.workspaceApiKeys[name] = apiKey?.auth?.apiKey?.value;
+    return this.workspaceApiKeys[name];
   }
 }

@@ -227,5 +227,37 @@ This can and should be combined with [automations securing](#securing-automation
 
 ## API Keys
 In order to grant some request/user session with additional permissions not available to the authenticated user, we can create API Keys with same rules syntax as defined here, and inject it within a `x-prismeai-api-key` header.  
-See our [API Swagger documentation](/api) in order to manage workspace API Keys
+See our [API Swagger documentation](/api) in order to manage workspace API Keys.  
+
+In order to grant additional permissions to requests coming from the workspace itself (using fetch or the Prismeai API app), api keys can also be defined from the security manifest itself, like so :  
+```yaml
+authorizations:
+  roles:
+    editor: {}
+    workspace:
+      auth:
+        apiKey: {}
+  rules:
+    - role: workspace
+      action:
+        - read
+        - manage_permissions
+        - aggregate_search
+      subject:
+        - workspaces
+        - events
+        - pages
+```
+
+Here, the role **workspace** will not be visible from the share modals and its associated api key will not be readable by admins either.  
+However, we can now use this api key for more permissions in Prismeai API / fetch requests :  
+```yaml
+# This call requires "aggregate_search" action, usually restricted to admins only :  
+- Prismeai API.searchEvents:
+    query:
+      ...
+    prismeaiApiKey:
+      name: workspace
+    output: events
+```
 

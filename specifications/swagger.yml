@@ -1093,6 +1093,14 @@ components:
               type: object
               additionalProperties:
                 type: 'string'
+            prismeaiApiKey:
+              type: object
+              description: "Only for requests towards prisme.ai API. Grants additional permissions using api keys"
+              properties:
+                name:
+                  type: string
+                  description: "Use one of the DSUL Security defined api keys, referred by its name."
+
             query:
               type: object
               description: Object defining querystring parameters
@@ -4161,8 +4169,15 @@ paths:
                 type: object
                 required:
                   - imported
-                  - workspace
                 properties:
+                  createdWorkspaceIds:
+                    type: array
+                    items:
+                      type: string
+                  updatedWorkspaceIds:
+                    type: array
+                    items:
+                      type: string
                   imported:
                     type: array
                     items:
@@ -4174,6 +4189,10 @@ paths:
                       additionalProperties: true
                   workspace:
                     $ref: '#/components/schemas/DSULReadOnly'
+                  publishedApps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/App"
         '401':
           description: AuthenticationError
           content:
@@ -4454,6 +4473,62 @@ paths:
           required: true
           schema:
             type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /v2/workspaces/export:
+    post:
+      description: Export multiple workspaces to a .zip archive
+      operationId: exportMultipleWorkspaces
+      tags:
+        - 'Prisme.ai Workspaces'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                workspaces:
+                  type: object
+                  properties:
+                    query:
+                      type: object
+                    pagination:
+                      type: object
+                      additionalProperties: false
+                      properties:
+                        limit:
+                          type: number
+                        page:
+                          type: number
+                includeApps:
+                  type: boolean
       responses:
         '200':
           description: Success Response
@@ -5263,7 +5338,10 @@ paths:
               type: object
               required:
                 - rules
+                - name
               properties:
+                name:
+                  type: string
                 rules:
                   type: array
                   items:
