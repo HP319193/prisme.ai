@@ -49,6 +49,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       location.pathname = `${currentLang}/${location.pathname}`;
       return null;
     }
+    const accessToken = currentURL.searchParams.get('access-token');
+    if (accessToken) {
+      localStorage.setItem('access-token', accessToken);
+    }
   }
 
   if (Component.isPublic) {
