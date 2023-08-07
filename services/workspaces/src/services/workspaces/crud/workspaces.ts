@@ -1256,9 +1256,16 @@ class Workspaces {
         const existingWorkspace = await superAdmin.findAll(
           SubjectType.Workspace,
           {
-            labels: {
-              $in: [`importFrom:${fromWorkspaceId}`],
-            },
+            $or: [
+              {
+                id: fromWorkspaceId,
+              },
+              {
+                labels: {
+                  $in: [`importFrom:${fromWorkspaceId}`],
+                },
+              },
+            ],
           }
         );
 
