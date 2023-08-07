@@ -51,6 +51,31 @@ export interface InteractiveSignin {
   remember?: boolean;
 }
 
+function dataURItoBlob(dataURI: string): [Blob, string] {
+  // convert base64/URLEncoded data component to raw binary data held in a string
+  let byteString;
+  if (dataURI.split(',')[0].indexOf('base64') >= 0)
+    byteString = atob(dataURI.split(',')[1]);
+  else byteString = unescape(dataURI.split(',')[1]);
+  // separate out the mime component
+  const metadata = dataURI
+    .split(';')
+    .filter((v, k, all) => k < all.length - 1)
+    .map((v) => v.split(/:/));
+  const [, mimeString = ''] = metadata.find(([k, v]) => k === 'data') || [];
+  const [, ext] = mimeString.split(/\//);
+  const [, fileName = `file.${ext}`] =
+    metadata.find(([k, v]) => k === 'filename') || [];
+
+  // write the bytes of the string to a typed array
+  let ia = new Uint8Array(byteString.length);
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return [new Blob([ia], { type: mimeString }), fileName];
+}
+
 export class Api extends Fetcher {
   public opts: Required<ApiOptions>;
   private sessionId?: string;
@@ -696,30 +721,6 @@ export class Api extends Fetcher {
   }
 
   async uploadFiles(files: string | string[], workspaceId: string) {
-    function dataURItoBlob(dataURI: string): [Blob, string] {
-      // convert base64/URLEncoded data component to raw binary data held in a string
-      let byteString;
-      if (dataURI.split(',')[0].indexOf('base64') >= 0)
-        byteString = atob(dataURI.split(',')[1]);
-      else byteString = unescape(dataURI.split(',')[1]);
-      // separate out the mime component
-      const metadata = dataURI
-        .split(';')
-        .filter((v, k, all) => k < all.length - 1)
-        .map((v) => v.split(/:/));
-      const [, mimeString = ''] = metadata.find(([k, v]) => k === 'data') || [];
-      const [, ext] = mimeString.split(/\//);
-      const [, fileName = `file.${ext}`] =
-        metadata.find(([k, v]) => k === 'filename') || [];
-
-      // write the bytes of the string to a typed array
-      let ia = new Uint8Array(byteString.length);
-      for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-
-      return [new Blob([ia], { type: mimeString }), fileName];
-    }
     const formData = new FormData();
     (Array.isArray(files) ? files : [files]).forEach((file) => {
       try {
@@ -831,6 +832,29 @@ export class Api extends Fetcher {
     );
 
     return this.get(`/workspaces/${workspaceId}/usage?${params.toString()}`);
+  }
+
+  async importArchive(
+    archive: File
+  ): Promise<PrismeaiAPI.ImportNewWorkspace.Responses.$200> {
+    return new Promise((resolve) => {
+      const fileReader = new FileReader();
+      fileReader.addEventListener('load', async ({ target }) => {
+        const file = target?.result as string;
+        const formData = new FormData();
+        formData.append('archive', ...dataURItoBlob(file));
+        resolve(
+          await this._fetch<PrismeaiAPI.ImportNewWorkspace.Responses.$200>(
+            `/workspaces/import`,
+            {
+              method: 'POST',
+              body: formData,
+            }
+          )
+        );
+      });
+      fileReader.readAsDataURL(archive);
+    });
   }
 
   users(id: string = this.user?.id || '') {

@@ -58,6 +58,12 @@
     "duplicate": {
       "label": "Dupliquer"
     },
+    "create": {
+      "label": "Créer un nouveau Workspace vide"
+    },
+    "import": {
+      "label": "Importer un Workspace depuis une archive"
+    },
     "expandSidebar": "Agrandir",
     "collapseSidebar": "Réduire",
     "details": {
