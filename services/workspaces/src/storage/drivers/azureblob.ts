@@ -44,7 +44,10 @@ export default class AzureBlob implements IStorage {
       });
       const ret = [];
       for await (let blob of it) {
-        if ((<any>blob.properties).ResourceType !== resourceType) {
+        if (
+          (<any>blob.properties).ResourceType &&
+          (<any>blob.properties).ResourceType !== resourceType
+        ) {
           continue;
         }
         if (fullKeys) {
