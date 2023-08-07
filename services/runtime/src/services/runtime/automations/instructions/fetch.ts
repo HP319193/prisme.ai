@@ -16,7 +16,6 @@ import { Broker, EventSource } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 import { logger } from '../../../../logger';
 import { getAccessToken } from '../../../../utils/jwks';
-import { InvalidInstructionError } from '../../../../errors';
 
 const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages'].map(
   (cur) => `${API_URL}${cur}`
