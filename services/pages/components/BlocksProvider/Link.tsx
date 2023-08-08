@@ -1,6 +1,5 @@
 import { HTMLAttributes, ReactElement, useCallback, useState } from 'react';
 import NextLink from 'next/link';
-import { usePreview } from '../usePreview';
 import { useRouter } from 'next/router';
 
 export const Link = ({
@@ -16,7 +15,6 @@ export const Link = ({
   const setPreview = useCallback(() => {
     setIsPreview(true);
   }, []);
-  usePreview(setPreview);
 
   const fullHref = `${
     !href || href.match(/^\?/) ? asPath.replace(/\?.*$/, '') : ''

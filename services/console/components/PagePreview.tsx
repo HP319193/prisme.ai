@@ -1,7 +1,40 @@
 import { Loading } from '@prisme.ai/design-system';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { usePageEndpoint } from '../utils/urls';
 import { usePage } from '../providers/Page';
+import { useContext } from '../utils/useContext';
+
+interface PagePreviewContext {
+  reload: () => void;
+  mounted: boolean;
+}
+export const pagePreviewContext = createContext<PagePreviewContext | undefined>(
+  undefined
+);
+export const usePagePreview = () =>
+  useContext<PagePreviewContext>(pagePreviewContext);
+interface PagePreviewProviderProps {
+  children: ReactNode;
+}
+export const PagePreviewProvider = ({ children }: PagePreviewProviderProps) => {
+  const [mounted, setMounted] = useState(true);
+  const reload = useCallback(() => {
+    setMounted(false);
+    setTimeout(() => setMounted(true), 1);
+  }, []);
+  return (
+    <pagePreviewContext.Provider value={{ reload, mounted }}>
+      {children}
+    </pagePreviewContext.Provider>
+  );
+};
 
 interface PagePreviewProps {
   page: Prismeai.Page;
@@ -11,6 +44,7 @@ interface PagePreviewProps {
 export const PagePreview = ({ page, visible = true }: PagePreviewProps) => {
   const { appInstances } = usePage();
   const pageEndpoint = usePageEndpoint();
+  const { mounted } = usePagePreview();
 
   const ref = useRef<HTMLIFrameElement>(null);
   const pageId = useRef(page.id);
@@ -65,6 +99,8 @@ export const PagePreview = ({ page, visible = true }: PagePreviewProps) => {
     // Reload new url with a delay because of backend is a too slow
     setTimeout(() => setUrl(`${pageEndpoint}/${page.slug}`), 500);
   }, [page.slug, pageEndpoint]);
+
+  if (!mounted) return null;
 
   return (
     <div className="flex flex-1 relative">

@@ -12,12 +12,17 @@ import useDirtyWarning from '../../utils/useDirtyWarning';
 import { replaceSilently } from '../../utils/urls';
 import { ApiError } from '../../utils/api';
 import { TrackingCategory, useTracking } from '../../components/Tracking';
+import {
+  PagePreviewProvider,
+  usePagePreview,
+} from '../../components/PagePreview';
 
 const Page = () => {
   const { t } = useTranslation('workspaces');
   const { trackEvent } = useTracking();
   const { replace, push } = useRouter();
   const { page, savePage, saving, deletePage } = usePage();
+  const { reload } = usePagePreview();
   const {
     workspace: { id: workspaceId, pages = {} },
     createPage,
@@ -87,6 +92,7 @@ const Page = () => {
       if (slug !== prevSlug) {
         replaceSilently(`/workspaces/${workspaceId}/pages/${slug}`);
       }
+      reload();
     } catch (e) {
       const { details, error } = e as ApiError;
       const description = (
@@ -112,7 +118,7 @@ const Page = () => {
         placement: 'bottomRight',
       });
     }
-  }, [page.slug, savePage, t, trackEvent, value, workspaceId]);
+  }, [page.slug, reload, savePage, t, trackEvent, value, workspaceId]);
 
   useKeyboardShortcut([
     {
@@ -178,7 +184,9 @@ const PageWithProvider = () => {
   return (
     <TrackingCategory category="Page Builder">
       <PageProvider workspaceId={`${workspaceId}`} slug={`${slug}`}>
-        <Page />
+        <PagePreviewProvider>
+          <Page />
+        </PagePreviewProvider>
       </PageProvider>
     </TrackingCategory>
   );
