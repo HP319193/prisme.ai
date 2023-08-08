@@ -307,6 +307,7 @@ class Pages {
     return {
       appInstances: filteredAppInstances,
       blocks: injectedBlocks,
+      favicon: workspace.photo,
     };
   }
 

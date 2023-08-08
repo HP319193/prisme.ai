@@ -54,10 +54,12 @@ export const PageProvider = ({
     setNotFound(false);
     if (!workspaceId || !slug) return null;
     try {
-      const { appInstances, public: isPublic, ...page } = await api.getPage(
-        workspaceId,
-        slug
-      );
+      const {
+        appInstances,
+        public: isPublic,
+        favicon,
+        ...page
+      } = await api.getPage(workspaceId, slug);
       setAppInstances(appInstances);
       return page || null;
     } catch (e) {
