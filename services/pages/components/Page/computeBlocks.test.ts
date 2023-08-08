@@ -306,3 +306,13 @@ it('should not create new array', () => {
   expect(from.array).toBe(to.array);
   expect(from.array).toEqual([['val1', 'val2']]);
 });
+
+it('should interpolate booleans', () => {
+  const from = {
+    boolean: '{{bool}}',
+  };
+  const to = computeBlocks(from, { bool: true });
+
+  expect(computeBlocks(from, { bool: true }).boolean).toBe(true);
+  expect(computeBlocks(from, { bool: false }).boolean).toBe(false);
+});
