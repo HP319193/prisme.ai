@@ -100,49 +100,55 @@ export function interpolate(blockConfig: any, values: any): any {
   if (typeof blockConfig === 'string') {
     return interpolateExpression(blockConfig, values);
   }
-  return Object.entries(blockConfig || {}).reduce((prev, [k, v]) => {
-    const { [k]: ignored, ...filteredBlockConfig } = blockConfig;
-    const allValues = { ...values, ...filteredBlockConfig };
+  if (Array.isArray(blockConfig)) {
+    return blockConfig.map((item) => interpolate(item, values));
+  }
+  if (typeof blockConfig === 'object') {
+    return Object.entries(blockConfig || {}).reduce((prev, [k, v]) => {
+      const { [k]: ignored, ...filteredBlockConfig } = blockConfig;
+      const allValues = { ...values, ...filteredBlockConfig };
 
-    if (k === 'blocks')
-      return {
-        ...prev,
-        blocks: v,
-      };
+      if (k === 'blocks')
+        return {
+          ...prev,
+          blocks: v,
+        };
 
-    // Interpolate
-    if (!v) {
-      return {
-        ...prev,
-        [k]: v,
-      };
-    }
-    if (typeof v === 'string') {
-      return {
-        ...prev,
-        [k]: interpolateExpression(v, allValues),
-      };
-    }
-    if (typeof v === 'object') {
-      if (Array.isArray(v)) {
-        const newV = v.map((item) => interpolate(item, allValues));
+      // Interpolate
+      if (!v) {
+        return {
+          ...prev,
+          [k]: v,
+        };
+      }
+      if (typeof v === 'string') {
+        return {
+          ...prev,
+          [k]: interpolateExpression(v, allValues),
+        };
+      }
+      if (typeof v === 'object') {
+        if (Array.isArray(v)) {
+          const newV = v.map((item) => interpolate(item, allValues));
+          return {
+            ...prev,
+            [k]: equal(newV, v) ? v : newV,
+          };
+        }
+        const newV = interpolate(v, allValues);
         return {
           ...prev,
           [k]: equal(newV, v) ? v : newV,
         };
       }
-      const newV = interpolate(v, allValues);
+
       return {
         ...prev,
-        [k]: equal(newV, v) ? v : newV,
+        [k]: v,
       };
-    }
-
-    return {
-      ...prev,
-      [k]: v,
-    };
-  }, {});
+    }, {});
+  }
+  return blockConfig;
 }
 
 export function repeatBlocks(
