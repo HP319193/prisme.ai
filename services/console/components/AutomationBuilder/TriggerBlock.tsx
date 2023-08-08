@@ -8,6 +8,7 @@ import { LinkOutlined } from '@ant-design/icons';
 import { Button, notification } from '@prisme.ai/design-system';
 import { truncate } from '../../utils/strings';
 import { useTracking } from '../Tracking';
+import copy from '../../utils/Copy';
 
 interface TriggerDisplayProps {
   value: Prismeai.When;
@@ -21,7 +22,7 @@ export const TriggerDisplay: FC<TriggerDisplayProps> = ({
   const { trackEvent } = useTracking();
 
   const copyEndpoint = () => {
-    globalThis.navigator.clipboard.writeText(endpoint);
+    copy(endpoint);
     notification.success({
       message: t('automations.trigger.endpoint.copied'),
       placement: 'bottomRight',

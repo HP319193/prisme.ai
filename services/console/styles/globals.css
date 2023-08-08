@@ -372,3 +372,9 @@ button {
 .react-js-cron > div:not([class]) {
   flex-wrap: wrap;
 }
+
+dialog.copy-fallback {
+  max-width: 80%;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+  border-radius: 1rem;
+}

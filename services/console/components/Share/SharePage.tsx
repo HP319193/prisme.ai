@@ -13,11 +13,12 @@ import { Form } from 'react-final-form';
 import { useTranslation } from 'react-i18next';
 import FieldContainer from '../../layouts/Field';
 import { usePermissions } from '../PermissionsProvider';
-import { DeleteOutlined, LinkOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { useUser } from '../UserProvider';
 import { usePageEndpoint } from '../../utils/urls';
 import { UserPermissions } from '../../utils/api';
 import { useTracking } from '../Tracking';
+import ShareButton from './ShareButton';
 
 interface SharePageProps {
   pageId: string;
@@ -63,7 +64,7 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
   const initialFetch = useCallback(async () => {
     getUsersPermissions(subjectType, subjectId);
     getRoles('workspaces', workspaceId);
-  }, [getUsersPermissions, subjectType, subjectId]);
+  }, [getUsersPermissions, subjectId, getRoles, workspaceId]);
 
   useEffect(() => {
     initialFetch();
@@ -150,21 +151,6 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
   };
 
   const link = `${pageHost}/${pageSlug}`;
-  const copyLink = useCallback(() => {
-    trackEvent({
-      name: 'Copy link in Share Panel',
-      action: 'click',
-    });
-    try {
-      window.navigator.clipboard.writeText(link);
-    } catch (e) {
-      console.log(link);
-    }
-    notification.success({
-      message: t('pages.share.copied'),
-      placement: 'bottomRight',
-    });
-  }, [link, t, trackEvent]);
 
   return (
     <div className="w-[44rem] space-y-5">
@@ -180,10 +166,7 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
             />
           </Space>
         </div>
-        <Button variant="grey" onClick={copyLink}>
-          <LinkOutlined />
-          {link}
-        </Button>
+        <ShareButton link={link} />
       </div>
       {!isPublic && (
         <>

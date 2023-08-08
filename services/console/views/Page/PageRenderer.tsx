@@ -16,7 +16,7 @@ import EditDetails from '../../layouts/EditDetails';
 import CopyIcon from '../../icons/copy.svgr';
 import Head from 'next/head';
 import useLocalizedText from '../../utils/useLocalizedText';
-import PagePreview from '../../components/PagePreview';
+import PagePreview, { usePagePreview } from '../../components/PagePreview';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PageBuilder from '../../components/PageBuilder';
 import CSSEditor from './CSSEditor';
@@ -57,6 +57,7 @@ export const PageRenderer = ({
   const [displaySource, setDisplaySource] = useState(false);
   const sectionsIds = useSectionsIds();
   const { trackEvent } = useTracking();
+  const { reload } = usePagePreview();
 
   const detailsFormSchema: Schema = useMemo(
     () => ({
@@ -144,11 +145,6 @@ export const PageRenderer = ({
     });
   }, [shareOpen, trackEvent]);
 
-  const [previewMounted, setPreviewMounted] = useState(true);
-  const reload = useCallback(() => {
-    setPreviewMounted(false);
-    setTimeout(() => setPreviewMounted(true), 1);
-  }, []);
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
       if (e.code === 'KeyR' && (e.metaKey || e.ctrlKey)) {
@@ -334,9 +330,7 @@ export const PageRenderer = ({
       />
 
       <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
-        {previewMounted && (
-          <PagePreview page={value} visible={viewMode === 0} />
-        )}
+        <PagePreview page={value} visible={viewMode === 0} />
         <SourceEdit
           value={source}
           onChange={setSource}

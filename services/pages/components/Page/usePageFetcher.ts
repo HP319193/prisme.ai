@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import api from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
-import { usePreview } from '../usePreview';
 
 export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
   const [page, setPage] = useState<Prismeai.DetailedPage | null>(
@@ -50,8 +49,6 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
     setLoading(true);
     fetchPage();
   }, [fetchPage, pageFromServer]);
-
-  usePreview(setPage);
 
   return { page, setPage: setPageFromChildren, loading, fetchPage };
 };

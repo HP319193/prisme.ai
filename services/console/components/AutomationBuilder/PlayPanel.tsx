@@ -1,8 +1,4 @@
-import {
-  CloseCircleOutlined,
-  CopyOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import { CloseCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import {
   Loading,
   Popover,
@@ -23,6 +19,7 @@ import components from '../SchemaForm/schemaFormComponents';
 import PlayIcon from '../../icons/play.svgr';
 import { useTracking } from '../Tracking';
 import useLocalizedText from '../../utils/useLocalizedText';
+import copy from '../../utils/Copy';
 
 const PlayView = () => {
   const {
@@ -128,17 +125,12 @@ const PlayView = () => {
       action: 'click',
     });
     const payload = JSON.stringify(values);
-    const cmd = `curl '${api.host}/workspaces/${wId}/test/${automation.slug}' \
-  -H 'content-type: application/json' \
-  -H 'dnt: 1' \
-  -H 'x-prismeai-token: ${api.token}' \
-  --data-raw '{"payload": ${payload}}' \
+    const cmd = `curl '${api.host}/workspaces/${wId}/test/${automation.slug}' \\
+  -H 'content-type: application/json' \\
+  -H 'authorization: Bearer ${api.token}' \\
+  --data-raw '{"payload": ${payload}}' \\
   --compressed`;
-    try {
-      window.navigator.clipboard.writeText(cmd);
-    } catch (e) {
-      console.log(cmd);
-    }
+    copy(cmd);
   }, [automation.slug, trackEvent, values, wId]);
 
   return (
