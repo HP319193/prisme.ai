@@ -287,3 +287,22 @@ it('should not create a new object', () => {
   const to = computeBlocks(from, {});
   expect(from.foo).toBe(to.foo);
 });
+
+it('should interpolate arrays', () => {
+  const from = {
+    array: [['val1', '{{replace}}']],
+  };
+  const to = computeBlocks(from, {
+    replace: 'val2',
+  });
+  expect(to.array).toEqual([['val1', 'val2']]);
+});
+
+it('should not create new array', () => {
+  const from = {
+    array: [['val1', 'val2']],
+  };
+  const to = computeBlocks(from, {});
+  expect(from.array).toBe(to.array);
+  expect(from.array).toEqual([['val1', 'val2']]);
+});
