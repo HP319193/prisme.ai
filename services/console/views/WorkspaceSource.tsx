@@ -2,26 +2,14 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { YAMLException } from 'js-yaml';
 import { Workspace } from '@prisme.ai/sdk';
 import useYaml from '../utils/useYaml';
-import {
-  findParameter,
-  findParent,
-  getLineNumberFromPath,
-  ValidationError,
-} from '../utils/yaml';
-import { generateEndpoint } from '../utils/urls';
+import { getLineNumberFromPath, ValidationError } from '../utils/yaml';
 import { useTranslation } from 'next-i18next';
 import {
   validateWorkspace,
   validateWorkspaceSecurity,
 } from '@prisme.ai/validation';
 import CodeEditor from '../components/CodeEditor/lazy';
-import {
-  Button,
-  Loading,
-  notification,
-  PageHeader,
-  Space,
-} from '@prisme.ai/design-system';
+import { Button, Loading, PageHeader, Space } from '@prisme.ai/design-system';
 import {
   DisplayedSourceType,
   useWorkspaceLayout,
@@ -35,11 +23,6 @@ interface Annotation {
   text: string;
   type: 'error';
 }
-
-const getEndpointAutomationName = (value: string, line: number) => {
-  const { line: l = line } = findParent(`${value}`, line) || {};
-  return findParent(`${value}`, l);
-};
 
 interface WorkspaceSourceProps {
   onLoad?: () => void;
@@ -63,13 +46,8 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
     },
   } = useWorkspace();
   const { onSaveSource } = useWorkspaceLayout();
-  const {
-    setInvalid,
-    setNewSource,
-    invalid,
-    saving,
-    displaySource,
-  } = useWorkspaceLayout();
+  const { setInvalid, setNewSource, invalid, saving, displaySource } =
+    useWorkspaceLayout();
   const [value, setValue] = useState<string | undefined>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const { toJSON, toYaml } = useYaml();
@@ -90,7 +68,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
         setValue(newValue);
       }
     } catch (e) {}
-  }, [workspace, toYaml, sourceDisplayed]);
+  }, [sourceDisplayed, toYaml, workspace, value?.length, id]);
 
   useEffect(() => {
     initYaml();
@@ -157,51 +135,6 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
     setAnnotations(annotations);
   }, [invalid, value]);
 
-  const allAnnotations = useMemo(() => {
-    if (!workspace) return annotations;
-    const endpoints = findParameter(`${value}`, {
-      indent: 3,
-      parameter: 'endpoint',
-    }).map(({ line, value: v }) => ({
-      row: line - 1,
-      column: 0,
-      text: generateEndpoint(
-        id,
-        v === 'true'
-          ? (getEndpointAutomationName(`${value}`, line) || { name: v }).name
-          : v
-      ),
-      type: 'endpoint',
-    }));
-    const allAnnotations = [...(annotations || []), ...endpoints];
-    return allAnnotations;
-  }, [annotations, id, value, workspace]);
-
-  useEffect(() => {
-    const { current } = ref;
-    if (!current) return;
-    const listener = (e: MouseEvent) => {
-      const target = e.target as HTMLDivElement;
-      if (!target.classList.contains('ace_endpoint')) return;
-      const line = +(target.textContent || 0);
-      const { text: url } =
-        allAnnotations.find(
-          ({ row, type }) => line - 1 === row && type === 'endpoint'
-        ) || {};
-      if (!url) return;
-      navigator.clipboard.writeText(url);
-      notification.success({
-        message: t('automations.endpoint.copied'),
-        placement: 'bottomRight',
-      });
-    };
-    current.addEventListener('click', listener);
-
-    return () => {
-      current.removeEventListener('click', listener);
-    };
-  }, [allAnnotations, ref, t]);
-
   const save = useCallback(() => {
     onSaveSource();
   }, [onSaveSource]);
@@ -249,8 +182,8 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
       <CodeEditor
         mode="yaml"
         value={value}
+        annotations={annotations}
         onChange={update}
-        annotations={allAnnotations}
         onLoad={onLoad}
         shortcuts={shortcuts}
       />
