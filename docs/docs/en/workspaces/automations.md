@@ -437,7 +437,19 @@ Any set variable to one of these contexts is automatically synchronized with par
     <tr>
       <td><b>global.endpoints</b></td>
       <td>Map of available endpoint slugs to the corresponding public url</td>
-    </tr>               
+    </tr>           
+    <tr>
+      <td><b>global.studioUrl</b></td>
+      <td>Current studio instance public url (fulfilled by runtime **STUDIO_URL** variable)</td>
+    </tr>           
+    <tr>
+      <td><b>global.pagesUrl</b></td>
+      <td>Current workspace pages public url (built from workspace slug and runtime **PAGES_HOST** variable)</td>
+    </tr>                       
+    <tr>
+      <td><b>global.pagesHost</b></td>
+      <td>Current pages instance base domain (fulfilled by runtime **PAGES_HOST** variable)</td>
+    </tr>                           
   </table>
 </center>
 

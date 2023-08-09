@@ -24,3 +24,10 @@ export const SESSION_ID_HEADER =
 export const OPENAPI_FILEPATH =
   process.env.OPENAPI_FILEPATH ||
   path.resolve(__dirname, '../specifications/swagger.yml');
+
+export const PAGES_HOST =
+  process.env.PAGES_HOST || '.pages.local.prisme.ai:3100';
+
+export const STUDIO_URL = `${
+  process.env.CONSOLE_URL || 'http://studio.local.prisme.ai:3000'
+}`;

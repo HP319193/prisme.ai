@@ -20,6 +20,8 @@ import {
   ADDITIONAL_GLOBAL_VARS,
   API_URL,
   SYNCHRONIZE_CONTEXTS,
+  STUDIO_URL,
+  PAGES_HOST,
 } from '../../../config';
 import { jsonPathMatches, redact } from '../../utils';
 import { PrismeContext } from '../../api/middlewares';
@@ -338,6 +340,8 @@ export default class Runtime {
     ctx.additionalGlobals = {
       ...ADDITIONAL_GLOBAL_VARS,
       apiUrl: API_URL,
+      studioUrl: STUDIO_URL,
+      pagesHost: PAGES_HOST,
     };
     await ctx.fetch();
 

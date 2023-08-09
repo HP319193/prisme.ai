@@ -45,10 +45,7 @@ import {
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { fetchUsers, NativeSubjectType } from '@prisme.ai/permissions';
-import {
-  getArchiveEntries,
-  processArchive,
-} from '../../../utils/processArchive';
+import { getArchiveEntries } from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
 import { Apps } from '../../apps';
 import { Security } from '../..';
