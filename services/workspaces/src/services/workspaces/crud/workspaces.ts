@@ -1138,6 +1138,7 @@ class Workspaces {
               err,
             },
           ],
+          imported: [],
         };
       }
     }
@@ -1214,15 +1215,22 @@ class Workspaces {
     appInstances: AppInstances,
     security: Security
   ) {
-    const [folder, subfile, mustBeNull] = path;
-    const subfileSlug = parse(subfile || '').name;
+    const [folder, subfile, ...nestedPath] = path;
+    let subfileSlug = parse(subfile || '').name;
     const folderName = parse(folder || '').name;
     if (
       subfileSlug === FolderIndex || // Ignore FolderIndexes
-      mustBeNull || // There should be at max 1 subfolder
       (subfileSlug && subfile.startsWith('.')) // Ignore hidden files
     ) {
       return false;
+    }
+
+    // Pages can have / in their filenames
+    if (folderName === DSULType.Pages && nestedPath.length) {
+      subfileSlug = [subfile]
+        .concat(nestedPath.filter(Boolean))
+        .join('/')
+        .replace(/\.[^/.]+$/, '');
     }
 
     switch (folderName) {
