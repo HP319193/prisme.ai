@@ -30,7 +30,8 @@ class Pages {
 
   createPage = async (
     workspaceId: string,
-    createPage: Prismeai.Page,
+    // public might be set in exported pages to automatically reset public permissions on import
+    { public: makePublic, ...createPage }: Prismeai.Page & { public?: boolean },
     replace: boolean = false // Force update if it already exists
   ) => {
     const page = {
@@ -89,6 +90,28 @@ class Pages {
       await this.accessManager.update(SubjectType.Page, pageMetadata);
     } else {
       await this.accessManager.create(SubjectType.Page, pageMetadata);
+    }
+
+    if (makePublic) {
+      this.accessManager
+        .grant(
+          SubjectType.Page,
+          page.id,
+          {
+            public: true,
+          },
+          {
+            policies: {
+              read: true,
+            },
+          }
+        )
+        .catch((err) =>
+          logger.eror({
+            msg: 'Could not set the page public after import',
+            err,
+          })
+        );
     }
 
     this.broker.send<Prismeai.CreatedPage['payload']>(

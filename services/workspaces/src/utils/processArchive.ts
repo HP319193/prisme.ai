@@ -26,8 +26,10 @@ export async function processArchive(
               zipfile.close();
               return reject(err);
             }
-            files.push(entry.fileName);
-            await fileCallback(entry.fileName, readStream);
+            if (!entry.fileName.startsWith('__MACOSX/')) {
+              files.push(entry.fileName);
+              await fileCallback(entry.fileName, readStream);
+            }
             zipfile.readEntry();
           });
         }
