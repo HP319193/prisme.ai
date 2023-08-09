@@ -15,6 +15,7 @@ import {
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
+import { logger } from '@azure/storage-blob';
 
 export interface ListAppsQuery {
   text?: string;
@@ -109,7 +110,7 @@ class Apps {
     let documentation: Prismeai.App['documentation'];
     try {
       if (dsul.slug) {
-        await this.storage.get({
+        const docPage = await this.storage.get({
           dsulType: DSULType.DetailedPage,
           workspaceSlug: dsul.slug,
           slug: '_doc',
@@ -118,6 +119,26 @@ class Apps {
           workspaceSlug: dsul.slug!,
           slug: '_doc',
         };
+        // Make the page public
+        this.accessManager
+          .grant(
+            SubjectType.Page,
+            docPage.id!,
+            {
+              public: true,
+            },
+            {
+              policies: {
+                read: true,
+              },
+            }
+          )
+          .catch((err) =>
+            logger.error({
+              msg: 'Could not set the app documentation page public',
+              err,
+            })
+          );
       }
     } catch {}
     const app: Prismeai.App & { id: string } = {

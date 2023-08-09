@@ -107,7 +107,7 @@ class Pages {
           }
         )
         .catch((err) =>
-          logger.eror({
+          logger.error({
             msg: 'Could not set the page public after import',
             err,
           })
