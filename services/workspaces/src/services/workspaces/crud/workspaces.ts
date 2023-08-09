@@ -45,10 +45,7 @@ import {
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { fetchUsers, NativeSubjectType } from '@prisme.ai/permissions';
-import {
-  getArchiveEntries,
-  processArchive,
-} from '../../../utils/processArchive';
+import { getArchiveEntries } from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
 import { Apps } from '../../apps';
 import { Security } from '../..';
@@ -959,7 +956,7 @@ class Workspaces {
             },
             bulkExportStream,
           };
-        } else if (filename.endsWith('/bulkExport.json')) {
+        } else if (filename.endsWith('bulkExport.json')) {
           return {
             bulkExportStream: stream,
             workspaces,
@@ -1053,7 +1050,8 @@ class Workspaces {
   private importDSUL = async (
     workspaceId: string,
     version: string,
-    zipBuffer: Buffer
+    zipBuffer: Buffer,
+    opts?: { overwriteWorkspaceSlug?: boolean }
   ) => {
     const workspace = await this.getDetailedWorkspace(
       workspaceId,
@@ -1085,32 +1083,74 @@ class Workspaces {
       this.storage
     );
 
+    const dsulStreams: Record<string, stream.Readable> = (
+      await getArchiveEntries(zipBuffer)
+    ).reduce((entries, { filename, stream }) => {
+      if (
+        !filename.endsWith('.yml') &&
+        !filename.endsWith('.yaml') &&
+        !filename.endsWith('.json')
+      ) {
+        return entries;
+      }
+      const splittedPath = filename.split('/').slice(1);
+      if (parse(splittedPath[0] || '').name === DSULType.DSULIndex) {
+        filename = DSULType.DSULIndex;
+      }
+      return { ...entries, [filename]: stream };
+    }, {});
+    if (Object.keys(dsulStreams).length > 5000) {
+      throw new PrismeError(
+        'Workspace archive cannot have more than 5000 files',
+        {}
+      );
+    }
+
     let imported: string[] = [];
+    // First load index before other files
+    if (dsulStreams[DSULType.DSULIndex]) {
+      try {
+        const buffer = await streamToBuffer(dsulStreams[DSULType.DSULIndex]);
+        delete dsulStreams[DSULType.DSULIndex];
+        const index: any = yaml.load(buffer.toString());
+        if (opts?.overwriteWorkspaceSlug && index.slug) {
+          workspace.slug = index.slug;
+        }
+        await this.applyDSULFile(
+          [DSULType.DSULIndex],
+          workspace,
+          index,
+          automations,
+          imports,
+          security
+        );
+        imported.push(DSULType.DSULIndex);
+      } catch (err) {
+        return {
+          errors: [
+            {
+              msg: 'Some error occured while importing a workspace archive',
+              workspaceId: workspaceId,
+              filepath: DSULType.DSULIndex,
+              err,
+            },
+          ],
+          imported: [],
+        };
+      }
+    }
+
+    // Import all other files
     let errors: any[] = [];
     let batch: Promise<void>[] = [];
-    let counter = 0;
-    await processArchive(zipBuffer, async (filepath: string, stream) => {
-      if (
-        !filepath.endsWith('.yml') &&
-        !filepath.endsWith('.yaml') &&
-        !filepath.endsWith('.json')
-      ) {
-        return;
-      }
-      if (counter > 5000) {
-        throw new PrismeError(
-          'Workspace archive cannot have more than 5000 files',
-          {}
-        );
-      }
-      counter++;
+    for (let [filepath, stream] of Object.entries(dsulStreams)) {
       const savePromise = new Promise<void>(async (resolve) => {
         try {
           const buffer = await streamToBuffer(stream);
           const content: any = yaml.load(buffer.toString());
-
+          const splittedPath = filepath.split('/').slice(1);
           const applied = await this.applyDSULFile(
-            filepath.split('/').slice(1),
+            splittedPath,
             workspace,
             content,
             automations,
@@ -1133,11 +1173,11 @@ class Workspaces {
 
       batch.push(savePromise);
       if (batch.length < IMPORT_BATCH_SIZE) {
-        return;
+        continue;
       }
       await Promise.all(batch);
       batch = [];
-    });
+    }
     await Promise.all(batch);
 
     const updatedDetailedWorkspace = await this.getDetailedWorkspace(
@@ -1172,15 +1212,22 @@ class Workspaces {
     appInstances: AppInstances,
     security: Security
   ) {
-    const [folder, subfile, mustBeNull] = path;
-    const subfileSlug = parse(subfile || '').name;
+    const [folder, subfile, ...nestedPath] = path;
+    let subfileSlug = parse(subfile || '').name;
     const folderName = parse(folder || '').name;
     if (
       subfileSlug === FolderIndex || // Ignore FolderIndexes
-      mustBeNull || // There should be at max 1 subfolder
       (subfileSlug && subfile.startsWith('.')) // Ignore hidden files
     ) {
       return false;
+    }
+
+    // Pages can have / in their filenames
+    if (folderName === DSULType.Pages && nestedPath.length) {
+      subfileSlug = [subfile]
+        .concat(nestedPath.filter(Boolean))
+        .join('/')
+        .replace(/\.[^/.]+$/, '');
     }
 
     switch (folderName) {
@@ -1314,7 +1361,10 @@ class Workspaces {
         const { imported, errors } = await this.importDSUL(
           target.id,
           'current',
-          archive
+          archive,
+          {
+            overwriteWorkspaceSlug: true,
+          }
         );
         allImported = allImported.concat(
           imported.map((path) => `${fromWorkspaceId}/${path}`)

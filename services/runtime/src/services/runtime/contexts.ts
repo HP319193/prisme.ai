@@ -4,6 +4,7 @@ import {
   CONTEXT_RUN_EXPIRE_TIME,
   CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
+  STUDIO_URL,
   SYNCHRONIZE_CONTEXTS,
 } from '../../../config';
 import { Cache } from '../../cache';
@@ -387,6 +388,16 @@ export class ContextsManager {
     findSecretValues(payload, automation.secretPaths, this.secrets);
     automation.workspace.secrets.forEach((secret) => this.secrets.add(secret));
 
+    const protocol = (STUDIO_URL || '').startsWith('https://')
+      ? 'https://'
+      : 'http://';
+    let pagesUrl: string | undefined;
+    if (this.additionalGlobals?.pagesHost) {
+      const dsul = automation.workspace.dsul;
+      pagesUrl = dsul?.customDomains?.[0]
+        ? `${protocol}${dsul?.customDomains?.[0]}`
+        : `${protocol}${dsul.slug}${this.additionalGlobals?.pagesHost}`;
+    }
     const child = this.child(
       {
         config: automation.workspace.config,
@@ -400,6 +411,7 @@ export class ContextsManager {
         automationSlug: automation.slug!,
         additionalGlobals: {
           endpoints: automation.workspace.getEndpointUrls(this.workspaceId),
+          pagesUrl,
         },
         trigger: trigger || {
           type: 'automation',
