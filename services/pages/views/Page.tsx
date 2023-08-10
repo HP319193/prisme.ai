@@ -18,7 +18,6 @@ export const Page = () => {
   const { page, error, loading } = usePage();
   const { setId } = useWorkspace();
   const [displayError, setDisplayError] = useState(false);
-  const { replace } = useRouter();
   useEffect(() => {
     if (!page || !page.workspaceId) return;
     setId(page.workspaceId);

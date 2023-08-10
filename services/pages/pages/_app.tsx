@@ -81,7 +81,6 @@ function MyApp({
                 name="viewport"
                 content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
               />
-              <link rel="icon" href="/favicon.png" />
               {serverSideStyles && <style>{serverSideStyles}</style>}
             </Head>
             <Sentry />
