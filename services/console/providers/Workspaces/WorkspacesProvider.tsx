@@ -57,7 +57,11 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
       const workspaces = await api.getWorkspaces();
       setWorkspaces(
         workspaces
-          .filter((cur) => !(cur.labels || []).includes('suggestions'))
+          .filter(
+            (cur) =>
+              !(cur.labels || []).includes('suggestions') ||
+              cur.createdBy === user.id
+          )
           .map(({ createdAt, updatedAt, ...workspace }) => ({
             ...workspace,
             createdAt: new Date(createdAt),

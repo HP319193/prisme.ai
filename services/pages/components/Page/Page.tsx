@@ -64,6 +64,9 @@ export const Page = ({ page }: PageProps) => {
           name="viewport"
           content="width=device-width, initial-scale=1, user-scalable=no"
         />
+        {page.favicon && (
+          <link rel="icon" href={page.favicon || '/favicon.png'} />
+        )}
       </Head>
       {page.styles && (
         <style dangerouslySetInnerHTML={{ __html: page.styles }} />

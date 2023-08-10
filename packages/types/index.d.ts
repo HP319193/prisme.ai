@@ -1401,6 +1401,7 @@ declare namespace Prismeai {
         public?: boolean;
         apiKey?: string;
         clientId?: string;
+        favicon?: string;
     }
     export interface DuplicatedWorkspace {
         /**
@@ -1816,6 +1817,7 @@ declare namespace Prismeai {
         public?: boolean;
         apiKey?: string;
         clientId?: string;
+        favicon?: string;
     }
     /**
      * Page

@@ -809,6 +809,8 @@ components:
           type: string
         clientId:
           type: string
+        favicon:
+          type: string
 
     DetailedPage:
       type: object
@@ -1095,11 +1097,11 @@ components:
                 type: 'string'
             prismeaiApiKey:
               type: object
-              description: "Only for requests towards prisme.ai API. Grants additional permissions using api keys"
+              description: 'Only for requests towards prisme.ai API. Grants additional permissions using api keys'
               properties:
                 name:
                   type: string
-                  description: "Use one of the DSUL Security defined api keys, referred by its name."
+                  description: 'Use one of the DSUL Security defined api keys, referred by its name.'
 
             query:
               type: object
@@ -1411,7 +1413,7 @@ components:
         currentSocket:
           type: boolean
           default: true
-          description: "If emitted in response to an active socket (i.e source.socketId is set), this event is only visible to this same socket. Defaults to true"
+          description: 'If emitted in response to an active socket (i.e source.socketId is set), this event is only visible to this same socket. Defaults to true'
 
     PrismeEventOptions:
       type: object
@@ -2501,7 +2503,7 @@ components:
                 - value
               properties:
                 type:
-                  $ref: "#/components/schemas/TriggerType"
+                  $ref: '#/components/schemas/TriggerType'
                 value:
                   type: string
                 id:
@@ -4192,7 +4194,7 @@ paths:
                   publishedApps:
                     type: array
                     items:
-                      $ref: "#/components/schemas/App"
+                      $ref: '#/components/schemas/App'
         '401':
           description: AuthenticationError
           content:
