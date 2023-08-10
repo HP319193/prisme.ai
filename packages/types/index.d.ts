@@ -3670,6 +3670,12 @@ declare namespace PrismeaiAPI {
             runtime_mappings?: {
                 [name: string]: any;
             };
+            /**
+             * Elasticsearch _source
+             */
+            _source?: {
+                [name: string]: any;
+            };
             sort?: {
                 [name: string]: any;
             }[];
