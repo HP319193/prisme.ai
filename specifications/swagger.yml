@@ -3774,6 +3774,10 @@ paths:
                   type: object
                   additionalProperties: true
                   description: 'Elasticsearch runtime_mappings executed on runtime'
+                _source:
+                  type: object
+                  additionalProperties: true
+                  description: 'Elasticsearch _source'
                 sort:
                   type: array
                   items:
