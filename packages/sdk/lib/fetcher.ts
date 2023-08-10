@@ -10,6 +10,10 @@ const headersAsObject = (headers: Headers) =>
     {}
   );
 
+export type Fetched<T> = T & {
+  headers?: Record<string, any>;
+};
+
 export class Fetcher {
   public host: string;
   public token: string | null = null;

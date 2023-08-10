@@ -1,6 +1,6 @@
 import QueryString from 'qs';
 import pkceChallenge from 'pkce-challenge';
-import Fetcher from './fetcher';
+import Fetcher, { Fetched } from './fetcher';
 import { Event, Workspace } from './types';
 import { Events } from './events';
 import { removedUndefinedProperties } from './utils';
@@ -277,13 +277,13 @@ export class Api extends Fetcher {
   async updateWorkspaceSecurity(
     workspaceId: string,
     security: Prismeai.WorkspaceSecurity
-  ): Promise<PrismeaiAPI.UpdateSecurity.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.UpdateSecurity.Responses.$200>> {
     return await this.put(`/workspaces/${workspaceId}/security`, security);
   }
 
   async getWorkspaceRoles(
     id: string
-  ): Promise<PrismeaiAPI.GetRoles.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.GetRoles.Responses.$200>> {
     return await this.get(`/workspaces/${id}/security/roles`);
   }
 
@@ -297,7 +297,7 @@ export class Api extends Fetcher {
 
   async updateWorkspace(
     workspace: Prismeai.DSULPatch
-  ): Promise<PrismeaiAPI.UpdateWorkspace.Responses.$200 | null> {
+  ): Promise<Fetched<PrismeaiAPI.UpdateWorkspace.Responses.$200> | null> {
     if (!workspace.id) return null;
     return await this.patch(
       `/workspaces/${workspace.id}`,
@@ -364,7 +364,7 @@ export class Api extends Fetcher {
   async getAutomation(
     workspaceId: string,
     automationSlug: string
-  ): Promise<PrismeaiAPI.GetAutomation.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.GetAutomation.Responses.$200>> {
     return await this.get(
       `/workspaces/${workspaceId}/automations/${automationSlug}`
     );
@@ -373,7 +373,7 @@ export class Api extends Fetcher {
   async createAutomation(
     workspaceId: Workspace['id'],
     automation: Prismeai.Automation
-  ): Promise<Prismeai.Automation & { slug: string }> {
+  ): Promise<Fetched<Prismeai.Automation & { slug: string }>> {
     return await this.post(`/workspaces/${workspaceId}/automations`, {
       ...automation,
     });
@@ -383,7 +383,7 @@ export class Api extends Fetcher {
     workspaceId: string,
     slug: string,
     automation: Prismeai.Automation
-  ): Promise<Prismeai.Automation & { slug: string }> {
+  ): Promise<Fetched<Prismeai.Automation & { slug: string }>> {
     return await this.patch(
       `/workspaces/${workspaceId}/automations/${slug}`,
       await this.replaceAllImagesData(automation, workspaceId)
@@ -413,7 +413,7 @@ export class Api extends Fetcher {
   async getPage(
     workspaceId: PrismeaiAPI.GetPage.Parameters.WorkspaceId,
     pageSlug: PrismeaiAPI.GetPage.Parameters.Slug
-  ): Promise<Prismeai.DetailedPage> {
+  ): Promise<Fetched<Prismeai.DetailedPage>> {
     return await this.get(
       `/workspaces/${workspaceId}/pages/${encodeURIComponent(pageSlug)}`
     );
@@ -422,7 +422,7 @@ export class Api extends Fetcher {
   async getPageBySlug(
     workspaceSlug: PrismeaiAPI.GetPageBySlug.Parameters.WorkspaceSlug,
     pageSlug: PrismeaiAPI.GetPageBySlug.Parameters.PageSlug
-  ): Promise<Prismeai.DetailedPage> {
+  ): Promise<Fetched<Prismeai.DetailedPage>> {
     return await this.get(
       `/pages/${workspaceSlug}/${encodeURIComponent(pageSlug)}`
     );
@@ -457,7 +457,7 @@ export class Api extends Fetcher {
   async deletePage(
     workspaceId: PrismeaiAPI.DeletePage.Parameters.WorkspaceId,
     pageSlug: PrismeaiAPI.DeletePage.Parameters.Slug
-  ): Promise<PrismeaiAPI.DeletePage.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.DeletePage.Responses.$200>> {
     return await this.delete(
       `/workspaces/${workspaceId}/pages/${encodeURIComponent(pageSlug)}`
     );
@@ -616,7 +616,7 @@ export class Api extends Fetcher {
     subjectType: PrismeaiAPI.GetPermissions.Parameters.SubjectType,
     subjectId: string,
     id: string
-  ): Promise<PrismeaiAPI.RevokePermissions.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.RevokePermissions.Responses.$200>> {
     return await this.delete(`/${subjectType}/${subjectId}/permissions/${id}`);
   }
 
@@ -630,7 +630,7 @@ export class Api extends Fetcher {
     page?: PrismeaiAPI.SearchApps.QueryParameters['page'];
     limit?: PrismeaiAPI.SearchApps.QueryParameters['limit'];
     workspaceId?: PrismeaiAPI.SearchApps.QueryParameters['workspaceId'];
-  }): Promise<PrismeaiAPI.SearchApps.Responses.$200> {
+  }): Promise<Fetched<PrismeaiAPI.SearchApps.Responses.$200>> {
     const params = new URLSearchParams(
       removedUndefinedProperties(
         {
@@ -648,7 +648,7 @@ export class Api extends Fetcher {
   async installApp(
     workspaceId: PrismeaiAPI.InstallAppInstance.PathParameters['workspaceId'],
     body: PrismeaiAPI.InstallAppInstance.RequestBody
-  ): Promise<PrismeaiAPI.InstallAppInstance.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.InstallAppInstance.Responses.$200>> {
     return await this.post(`/workspaces/${workspaceId}/apps`, body);
   }
 
@@ -656,26 +656,26 @@ export class Api extends Fetcher {
     workspaceId: PrismeaiAPI.ConfigureAppInstance.PathParameters['workspaceId'],
     slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug'],
     body: PrismeaiAPI.ConfigureAppInstance.RequestBody
-  ): Promise<PrismeaiAPI.ConfigureAppInstance.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.ConfigureAppInstance.Responses.$200>> {
     return await this.patch(`/workspaces/${workspaceId}/apps/${slug}`, body);
   }
 
   async uninstallApp(
     workspaceId: PrismeaiAPI.UninstallAppInstance.PathParameters['workspaceId'],
     slug: PrismeaiAPI.ConfigureAppInstance.PathParameters['slug']
-  ): Promise<PrismeaiAPI.UninstallAppInstance.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.UninstallAppInstance.Responses.$200>> {
     return await this.delete(`/workspaces/${workspaceId}/apps/${slug}`);
   }
 
   async publishApp(
     body: PrismeaiAPI.PublishApp.RequestBody
-  ): Promise<PrismeaiAPI.PublishApp.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.PublishApp.Responses.$200>> {
     return await this.post(`/apps`, body);
   }
 
   async listAppInstances(
     workspaceId: PrismeaiAPI.ListAppInstances.PathParameters['workspaceId']
-  ): Promise<PrismeaiAPI.ListAppInstances.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.ListAppInstances.Responses.$200>> {
     return await this.get(`/workspaces/${workspaceId}/apps`);
   }
 
@@ -704,7 +704,7 @@ export class Api extends Fetcher {
   async getAppInstance(
     workspaceId: string,
     slug: string
-  ): Promise<PrismeaiAPI.GetAppInstance.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.GetAppInstance.Responses.$200>> {
     return this.get(`/workspaces/${workspaceId}/apps/${slug}`);
   }
 
@@ -712,7 +712,7 @@ export class Api extends Fetcher {
     workspaceId: PrismeaiAPI.ConfigureAppInstance.Parameters.WorkspaceId,
     slug: PrismeaiAPI.ConfigureAppInstance.Parameters.Slug,
     appInstance: PrismeaiAPI.ConfigureAppInstance.RequestBody
-  ): Promise<PrismeaiAPI.ConfigureAppInstance.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.ConfigureAppInstance.Responses.$200>> {
     const response = await this.patch<Prismeai.DetailedAppInstance>(
       `/workspaces/${workspaceId}/apps/${slug}`,
       { ...appInstance }
@@ -787,7 +787,7 @@ export class Api extends Fetcher {
     workspaceId: string,
     automation: string,
     params?: any
-  ): Promise<any> {
+  ): Promise<Fetched<any>> {
     return this.post(
       `/workspaces/${workspaceId}/webhooks/${automation}`,
       params
@@ -802,7 +802,7 @@ export class Api extends Fetcher {
     workspaceId: string;
     automation: string;
     payload?: Record<string, any>;
-  }): Promise<any> {
+  }): Promise<Fetched<any>> {
     return this.post(`/workspaces/${workspaceId}/test/${automation}`, {
       payload,
     });
@@ -819,7 +819,7 @@ export class Api extends Fetcher {
       beforeDate?: PrismeaiAPI.WorkspaceUsage.Parameters.BeforeDate;
       details?: PrismeaiAPI.WorkspaceUsage.Parameters.Details;
     } = {}
-  ): Promise<PrismeaiAPI.WorkspaceUsage.Responses.$200> {
+  ): Promise<Fetched<PrismeaiAPI.WorkspaceUsage.Responses.$200>> {
     const params = new URLSearchParams(
       removedUndefinedProperties(
         {

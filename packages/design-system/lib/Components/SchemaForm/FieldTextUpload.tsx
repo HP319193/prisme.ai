@@ -1,6 +1,12 @@
 import { FieldProps, UiOptionsUpload } from './types';
 import { useField } from 'react-final-form';
-import { ChangeEvent, ReactElement, useCallback, useState } from 'react';
+import {
+  ChangeEvent,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { DeleteOutlined, PictureOutlined } from '@ant-design/icons';
 import Button from '../Button';
 import { Tooltip } from 'antd';
@@ -31,43 +37,57 @@ export const FieldTextUpload = ({
   );
   const [previewLabel, setPreviewLabel] = useState('');
 
-  const readFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = async ({ target }) => {
-      if (!target || typeof target.result !== 'string') return;
-      const value = await uploadFile(
-        target.result.replace(
-          /base64/,
-          `filename:${file.name.replace(/[;\s]/g, '-')}; base64`
-        )
-      );
-      setPreviewLabel('');
-      if (typeof value === 'string') {
-        field.input.onChange(value);
-        setPreview(<img src={value} className="max-h-24" />);
-      } else {
-        const { value: v, preview, label } = value;
-        if (v) {
-          field.input.onChange(v);
-          if (preview) {
-            setPreview(
-              typeof preview === 'string' ? (
-                <img src={preview} className="max-h-24" />
-              ) : (
-                preview
-              )
-            );
-          }
-          if (label) {
-            setPreviewLabel(label);
+  const readFile = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (!e.target.files || e.target.files.length === 0) return;
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = async ({ target }) => {
+        if (!target || typeof target.result !== 'string') return;
+        const value = await uploadFile(
+          target.result.replace(
+            /base64/,
+            `filename:${file.name.replace(/[;\s]/g, '-')}; base64`
+          )
+        );
+        setPreviewLabel('');
+        if (typeof value === 'string') {
+          field.input.onChange(value);
+          setPreview(<img src={value} className="max-h-24" />);
+        } else {
+          const { value: v, preview, label } = value;
+          if (v) {
+            field.input.onChange(v);
+            if (preview) {
+              setPreview(
+                typeof preview === 'string' ? (
+                  <img src={preview} className="max-h-24" />
+                ) : (
+                  preview
+                )
+              );
+            }
+            if (label) {
+              setPreviewLabel(label);
+            }
           }
         }
-      }
-    };
-    reader.readAsDataURL(file);
-  }, [setPreviewLabel, setPreview, preview, uploadFile]);
+      };
+      reader.readAsDataURL(file);
+    },
+    [setPreviewLabel, setPreview, preview, uploadFile]
+  );
+
+  const defaultPreview = useMemo(() => {
+    const defaultPreview = props.options?.upload?.defaultPreview || (
+      <PictureOutlined className="text-4xl !text-gray-200 flex items-center" />
+    );
+    if (typeof defaultPreview === 'string') {
+      return <img src={defaultPreview} />;
+    }
+
+    return defaultPreview;
+  }, []);
 
   return (
     <FieldContainer {...props} className="pr-form-upload">
@@ -81,11 +101,7 @@ export const FieldTextUpload = ({
       <div className="pr-form-upload__input pr-form-input">
         <div className="pr-form-upload__placeholder">
           <div className="pr-form-upload__preview">
-            {field.input.value ? (
-              preview
-            ) : (
-              <PictureOutlined className="text-4xl !text-gray-200 flex items-center" />
-            )}
+            {field.input.value ? preview : defaultPreview}
           </div>
           {previewLabel || locales.uploadLabel || 'Choose file'}
         </div>

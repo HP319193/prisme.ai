@@ -9,7 +9,6 @@ export const OnChange = ({
 }) => {
   const dirty = useRef(false);
   useEffect(() => {
-    console.log({ values, dirty });
     const { current: isDirty } = dirty;
     dirty.current = true;
     if (!isDirty || !onChange || !values) return;
