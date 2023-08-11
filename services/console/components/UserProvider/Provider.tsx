@@ -192,6 +192,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
 
       api.token = Storage.get('access-token');
+      console.log('fetch me with', api.token);
       const user = await api.me();
       if (user.authData && user.authData.anonymous && !anonymous) {
         throw {
