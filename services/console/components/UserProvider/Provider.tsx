@@ -310,7 +310,6 @@ export const UserProvider: FC<UserProviderProps> = ({
           );
           api.token = access_token;
           Storage.set('access-token', access_token);
-          await fetchMe();
         } catch (e) {
           const { error } = e as ApiError;
           if (error === 'invalid_grant') {
@@ -324,7 +323,7 @@ export const UserProvider: FC<UserProviderProps> = ({
           return;
         }
       },
-      [fetchMe, signout]
+      [signout]
     );
 
   const signup: UserContext['signup'] = useCallback(
