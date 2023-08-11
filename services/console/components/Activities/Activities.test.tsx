@@ -30,6 +30,8 @@ jest.mock('../../layouts/WorkspaceLayout/context', () => {
   };
 });
 
+jest.mock('./EventsList', () => () => null);
+
 it('should render virgin workspace', () => {
   const root = renderer.create(
     <queryStringContext.Provider value={queryStringContextValue}>

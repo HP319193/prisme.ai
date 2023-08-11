@@ -1,3 +1,5 @@
+import { forwardRef } from 'react';
+
 export const notification = {
   success: jest.fn(),
   error: jest.fn(),
@@ -19,9 +21,9 @@ export function Switch({ children = null }) {
   return children;
 }
 
-export function Tooltip({ children = null }) {
+export const Tooltip = forwardRef(function Tooltip({ children = null }, ref) {
   return children;
-}
+});
 
 export function Select({ children = null }) {
   return children;

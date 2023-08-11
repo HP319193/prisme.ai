@@ -371,20 +371,19 @@ export const UserProvider: FC<UserProviderProps> = ({
     [push, initAuthentication]
   );
 
-  const initialFetch = useRef(fetchMe);
+  const initialFetch = useRef(async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+      await completeAuthentication(code);
+    }
+
+    fetchMe();
+  });
 
   useEffect(() => {
-    async function init() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      if (code) {
-        await completeAuthentication(code);
-      }
-
-      initialFetch.current();
-    }
-    init();
-  }, [completeAuthentication]);
+    initialFetch.current();
+  }, []);
 
   useEffect(() => {
     // For preview in console
