@@ -5,8 +5,16 @@ function fallback(text: string) {
 
   const d = document.createElement('dialog');
   d.classList.add('copy-fallback');
+  function selectAll() {
+    const selection = window.getSelection();
+    if (!selection) return;
+    const range = document.createRange();
+    range.selectNodeContents(d);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
   render(
-    <div>
+    <div className="p-4" onClick={selectAll}>
       <pre>
         <code>{text}</code>
       </pre>
@@ -27,12 +35,7 @@ function fallback(text: string) {
     }
   });
   d.showModal();
-  const selection = window.getSelection();
-  if (!selection) return;
-  const range = document.createRange();
-  range.selectNodeContents(d);
-  selection.removeAllRanges();
-  selection.addRange(range);
+  selectAll();
 }
 
 export function copy(text: string) {
