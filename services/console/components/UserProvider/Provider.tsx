@@ -374,17 +374,8 @@ export const UserProvider: FC<UserProviderProps> = ({
   const initialFetch = useRef(fetchMe);
 
   useEffect(() => {
-    async function init() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      if (code) {
-        await completeAuthentication(code);
-      }
-
-      initialFetch.current();
-    }
-    init();
-  }, [completeAuthentication]);
+    initialFetch.current();
+  }, []);
 
   useEffect(() => {
     // For preview in console
