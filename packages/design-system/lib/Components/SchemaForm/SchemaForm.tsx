@@ -1,4 +1,6 @@
 import {
+  Children,
+  cloneElement,
   MutableRefObject,
   ReactElement,
   useCallback,
@@ -128,7 +130,13 @@ export const SchemaForm = ({
                 </OnChange>
               )}
               <Field schema={schema} name={root} />
-              {buttons || (
+              {buttons ? (
+                Children.map(buttons, (button, key) =>
+                  cloneElement(button, {
+                    key: button.key || key,
+                  })
+                )
+              ) : (
                 <Button
                   type="submit"
                   className="pr-form-submit"

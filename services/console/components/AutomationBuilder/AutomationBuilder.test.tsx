@@ -54,6 +54,8 @@ jest.mock('../SchemaForm/BlockSelector', () => {
   return () => null;
 });
 
+jest.mock('./Panel/InstructionForm', () => () => null);
+
 beforeEach(() => {
   useWorkspace().workspace = {
     id: '42',
@@ -79,7 +81,6 @@ it('should render', () => {
 });
 
 it('should fit zoom', () => {
-  jest.useFakeTimers();
   const value = {
     name: 'Automation',
     do: [],
@@ -139,7 +140,6 @@ it('should build custom instructions schemas', () => {
 });
 
 it('should hide panel', async () => {
-  jest.useFakeTimers();
   const value = {
     name: 'Automation',
     do: [],
@@ -219,7 +219,6 @@ it('should get app', async () => {
 });
 
 it('should add instruction', async () => {
-  jest.useFakeTimers();
   const value = {
     name: 'Automation',
     do: [],
@@ -287,7 +286,6 @@ it('should remove instruction', async () => {
 });
 
 it('should edit instruction', async () => {
-  jest.useFakeTimers();
   const value = {
     name: 'Automation',
     do: [{ foo: undefined }],
