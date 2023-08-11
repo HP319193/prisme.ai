@@ -412,7 +412,12 @@ const Block = () => {
             <div className="m-4">
               <BlockEditor
                 value={value}
-                onChange={(b) => setValue({ ...b, slug: value.slug })}
+                onChange={(b) =>
+                  setValue((prev) => {
+                    const { blocks, ...block } = prev;
+                    return { ...block, ...b };
+                  })
+                }
               />
             </div>
           </div>
