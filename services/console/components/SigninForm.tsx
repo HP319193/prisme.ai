@@ -22,7 +22,7 @@ interface SigninFormProps {
   provider?: 'prismeai';
 }
 
-export const SigninForm = ({ onSignin, provider }: SigninFormProps) => {
+export const SigninForm = ({ provider }: SigninFormProps) => {
   const { t } = useTranslation('sign');
   const { loading, signin, initAuthentication, completeAuthentication } =
     useUser();
@@ -32,7 +32,7 @@ export const SigninForm = ({ onSignin, provider }: SigninFormProps) => {
       const success = await signin(email, password);
       setError(!success);
     },
-    [onSignin, signin]
+    [signin]
   );
   const validate = (values: Values) => {
     const errors: Partial<Values> = {};
