@@ -36,7 +36,7 @@ export function initSearchRoutes(eventsStore: EventsStore) {
       query,
       aggs,
       sort,
-      _source,
+      source,
       runtime_mappings: runtimeMappings,
     } = body;
     if (aggs || runtimeMappings) {
@@ -56,7 +56,7 @@ export function initSearchRoutes(eventsStore: EventsStore) {
           query,
           aggs,
           sort,
-          _source,
+          _source: source,
           runtime_mappings: runtimeMappings,
         }
       );

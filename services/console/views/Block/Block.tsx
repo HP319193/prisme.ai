@@ -10,7 +10,7 @@ import useKeyboardShortcut from '../../components/useKeyboardShortcut';
 import getLayout from '../../layouts/WorkspaceLayout';
 import { useWorkspace } from '../../providers/Workspace';
 import { Button, Schema } from '@prisme.ai/design-system';
-import { useTranslation } from 'next-i18next';
+import { Trans, useTranslation } from 'next-i18next';
 import useDirtyWarning from '../../utils/useDirtyWarning';
 import { TrackingCategory, useTracking } from '../../components/Tracking';
 import { BlockProvider, useBlock } from '../../providers/Block';
@@ -23,6 +23,7 @@ import EditDetails from '../../layouts/EditDetails';
 import CopyIcon from '../../icons/copy.svgr';
 import {
   CodeOutlined,
+  CodepenOutlined,
   EditOutlined,
   EyeOutlined,
   LoadingOutlined,
@@ -34,6 +35,7 @@ import { replaceSilently } from '../../utils/urls';
 import { ApiError } from '../../utils/api';
 import { incrementName } from '../../utils/incrementName';
 import BlockPreview from './BlockPreview';
+import BlockEditor from '../../components/BlocksListEditor';
 
 const Block = () => {
   const { t } = useTranslation('workspaces');
@@ -46,7 +48,9 @@ const Block = () => {
     createBlock,
   } = useWorkspace();
   const [value, setValue] = useState(block);
-  const [viewMode, setViewMode] = useState(0);
+  const [viewMode, setViewMode] = useState(
+    (value?.blocks || []).length === 0 ? 1 : 0
+  );
   const [dirty] = useDirtyWarning(block, value);
   const [saving, setSaving] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
@@ -84,6 +88,7 @@ const Block = () => {
 
   useEffect(() => {
     setValue(block);
+    setViewMode((block?.blocks || []).length === 0 ? 1 : 0);
   }, [block]);
 
   const onDelete = useCallback(() => {
@@ -179,6 +184,37 @@ const Block = () => {
           title: t('blocks.details.description.label'),
           'ui:widget': 'textarea',
           'ui:options': { textarea: { rows: 10 } },
+        },
+        photo: {
+          type: 'string',
+          title: t('blocks.details.photo.label'),
+          description: t('blocks.details.photo.description'),
+          'ui:widget': 'upload',
+          'ui:options': {
+            upload: { accept: 'image/jpg,image/gif,image/png,image/svg' },
+          },
+        },
+        url: {
+          type: 'string',
+          title: t('blocks.details.url.label'),
+          description: (
+            <Trans
+              t={t}
+              i18nKey="blocks.details.url.description"
+              components={{
+                a: <a target="_blank" />,
+              }}
+            />
+          ),
+          'ui:widget': 'upload',
+          'ui:options': {
+            upload: {
+              accept: '.js',
+              defaultPreview: (
+                <CodepenOutlined className="text-4xl !text-gray-200 flex items-center" />
+              ),
+            },
+          },
         },
       },
     }),
@@ -326,6 +362,38 @@ const Block = () => {
               {t('blocks.save.label')}
             </Button>
           </div>,
+          <div key="views">
+            <div className="ml-3">
+              <Segmented
+                key="nav"
+                options={[
+                  {
+                    value: 0,
+                    icon: (
+                      <Tooltip
+                        title={t('blocks.preview.label')}
+                        placement="bottom"
+                      >
+                        <EyeOutlined />
+                      </Tooltip>
+                    ),
+                    disabled: (value?.blocks || []).length === 0,
+                  },
+                  {
+                    value: 1,
+                    icon: (
+                      <Tooltip title={t('blocks.edit')} placement="bottom">
+                        <EditOutlined />
+                      </Tooltip>
+                    ),
+                  },
+                ]}
+                value={(value.blocks || []).length === 0 ? 1 : viewMode}
+                className="pr-segmented-accent"
+                onChange={(v) => setViewMode(+v)}
+              />
+            </div>
+          </div>,
         ]}
       />
 
@@ -339,6 +407,21 @@ const Block = () => {
           validate={validateSource}
           error={validationError}
         />
+        {viewMode === 1 && (
+          <div className="absolute top-0 bottom-0 left-0 right-0 bg-white overflow-auto">
+            <div className="m-4">
+              <BlockEditor
+                value={value}
+                onChange={(b) =>
+                  setValue((prev) => {
+                    const { blocks, ...block } = prev;
+                    return { ...block, ...b };
+                  })
+                }
+              />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

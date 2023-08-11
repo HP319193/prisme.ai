@@ -102,6 +102,7 @@ export const AppsStore = ({ visible, onCancel }: AppStoreProps) => {
               });
             }}
             placeholder={t('apps.search')}
+            autoFocus
           />
         </div>
         <div

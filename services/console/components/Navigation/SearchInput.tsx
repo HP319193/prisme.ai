@@ -1,6 +1,6 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'next-i18next';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import MagnifierIcon from '../../icons/magnifier.svgr';
 
 interface SearchInputProps {
@@ -8,15 +8,23 @@ interface SearchInputProps {
   onChange: (v: string) => void;
   onFocus?: () => void;
   placeholder?: string;
+  autoFocus?: boolean;
 }
 export const SearchInput = ({
   value,
   onChange,
   onFocus,
   placeholder = 'workspace.search',
+  autoFocus,
 }: SearchInputProps) => {
   const { t } = useTranslation('workspaces');
   const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (!autoFocus || !ref.current) return;
+    setTimeout(() => {
+      ref.current?.focus();
+    });
+  });
   return (
     <div className="flex flex-1 relative px-2 border-b-[1px] h-[4rem]">
       <button
