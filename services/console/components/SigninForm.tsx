@@ -24,8 +24,7 @@ interface SigninFormProps {
 
 export const SigninForm = ({ provider }: SigninFormProps) => {
   const { t } = useTranslation('sign');
-  const { loading, signin, initAuthentication, completeAuthentication } =
-    useUser();
+  const { loading, signin, initAuthentication } = useUser();
   const [error, setError] = useState(false);
   const submit = useCallback(
     async ({ email, password }: Values) => {
@@ -44,15 +43,6 @@ export const SigninForm = ({ provider }: SigninFormProps) => {
     }
     return errors;
   };
-
-  // 3. Handle final authorization code validation
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    if (code) {
-      completeAuthentication(code);
-    }
-  }, [completeAuthentication]);
 
   // 1. Init authentication flow
   if (typeof window !== 'undefined') {
