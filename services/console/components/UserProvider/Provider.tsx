@@ -190,6 +190,8 @@ export const UserProvider: FC<UserProviderProps> = ({
           await authFromConsole();
         } catch {}
       }
+
+      api.token = Storage.get('access-token');
       const user = await api.me();
       if (user.authData && user.authData.anonymous && !anonymous) {
         throw {
@@ -369,7 +371,14 @@ export const UserProvider: FC<UserProviderProps> = ({
     [push, initAuthentication]
   );
 
-  const initialFetch = useRef(fetchMe);
+  const initialFetch = useRef(async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+      await completeAuthentication(code);
+    }
+    fetchMe();
+  });
 
   useEffect(() => {
     initialFetch.current();

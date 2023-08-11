@@ -45,15 +45,6 @@ export const SigninForm = ({ provider }: SigninFormProps) => {
     return errors;
   };
 
-  // 3. Handle final authorization code validation
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    if (code) {
-      completeAuthentication(code);
-    }
-  }, [completeAuthentication]);
-
   // 1. Init authentication flow
   if (typeof window !== 'undefined') {
     const urlParams = new URLSearchParams(window.location.search);
