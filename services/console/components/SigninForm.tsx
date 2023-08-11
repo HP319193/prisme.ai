@@ -24,7 +24,8 @@ interface SigninFormProps {
 
 export const SigninForm = ({ provider }: SigninFormProps) => {
   const { t } = useTranslation('sign');
-  const { loading, signin, initAuthentication } = useUser();
+  const { loading, signin, initAuthentication, completeAuthentication } =
+    useUser();
   const [error, setError] = useState(false);
   const submit = useCallback(
     async ({ email, password }: Values) => {

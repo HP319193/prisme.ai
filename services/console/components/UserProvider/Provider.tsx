@@ -190,6 +190,9 @@ export const UserProvider: FC<UserProviderProps> = ({
           await authFromConsole();
         } catch {}
       }
+
+      api.token = Storage.get('access-token');
+
       const user = await api.me();
       if (user.authData && user.authData.anonymous && !anonymous) {
         throw {
@@ -223,7 +226,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         (e as Prismeai.GenericError).error === 'AuthenticationError' &&
         (e as Prismeai.GenericError).message === 'jwt expired'
       ) {
-        api.token = '';
+        api.token = null;
         Storage.remove('access-token');
       }
       if (anonymous) {
@@ -299,8 +302,6 @@ export const UserProvider: FC<UserProviderProps> = ({
         try {
           const codeVerifier = Storage.get('code-verifier');
           const clientId = Storage.get('client-id');
-          Storage.remove('code-verifier');
-          Storage.remove('client-id');
           const redirectionUrl = new URL('/signin', window.location.href);
           api.overwriteClientId = clientId;
           const { access_token } = await api.getToken(
@@ -377,7 +378,6 @@ export const UserProvider: FC<UserProviderProps> = ({
     if (code) {
       await completeAuthentication(code);
     }
-
     fetchMe();
   });
 
