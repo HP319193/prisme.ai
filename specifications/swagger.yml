@@ -3774,7 +3774,7 @@ paths:
                   type: object
                   additionalProperties: true
                   description: 'Elasticsearch runtime_mappings executed on runtime'
-                _source:
+                source:
                   type: object
                   additionalProperties: true
                   description: 'Elasticsearch _source'
