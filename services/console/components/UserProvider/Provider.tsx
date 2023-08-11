@@ -299,6 +299,8 @@ export const UserProvider: FC<UserProviderProps> = ({
         try {
           const codeVerifier = Storage.get('code-verifier');
           const clientId = Storage.get('client-id');
+          Storage.remove('code-verifier');
+          Storage.remove('client-id');
           const redirectionUrl = new URL('/signin', window.location.href);
           api.overwriteClientId = clientId;
           const { access_token } = await api.getToken(
