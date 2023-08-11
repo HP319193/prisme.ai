@@ -192,7 +192,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
 
       api.token = Storage.get('access-token');
-      console.log('fetch me with', api.token);
+
       const user = await api.me();
       if (user.authData && user.authData.anonymous && !anonymous) {
         throw {
@@ -226,7 +226,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         (e as Prismeai.GenericError).error === 'AuthenticationError' &&
         (e as Prismeai.GenericError).message === 'jwt expired'
       ) {
-        api.token = '';
+        api.token = null;
         Storage.remove('access-token');
       }
       if (anonymous) {

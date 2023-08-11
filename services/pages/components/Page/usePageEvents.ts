@@ -20,7 +20,7 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
         prevSocketWorkspaceId.current === page.workspaceId
       )
         return;
-      console.log('stream events from page', api.token);
+
       const events = await api.streamEvents(page.workspaceId, {
         'source.sessionId': true,
       });
