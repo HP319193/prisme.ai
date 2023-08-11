@@ -21,7 +21,7 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
         workspaceSlug,
         slug === '' ? 'index' : slug
       );
-      api.token = page.headers?.apiToken;
+      api.token = api.token || page.headers?.apiToken;
       setPage(page);
     } catch (e) {}
     setLoading(false);
