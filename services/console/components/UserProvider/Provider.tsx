@@ -13,6 +13,7 @@ const {
 
 const REDIRECT_IF_SIGNED = ['/forgot', '/signin', '/signup', '/'];
 const PUBLIC_URLS = [
+  '/404',
   '/forgot',
   '/signin',
   '/signup',
