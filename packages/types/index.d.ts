@@ -3673,9 +3673,7 @@ declare namespace PrismeaiAPI {
             /**
              * Elasticsearch _source
              */
-            source?: {
-                [name: string]: any;
-            };
+            source?: string[];
             sort?: {
                 [name: string]: any;
             }[];
