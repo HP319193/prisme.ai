@@ -111,7 +111,10 @@ export class Api extends Fetcher {
 
   async getAuthorizationURL(
     overrideRedirectUri?: string,
-    authParams?: { max_age?: string; acr_values?: string }
+    authParams?: { max_age?: string; acr_values?: string },
+    locale = window?.navigator?.language
+      ? window.navigator.language.substring(0, 2)
+      : undefined
   ) {
     const url = new URL('/oidc/auth', this.opts.oidc.url);
     url.searchParams.set('response_type', 'code');
@@ -131,9 +134,6 @@ export class Api extends Fetcher {
     const { code_verifier: codeVerifier, code_challenge: codeChallenge } =
       await pkceChallenge(64);
     url.searchParams.set('code_challenge', codeChallenge);
-    const locale = window?.navigator?.language
-      ? window.navigator.language.substring(0, 2)
-      : undefined;
     if (locale) {
       url.searchParams.set('locale', locale);
     }

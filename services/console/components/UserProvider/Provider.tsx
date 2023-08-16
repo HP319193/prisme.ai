@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import Storage from '../../utils/Storage';
 import { Loading } from '@prisme.ai/design-system';
 import getConfig from 'next/config';
+import { useTranslation } from 'next-i18next';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_URL = '' },
@@ -13,6 +14,7 @@ const {
 
 const REDIRECT_IF_SIGNED = ['/forgot', '/signin', '/signup', '/'];
 const PUBLIC_URLS = [
+  '/404',
   '/forgot',
   '/signin',
   '/signup',
@@ -58,6 +60,10 @@ export const UserProvider: FC<UserProviderProps> = ({
   children,
   isPublic = false,
 }) => {
+  const {
+    i18n: { language },
+  } = useTranslation();
+
   const [user, setUser] = useState<UserContext['user']>(null);
   const [loading, setLoading] = useState<UserContext['loading']>(true);
   const [error, setError] = useState<ApiError>();
@@ -168,8 +174,11 @@ export const UserProvider: FC<UserProviderProps> = ({
       Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
       // redirect_uri must be on the same domain we want the session on (i.e current one)
       const redirectionUrl = new URL('/signin', window.location.href);
+
       const { url, codeVerifier, clientId } = await api.getAuthorizationURL(
-        redirectionUrl.toString()
+        redirectionUrl.toString(),
+        undefined,
+        language
       );
       Storage.set('code-verifier', codeVerifier);
       Storage.set('client-id', clientId);
@@ -178,7 +187,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
       return url;
     },
-    []
+    [language]
   );
 
   const fetchMe = useCallback(async () => {
