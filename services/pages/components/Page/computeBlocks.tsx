@@ -22,7 +22,7 @@ interface TemplatedBlock {
 }
 
 interface Config {
-  blocks?: TemplatedBlock[];
+  blocks?: TemplatedBlock[] | string;
   [k: string]: any;
 }
 export const cleanAttribute = (values: any) => (attribute: string) => {
@@ -179,11 +179,13 @@ export function repeatBlocks(
 }
 
 export function computeBlocks({ blocks, ...config }: Config, values: any) {
+  const blocksValue =
+    typeof blocks === 'string' ? interpolate(blocks, values) : blocks;
   return {
     ...interpolate(config, values),
     blocks:
-      blocks && Array.isArray(blocks)
-        ? blocks
+      blocksValue && Array.isArray(blocksValue)
+        ? blocksValue
             .filter((block) => {
               const { [TEMPLATE_IF]: _if } = block || {};
               return testCondition(_if, { ...values, ...config });
@@ -199,6 +201,6 @@ export function computeBlocks({ blocks, ...config }: Config, values: any) {
                 ...config,
               });
             })
-        : blocks,
+        : undefined,
   };
 }

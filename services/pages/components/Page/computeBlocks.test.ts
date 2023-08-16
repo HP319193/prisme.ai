@@ -217,6 +217,13 @@ it('should interpolate expression with filters', () => {
     })
   ).toBe('FOO');
 });
+it('should interpolate expression with filters 2', () => {
+  expect(
+    interpolateExpression("{{direction|if:'bottom: 0;'}}", {
+      direction: 'bottom',
+    })
+  ).toBe('bottom: 0;');
+});
 
 it('should not read self value', () => {
   expect(
@@ -315,4 +322,16 @@ it('should interpolate booleans', () => {
 
   expect(computeBlocks(from, { bool: true }).boolean).toBe(true);
   expect(computeBlocks(from, { bool: false }).boolean).toBe(false);
+});
+
+it('should interpolate a blocks expression', () => {
+  const from = {
+    blocks: '{{blocks}}',
+  };
+  const to = computeBlocks(from, {
+    blocks: [{ slug: 'RichText', content: 'Yeah man' }],
+  });
+  expect(to).toEqual({
+    blocks: [{ slug: 'RichText', content: 'Yeah man' }],
+  });
 });
