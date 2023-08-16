@@ -61,10 +61,7 @@ export const UserProvider: FC<UserProviderProps> = ({
   isPublic = false,
 }) => {
   const {
-    i18n: {
-      language,
-      options: { supportedLngs },
-    },
+    i18n: { language },
   } = useTranslation();
 
   const [user, setUser] = useState<UserContext['user']>(null);
@@ -177,15 +174,11 @@ export const UserProvider: FC<UserProviderProps> = ({
       Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
       // redirect_uri must be on the same domain we want the session on (i.e current one)
       const redirectionUrl = new URL('/signin', window.location.href);
-      const currentLocale = window.navigator.language.substring(0, 2);
-      const locale = (supportedLngs || []).includes(currentLocale)
-        ? currentLocale
-        : language;
 
       const { url, codeVerifier, clientId } = await api.getAuthorizationURL(
         redirectionUrl.toString(),
         undefined,
-        locale
+        language
       );
       Storage.set('code-verifier', codeVerifier);
       Storage.set('client-id', clientId);
@@ -194,7 +187,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
       return url;
     },
-    [language, supportedLngs]
+    [language]
   );
 
   const fetchMe = useCallback(async () => {
