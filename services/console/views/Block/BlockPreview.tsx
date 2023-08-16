@@ -30,11 +30,30 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
   const update = useCallback(() => {
     if (!iframeRef.current) return;
 
+    const appInstances = Object.entries(workspace.imports || {}).reduce<
+      { slug: string; blocks: {} }[]
+    >(
+      (prev, [slug, { blocks }]) => [
+        ...prev,
+        {
+          slug,
+          blocks: blocks.reduce(
+            (prev, { slug, ...block }) => ({ ...prev, [slug]: block }),
+            {}
+          ),
+        },
+      ],
+      []
+    );
+
     iframeRef.current?.contentWindow?.postMessage(
       {
         type: 'previewblock.update',
         page: {
-          appInstances: [{ slug: '', blocks: workspace.blocks }],
+          appInstances: [
+            { slug: '', blocks: workspace.blocks },
+            ...appInstances,
+          ],
         },
         config: {
           blocks: blocks,
