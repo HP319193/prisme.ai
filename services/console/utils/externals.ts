@@ -11,7 +11,17 @@ export const externals = {
   prismeaiDS,
   prismeaiSDK,
   prismeaiBlocks,
-  antd
+  antd,
 };
+
+declare global {
+  interface Window {
+    __external: typeof externals;
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.__external = externals;
+}
 
 export default externals;
