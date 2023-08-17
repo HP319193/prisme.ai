@@ -1408,6 +1408,11 @@
       "config": {
         "label": "Configuration du Block",
         "reset": "Réinitialiser les valeurs par défaut"
+      },
+      "toggleWidth": {
+        "desktop": "Afficher en pleine largeur",
+        "tablet": "Afficher en largeur tablette",
+        "mobile": "Afficher en largeur mobile"
       }
     },
     "edit": "Éditer",

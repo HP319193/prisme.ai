@@ -1408,6 +1408,11 @@
       "config": {
         "label": "Block setup",
         "reset": "Reset to default values"
+      },
+      "toggleWidth": {
+        "desktop": "Display full width",
+        "tablet": "Display in tablet width",
+        "mobile": "Display in mobile width"
       }
     },
     "edit": "Edit",

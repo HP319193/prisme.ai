@@ -2,10 +2,15 @@ import { Block } from '../../providers/Block';
 import { useWorkspace } from '../../providers/Workspace';
 import getConfig from 'next/config';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { SchemaForm } from '@prisme.ai/design-system';
+import { SchemaForm, Tooltip } from '@prisme.ai/design-system';
 import { getDefaults } from './getDefaults';
 import { useTranslation } from 'next-i18next';
 import Storage from '../../utils/Storage';
+import {
+  DesktopOutlined,
+  MobileOutlined,
+  TabletOutlined,
+} from '@ant-design/icons';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = `${global?.location?.origin}/pages` },
@@ -22,6 +27,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
   const [values, setValues] = useState(Storage.get(storageKey));
   const { t } = useTranslation('workspaces');
   const { workspace } = useWorkspace();
+  const [width, setWidth] = useState<'full' | 'tablet' | 'mobile'>('full');
 
   useEffect(() => {
     Storage.set(storageKey, values);
@@ -30,11 +36,30 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
   const update = useCallback(() => {
     if (!iframeRef.current) return;
 
+    const appInstances = Object.entries(workspace.imports || {}).reduce<
+      { slug: string; blocks: {} }[]
+    >(
+      (prev, [slug, { blocks }]) => [
+        ...prev,
+        {
+          slug,
+          blocks: blocks.reduce(
+            (prev, { slug, ...block }) => ({ ...prev, [slug]: block }),
+            {}
+          ),
+        },
+      ],
+      []
+    );
+
     iframeRef.current?.contentWindow?.postMessage(
       {
         type: 'previewblock.update',
         page: {
-          appInstances: [{ slug: '', blocks: workspace.blocks }],
+          appInstances: [
+            { slug: '', blocks: workspace.blocks },
+            ...appInstances,
+          ],
         },
         config: {
           blocks: blocks,
@@ -75,13 +100,55 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
 
   return (
     <div className="flex flex-1 flex-col">
-      <iframe
-        ref={iframeRef}
-        className="flex flex-1"
-        src={`${window.location.protocol}//${slug}${PAGES_HOST}/__preview/block`}
-      />
-      {cleanedSchema && mounted && (
-        <div className="flex pb-6">
+      <div className="flex flex-1 flex-col items-center">
+        <iframe
+          ref={iframeRef}
+          className={`flex flex-1 ${width === 'full' ? 'w-full' : ''}
+            ${width === 'tablet' ? 'w-[800px] shadow-lg' : ''}
+            ${width === 'mobile' ? 'w-[420px] shadow-lg' : ''}`}
+          src={`${window.location.protocol}//${slug}${PAGES_HOST}/__preview/block`}
+        />
+      </div>
+      <div className="flex pb-6 relative">
+        <div className="absolute right-0 m-2 z-10 justify-center">
+          <Tooltip title={t('blocks.preview.toggleWidth.desktop')}>
+            <button
+              onClick={() => {
+                setWidth('full');
+              }}
+              className="text-2xl m-2"
+            >
+              <DesktopOutlined
+                className={width === 'full' ? '!text-accent' : ''}
+              />
+            </button>
+          </Tooltip>
+          <Tooltip title={t('blocks.preview.toggleWidth.tablet')}>
+            <button
+              onClick={() => {
+                setWidth('tablet');
+              }}
+              className="text-2xl m-2"
+            >
+              <TabletOutlined
+                className={width === 'tablet' ? '!text-accent' : ''}
+              />
+            </button>
+          </Tooltip>
+          <Tooltip title={t('blocks.preview.toggleWidth.mobile')}>
+            <button
+              onClick={() => {
+                setWidth('mobile');
+              }}
+              className="text-2xl m-2"
+            >
+              <MobileOutlined
+                className={width === 'mobile' ? '!text-accent' : ''}
+              />
+            </button>
+          </Tooltip>
+        </div>
+        {cleanedSchema && mounted && (
           <SchemaForm
             schema={cleanedSchema}
             onChange={setValues}
@@ -100,8 +167,8 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
             ]}
             initialValues={values}
           />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

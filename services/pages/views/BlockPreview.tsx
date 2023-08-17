@@ -30,7 +30,7 @@ export const BlockPreview = () => {
   if (!mounted) return null;
 
   return (
-    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full">
+    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full building-surface">
       <div className="flex flex-1 flex-col page-blocks w-full">
         <BlockLoader name="BlocksList" config={config} />
       </div>
