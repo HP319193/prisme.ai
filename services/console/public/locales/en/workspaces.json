@@ -951,6 +951,10 @@
               "label": "Scroll speed",
               "description": "Setting the page change speed in seconds."
             }
+          },
+          "displayIndicators": {
+            "label": "Page indicators",
+            "description": "Displays as many buttons as pages available."
           }
         }
       },
