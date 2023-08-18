@@ -12,7 +12,10 @@ export function getBlockStyles({
   parentClassName: string;
 }) {
   return prefixCSS(
-    (css || '').replace(/@import\s+default;/, defaultStyles || ''),
+    (typeof css === 'string' ? css : '').replace(
+      /@import\s+default;/,
+      defaultStyles || ''
+    ),
     {
       block: `.${containerClassName}`,
       parent: `.${parentClassName}`,
