@@ -99,7 +99,7 @@ export const Carousel = ({
     []
   );
 
-  const indicators = props.blocks.length;
+  const indicators = props.blocks?.length || 0;
   const [currentIndicator, setCurrentIndicator] = useState(-1);
   useEffect(() => {
     const scrollingEl = container.current?.querySelector(
