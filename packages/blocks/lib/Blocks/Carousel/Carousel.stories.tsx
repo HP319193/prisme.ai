@@ -40,7 +40,17 @@ const demoBlock = (k: string) => ({
 Default.args = {
   blocks: Array.from(new Array(100), (v, k) => demoBlock(`${k}`)),
   autoscroll: {
-    active: undefined,
+    active: true,
     speed: undefined,
   },
+  displayIndicators: false,
+};
+
+export const WithIndicators = Template.bind({});
+WithIndicators.args = {
+  blocks: Array.from(new Array(6), (v, k) => demoBlock(`${k}`)),
+  autoscroll: {
+    active: false,
+  },
+  displayIndicators: true,
 };

@@ -951,6 +951,10 @@
               "label": "Vitesse de défilement",
               "description": "Réglage de la vitesse de changement de page en secondes."
             }
+          },
+          "displayIndicators": {
+            "label": "Indicateurs de pages",
+            "description": "Affiche autant de bouton que de pages disponibles."
           }
         }
       },

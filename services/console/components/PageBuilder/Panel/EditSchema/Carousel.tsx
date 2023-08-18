@@ -26,6 +26,12 @@ const schema: Schema = {
         },
       },
     },
+    displayIndicators: {
+      type: 'boolean',
+      title: 'pages.blocks.carousel.settings.displayIndicators.label',
+      description:
+        'pages.blocks.carousel.settings.displayIndicators.description',
+    },
     ...blocksListSchema.properties,
     ...commonSchema.properties,
   },
