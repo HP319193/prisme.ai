@@ -163,7 +163,7 @@ export function repeatBlocks(
 ) {
   if (!repeat) return [block];
   const { on: _on = '', as = 'item' } = repeat;
-  const [, on = ''] = _on.match(/^{{(.+)}}$/) || [];
+  const [, on = ''] = `${_on}`.match(/^{{(.+)}}$/) || [];
   if (!on) return [];
   const items = jsonpath.value(values, on);
 
