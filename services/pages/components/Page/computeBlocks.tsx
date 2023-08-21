@@ -31,7 +31,11 @@ export const cleanAttribute = (values: any) => (attribute: string) => {
     return trimed.substring(1, trimed.length - 1);
   }
 
-  return jsonpath.value(values, trimed);
+  try {
+    return jsonpath.value(values, trimed);
+  } catch {
+    return undefined;
+  }
 };
 
 export function applyFilter(filter: string, value: string, values: any) {
