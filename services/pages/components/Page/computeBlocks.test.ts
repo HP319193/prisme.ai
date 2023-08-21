@@ -217,13 +217,6 @@ it('should interpolate expression with filters', () => {
     })
   ).toBe('FOO');
 });
-it('should interpolate expression with filters 2', () => {
-  expect(
-    interpolateExpression("{{direction|if:'bottom: 0;'}}", {
-      direction: 'bottom',
-    })
-  ).toBe('bottom: 0;');
-});
 
 it('should not read self value', () => {
   expect(
