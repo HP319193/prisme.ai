@@ -1,6 +1,6 @@
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
@@ -13,6 +13,7 @@ export interface CarouselConfig extends BaseBlockConfig, BlocksListConfig {
     active: boolean;
     speed?: number;
   };
+  displayIndicators?: boolean;
 }
 
 interface CarouselProps extends CarouselConfig {}
@@ -31,6 +32,7 @@ export const Carousel = ({
   } = {
     active: true,
   },
+  displayIndicators,
   ...props
 }: CarouselProps) => {
   const {
@@ -97,6 +99,51 @@ export const Carousel = ({
     []
   );
 
+  const indicators = props.blocks?.length || 0;
+  const [currentIndicator, setCurrentIndicator] = useState(-1);
+  useEffect(() => {
+    const scrollingEl = container.current?.querySelector(
+      '.pr-block-carousel__content'
+    );
+    const listener = () => {
+      if (!scrollingEl) return;
+      const children = Array.from(scrollingEl.children) as HTMLElement[];
+
+      const currentPage = children.reduce((prev, child, k) => {
+        if (prev > -1) return prev;
+        const { width } = child.getBoundingClientRect();
+        const left = child.offsetLeft;
+        const right = left + width;
+
+        if (left <= scrollingEl.scrollLeft && right > scrollingEl.scrollLeft) {
+          return k;
+        }
+        return prev;
+      }, -1);
+      setCurrentIndicator(currentPage);
+    };
+    scrollingEl?.addEventListener('scroll', listener);
+    setTimeout(listener);
+    return () => {
+      scrollingEl?.removeEventListener('scroll', listener);
+    };
+  }, []);
+  const scrollTo = useCallback((step: number) => {
+    const scrollingEl = container.current?.querySelector(
+      '.pr-block-carousel__content'
+    );
+    if (!scrollingEl) return;
+    const children = Array.from(scrollingEl.children) as HTMLElement[];
+    const left = children
+      .splice(0, step)
+      .reduce((prev, child) => prev + child.offsetWidth, 0);
+    scrollingEl.scrollTo({
+      left,
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, []);
+
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
       switch (e.key) {
@@ -149,34 +196,45 @@ export const Carousel = ({
         config={{ ...props, className: 'pr-block-carousel__content' }}
       />
       {canScroll && (
-        <div className="pr-block-carousel__arrows">
-          <div className="pr-block-carousel__arrow pr-block-carousel__arrow--left">
-            <Tooltip title={t('cards.prev')} placement="right">
-              <button
-                onClick={scroll(-1)}
-                className="pr-block-carousel__arrow__button"
-              >
-                {/*
-                  'block-cards__scroll__left__button outline-none justify-center items-center'
-          */}
-                <ArrowLeftOutlined className="pr-block-carousel__arrow__icon" />
-                {/*tw`block-cards__scroll__left__button__icon bg-black rounded-[50%]`*/}
-              </button>
-            </Tooltip>
+        <>
+          {displayIndicators && (
+            <div className="pr-block-carousel__indicators">
+              {Array.from(new Array(indicators), (v, k) => k).map((k) => (
+                <button
+                  key={k}
+                  className={`pr-block-carousel__indicator ${
+                    currentIndicator === k
+                      ? 'pr-block-carousel__indicator--current'
+                      : ''
+                  }`}
+                  onClick={() => scrollTo(k)}
+                />
+              ))}
+            </div>
+          )}
+          <div className="pr-block-carousel__arrows">
+            <div className="pr-block-carousel__arrow pr-block-carousel__arrow--left">
+              <Tooltip title={t('cards.prev')} placement="right">
+                <button
+                  onClick={scroll(-1)}
+                  className="pr-block-carousel__arrow__button"
+                >
+                  <ArrowLeftOutlined className="pr-block-carousel__arrow__icon" />
+                </button>
+              </Tooltip>
+            </div>
+            <div className="pr-block-carousel__arrow pr-block-carousel__arrow--right">
+              <Tooltip title={t('cards.next')} placement="left">
+                <button
+                  onClick={scroll(1)}
+                  className="pr-block-carousel__arrow__button"
+                >
+                  <ArrowRightOutlined className="pr-block-carousel__arrow__icon" />
+                </button>
+              </Tooltip>
+            </div>
           </div>
-          <div className="pr-block-carousel__arrow pr-block-carousel__arrow--right">
-            <Tooltip title={t('cards.next')} placement="left">
-              <button
-                onClick={scroll(1)}
-                className="pr-block-carousel__arrow__button"
-              >
-                {/*tw`block-cards__scroll__right__button outline-none flex justify-center items-center`*/}
-                <ArrowRightOutlined className="pr-block-carousel__arrow__icon" />
-                {/*tw`block-cards__scroll__right__button__icon bg-black rounded-[50%]`*/}
-              </button>
-            </Tooltip>
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
@@ -223,6 +281,23 @@ const defaultStyles = `:block {
 }
 .pr-block-blocks-list > .pr-block-blocks-list__block {
   flex-shrink: 0;
+}
+.pr-block-carousel__indicators {
+  display: flex;
+  margin-left: 3rem;
+}
+.pr-block-carousel__indicator {
+  display: flex;
+  width: 1rem;
+  height: 1rem;
+  background: var(--color-accent);
+  border: 4px solid var(--color-accent);
+  margin: .2rem;
+  border-radius: 50%;
+  transition: background-color .2s ease-in;
+}
+.pr-block-carousel__indicator--current {
+  background: var(--color-accent-contrast, white);
 }
 `;
 

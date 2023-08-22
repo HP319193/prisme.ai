@@ -22,7 +22,7 @@ interface TemplatedBlock {
 }
 
 interface Config {
-  blocks?: TemplatedBlock[];
+  blocks?: TemplatedBlock[] | string;
   [k: string]: any;
 }
 export const cleanAttribute = (values: any) => (attribute: string) => {
@@ -31,7 +31,11 @@ export const cleanAttribute = (values: any) => (attribute: string) => {
     return trimed.substring(1, trimed.length - 1);
   }
 
-  return jsonpath.value(values, trimed);
+  try {
+    return jsonpath.value(values, trimed);
+  } catch {
+    return undefined;
+  }
 };
 
 export function applyFilter(filter: string, value: string, values: any) {
@@ -163,7 +167,7 @@ export function repeatBlocks(
 ) {
   if (!repeat) return [block];
   const { on: _on = '', as = 'item' } = repeat;
-  const [, on = ''] = _on.match(/^{{(.+)}}$/) || [];
+  const [, on = ''] = `${_on}`.match(/^{{(.+)}}$/) || [];
   if (!on) return [];
   const items = jsonpath.value(values, on);
 
@@ -179,11 +183,13 @@ export function repeatBlocks(
 }
 
 export function computeBlocks({ blocks, ...config }: Config, values: any) {
+  const blocksValue =
+    typeof blocks === 'string' ? interpolate(blocks, values) : blocks;
   return {
     ...interpolate(config, values),
     blocks:
-      blocks && Array.isArray(blocks)
-        ? blocks
+      blocksValue && Array.isArray(blocksValue)
+        ? blocksValue
             .filter((block) => {
               const { [TEMPLATE_IF]: _if } = block || {};
               return testCondition(_if, { ...values, ...config });
@@ -199,6 +205,6 @@ export function computeBlocks({ blocks, ...config }: Config, values: any) {
                 ...config,
               });
             })
-        : blocks,
+        : undefined,
   };
 }

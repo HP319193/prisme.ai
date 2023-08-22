@@ -15,7 +15,9 @@ interface RichTextConfig {
   allowScripts?: boolean;
   values?: Record<string, ReactNode>;
   markdown?: boolean;
+  // @deprecated
   container?: string;
+  tag?: string;
 }
 
 class ScriptsLoader {
@@ -108,7 +110,9 @@ export const RichText = ({
   className = '',
   values = {},
   markdown = true,
+  // @deprecated
   container = 'div',
+  tag = container,
 }: Omit<RichTextConfig, 'content'> & {
   children: RichTextConfig['content'];
 } & HTMLAttributes<HTMLDivElement>) => {
@@ -168,8 +172,11 @@ export const RichText = ({
 
   const text = localize(children) || '';
   const toRender = markdown ? marked(text) : text;
-  const Container = container as keyof JSX.IntrinsicElements;
-  const child = parser(mustache.render(toRender, values), options);
+  const Container = tag as keyof JSX.IntrinsicElements;
+  let child: string | JSX.Element | JSX.Element[] = '';
+  try {
+    child = parser(mustache.render(toRender, values), options);
+  } catch {}
 
   if (!Container) return <>{child}</>;
 

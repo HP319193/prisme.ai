@@ -316,3 +316,15 @@ it('should interpolate booleans', () => {
   expect(computeBlocks(from, { bool: true }).boolean).toBe(true);
   expect(computeBlocks(from, { bool: false }).boolean).toBe(false);
 });
+
+it('should interpolate a blocks expression', () => {
+  const from = {
+    blocks: '{{blocks}}',
+  };
+  const to = computeBlocks(from, {
+    blocks: [{ slug: 'RichText', content: 'Yeah man' }],
+  });
+  expect(to).toEqual({
+    blocks: [{ slug: 'RichText', content: 'Yeah man' }],
+  });
+});
