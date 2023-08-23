@@ -295,6 +295,7 @@ const defaultStyles = `:block {
   margin: .2rem;
   border-radius: 50%;
   transition: background-color .2s ease-in;
+  z-index: 9999;
 }
 .pr-block-carousel__indicator--current {
   background: var(--color-accent-contrast, white);
