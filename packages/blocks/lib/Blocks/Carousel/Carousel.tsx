@@ -248,6 +248,10 @@ const defaultStyles = `:block {
   display: flex;
   flex-direction: row;
   overflow: auto;
+  scroll-snap-type: x mandatory;
+}
+.pr-block-carousel__content > .pr-block-blocks-list__block {
+  scroll-snap-align: start;
 }
 
 .pr-block-carousel__arrows {
@@ -295,7 +299,6 @@ const defaultStyles = `:block {
   margin: .2rem;
   border-radius: 50%;
   transition: background-color .2s ease-in;
-  z-index: 9999;
 }
 .pr-block-carousel__indicator--current {
   background: var(--color-accent-contrast, white);
