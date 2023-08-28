@@ -42,6 +42,10 @@ jest.mock('../../../console/components/UserProvider', () => {
   };
 });
 
+jest.mock('../../utils/isServerSide', () => () => {
+  return true;
+});
+
 it('should render a builtin block', () => {
   const root = renderer.create(<BlockLoader name="RichText" />);
   const child = root.root.children[0] as renderer.ReactTestInstance;
