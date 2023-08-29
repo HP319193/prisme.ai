@@ -182,7 +182,7 @@ export function repeatBlocks(
   });
 }
 
-export function computeBlocks({ blocks, ...config }: Config, values: any) {
+export function computeBlocks({ blocks, ...config }: Config = {}, values: any) {
   const blocksValue =
     typeof blocks === 'string' ? interpolate(blocks, values) : blocks;
   return {

@@ -15,6 +15,7 @@ import { computeBlocks } from './computeBlocks';
 import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
 import fastDeepEqual from 'fast-deep-equal';
+import isServerSide from '../../utils/isServerSide';
 
 /**
  * This function aims to replace deprecated Block names by the new one
@@ -54,9 +55,6 @@ export const BlockLoader: TBlockLoader = ({
   container,
 }) => {
   const { user } = useUser();
-  const [blockName, setBlockName] = useState(name);
-  const [url, setUrl] = useState('');
-  const [config, setConfig] = useState<typeof initialConfig>(initialConfig);
   const [appConfig, setAppConfig] = useState<any>();
   const { page, events } = usePage();
   const [loaded, setLoaded] = useState(false);
@@ -66,21 +64,31 @@ export const BlockLoader: TBlockLoader = ({
   const lock = useRef(false);
   const [listening, setListening] = useState(false);
   const recursiveConfig = useRecursiveConfigContext();
+  const [config, setConfig] = useState(initialConfig);
 
   const debug = useDebug();
 
   const prevInitialConfig = useRef(initialConfig);
-  useEffect(() => {
-    if (fastDeepEqual(prevInitialConfig.current, initialConfig)) return;
-    prevInitialConfig.current = initialConfig;
-    setConfig(initialConfig);
-  }, [initialConfig]);
 
-  useEffect(() => {
-    if (lock.current || !name) return;
+  // These values must be computed on the first render to make page rendered
+  // on server side
+  const { blockName, computedConfig, url } = useMemo(() => {
+    if (!fastDeepEqual(prevInitialConfig.current, config)) {
+      prevInitialConfig.current = config;
+    }
+    const output = {
+      blockName: name,
+      url: '',
+      computedConfig:
+        prevInitialConfig.current &&
+        computeBlocks(prevInitialConfig.current, recursiveConfig),
+    };
+    if (!name) return output;
     if (name.match(/^http/)) {
-      setUrl(name);
-      return;
+      return {
+        ...output,
+        url: name,
+      };
     }
 
     const parts = name.split(/\./);
@@ -97,26 +105,30 @@ export const BlockLoader: TBlockLoader = ({
       } = typeof block === 'string' ? { url: block } : block;
 
       if (blocks) {
-        setBlockName('BlocksList');
-        setConfig({
-          ...initialConfig,
-          blocks,
-          ...props,
-        });
+        return {
+          ...output,
+          blockName: 'BlocksList',
+          computedConfig: computeBlocks(
+            {
+              ...initialConfig,
+              blocks,
+              ...props,
+            },
+            recursiveConfig
+          ),
+        };
       }
-      setUrl(url);
-      return;
+      return output;
     }
     if (parts.length === 1) {
-      setUrl(getBlockName(name));
-      return;
+      return output;
     }
 
     const [appSlug] = parts;
     const app = (page?.appInstances || []).find(({ slug }) => appSlug === slug);
     if (!app || !app.blocks?.[name]) {
       console.error(`"${name}" Block is not installed`);
-      return;
+      return output;
     }
 
     const debugUrl = debug.get(name);
@@ -133,15 +145,24 @@ export const BlockLoader: TBlockLoader = ({
     } = block;
 
     if (blocks) {
-      setBlockName('BlocksList');
-      setConfig({
-        ...initialConfig,
-        blocks,
-        ...props,
-      });
+      return {
+        ...output,
+        blockName: 'BlocksList',
+        computedConfig: computeBlocks(
+          {
+            ...initialConfig,
+            blocks,
+            ...props,
+          },
+          recursiveConfig
+        ),
+      };
     }
-    setUrl(url);
-  }, [debug, name, page, initialConfig]);
+    return {
+      ...output,
+      url,
+    };
+  }, [config, name, recursiveConfig, page?.appInstances, debug, initialConfig]);
 
   const { onInit, updateOn, automation } = initialConfig || {};
   const onBlockLoad = useCallback(() => {
@@ -248,10 +269,11 @@ export const BlockLoader: TBlockLoader = ({
     [name, page]
   );
 
-  const computedConfig = useMemo(() => {
-    if (!config) return config;
-    return computeBlocks(config, recursiveConfig);
-  }, [config, recursiveConfig]);
+  // This lines force browser to re render page and regenerate classnames
+  const [render, setRender] = useState(isServerSide());
+  useEffect(() => {
+    setRender(true);
+  }, []);
 
   const cumulatedConfig = useMemo(
     () => ({
@@ -260,9 +282,9 @@ export const BlockLoader: TBlockLoader = ({
     }),
     [computedConfig, recursiveConfig]
   );
-
-  if (!page) return null;
-
+  console.log({ render });
+  if (!page || !render) return null;
+  console.log({ blockName, url, language });
   return (
     <recursiveConfigContext.Provider value={cumulatedConfig}>
       <BLoader
