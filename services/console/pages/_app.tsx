@@ -19,6 +19,7 @@ import { PublicBlocksProvider } from '../components/BlocksProvider';
 import OnBoarding from '../components/OnBoarding';
 import InstallWorkspace from '../components/InstallWorkspace';
 import Tracking from '../components/Tracking';
+import Storage from '../utils/Storage';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -51,7 +52,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     }
     const accessToken = currentURL.searchParams.get('access-token');
     if (accessToken) {
-      localStorage.setItem('access-token', accessToken);
+      Storage.set('access-token', accessToken);
     }
   }
 
