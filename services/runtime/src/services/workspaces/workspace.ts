@@ -37,6 +37,7 @@ export interface AppContext {
   appInstanceFullSlug: string;
   parentAppSlug?: string;
   parentAppSlugs: string[];
+  runningWorkspaceId: string;
 }
 
 export class Workspace {
@@ -224,6 +225,7 @@ export class Workspace {
             (importParentAppSlugs?.length || 0) > 1
               ? importParentAppSlugs[importParentAppSlugs.length - 2]
               : undefined,
+          runningWorkspaceId: this.appContext?.runningWorkspaceId || this.id,
         },
         interpolatedAppConfig
       );
@@ -368,7 +370,8 @@ export class Workspace {
       const automation = this.imports[appSlug].getAutomation(name, false);
       if (automation) {
         // For apps automation, fix runningWorkspaceId with current one
-        automation.runningWorkspaceId = this.id;
+        automation.runningWorkspaceId =
+          this.appContext?.runningWorkspaceId || this.id;
       }
       return automation;
     }
@@ -389,7 +392,7 @@ export class Workspace {
       authorizations: {},
       ...automation,
       workspace: this,
-      runningWorkspaceId: this.id,
+      runningWorkspaceId: this.appContext?.runningWorkspaceId || this.id,
       secretPaths: automation.arguments
         ? findSecretPaths(automation.arguments)
         : [],
