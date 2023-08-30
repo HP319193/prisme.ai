@@ -5,6 +5,7 @@ import {
   RedisOptions,
   Worker,
   RepeatOptions,
+  JobsOptions,
 } from 'bullmq';
 import { parseExpression as parseCron } from 'cron-parser';
 import { URL } from 'url';
@@ -91,16 +92,19 @@ export default class BullMQ implements ISchedule {
   }
 
   async add(scheduleTriggers: DetailedTrigger[]) {
-    const jobs = scheduleTriggers.map((trigger) => ({
-      name: getJobId(trigger.workspace.id, trigger.automationSlug),
-      data: { ...trigger },
-      opts: {
-        repeat: {
-          pattern: trigger.value,
+    const jobs: { name: string; data: any; opts: JobsOptions }[] =
+      scheduleTriggers.map((trigger) => ({
+        name: getJobId(trigger.workspace.id, trigger.automationSlug),
+        data: { ...trigger },
+        opts: {
+          repeat: {
+            pattern: trigger.value,
+          },
+          jobId: getJobId(trigger.workspace.id, trigger.automationSlug),
+          removeOnComplete: SCHEDULES.removeOnComplete,
+          removeOnFailed: SCHEDULES.removeOnFailed,
         },
-        jobId: getJobId(trigger.workspace.id, trigger.automationSlug),
-      },
-    }));
+      }));
 
     for (const job of jobs) {
       const { name, data, opts } = job;

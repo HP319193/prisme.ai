@@ -12,4 +12,14 @@ export const SCHEDULES = {
   password: process.env.SCHEDULES_DRIVER_PASSWORD || CONTEXTS_CACHE.password,
   maxOccurrencePattern:
     process.env.SCHEDULES_MAXIMUM_OCCURRENCE_PATTERN || '*/15 * * * *',
+  removeOnComplete: {
+    age: parseInt(
+      process.env.SCHEDULES_COMPLETED_JOBS_REDIS_MAX_AGE || `${3600 * 24 * 7}`
+    ),
+  },
+  removeOnFailed: {
+    age: parseInt(
+      process.env.SCHEDULES_COMPLETED_JOBS_REDIS_MAX_AGE || `${3600 * 24 * 7}`
+    ),
+  },
 };
