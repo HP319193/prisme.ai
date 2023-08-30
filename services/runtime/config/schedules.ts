@@ -17,7 +17,7 @@ export const SCHEDULES = {
       process.env.SCHEDULES_COMPLETED_JOBS_REDIS_MAX_AGE || `${3600 * 24 * 7}`
     ),
   },
-  removeOnFailed: {
+  removeOnFail: {
     age: parseInt(
       process.env.SCHEDULES_COMPLETED_JOBS_REDIS_MAX_AGE || `${3600 * 24 * 7}`
     ),

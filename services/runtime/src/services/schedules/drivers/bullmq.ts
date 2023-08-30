@@ -102,7 +102,7 @@ export default class BullMQ implements ISchedule {
           },
           jobId: getJobId(trigger.workspace.id, trigger.automationSlug),
           removeOnComplete: SCHEDULES.removeOnComplete,
-          removeOnFailed: SCHEDULES.removeOnFailed,
+          removeOnFail: SCHEDULES.removeOnFail,
         },
       }));
 
