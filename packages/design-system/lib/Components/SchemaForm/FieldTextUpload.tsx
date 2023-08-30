@@ -36,41 +36,48 @@ export const FieldTextUpload = ({
     ) : null
   );
   const [previewLabel, setPreviewLabel] = useState('');
+  const [error, setError] = useState(false);
 
   const readFile = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files || e.target.files.length === 0) return;
+      setError(false);
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onload = async ({ target }) => {
         if (!target || typeof target.result !== 'string') return;
-        const value = await uploadFile(
-          target.result.replace(
-            /base64/,
-            `filename:${file.name.replace(/[;\s]/g, '-')}; base64`
-          )
-        );
-        setPreviewLabel('');
-        if (typeof value === 'string') {
-          field.input.onChange(value);
-          setPreview(<img src={value} className="max-h-24" />);
-        } else {
-          const { value: v, preview, label } = value;
-          if (v) {
-            field.input.onChange(v);
-            if (preview) {
-              setPreview(
-                typeof preview === 'string' ? (
-                  <img src={preview} className="max-h-24" />
-                ) : (
-                  preview
-                )
-              );
-            }
-            if (label) {
-              setPreviewLabel(label);
+
+        try {
+          const value = await uploadFile(
+            target.result.replace(
+              /base64/,
+              `filename:${file.name.replace(/[;\s]/g, '-')}; base64`
+            )
+          );
+          setPreviewLabel('');
+          if (typeof value === 'string') {
+            field.input.onChange(value);
+            setPreview(<img src={value} className="max-h-24" />);
+          } else {
+            const { value: v, preview, label } = value;
+            if (v) {
+              field.input.onChange(v);
+              if (preview) {
+                setPreview(
+                  typeof preview === 'string' ? (
+                    <img src={preview} className="max-h-24" />
+                  ) : (
+                    preview
+                  )
+                );
+              }
+              if (label) {
+                setPreviewLabel(label);
+              }
             }
           }
+        } catch (error) {
+          setError(true);
         }
       };
       reader.readAsDataURL(file);
@@ -98,7 +105,11 @@ export const FieldTextUpload = ({
       >
         {props.label}
       </Label>
-      <div className="pr-form-upload__input pr-form-input">
+      <div
+        className={`pr-form-upload__input pr-form-input ${
+          error ? 'pr-form-error' : ''
+        }`}
+      >
         <div className="pr-form-upload__placeholder">
           <div className="pr-form-upload__preview">
             {field.input.value ? preview : defaultPreview}
