@@ -1389,6 +1389,9 @@
       "slug": {
         "label": "Nom technique"
       },
+      "photo": {
+        "label": "Image de prévisualisation"
+      },
       "url": {
         "label": "URL du module Javascript (avancé)",
         "description": "Vous pouvez créer votre Block sous la forme d'un composant React en utilisant <a href=\"https://gitlab.com/prisme.ai/block-starter\">ce modèle</a>."

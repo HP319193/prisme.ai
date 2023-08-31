@@ -1389,6 +1389,9 @@
       "slug": {
         "label": "Slug"
       },
+      "photo": {
+        "label": "Preview image"
+      },
       "url": {
         "label": "Javascript module URL (advanced)",
         "description": "You can create your Block as a React component using <a href=\"https://gitlab.com/prisme.ai/block-starter\">this template</a>."
