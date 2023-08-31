@@ -282,9 +282,9 @@ export const BlockLoader: TBlockLoader = ({
     }),
     [computedConfig, recursiveConfig]
   );
-  console.log({ render });
+
   if (!page || !render) return null;
-  console.log({ blockName, url, language });
+
   return (
     <recursiveConfigContext.Provider value={cumulatedConfig}>
       <BLoader
