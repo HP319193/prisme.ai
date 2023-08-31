@@ -69,6 +69,11 @@ export const BlockLoader: TBlockLoader = ({
   const debug = useDebug();
 
   const prevInitialConfig = useRef(initialConfig);
+  useEffect(() => {
+    if (!fastDeepEqual(prevInitialConfig.current, initialConfig)) {
+      setConfig(initialConfig);
+    }
+  }, [initialConfig]);
 
   // These values must be computed on the first render to make page rendered
   // on server side
