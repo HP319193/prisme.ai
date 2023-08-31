@@ -71,22 +71,24 @@ export const BlockLoader: TBlockLoader = ({
   const prevInitialConfig = useRef(initialConfig);
   useEffect(() => {
     if (!fastDeepEqual(prevInitialConfig.current, initialConfig)) {
+      prevInitialConfig.current = initialConfig;
       setConfig(initialConfig);
     }
   }, [initialConfig]);
 
   // These values must be computed on the first render to make page rendered
   // on server side
+  const prevConfig = useRef(config);
   const { blockName, computedConfig, url } = useMemo(() => {
-    if (!fastDeepEqual(prevInitialConfig.current, config)) {
-      prevInitialConfig.current = config;
+    if (!fastDeepEqual(prevConfig.current, config)) {
+      prevConfig.current = config;
     }
     const output = {
       blockName: name,
       url: '',
       computedConfig:
-        prevInitialConfig.current &&
-        computeBlocks(prevInitialConfig.current, recursiveConfig),
+        prevConfig.current &&
+        computeBlocks(prevConfig.current, recursiveConfig),
     };
     if (!name) return output;
     if (name.match(/^http/)) {
