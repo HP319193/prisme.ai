@@ -13,7 +13,7 @@ const {
   publicRuntimeConfig: {
     CONSOLE_URL = '',
     API_URL = '',
-    ENABLED_AUTH_PROVIDERS,
+    ENABLED_AUTH_PROVIDERS = [],
   },
 } = getConfig();
 
