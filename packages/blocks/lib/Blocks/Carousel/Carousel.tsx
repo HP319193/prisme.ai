@@ -101,6 +101,7 @@ export const Carousel = ({
 
   const indicators = props.blocks?.length || 0;
   const [currentIndicator, setCurrentIndicator] = useState(-1);
+
   useEffect(() => {
     const scrollingEl = container.current?.querySelector(
       '.pr-block-carousel__content'
@@ -127,7 +128,8 @@ export const Carousel = ({
     return () => {
       scrollingEl?.removeEventListener('scroll', listener);
     };
-  }, []);
+  }, [container.current]);
+
   const scrollTo = useCallback((step: number) => {
     const scrollingEl = container.current?.querySelector(
       '.pr-block-carousel__content'
@@ -173,7 +175,7 @@ export const Carousel = ({
     return () => {
       clearInterval(interval);
     };
-  }, [autoscrollIsActive, autoscrollSpeed]);
+  }, [autoscrollIsActive, autoscrollSpeed, container.current]);
 
   const [canScroll, setCanScroll] = useState<boolean | null>(false);
   useEffect(() => {
