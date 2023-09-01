@@ -299,7 +299,13 @@ export default {
         '/oidc/session/end?'.concat(signoutParams.toString()),
         PROVIDER_URL
       ).toString();
-      ctx.redirect(signoutURI);
+
+      // Avoid an infinite loop if the signout itself is crashing
+      if ((ctx.request.url || '').includes('/session/end/')) {
+        ctx.redirect(signoutParams.get('post_logout_redirect_uri')!);
+      } else {
+        ctx.redirect(signoutURI);
+      }
     },
   },
 };

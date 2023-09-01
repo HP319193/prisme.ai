@@ -49,7 +49,7 @@ export const SignIn = () => {
 
   return (
     <SignLayout type={SignType.In} link="signup">
-      {token ? null : <SigninForm onSignin={signedin} provider="prismeai" />}
+      {token ? null : <SigninForm onSignin={signedin} />}
     </SignLayout>
   );
 };

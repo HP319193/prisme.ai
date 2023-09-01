@@ -5,8 +5,9 @@
     "topForm1": "Good to have you back",
     "topForm2": "Connect to Prisme.ai",
     "topForm3": "Don't have an account yet? <a>Sign up</a>",
-    "withPrismeai": "Sign in with Prisme.ai",
-    "withAzure": "Sign in with Microsoft",
+    "signin": "Sign in",
+    "or": "OR",
+    "withAzure": "Continue with Microsoft",
     "forgot": "<a>Reset your password</a>",
     "email": "Email",
     "password": "Password",
@@ -74,5 +75,8 @@
     "success_emailSent": "We just sent you a new email, please check your inbox!",
     "emailSentAt": "We sent you an email at:",
     "followInstructions": "Please, follow its instructions in order to validate your account"
+  },
+  "pages": {
+    "restricted": "Access to this page is restricted."
   }
 }

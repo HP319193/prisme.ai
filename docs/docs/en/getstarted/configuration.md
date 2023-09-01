@@ -634,6 +634,6 @@ In order to finish SSO configuration in **api-gateway**, its following **environ
 * **AZURE_AD_APP_ID** : The application id retrieved in first step
 * **AZURE_AD_CLIENT_SECRET** : The secret value retrieved in second step
 
-Finally, add the following environment variable to **console** microsevice :  
+Finally, add the following environment variable to **console** and **pages** microsevice :  
 
 * **ENABLED_AUTH_PROVIDERS** : azure
