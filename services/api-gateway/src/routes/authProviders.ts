@@ -105,11 +105,7 @@ export async function initAuthProviders(
    */
   const authProvider = new AuthProvider(azureCfg.msal);
   const redirectPath = '/login/azure/callback';
-  const REDIRECT_URI = new URL(
-    '/v2' + redirectPath,
-    // '/oidc/azure/callback',
-    'http://localhost:3001/v2' /* syscfg.API_URL */
-  ).toString();
+  const REDIRECT_URI = new URL('/v2' + redirectPath, syscfg.API_URL).toString();
 
   app.get(
     '/login/azure',
