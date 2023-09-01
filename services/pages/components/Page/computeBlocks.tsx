@@ -120,8 +120,11 @@ export function interpolateExpression(expression: string, values: any) {
 
 export function testCondition(condition: string = '', values: any) {
   if (!condition) return true;
+  const interpolated = interpolateExpression(condition, values);
   const [, invert, result] =
-    `${interpolateExpression(condition, values)}`.match(/(^!?)(.+$)?/) || [];
+    typeof interpolated === 'string'
+      ? interpolated.match(/(^!?)(.+$)?/) || []
+      : [, condition.match(/^!/), interpolated];
 
   if (result === 'true') {
     return invert ? false : true;
