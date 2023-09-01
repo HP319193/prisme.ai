@@ -393,6 +393,9 @@ api-gateway_build_docker:
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
   image: docker:stable
+  needs:
+    - job: backend_npm_install
+      optional: true
   services:
     - docker:stable-dind
   rules: &API_GATEWAY_DEPLOY_RULES
