@@ -30,6 +30,9 @@ module.exports = {
       process.env.OIDC_STUDIO_CLIENT_ID || 'local-client-id',
     OIDC_CLIENT_ID_HEADER:
       process.env.OIDC_CLIENT_ID_HEADER || 'x-prismeai-client-id',
+    ENABLED_AUTH_PROVIDERS: (process.env.ENABLED_AUTH_PROVIDERS || '').split(
+      ','
+    ),
   },
   webpack(config) {
     config.module.rules.push({

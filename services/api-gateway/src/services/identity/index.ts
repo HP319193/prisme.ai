@@ -13,6 +13,7 @@ import {
   resetPassword,
   validateAccount,
   sendAccountValidationLink,
+  externalLoginOrSignup,
 } from './users';
 import { setupUserMFA, validateMFA } from './mfa';
 import {
@@ -44,6 +45,7 @@ export default (ctx?: PrismeContext, logger?: Logger) => {
     updateUser: updateUser(Users, ctx),
     login: login(Users, ctx),
     anonymousLogin: anonymousLogin(Users, ctx),
+    externalLoginOrSignup: externalLoginOrSignup(Users, ctx),
     findContacts: findContacts(Users, ctx),
     sendResetPasswordLink: sendResetPasswordLink(Users, ctx, logger),
     resetPassword: resetPassword(Users, ctx, logger),

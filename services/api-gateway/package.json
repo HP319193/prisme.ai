@@ -33,6 +33,7 @@
     "ts-node-dev": "^2.0.0"
   },
   "dependencies": {
+    "@azure/msal-node": "^2.0.2",
     "@prisme.ai/broker": "^0.1.2",
     "@prisme.ai/permissions": "^1.0.0",
     "@prisme.ai/types": "^1.0.6",

@@ -10,6 +10,7 @@ declare namespace Express {
           Partial<import('express-session').SessionData> &
           CustomSessionFields)
       | Omit<CustomSessionFields, 'passport'>;
+    locals: any;
   }
 
   interface CustomSessionFields {
@@ -18,5 +19,6 @@ declare namespace Express {
     passport: {
       user: string;
     };
+    authData?: Prismeai.AuthData;
   }
 }

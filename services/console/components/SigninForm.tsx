@@ -7,9 +7,14 @@ import { Trans, useTranslation } from 'next-i18next';
 import LinkInTrans from './LinkInTrans';
 import getConfig from 'next/config';
 import Storage from '../utils/Storage';
+import Link from 'next/link';
 
 const {
-  publicRuntimeConfig: { CONSOLE_URL = '' },
+  publicRuntimeConfig: {
+    CONSOLE_URL = '',
+    API_URL = '',
+    ENABLED_AUTH_PROVIDERS,
+  },
 } = getConfig();
 
 interface Values {
@@ -73,6 +78,8 @@ export const SigninForm = ({ provider }: SigninFormProps) => {
   }
 
   // 2. Display login form
+  const microsoftAuthUrl =
+    ENABLED_AUTH_PROVIDERS.includes('azure') && `${API_URL}/login/azure`;
   return (
     <Form onSubmit={submit} validate={validate}>
       {({ handleSubmit }) => (
@@ -129,6 +136,18 @@ export const SigninForm = ({ provider }: SigninFormProps) => {
             >
               {t('in.submit')}
             </Button>
+
+            {microsoftAuthUrl ? (
+              <Button
+                variant="primary"
+                className="w-full !h-12 !mb-4 !font-bold"
+                type="button"
+              >
+                <Link href={microsoftAuthUrl}>
+                  <a className="font-bold">{t('in.withAzure')}</a>
+                </Link>
+              </Button>
+            ) : null}
           </div>
         </form>
       )}

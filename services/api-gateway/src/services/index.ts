@@ -1,4 +1,7 @@
 import identity from './identity';
+import { msal } from './msal';
+import * as oidcProvider from './oidc/provider';
 
-export { identity };
+const oidc = { provider: oidcProvider };
+export { identity, msal, oidc };
 export default { identity };
