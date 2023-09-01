@@ -1,12 +1,34 @@
 import jsonpath from 'jsonpath';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import updateLocale from 'dayjs/plugin/updateLocale';
 import equal from 'fast-deep-equal';
 
 import('dayjs/locale/en');
 import('dayjs/locale/fr');
 
 dayjs.extend(LocalizedFormat);
+dayjs.extend(relativeTime);
+dayjs.extend(updateLocale);
+
+dayjs.updateLocale('fr', {
+  relativeTime: {
+    future: 'dans %s',
+    past: 'il y a %s',
+    s: 'quelques secondes',
+    m: 'une minute',
+    mm: '%d minutes',
+    h: 'une heure',
+    hh: '%d heures',
+    d: 'un jour',
+    dd: '%d jours',
+    M: 'un mois',
+    MM: '%d mois',
+    y: 'un an',
+    yy: '%d ans',
+  },
+});
 
 const TEMPLATE_IF = 'template.if';
 const TEMPLATE_REPEAT = 'template.repeat';
@@ -42,14 +64,20 @@ export function applyFilter(filter: string, value: string, values: any) {
   if (!filter) return value;
   const [fn, attrs = ''] = filter.split(/\:/);
   switch (fn) {
-    case 'date':
+    case 'date': {
       const [format = '', lang = 'en'] = attrs
         .split(/,/)
         .map(cleanAttribute(values));
       return dayjs(value).locale(lang).format(format);
-    case 'if':
+    }
+    case 'from-now': {
+      const [lang = 'en'] = attrs.split(/,/).map(cleanAttribute(values));
+      return dayjs(value).locale(lang).fromNow();
+    }
+    case 'if': {
       const [True, False] = attrs.split(/,/).map(cleanAttribute(values));
       return value ? True : False;
+    }
     default:
       return value;
   }
