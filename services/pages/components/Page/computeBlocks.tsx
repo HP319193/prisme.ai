@@ -95,8 +95,12 @@ export function interpolateExpression(expression: string, values: any) {
     const [, expr] = match.match(/{{([^}]+)}}/) || [];
     const [_key, ...filters] = expr.split(/\|/);
     const key = _key.trim();
-    let interpolation =
-      key === '$index' ? values.$index : jsonpath.value(values, key);
+
+    let interpolation = '';
+    try {
+      interpolation =
+        key === '$index' ? values.$index : jsonpath.value(values, key);
+    } catch (e) {}
     if (filters) {
       interpolation = filters
         .filter(Boolean)
