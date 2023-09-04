@@ -22,10 +22,13 @@ export default async function initRoutes(
   oidc: Provider
 ) {
   // Drop legacy session cookies on logout as they would otherwise prevent from signing out
+  // Also reset SameSite option to allow compatibility between microsoft sso & cookies existing before this feature
   app.use(
     '/oidc/session/end',
     (req: Request, res: Response, next: NextFunction) => {
-      res.clearCookie('cookie.sid');
+      res.clearCookie('cookie.sid', {
+        sameSite: 'none',
+      });
       next();
     }
   );
