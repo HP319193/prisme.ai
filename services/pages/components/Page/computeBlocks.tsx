@@ -109,10 +109,14 @@ export function interpolateExpression(expression: string, values: any) {
       newValue = interpolation;
       return;
     }
-    newValue = newValue.replace(
-      match,
-      interpolation === undefined ? '' : interpolation
-    );
+
+    newValue =
+      typeof newValue === 'string'
+        ? newValue.replace(
+            match,
+            interpolation === undefined ? '' : interpolation
+          )
+        : newValue;
   });
 
   return newValue;
