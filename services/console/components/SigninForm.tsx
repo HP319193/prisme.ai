@@ -1,5 +1,5 @@
 import { Form } from 'react-final-form';
-import { Button, Input } from '@prisme.ai/design-system';
+import { Button, Input, Title } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
 import { useCallback, useEffect, useState } from 'react';
 import { useUser } from './UserProvider';
@@ -7,9 +7,16 @@ import { Trans, useTranslation } from 'next-i18next';
 import LinkInTrans from './LinkInTrans';
 import getConfig from 'next/config';
 import Storage from '../utils/Storage';
+import Link from 'next/link';
+import MicrosoftIcon from '../icons/microsoft.svg';
+import Image from 'next/image';
 
 const {
-  publicRuntimeConfig: { CONSOLE_URL = '' },
+  publicRuntimeConfig: {
+    CONSOLE_URL = '',
+    API_URL = '',
+    ENABLED_AUTH_PROVIDERS = [],
+  },
 } = getConfig();
 
 interface Values {
@@ -19,10 +26,10 @@ interface Values {
 
 interface SigninFormProps {
   onSignin: (user: Prismeai.User | null) => void;
-  provider?: 'prismeai';
+  show403?: false | string;
 }
 
-export const SigninForm = ({ provider }: SigninFormProps) => {
+export const SigninForm = ({ show403 }: SigninFormProps) => {
   const { t } = useTranslation('sign');
   const { loading, signin, initAuthentication, completeAuthentication } =
     useUser();
@@ -51,20 +58,25 @@ export const SigninForm = ({ provider }: SigninFormProps) => {
     const interactionUid = urlParams.get('interaction');
     const code = urlParams.get('code');
     if (!code && !interactionUid && !urlParams.get('error')) {
-      if (provider === 'prismeai') {
+      if (!show403) {
         initAuthentication();
         return null;
       }
       return (
-        <Button
-          onClick={() => {
-            initAuthentication();
-          }}
-          variant="primary"
-          className="w-full !h-12 !mb-4 !font-bold"
-        >
-          {t('in.withPrismeai')}
-        </Button>
+        <div className="flex flex-col items-center space-y-4 mb-16 mt-8">
+          <Title className="text-center !text-3xl">{show403}</Title> <br />
+          <div>
+            <Button
+              onClick={() => {
+                initAuthentication();
+              }}
+              variant="primary"
+              className="w-full !h-12 !mb-4 !font-bold"
+            >
+              {t('in.signin')}
+            </Button>
+          </div>
+        </div>
       );
     } else if (code) {
       // Authorization code processing, wait for redirection
@@ -73,11 +85,36 @@ export const SigninForm = ({ provider }: SigninFormProps) => {
   }
 
   // 2. Display login form
+  const microsoftAuthUrl =
+    ENABLED_AUTH_PROVIDERS.includes('azure') && `${API_URL}/login/azure`;
   return (
     <Form onSubmit={submit} validate={validate}>
       {({ handleSubmit }) => (
         <form onSubmit={handleSubmit} className="md:w-96 flex">
           <div className="flex flex-col flex-1">
+            {microsoftAuthUrl ? (
+              <button
+                className="w-full !h-12 !mb-4 !font-bold flex items-center text-[#3B3B3B] !border border-[#EDEDF0] rounded-[24px] text-center justify-center"
+                type="button"
+              >
+                <Image
+                  src={MicrosoftIcon}
+                  width={16}
+                  height={16}
+                  alt="Microsoft"
+                />
+                <Link href={microsoftAuthUrl}>
+                  <a className="font-bold ml-2">{t('in.withAzure')}</a>
+                </Link>
+              </button>
+            ) : null}
+            {microsoftAuthUrl ? (
+              <div className='before:content-[""] before:h-[1px] before:bg-[#9F97AE] before:w-full before:block before:top-[50%] before:absolute relative text-center'>
+                <span className="bg-white relative px-2 !font-bold text-[#9F97AE]">
+                  {t('in.or')}
+                </span>
+              </div>
+            ) : null}
             <Field
               name="email"
               containerClassName="!mx-0 !mb-4"

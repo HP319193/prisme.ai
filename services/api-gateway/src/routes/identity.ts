@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import services from '../services';
-import passport from 'passport';
+
 import {
   enforceMFA,
   forbidAccessTokens,
@@ -10,67 +10,8 @@ import {
 import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { FindUserQuery } from '../services/identity/users';
-import { syscfg } from '../config';
-import { getAccessToken } from '../services/oidc/provider';
-
-const loginHandler = (strategy: string) =>
-  async function (
-    req: Request<any, any>,
-    res: Response<PrismeaiAPI.AnonymousAuth.Responses.$200>,
-    next: NextFunction
-  ) {
-    passport.authenticate(
-      strategy,
-      { session: true },
-      async (err, user, info) => {
-        if (err || !user) {
-          next(info);
-          await req.broker.send(EventType.FailedLogin, {
-            email: req.body.email,
-            ip: req.context?.http?.ip,
-          });
-          return;
-        }
-
-        req.logIn(user, async (err) => {
-          if (err) {
-            req.logger?.error(err);
-            return next(
-              new AuthenticationError('Unknown authentication error')
-            );
-          }
-
-          // Mimic OIDC emitted JWT tokens so we can validate / handle these anonymous session exactly like for OIDC tokens
-          const { token, jwt, expires } = await getAccessToken(user.id);
-          req.session.prismeaiSessionId = token.prismeaiSessionId;
-          req.session.mfaValidated = false;
-          res.send({
-            ...user,
-            token: jwt,
-            sessionId: req.session.prismeaiSessionId,
-            expires,
-          });
-          const provider = strategy === 'local' ? 'prismeai' : strategy;
-          await req.broker.send<Prismeai.SucceededLogin['payload']>(
-            EventType.SucceededLogin,
-            {
-              email: user.email,
-              ip: req.context?.http?.ip,
-              id: user.id,
-              authData: {
-                [provider]: {},
-              },
-              session: {
-                id: req.session.prismeaiSessionId,
-                expiresIn: syscfg.SESSION_COOKIES_MAX_AGE,
-                expires,
-              },
-            }
-          );
-        });
-      }
-    )(req, res, next);
-  };
+import { initAuthProviders } from './authProviders';
+import Provider from 'oidc-provider';
 
 async function reAuthenticate(req: Request, res: Response, next: NextFunction) {
   if (!req.user?.email || !req.body?.currentPassword) {
@@ -189,26 +130,6 @@ async function setupUserMFAHandler(
     id: user?.id!,
   });
   return res.send(mfa);
-}
-
-async function mfaHandler(
-  req: Request<any, any, PrismeaiAPI.MFA.RequestBody>,
-  res: Response<PrismeaiAPI.MFA.Responses.$200>,
-  next: NextFunction
-) {
-  const { user, context, body, broker } = req;
-  const identity = services.identity(context, req.logger);
-  try {
-    await identity.validateMFA(user!, body);
-  } catch (err) {
-    broker.send<Prismeai.FailedMFA['payload']>(EventType.FailedMFA, {
-      email: user?.email!,
-      ip: req.context?.http?.ip,
-    });
-    throw err;
-  }
-  req.session.mfaValidated = true;
-  return res.send({ success: true });
 }
 
 /**
@@ -332,31 +253,31 @@ async function deleteMetaHandler(
   res.send(meta);
 }
 
-const app = express.Router();
+export default function initIdentityRoutes(oidc: Provider) {
+  const app = express.Router();
 
-app.get(`/me`, isAuthenticated, meHandler);
-app.post(`/contacts`, findContactsHandler);
+  app.get(`/me`, isAuthenticated, meHandler);
+  app.post(`/contacts`, findContactsHandler);
 
-// From there, only routes restricted to users, forbidden to access tokens
-app.use(forbidAccessTokens);
+  // From there, only routes restricted to users, forbidden to access tokens
+  app.use(forbidAccessTokens);
 
-app.post(`/login`, loginHandler('local'));
-app.post(`/login/anonymous`, loginHandler('anonymous'));
-app.post(`/login/mfa`, isAuthenticated, mfaHandler);
-app.post(`/signup`, signupHandler);
+  initAuthProviders(app, oidc);
+  app.post(`/signup`, signupHandler);
 
-// User account
-app.post(`/user/password`, resetPasswordHandler);
-app.post(`/user/validate`, validateAccountHandler);
-app.post(`/user/mfa`, reAuthenticate, enforceMFA, setupUserMFAHandler);
+  // User account
+  app.post(`/user/password`, resetPasswordHandler);
+  app.post(`/user/validate`, validateAccountHandler);
+  app.post(`/user/mfa`, reAuthenticate, enforceMFA, setupUserMFAHandler);
 
-app.get(`/user/accessTokens`, isAuthenticated, listAccessTokensHandler);
-app.post(`/user/accessTokens`, isAuthenticated, createAccessTokenHandler);
-app.delete(
-  `/user/accessTokens/:token`,
-  isAuthenticated,
-  deleteAccessTokenHandler
-);
-app.post('/user/meta', isAuthenticated, setMetaHandler);
-app.delete('/user/meta/:key', isAuthenticated, deleteMetaHandler);
-export default app;
+  app.get(`/user/accessTokens`, isAuthenticated, listAccessTokensHandler);
+  app.post(`/user/accessTokens`, isAuthenticated, createAccessTokenHandler);
+  app.delete(
+    `/user/accessTokens/:token`,
+    isAuthenticated,
+    deleteAccessTokenHandler
+  );
+  app.post('/user/meta', isAuthenticated, setMetaHandler);
+  app.delete('/user/meta/:key', isAuthenticated, deleteMetaHandler);
+  return app;
+}

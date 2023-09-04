@@ -249,3 +249,10 @@ async function deleteWorkspaceClients(workspaceId: string) {
     subjectId: workspaceId,
   });
 }
+
+export async function getOAuthClient(clientId: string) {
+  const clients = await OAuthClients.find({
+    clientId,
+  });
+  return clients?.[0];
+}

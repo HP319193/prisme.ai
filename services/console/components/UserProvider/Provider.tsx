@@ -1,3 +1,4 @@
+import Cookie from 'js-cookie';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import context, { OperationSuccess, UserContext } from './context';
 import api from '../../utils/api';
@@ -155,6 +156,10 @@ export const UserProvider: FC<UserProviderProps> = ({
       if (clearOpSession && !api.legacyToken) {
         const redirectionUrl = new URL('/signin', window.location.href);
         const signoutUrl = api.getSignoutURL(redirectionUrl.toString());
+        try {
+          // Compatibility between microsoft sso & cookies existing before it : force clear express-session cookie
+          Cookie.remove('cookie.sid');
+        } catch {}
         window.location.assign(signoutUrl);
       } else {
         if (!PUBLIC_URLS.includes(route)) {

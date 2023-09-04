@@ -5,7 +5,9 @@ import { syscfg } from '.';
 import { findCommonParentDomain } from '../utils/findCommonParentDomain';
 import { getJWKS } from '../services/oidc/provider';
 import path from 'path';
-import { URL } from 'url';
+import { URL, URLSearchParams } from 'url';
+import { logger } from '../logger';
+import { getOAuthClient } from '../services/oidc/client';
 
 const OIDC_STUDIO_CLIENT_ID =
   process.env.OIDC_STUDIO_CLIENT_ID || 'local-client-id';
@@ -242,7 +244,7 @@ export default {
         // signed: true
         httpOnly: true,
         overwrite: true,
-        sameSite: 'lax',
+        sameSite: 'none', // Lax would break external SSO auth as they redirect directly on OIDC termination
         path: '/',
         domain: cookiesDomain,
       },
@@ -265,6 +267,45 @@ export default {
       ClientCredentials: 10 * 60, // 10 minutes in seconds
       IdToken: 1 * 60 * 60, // 1 hour in seconds
       RefreshToken: 1 * 24 * 60 * 60, // 1 day in seconds
+    },
+
+    async renderError(ctx, out, error) {
+      ((<any>ctx.req)?.logger || logger).error({
+        msg: `Failed OIDC authentication with an error : ${error.message}. Redirect user back to sign out.`,
+        error,
+      });
+
+      // Build signout URI to  clear client cookies & restart a login attempt
+      let signoutParams = new URLSearchParams({
+        client_id: OIDC_STUDIO_CLIENT_ID,
+        post_logout_redirect_uri: new URL(LOGIN_PATH, STUDIO_URL).toString(),
+      });
+      const sourceClientId = new URLSearchParams(ctx.request.url).get(
+        'client_id'
+      );
+
+      // If we're coming from a workspace client, redirect back to its pages login page
+      const sourceWorkspaceClient =
+        sourceClientId &&
+        sourceClientId !== OIDC_STUDIO_CLIENT_ID &&
+        (await getOAuthClient(sourceClientId));
+      if (sourceWorkspaceClient) {
+        signoutParams = new URLSearchParams({
+          client_id: sourceClientId,
+          post_logout_redirect_uri: sourceWorkspaceClient.redirectUris[0],
+        });
+      }
+      const signoutURI = new URL(
+        '/oidc/session/end?'.concat(signoutParams.toString()),
+        PROVIDER_URL
+      ).toString();
+
+      // Avoid an infinite loop if the signout itself is crashing
+      if ((ctx.request.url || '').includes('/session/end/')) {
+        ctx.redirect(signoutParams.get('post_logout_redirect_uri')!);
+      } else {
+        ctx.redirect(signoutURI);
+      }
     },
   },
 };

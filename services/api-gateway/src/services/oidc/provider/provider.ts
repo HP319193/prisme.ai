@@ -80,16 +80,14 @@ export const initOidcProvider = (broker: Broker): ProviderType => {
     try {
       const user = await identity.get(token.accountId);
       email = user.email;
-      authData = user.authData || {};
+      authData = user.authData || { prismeai: { id: user.id } };
     } catch {}
 
     broker
       .send<Prismeai.SucceededLogin['payload']>(EventType.SucceededLogin, {
         id: token.accountId,
         email,
-        authData: {
-          ['prismeai']: authData,
-        },
+        authData,
         session: {
           id: token.sessionUid,
           expiresIn: token.expiresIn,
