@@ -2,7 +2,12 @@ import { UiOptionsSelect, Schema } from '@prisme.ai/design-system';
 import { createContext, FC, ReactElement, useContext } from 'react';
 import { SelectProps, TagsOption } from '../Select';
 import { DefaultFieldContainer } from './FieldContainer';
-import { FieldProps, UiOptionsAutocomplete, UiOptionsHTML } from './types';
+import {
+  FieldProps,
+  UiOptionsAutocomplete,
+  UiOptionsCode,
+  UiOptionsHTML,
+} from './types';
 
 export type FieldComponent<T = {}> = (
   props: FieldProps & T
@@ -42,6 +47,7 @@ export interface SchemaFormContext {
     FieldSelect?: FieldComponent<{ options?: SelectProps['selectOptions'] }>;
     FieldRadio?: FieldComponent<{ options?: SelectProps['selectOptions'] }>;
     FieldDate?: FieldComponent;
+    FieldCode?: FieldComponent<{ options?: UiOptionsCode }>;
     JSONEditor?: InputComponent;
     HTMLEditor?: InputComponent<{ options?: UiOptionsHTML }>;
     FreeAdditionalProperties?: FieldComponent;

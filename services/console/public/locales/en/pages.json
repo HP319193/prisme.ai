@@ -2,5 +2,8 @@
   "signin": {
     "title": "Access to this page is restricted. Please login to access it."
   },
-  "preview": "Preview"
+  "preview": "Preview",
+  "form": {
+    "invalidJSON": "Invalid JSON"
+  }
 }
