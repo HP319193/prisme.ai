@@ -587,7 +587,7 @@ Then, for when you want to run this service directly from its docker image, you 
   </tr>           
   <tr>
     <td>UPLOADS_MAX_SIZE</td>
-    <td>workspaces</td>
+    <td>workspaces,api-gateway</td>
     <td>Max upload size in bytes</td>
     <td>10000000 (10MB)</td>
   </tr>       
