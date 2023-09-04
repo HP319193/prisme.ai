@@ -28,7 +28,10 @@ export * from './types';
 
 const cache = buildCache(storage.Sessions);
 
-const Users = buildStorage<User>('Users', storage.Users);
+const Users = buildStorage<User>('Users', {
+  ...storage.Users,
+  indexes: ['email', 'authData.azure.id'],
+});
 const OTPKeys = buildStorage<OTPKey>('OTPKeys', storage.Users);
 const AccessTokens = buildStorage<AccessToken>('AccessTokens', {
   ...storage.Users,
@@ -36,6 +39,7 @@ const AccessTokens = buildStorage<AccessToken>('AccessTokens', {
     key: 'token',
     driver: cache,
   },
+  indexes: ['token', 'userId'],
 });
 
 export default (ctx?: PrismeContext, logger?: Logger) => {

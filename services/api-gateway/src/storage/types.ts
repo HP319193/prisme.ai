@@ -10,6 +10,7 @@ export interface StorageOptions {
     ttl?: number;
     driver: CacheDriver;
   };
+  indexes?: string[];
 }
 
 export interface SaveOpts<Model> {
