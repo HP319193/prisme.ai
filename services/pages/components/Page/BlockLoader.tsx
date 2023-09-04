@@ -90,6 +90,7 @@ export const BlockLoader: TBlockLoader = ({
         prevConfig.current &&
         computeBlocks(prevConfig.current, recursiveConfig),
     };
+
     if (!name) return output;
     if (name.match(/^http/)) {
       return {
@@ -117,7 +118,7 @@ export const BlockLoader: TBlockLoader = ({
           blockName: 'BlocksList',
           computedConfig: computeBlocks(
             {
-              ...initialConfig,
+              ...output.computedConfig,
               blocks,
               ...props,
             },
@@ -157,7 +158,7 @@ export const BlockLoader: TBlockLoader = ({
         blockName: 'BlocksList',
         computedConfig: computeBlocks(
           {
-            ...initialConfig,
+            ...output.computedConfig,
             blocks,
             ...props,
           },
@@ -169,7 +170,7 @@ export const BlockLoader: TBlockLoader = ({
       ...output,
       url,
     };
-  }, [config, name, recursiveConfig, page?.appInstances, debug, initialConfig]);
+  }, [config, name, recursiveConfig, page?.appInstances, debug]);
 
   const { onInit, updateOn, automation } = initialConfig || {};
   const onBlockLoad = useCallback(() => {
