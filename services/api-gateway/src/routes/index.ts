@@ -25,7 +25,9 @@ export default async function initRoutes(
   app.use(
     '/oidc/session/end',
     (req: Request, res: Response, next: NextFunction) => {
-      res.clearCookie('cookie.sid');
+      res.clearCookie('connect.sid', {
+        sameSite: 'none',
+      });
       next();
     }
   );

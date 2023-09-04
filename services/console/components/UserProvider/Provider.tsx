@@ -156,10 +156,6 @@ export const UserProvider: FC<UserProviderProps> = ({
       if (clearOpSession && !api.legacyToken) {
         const redirectionUrl = new URL('/signin', window.location.href);
         const signoutUrl = api.getSignoutURL(redirectionUrl.toString());
-        try {
-          // Compatibility between microsoft sso & cookies existing before it : force clear express-session cookie
-          Cookie.remove('cookie.sid');
-        } catch {}
         window.location.assign(signoutUrl);
       } else {
         if (!PUBLIC_URLS.includes(route)) {
