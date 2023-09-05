@@ -9,12 +9,14 @@ import {
   WithId,
 } from 'mongodb';
 import { eda } from '../config';
+import { logger } from '../logger';
 
 export class MongodbDriver implements StorageDriver<any> {
   private client: MongoClient;
   private collectionName: string;
   private db?: Db;
   private _collection?: Collection;
+  private opts: StorageOptions;
 
   constructor(collectionName: string, opts: StorageOptions) {
     const { host, driverOptions } = opts;
@@ -27,12 +29,35 @@ export class MongodbDriver implements StorageDriver<any> {
     };
     this.client = new MongoClient(host, mongoOpts);
     this.collectionName = collectionName;
+    this.opts = opts;
   }
 
   async connect() {
     await this.client.connect();
     this.db = await this.client.db();
     this._collection = await this.db.collection(this.collectionName);
+    if (this.opts?.indexes?.length) {
+      this.ensureIndexes(this.opts.indexes);
+    }
+  }
+
+  private async ensureIndexes(indexes: string[]) {
+    try {
+      await Promise.all(
+        indexes.map((name) =>
+          this._collection?.createIndex({
+            [name]: 1,
+          })
+        )
+      );
+    } catch (err) {
+      logger.error({
+        msg:
+          'Could not ensure indexes from MongoDB collection ' +
+          this.collectionName,
+        err,
+      });
+    }
   }
 
   private async collection() {

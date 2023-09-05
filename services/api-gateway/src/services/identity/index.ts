@@ -13,6 +13,7 @@ import {
   resetPassword,
   validateAccount,
   sendAccountValidationLink,
+  externalLoginOrSignup,
 } from './users';
 import { setupUserMFA, validateMFA } from './mfa';
 import {
@@ -27,7 +28,10 @@ export * from './types';
 
 const cache = buildCache(storage.Sessions);
 
-const Users = buildStorage<User>('Users', storage.Users);
+const Users = buildStorage<User>('Users', {
+  ...storage.Users,
+  indexes: ['email', 'authData.azure.id'],
+});
 const OTPKeys = buildStorage<OTPKey>('OTPKeys', storage.Users);
 const AccessTokens = buildStorage<AccessToken>('AccessTokens', {
   ...storage.Users,
@@ -35,6 +39,7 @@ const AccessTokens = buildStorage<AccessToken>('AccessTokens', {
     key: 'token',
     driver: cache,
   },
+  indexes: ['token', 'userId'],
 });
 
 export default (ctx?: PrismeContext, logger?: Logger) => {
@@ -44,6 +49,7 @@ export default (ctx?: PrismeContext, logger?: Logger) => {
     updateUser: updateUser(Users, ctx),
     login: login(Users, ctx),
     anonymousLogin: anonymousLogin(Users, ctx),
+    externalLoginOrSignup: externalLoginOrSignup(Users, ctx),
     findContacts: findContacts(Users, ctx),
     sendResetPasswordLink: sendResetPasswordLink(Users, ctx, logger),
     resetPassword: resetPassword(Users, ctx, logger),

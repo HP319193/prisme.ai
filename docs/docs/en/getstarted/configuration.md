@@ -587,7 +587,7 @@ Then, for when you want to run this service directly from its docker image, you 
   </tr>           
   <tr>
     <td>UPLOADS_MAX_SIZE</td>
-    <td>workspaces</td>
+    <td>workspaces,api-gateway</td>
     <td>Max upload size in bytes</td>
     <td>10000000 (10MB)</td>
   </tr>       
@@ -599,3 +599,41 @@ Then, for when you want to run this service directly from its docker image, you 
   </tr>             
         
 </table>
+
+# SSO
+
+## Configuring Microsoft SSO
+
+**1. Register an app**  
+
+First follow https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app in order to **register an app** in your Azure tenant.  
+
+* The application can be named Prismeai or whatever else, it doesn't matter.  
+* Select the desired **Supported account types** as it will restrict which microsoft accounts can log in the studio  
+* Its redirect URI must be set to **Web** platform & have the following value :  https://api-gateway-url/v2/login/azure/callback  
+
+**Note somewhere the application id** as it will be the client id passed in environment variables.  
+
+**2. Generate a secret**  
+
+Click on **Certificates & secrets** under **Manage** menu & add a **New client secret**.  
+
+Keep longest expires time & **Add**.  
+**Note somewhere the client secret value** as it will be the client secret passed in environement variables.  
+
+**3. Configure environment variables**  
+
+In order to finish SSO configuration in **api-gateway**, its following **environment variables** must be set :  
+
+* **AZURE_AD_CLOUD_INSTANCE_ID** :  https://login.microsoftonline.com/ or any private one
+* **AZURE_AD_TENANT** : The tenant domain as found in **Azure Active Directory** > **Primary domain** (ex: YourCompany.onmicrosoft.com)
+  * In order to accept any organizational directory account, replace this value with **organizations**.
+  * In order to accept any organizational directory and personal Microsoft accounts, replace this value with **common**.
+  * In order to accept only Microsoft accounts only, replace this value with **consumers**.
+  * This must reflect the **Supported account types** option chosen when registering the app 
+* **AZURE_AD_APP_ID** : The application id retrieved in first step
+* **AZURE_AD_CLIENT_SECRET** : The secret value retrieved in second step
+
+Finally, add the following environment variable to **console** and **pages** microsevice :  
+
+* **ENABLED_AUTH_PROVIDERS** : azure

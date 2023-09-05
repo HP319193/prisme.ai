@@ -19,7 +19,7 @@ import { comparePasswords, hashPassword } from './utils';
 import { EmailTemplate, sendMail } from '../../utils/email';
 import { syscfg, mails as mailConfig } from '../../config';
 import { logger, Logger } from '../../logger';
-import { User } from '.';
+import { AuthProviders, User } from '.';
 
 const { RESET_PASSWORD_URL, LOGIN_URL } = mailConfig;
 
@@ -213,6 +213,9 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
         ? UserStatus.Pending
         : UserStatus.Validated,
       language,
+      authData: {
+        prismeai: {},
+      },
     };
     const savedUser = await Users.save({
       ...user,
@@ -284,7 +287,9 @@ export const updateUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
 
 export const login = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function (email: string, password: string) {
-    const users = await Users.find({ email: email.toLowerCase().trim() });
+    const users = (
+      await Users.find({ email: email.toLowerCase().trim() })
+    ).filter((cur) => cur.password); // External providers don't have passwords
     if (!users.length) {
       throw new AuthenticationError();
     }
@@ -310,6 +315,60 @@ export const anonymousLogin = (
       },
     };
     return await Users.save(user);
+  };
+
+export const externalLoginOrSignup = (
+  Users: StorageDriver<User>,
+  ctx?: PrismeContext
+) =>
+  async function (provider: AuthProviders, authData: Prismeai.AuthData) {
+    if (!authData.id) {
+      throw new AuthenticationError('Missing user id from external provider');
+    }
+    // First find any user matching this same external id
+    const users = await Users.find({
+      [`authData.${provider}.id`]: authData.id,
+    });
+    let user: Prismeai.User = users[0];
+    let newAccount = false;
+
+    if (!users.length) {
+      // is there another account matching the same email ?
+      const usersByEmail = authData.email
+        ? await Users.find({
+            email: authData.email,
+          })
+        : [];
+      // Another account exists with the same email, merges authData
+      if (usersByEmail?.length) {
+        user = await Users.save({
+          ...usersByEmail[0],
+          authData: {
+            ...usersByEmail[0].authData,
+            [provider]: authData,
+          },
+        });
+        user.id = usersByEmail[0].id;
+      } else {
+        // Sign up
+        user = await Users.save({
+          firstName: authData.firstName || 'Guest',
+          lastName: authData.lastName,
+          email: authData.email,
+          authData: {
+            [provider]: authData,
+          },
+          status: UserStatus.Validated,
+          language: 'fr',
+        });
+        newAccount = true;
+      }
+    }
+
+    if (user.status && user.status !== UserStatus.Validated) {
+      throw new ValidateEmailError();
+    }
+    return { ...filterUserFields(user), newAccount };
   };
 
 export interface FindUserQuery {

@@ -50,7 +50,7 @@ export const Enum = ({ value, onChange }: EnumProps) => {
 
       onChange(newValue);
     },
-    [onChange, value.enum, value.enumNames]
+    [onChange, value]
   );
 
   const updateValue = useCallback(

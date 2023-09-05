@@ -8,7 +8,7 @@ import {
   validationErrorMiddleware,
   validationMiddleware,
 } from '../middlewares/validation';
-import identityRoutes from './identity';
+import initIdentityRoutes from './identity';
 import bodyParser from 'body-parser';
 import { init as initAuthentication } from '../middlewares';
 import { initRoutes as initOidcRoutes } from '../services/oidc/provider';
@@ -25,7 +25,9 @@ export default async function initRoutes(
   app.use(
     '/oidc/session/end',
     (req: Request, res: Response, next: NextFunction) => {
-      res.clearCookie('cookie.sid');
+      res.clearCookie('connect.sid', {
+        sameSite: 'none',
+      });
       next();
     }
   );
@@ -49,7 +51,7 @@ export default async function initRoutes(
     }),
     validationErrorMiddleware
   );
-  app.use('/v2/', identityRoutes);
+  app.use('/v2/', initIdentityRoutes(oidc));
 
   app.use(errorHandler);
 }

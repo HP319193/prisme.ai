@@ -924,6 +924,12 @@ declare namespace Prismeai {
             };
         }[];
     }
+    export interface AuthData {
+        [name: string]: any;
+        id: string;
+        firstName?: string;
+        email?: string;
+    }
     export interface AuthenticationError {
         /**
          * example:
@@ -2144,13 +2150,7 @@ declare namespace Prismeai {
             email?: string;
             id: string;
             authData: {
-                [name: string]: any;
-                facebook?: {
-                    [key: string]: any;
-                };
-                anonymous?: {
-                    [key: string]: any;
-                };
+                [name: string]: AuthData;
             };
             session: {
                 id: string;
@@ -2198,7 +2198,7 @@ declare namespace Prismeai {
             user: User;
         };
     }
-    export type SupportedMFA = "totp" | "none" | "";
+    export type SupportedMFA = "totp" | "none" | "*";
     export interface SuspendedWorkspace {
         /**
          * example:
@@ -2379,12 +2379,13 @@ declare namespace Prismeai {
         language?: string;
         authData?: {
             [name: string]: any;
-            facebook?: {
-                [key: string]: any;
-            };
             anonymous?: {
                 [key: string]: any;
             };
+            prismeai?: {
+                [key: string]: any;
+            };
+            azure?: AuthData;
         };
         mfa?: SupportedMFA;
         meta?: {
@@ -2650,12 +2651,13 @@ declare namespace PrismeaiAPI {
                 language?: string;
                 authData?: {
                     [name: string]: any;
-                    facebook?: {
-                        [key: string]: any;
-                    };
                     anonymous?: {
                         [key: string]: any;
                     };
+                    prismeai?: {
+                        [key: string]: any;
+                    };
+                    azure?: Prismeai.AuthData;
                 };
                 mfa?: Prismeai.SupportedMFA;
                 meta?: {
@@ -2707,6 +2709,24 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.GenericError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace AzureAuthCallback {
+        export interface RequestBody {
+            code?: string;
+            client_info?: string;
+            state?: string;
+            session_state?: string;
+        }
+        namespace Responses {
+            export interface $302 {
+            }
+        }
+    }
+    namespace AzureAuthInit {
+        namespace Responses {
+            export interface $302 {
+            }
         }
     }
     namespace ConfigureAppInstance {
@@ -3178,12 +3198,13 @@ declare namespace PrismeaiAPI {
                 language?: string;
                 authData?: {
                     [name: string]: any;
-                    facebook?: {
-                        [key: string]: any;
-                    };
                     anonymous?: {
                         [key: string]: any;
                     };
+                    prismeai?: {
+                        [key: string]: any;
+                    };
+                    azure?: Prismeai.AuthData;
                 };
                 mfa?: Prismeai.SupportedMFA;
                 meta?: {

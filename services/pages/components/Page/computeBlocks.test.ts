@@ -33,6 +33,19 @@ it('should display conditionally', () => {
   expect(testCondition('!true', {})).toBeFalsy();
   expect(testCondition('false', {})).toBeFalsy();
   expect(testCondition('!false', {})).toBeTruthy();
+
+  expect(
+    testCondition('!{{currentFile}}', {
+      currentFile: {
+        id: '695e602e5398485c90b3da84ad44a84d',
+        name: '',
+        status: 'published',
+        updatedAt: '2023-09-01T13:28:11.492Z',
+        text: '',
+        tokens: 1384,
+      },
+    })
+  ).toBeFalsy();
 });
 
 it('should interpolate expression', () => {
@@ -199,6 +212,17 @@ it('should interpolate expression with filters', () => {
       lang: 'fr',
     })
   ).toBe('11 juillet 2023');
+
+  expect(
+    interpolateExpression('{{foo|from-now}}', {
+      foo: new Date(Date.now() - 1000 * 60 * 60),
+    })
+  ).toBe('an hour ago');
+  expect(
+    interpolateExpression('{{foo|from-now:"fr"}}', {
+      foo: new Date(Date.now() - 1000 * 60 * 60),
+    })
+  ).toBe('il y a une heure');
 
   expect(
     interpolateExpression("{{foo|if:'foo','bar'}}", {

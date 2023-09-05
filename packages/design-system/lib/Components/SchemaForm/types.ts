@@ -25,6 +25,7 @@ export const UIWidgetsForString = [
   'radio',
   'html',
   'slider',
+  'code',
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'] as const;
 export const UIWidgetsForNumber = ['slider'] as const;
@@ -119,6 +120,11 @@ export type UiOptionsSlider = {
     }[];
     step?: number;
     showTooltip?: 'always' | 'hover';
+  };
+};
+export type UiOptionsCode = {
+  code: {
+    mode: 'json' | 'css' | 'html' | 'javascript' | 'yaml';
   };
 };
 export interface Schema extends Record<string, any> {

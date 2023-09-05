@@ -22,3 +22,7 @@ export interface OTPKey {
 }
 
 export type AccessToken = Prismeai.AccessToken;
+
+export enum AuthProviders {
+  Azure = 'azure',
+}

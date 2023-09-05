@@ -1,3 +1,4 @@
+import Cookie from 'js-cookie';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import context, { OperationSuccess, UserContext } from './context';
 import api from '../../utils/api';

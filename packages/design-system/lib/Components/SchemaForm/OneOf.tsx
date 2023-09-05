@@ -72,16 +72,21 @@ export const OneOf = ({
     [oneOf, uiOptionsOneOf]
   );
 
-  const childSchema = useMemo(() => {
+  const { childSchema, childTitle } = useMemo(() => {
     const { index = 0 } = uiOptionsOneOf
       ? uiOptionsOneOf.oneOf.options[+selected]
       : { index: +selected };
     const cleanedSchema = { ...props.schema };
     delete cleanedSchema.oneOf;
     const partialSchema = oneOf[index] || {};
-    const childSchema: Schema = { ...cleanedSchema, ...partialSchema };
+    const { title, ...childSchema }: Schema = {
+      ...cleanedSchema,
+      ...partialSchema,
+    };
 
-    delete childSchema.title;
+    const childTitle =
+      typeof title === 'string' ? title : getLabel(childSchema.name);
+
     if (!partialSchema.description) {
       delete childSchema.description;
     }
@@ -92,7 +97,7 @@ export const OneOf = ({
       };
     }
 
-    return childSchema;
+    return { childSchema, childTitle };
   }, [selected]);
 
   useEffect(() => {
@@ -140,7 +145,7 @@ export const OneOf = ({
         />
       </div>
       {props.schema.type !== undefined && (
-        <Field schema={childSchema} name={props.name} label={props.label} />
+        <Field schema={childSchema} name={props.name} label={childTitle} />
       )}
     </FieldContainer>
   );

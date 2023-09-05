@@ -70,7 +70,20 @@ components:
       enum:
         - totp
         - none
-        - ''
+        - '*'
+
+    AuthData:
+      type: object
+      required:
+        - id
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        email:
+          type: string
 
     User:
       allOf:
@@ -87,13 +100,15 @@ components:
                 - deactivated
             language:
               type: string
-            authData: &AUTH_DATA
+            authData:
               type: object
               properties:
-                facebook:
-                  type: object
                 anonymous:
                   type: object
+                prismeai:
+                  type: object
+                azure:
+                  $ref: "#/components/schemas/AuthData"
               additionalProperties: true
             mfa:
               $ref: '#/components/schemas/SupportedMFA'
@@ -1760,7 +1775,9 @@ components:
               type: string
             id:
               type: string
-            authData: *AUTH_DATA
+            authData:
+              additionalProperties:
+                $ref: "#/components/schemas/AuthData"
             session:
               type: object
               required:
@@ -2908,6 +2925,44 @@ paths:
                   success:
                     type: boolean
         '401': *AuthenticationError
+
+  /v2/login/azure:
+    get:
+      description: Starts azure authentication
+      operationId: azureAuthInit
+      tags:
+        - API Gateway
+        - AuthProviders
+      responses:
+        '302':
+          description: Redirection response
+
+  /v2/login/azure/callback:
+    post:
+      description: End azure authentication
+      operationId: azureAuthCallback
+      tags:
+        - API Gateway
+        - AuthProviders
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                client_info:
+                  type: string
+                state:
+                  type: string
+                session_state:
+                  type: string
+      responses:
+        '302':
+          description: Redirection response
+
 
   /v2/me:
     get:

@@ -1,7 +1,6 @@
 import blocksContext, { BlocksDependenciesContext } from './blocksContext';
 import { FC } from 'react';
 import * as defaultComponents from './defaultComponents';
-import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n';
 
 interface BlocksProviderProps extends Omit<BlocksDependenciesContext, 'utils'> {

@@ -73,7 +73,7 @@ const PublishModal = ({ visible, close }: PublishModalProps) => {
       console.error(error);
       return null;
     }
-  }, [slug, t, workspace.id]);
+  }, [slug, t, trackEvent, workspace.id]);
 
   const isSlugValid = useMemo(
     () => slug.length > 0 && SLUG_VALIDATION_REGEXP.test(slug),

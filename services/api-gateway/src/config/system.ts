@@ -56,4 +56,7 @@ export default {
   ),
 
   REQUEST_MAX_SIZE: process.env.REQUEST_MAX_SIZE || '1mb',
+  UPLOADS_MAX_SIZE: parseInt(
+    process.env.UPLOADS_MAX_SIZE || '10000000' // 10MB
+  ),
 };

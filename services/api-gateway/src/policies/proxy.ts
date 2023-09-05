@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+//@ts-ignore
+import followRedirects from 'follow-redirects';
 import { GatewayConfig, syscfg } from '../config';
 
+followRedirects.maxBodyLength = syscfg.UPLOADS_MAX_SIZE;
 export interface Params {
   service: string;
   websockets?: boolean;

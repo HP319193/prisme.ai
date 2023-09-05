@@ -9,7 +9,7 @@ import FieldTextTextArea from './FieldTextTextArea';
 import FieldTextUpload from './FieldTextUpload';
 import {
   FieldProps,
-  Schema,
+  UiOptionsCode,
   UiOptionsSlider,
   UiOptionsTextArea,
   UiOptionsUpload,
@@ -23,9 +23,11 @@ import FieldSlider from './FieldSlider';
 
 export const FieldText = ({
   FieldDate = DefaultFieldDate,
+  FieldCode,
   ...props
 }: FieldProps & {
   FieldDate: SchemaFormContext['components']['FieldDate'];
+  FieldCode: SchemaFormContext['components']['FieldCode'];
 }) => {
   const field = useField(props.name);
   const { 'ui:widget': uiWidget, 'ui:options': uiOptions } = props.schema;
@@ -67,6 +69,13 @@ export const FieldText = ({
           options={(uiOptions || { slider: {} }) as UiOptionsSlider}
         />
       );
+    case 'code':
+      return FieldCode ? (
+        <FieldCode
+          {...props}
+          options={(uiOptions || { code: {} }) as UiOptionsCode}
+        />
+      ) : null;
   }
 
   const hasError = getError(field.meta);
@@ -110,9 +119,9 @@ export const FieldText = ({
 
 const LinkedFieldText = (props: FieldProps) => {
   const {
-    components: { FieldDate },
+    components: { FieldDate, FieldCode },
   } = useSchemaForm();
-  return <FieldText {...props} FieldDate={FieldDate} />;
+  return <FieldText {...props} FieldDate={FieldDate} FieldCode={FieldCode} />;
 };
 
 export default LinkedFieldText;
