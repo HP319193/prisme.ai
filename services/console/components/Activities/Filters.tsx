@@ -80,7 +80,7 @@ const Filters = () => {
           filter,
         })
       ),
-    [t]
+    [t, user?.sessionId]
   );
 
   const focusFieldsInput = useCallback(() => {

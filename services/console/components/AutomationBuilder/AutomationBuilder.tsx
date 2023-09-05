@@ -292,7 +292,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
           }
         );
       },
-      [editInstructionDetails, onChange, trackEvent]
+      [editInstructionDetails, onChange]
     );
 
   const removeInstruction: AutomationBuilderContext['removeInstruction'] =
