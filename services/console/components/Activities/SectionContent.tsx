@@ -1,9 +1,9 @@
-import useLocalizedText from '@prisme.ai/blocks/lib/useLocalizedText';
 import { Tooltip } from '@prisme.ai/design-system';
 import { Trans, useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { useWorkspace } from '../../providers/Workspace';
 import { Event } from '../../utils/api';
+import useLocalizedText from '../../utils/useLocalizedText';
 import { useSourceDetails } from '../SourceDetails';
 import {
   AppLabel,
