@@ -514,7 +514,7 @@ export class ContextsManager {
         // Handle user/session switching
         if (
           context === ContextType.User &&
-          lastKey === 'id' &&
+          path === 'user.id' &&
           prevValue !== value
         ) {
           this.contexts.user = { id: value };
@@ -530,7 +530,7 @@ export class ContextsManager {
           return;
         } else if (
           context === ContextType.Session &&
-          lastKey === 'id' &&
+          path === 'session.id' &&
           prevValue !== value
         ) {
           const targetSession = await this.cache.getSession(value);
