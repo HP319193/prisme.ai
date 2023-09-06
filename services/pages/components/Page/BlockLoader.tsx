@@ -16,6 +16,7 @@ import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
 import fastDeepEqual from 'fast-deep-equal';
 import isServerSide from '../../utils/isServerSide';
+import { useRedirect } from './useRedirect';
 
 /**
  * This function aims to replace deprecated Block names by the new one
@@ -177,6 +178,7 @@ export const BlockLoader: TBlockLoader = ({
     setLoaded(true);
   }, []);
 
+  const redirect = useRedirect();
   const initWithAutomation = useCallback(async () => {
     if (!user || !page || !page.workspaceId || !loaded) return;
     try {
@@ -191,9 +193,10 @@ export const BlockLoader: TBlockLoader = ({
         automation,
         query
       );
+      redirect(newConfig);
       setConfig((prev = {}) => ({ ...prev, ...newConfig }));
     } catch {}
-  }, [automation, loaded, page, user]);
+  }, [automation, loaded, page, redirect, user]);
 
   useEffect(() => {
     if (!user || !loaded || !events) return;

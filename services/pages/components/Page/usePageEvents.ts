@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api, { Events } from '../../../console/utils/api';
+import { useRedirect } from './useRedirect';
 
 export const usePageEvents = (page: Prismeai.Page | null) => {
   const { user } = useUser();
@@ -62,53 +63,15 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
   }, [events]);
 
   // Listen to update page events
+  const redirect = useRedirect();
   useEffect(() => {
     if (!page || !events) return;
     const offs: Function[] = [];
 
     if (page.updateOn) {
       offs.push(
-        events.on(page.updateOn, ({ payload: { url, redirect } }) => {
-          function redirectGet(url: string, locale?: string) {
-            if (url.match(/^#/)) {
-              window.location.hash = url;
-              return;
-            }
-            if (url.match(/^http/)) {
-              window.location.href = url;
-              return;
-            }
-            push(url, undefined, { locale });
-          }
-          function redirectPost(url: string, body: Record<string, string>) {
-            const form = document.createElement('form');
-            form.setAttribute('action', url);
-            form.setAttribute('method', 'post');
-            Object.entries(body).forEach(([k, v]) => {
-              const field = document.createElement('input');
-              field.setAttribute('type', 'hidden');
-              field.setAttribute('name', k);
-              field.setAttribute('value', v);
-              form.appendChild(field);
-            });
-            document.body.appendChild(form);
-            form.submit();
-          }
-
-          if (redirect) {
-            const { url, method = 'get', body = {}, locale, push } = redirect;
-            if (!url) return;
-            if (push) {
-              return window.history.pushState({}, '', url);
-            }
-            if (`${method}`.toLowerCase() === 'get') {
-              return redirectGet(url, locale);
-            }
-            return redirectPost(url, body);
-          }
-          if (url) {
-            redirectGet(url);
-          }
+        events.on(page.updateOn, ({ payload }) => {
+          redirect(payload);
         })
       );
     }

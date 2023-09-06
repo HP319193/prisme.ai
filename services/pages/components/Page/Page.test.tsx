@@ -9,6 +9,16 @@ window.Prisme = {
   },
 } as any;
 
+jest.mock('next/router', () => {
+  function useRouter() {
+    return {
+      push: jest.fn(),
+    };
+  }
+  return {
+    useRouter,
+  };
+});
 jest.mock('./PageProvider', () => {
   const mock = {
     events: {
