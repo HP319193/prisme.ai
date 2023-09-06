@@ -131,7 +131,7 @@ export function testCondition(condition: string = '', values: any) {
   const interpolated = interpolateExpression(condition, values);
   const [, invert, result] =
     typeof interpolated === 'string'
-      ? interpolated.match(/(^!?)(.+$)?/) || []
+      ? interpolated.match(/(^!?)(.+$)?/m) || []
       : [, condition.match(/^!/), interpolated];
 
   if (result === 'true') {
