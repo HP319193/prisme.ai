@@ -33,6 +33,7 @@ export const FieldTextTextArea = ({
             id={field.input.name}
             autoSize={!options?.textarea?.rows}
             status={hasError ? 'error' : ''}
+            disabled={props.schema.disabled}
           />
         </Tooltip>
       </div>

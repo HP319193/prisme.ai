@@ -78,7 +78,7 @@ const loginHandler = (strategy: string) =>
               ip: req.context?.http?.ip,
               id: user.id,
               authData: {
-                [provider]: {} as Prismeai.AuthData,
+                [provider]: { id: user.id },
               },
               session: {
                 id: req.session.prismeaiSessionId,
