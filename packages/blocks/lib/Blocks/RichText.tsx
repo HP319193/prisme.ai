@@ -171,7 +171,13 @@ export const RichText = ({
   };
 
   const text = localize(children) || '';
-  const toRender = markdown && typeof text === 'string' ? marked(text) : text;
+
+  const toRender =
+    markdown && typeof text === 'string'
+      ? marked(text)
+      : typeof text === 'object'
+      ? text
+      : `${text}`;
   const Container = tag as keyof JSX.IntrinsicElements;
   let child: string | JSX.Element | JSX.Element[] = '';
   try {
