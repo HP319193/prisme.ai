@@ -1,6 +1,6 @@
 {
   "name": "@prisme.ai/sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Communicate with Prisme.ai API",
   "main": "dist/sdk/index.js",
   "scripts": {
