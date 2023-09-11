@@ -8,10 +8,11 @@ import { FieldProps } from './types';
 import { getFieldOptions } from './utils';
 import { OnChange } from 'react-final-form-listeners';
 
-export const Field = ({
-  components,
-  ...props
-}: FieldProps & { components: SchemaFormContext['components'] }) => {
+export interface FieldComponentProps extends FieldProps {
+  components: SchemaFormContext['components'];
+}
+
+export const Field = ({ components, ...props }: FieldComponentProps) => {
   const field = useField(props.name, getFieldOptions(props.schema));
 
   // Update value with default value
@@ -78,7 +79,8 @@ export const Field = ({
 
 const LinkedField = (props: FieldProps) => {
   const { components } = useSchemaForm();
-  return <Field {...props} components={components} />;
+  const { Field: FieldComponent = Field } = components;
+  return <FieldComponent {...props} components={components} />;
 };
 
 export const SelfField = (

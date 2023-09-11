@@ -1,6 +1,7 @@
 import { UiOptionsSelect, Schema } from '@prisme.ai/design-system';
 import { createContext, FC, ReactElement, useContext } from 'react';
 import { SelectProps, TagsOption } from '../Select';
+import { Field } from './Field';
 import { DefaultFieldContainer } from './FieldContainer';
 import {
   FieldProps,
@@ -34,6 +35,7 @@ export interface SchemaFormContext {
     freeAdditionalPropertiesLabel?: string;
   };
   components: {
+    Field?: typeof Field;
     FieldContainer: FC<FieldProps>;
     FieldLocalizedText?: FieldComponent;
     FieldText?: FieldComponent;
