@@ -4,6 +4,7 @@ import {
   ChangeEvent,
   ReactElement,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -21,6 +22,10 @@ interface FieldTextUploadProps extends FieldProps {
   options: UiOptionsUpload;
 }
 
+const Preview = ({ src }: { src: string }) => {
+  return <img src={src} className="max-h-24 min-w-[3rem]" />;
+};
+
 export const FieldTextUpload = ({
   locales,
   uploadFile,
@@ -30,13 +35,18 @@ export const FieldTextUpload = ({
   uploadFile: SchemaFormContext['utils']['uploadFile'];
 }) => {
   const field = useField(props.name);
+
   const [preview, setPreview] = useState<ReactElement | null>(
-    field.input.value ? (
-      <img src={field.input.value} className="max-h-24" />
-    ) : null
+    field.input.value ? <Preview src={field.input.value} /> : null
   );
   const [previewLabel, setPreviewLabel] = useState('');
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (field.input.value) {
+      setPreview(<Preview src={field.input.value} />);
+    }
+  }, [field.input.value]);
 
   const readFile = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +67,7 @@ export const FieldTextUpload = ({
           setPreviewLabel('');
           if (typeof value === 'string') {
             field.input.onChange(value);
-            setPreview(<img src={value} className="max-h-24" />);
+            setPreview(<Preview src={value} />);
           } else {
             const { value: v, preview, label } = value;
             if (v) {
@@ -65,7 +75,7 @@ export const FieldTextUpload = ({
               if (preview) {
                 setPreview(
                   typeof preview === 'string' ? (
-                    <img src={preview} className="max-h-24" />
+                    <Preview src={preview} />
                   ) : (
                     preview
                   )
@@ -90,7 +100,7 @@ export const FieldTextUpload = ({
       <PictureOutlined className="text-4xl !text-gray-200 flex items-center" />
     );
     if (typeof defaultPreview === 'string') {
-      return <img src={defaultPreview} />;
+      return <Preview src={defaultPreview} />;
     }
 
     return defaultPreview;
