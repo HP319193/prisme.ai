@@ -188,7 +188,6 @@ const defaultStyles = `:block {
 
 :block .pr-block-form__buttons-container {
   display: flex;
-  flex: 1 1 0%;
   justify-content: flex-end;
   margin-top: 0.5rem;
   padding-top: 1rem;
