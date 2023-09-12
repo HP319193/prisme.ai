@@ -85,7 +85,9 @@ export const OneOf = ({
     };
 
     const childTitle =
-      typeof title === 'string' ? title : getLabel(childSchema.name);
+      typeof title === 'string'
+        ? title
+        : childSchema.name && getLabel(childSchema.name);
 
     if (!partialSchema.description) {
       delete childSchema.description;
@@ -132,7 +134,7 @@ export const OneOf = ({
     }
   }, [selected]);
 
-  const title = props.schema.title || getLabel(props.name);
+  const title = props.schema.title || (props.name && getLabel(props.name));
 
   return (
     <FieldContainer {...props} className="pr-form-one-of">
