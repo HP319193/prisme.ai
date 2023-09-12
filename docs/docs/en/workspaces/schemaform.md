@@ -61,6 +61,7 @@ The root object and all its children are made with the same structure:
     * localized string type:
         * `textarea`
     * any type:
+        * `block`: Display any Block available in your Workspace
         * A javascript React Component. Only for Blocks developers who want a custom field they made.
 * `ui:options`: Some options for field types and widgets:
     * type array:
@@ -81,6 +82,8 @@ The root object and all its children are made with the same structure:
         * `autocomplete`: Source of autocomplete values. Can be:
             * "events:emit": Retreive all events emitted by current workspace and all its installed apps
             * "events:listen": Retreive all events listened by current workspace and all its installed apps
+    * `block`: slug property is mandatory. Any other property will be passed to the Block.
+    * `updateValue`: Helps your field to be updated from anywhere in your page from the events. Set the `event` attribute to tell which event to listen to, and optionnaly set a `selector` to pick the right value in the event payload. When the event fires, the payload (or its selection) will be set as the value of this field.
     * or any other key/value to be used with your custom widgets.
 
 ### Example

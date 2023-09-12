@@ -2,17 +2,18 @@ import {
   SchemaForm as OriginalSchemaForm,
   schemaFormUtils,
   Tooltip,
+  SchemaFormField,
 } from '@prisme.ai/design-system';
 import RichTextEditor from '../../../console/components/RichTextEditor';
 import BlockWidget from './BlockWidget';
 import { CodeEditorInline } from '../../../console/components/CodeEditor/lazy';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import {
-  FieldComponent,
-  SchemaFormContext,
-} from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
+import { SchemaFormContext } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
+import { FieldComponentProps } from '@prisme.ai/design-system/lib/Components/SchemaForm/Field';
+import { useBlock } from '@prisme.ai/blocks';
+import { get } from 'lodash';
 
 const FieldCode: SchemaFormContext['components']['FieldCode'] = ({
   schema,
@@ -75,7 +76,25 @@ const FieldCode: SchemaFormContext['components']['FieldCode'] = ({
   );
 };
 
+const Field = (props: FieldComponentProps) => {
+  const { 'ui:options': UiOptions } = props.schema;
+  const { events } = useBlock();
+  const field = useField(props.name);
+  const { updateValue: { event = '', selector = '' } = {} } = (UiOptions ||
+    {}) as any;
+
+  useEffect(() => {
+    if (!event) return;
+    const off = events?.on(event, ({ payload }) => {
+      field.input.onChange(selector ? get({ payload }, selector) : payload);
+    });
+    return off;
+  }, [event, selector, events, field]);
+
+  return <SchemaFormField {...props} />;
+};
 const components = {
+  Field,
   HTMLEditor: RichTextEditor,
   UiWidgets: {
     block: BlockWidget,
