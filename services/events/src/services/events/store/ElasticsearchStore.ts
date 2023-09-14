@@ -13,6 +13,23 @@ import { logger } from '../../../logger';
 import { preprocess } from './preprocess';
 import { EventsStore, SearchOptions } from './types';
 
+function mergeArrays(firstArray: any[] = [], secondArray: any[] = []) {
+  const mergedMap = new Map();
+
+  for (const item of firstArray) {
+    mergedMap.set(item.date, { ...item });
+  }
+
+  for (const item of secondArray) {
+    mergedMap.set(item.date, { ...mergedMap.get(item.date), ...item });
+  }
+
+  const mergedArray = [...mergedMap.values()];
+
+  mergedArray.sort((a, b) => a.date.localeCompare(b.date));
+
+  return mergedArray;
+}
 export class ElasticsearchStore implements EventsStore {
   client: elasticsearch.Client;
   namespace?: string;
@@ -434,12 +451,28 @@ export class ElasticsearchStore implements EventsStore {
         },
       },
     };
+
+    const timeseriesAggs = options.interval
+      ? {
+          timeseries: {
+            date_histogram: {
+              field: 'createdAt',
+              calendar_interval: options.interval,
+            },
+            aggs: metricAggs,
+          },
+        }
+      : {};
+
     type MetricsElasticBucket = ElasticBucket<{
       types: {
         buckets: ElasticBucket[];
       };
       transactions: { value: number };
       users: { value: number };
+      timeseries: {
+        buckets: ElasticBucket[];
+      };
     }>;
 
     const result: any = await this._search(
@@ -452,8 +485,7 @@ export class ElasticsearchStore implements EventsStore {
             filter,
           },
         },
-
-        aggs: metricAggs,
+        aggs: { ...metricAggs, ...timeseriesAggs },
       }
     );
     const { aggregations } = result;
@@ -480,16 +512,33 @@ export class ElasticsearchStore implements EventsStore {
       return metrics;
     };
 
+    const timeseries = aggregations?.timeseries
+      ? aggregations?.timeseries?.buckets.map((dayAggregation) => {
+          const { key_as_string: date } = dayAggregation;
+          return {
+            date,
+            total: mapMetricsElasticBuckets(dayAggregation),
+          };
+        })
+      : undefined;
+
     const usage: Prismeai.WorkspaceUsage = {
       workspaceId,
       beforeDate: options.beforeDate,
       afterDate: options.afterDate,
+      interval: options.interval,
       total: mapMetricsElasticBuckets(aggregations),
+      timeseries: timeseries,
       apps: [],
     };
 
     try {
-      usage.apps = await this.getAppCustomUsage(workspaceId, options);
+      const { apps, timeseries: appsTimeseries } = await this.getAppCustomUsage(
+        workspaceId,
+        options
+      );
+      usage.apps = apps;
+      usage.timeseries = mergeArrays(usage.timeseries, appsTimeseries);
     } catch (err) {
       logger.warn({
         msg: 'Could not retrieve custom app usage',
@@ -504,7 +553,7 @@ export class ElasticsearchStore implements EventsStore {
   async getAppCustomUsage(
     workspaceId: string,
     options: PrismeaiAPI.WorkspaceUsage.QueryParameters
-  ): Promise<Prismeai.WorkspaceUsage['apps']> {
+  ): Promise<{ apps: Prismeai.WorkspaceUsage['apps']; timeseries?: any }> {
     const filter: any = [
       { wildcard: { type: '*.usage' } },
       { term: { 'source.appInstanceDepth': 1 } },
@@ -581,6 +630,54 @@ export class ElasticsearchStore implements EventsStore {
     }
     return reduce;
     `;
+
+    const metricAggs = {
+      apps: {
+        terms: { field: 'source.appSlug' },
+        aggs: {
+          appInstances: {
+            terms: {
+              field: 'source.appInstanceFullSlug',
+              size: 3000,
+            },
+            aggs: {
+              usage: {
+                scripted_metric: {
+                  init_script: 'state.metrics = []',
+                  // 1. Build each shard state from all documents
+                  map_script: `
+                    if (params['_source'].containsKey('payload') && params['_source'].payload.containsKey('metrics') && params['_source'].payload.metrics instanceof Map) {
+                      Map record = [:];
+                      record["metrics"] = params['_source'].payload.metrics;
+                      record["timestamp"] = doc['createdAt'].value.getMillis();
+                      state.metrics.add(record)
+                    }`,
+
+                  // Combine each shard state into a single value
+                  combine_script: usageAggregationPainless('state.metrics'),
+
+                  // Combine shards values into the final one
+                  reduce_script: usageAggregationPainless('states'),
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const timeseriesAggs = options.interval
+      ? {
+          timeseries: {
+            date_histogram: {
+              field: 'createdAt',
+              calendar_interval: options.interval,
+            },
+            aggs: metricAggs,
+          },
+        }
+      : {};
+
     const result: any = await this._search(
       workspaceId,
       { limit: 0 },
@@ -591,110 +688,102 @@ export class ElasticsearchStore implements EventsStore {
           },
         },
 
-        aggs: {
-          apps: {
-            terms: { field: 'source.appSlug' },
-            aggs: {
-              appInstances: {
-                terms: {
-                  field: 'source.appInstanceFullSlug',
-                  size: 3000,
-                },
-                aggs: {
-                  usage: {
-                    scripted_metric: {
-                      init_script: 'state.metrics = []',
-                      // 1. Build each shard state from all documents
-                      map_script: `
-                        if (params['_source'].containsKey('payload') && params['_source'].payload.containsKey('metrics') && params['_source'].payload.metrics instanceof Map) {
-                          Map record = [:];
-                          record["metrics"] = params['_source'].payload.metrics;
-                          record["timestamp"] = doc['createdAt'].value.getMillis();
-                          state.metrics.add(record)
-                        }`,
-
-                      // Combine each shard state into a single value
-                      combine_script: usageAggregationPainless('state.metrics'),
-
-                      // Combine shards values into the final one
-                      reduce_script: usageAggregationPainless('states'),
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
+        aggs: { ...metricAggs, ...timeseriesAggs },
       }
     );
     const { aggregations } = result;
-    const appsUsage = mapElasticBuckets(aggregations.apps.buckets);
-    return Object.entries(appsUsage).reduce(
-      (prevApps, [appSlug, { buckets }]) => {
-        if (!buckets?.appInstances?.buckets) {
-          return prevApps;
-        }
 
-        const appUsage = {
-          slug: appSlug,
-          total: {
-            custom: {},
-          },
-          appInstances: [],
-        };
+    const mapMetricsElasticBuckets = (
+      appBuckets: ElasticBucket<
+        Record<string, { buckets: ElasticBucket<Record<string, any>>[] }>
+      >[]
+    ) => {
+      const appsUsage = mapElasticBuckets(appBuckets);
 
-        const appInstancesUsage = mapElasticBuckets(
-          buckets?.appInstances?.buckets
-        );
-        const metricsPerAppInstance: Record<
-          string,
-          Record<string, number>
-        > = Object.entries(appInstancesUsage).reduce(
-          (prevTotal, [appInstanceSlug, { buckets }]) => {
-            if (!buckets?.usage?.value) {
-              return prevTotal;
+      return Object.entries(appsUsage).reduce(
+        (prevApps, [appSlug, { buckets }]) => {
+          if (!buckets?.appInstances?.buckets) {
+            return prevApps;
+          }
+
+          const appUsage = {
+            slug: appSlug,
+            total: {
+              custom: {},
+            },
+            appInstances: [],
+          };
+
+          const appInstancesUsage = mapElasticBuckets(
+            buckets?.appInstances?.buckets
+          );
+          const metricsPerAppInstance: Record<
+            string,
+            Record<string, number>
+          > = Object.entries(appInstancesUsage).reduce(
+            (prevTotal, [appInstanceSlug, { buckets }]) => {
+              if (!buckets?.usage?.value) {
+                return prevTotal;
+              }
+              return {
+                ...prevTotal,
+                [appInstanceSlug]: buckets?.usage?.value?.metrics,
+              };
+            },
+            {}
+          );
+
+          appUsage.appInstances = buckets?.appInstances?.buckets.map(
+            (cur: any) => {
+              return {
+                slug: cur.key,
+                total: {
+                  custom: metricsPerAppInstance[cur.key],
+                },
+              };
             }
-            return {
-              ...prevTotal,
-              [appInstanceSlug]: buckets?.usage?.value?.metrics,
-            };
-          },
-          {}
-        );
+          );
 
-        appUsage.appInstances = buckets?.appInstances?.buckets.map(
-          (cur: any) => {
+          appUsage.total.custom = Object.values(metricsPerAppInstance).reduce(
+            (prevCustom, cur) => ({
+              ...Object.entries(cur).reduce(
+                (prev, [k, v]) => ({
+                  ...prev,
+                  [k]: (prevCustom[k] || 0) + v,
+                }),
+                prevCustom
+              ),
+            }),
+            {}
+          );
+          if (typeof (appUsage.total?.custom as any).billing === 'number') {
+            (appUsage.total?.custom as any).billing = Math.floor(
+              (appUsage.total?.custom as any).billing
+            );
+          }
+
+          return [...prevApps, appUsage];
+        },
+        [] as Prismeai.AppUsageMetrics[]
+      );
+    };
+
+    const timeseries = aggregations?.timeseries
+      ? aggregations?.timeseries?.buckets.map(
+          (dayAggregation: { apps?: any; key_as_string?: string }) => {
+            const { key_as_string: date } = dayAggregation;
             return {
-              slug: cur.key,
-              total: {
-                custom: metricsPerAppInstance[cur.key],
-              },
+              date,
+              apps: mapMetricsElasticBuckets(dayAggregation.apps.buckets),
             };
           }
-        );
+        )
+      : undefined;
 
-        appUsage.total.custom = Object.values(metricsPerAppInstance).reduce(
-          (prevCustom, cur) => ({
-            ...Object.entries(cur).reduce(
-              (prev, [k, v]) => ({
-                ...prev,
-                [k]: (prevCustom[k] || 0) + v,
-              }),
-              prevCustom
-            ),
-          }),
-          {}
-        );
-        if (typeof (appUsage.total?.custom as any).billing === 'number') {
-          (appUsage.total?.custom as any).billing = Math.floor(
-            (appUsage.total?.custom as any).billing
-          );
-        }
-
-        return [...prevApps, appUsage];
-      },
-      [] as Prismeai.AppUsageMetrics[]
-    );
+    return {
+      apps: mapMetricsElasticBuckets(aggregations.apps.buckets),
+      timeseries: timeseries,
+    };
   }
 
   async closeWorkspace(workspaceId: string): Promise<any> {
