@@ -7,16 +7,14 @@ import PageRenderer, {
 } from '../components/Page/Page';
 import { usePage } from '../components/Page/PageProvider';
 import { useWorkspace } from '../components/Workspace';
-import { useRouter } from 'next/router';
-import SigninForm from '../../console/components/SigninForm';
-import { useTranslation } from 'next-i18next';
+import FourFourOne from './401';
+import FourHundredOne from './401';
 
 export interface PageProps extends Omit<PageRendererProps, 'page'> {
   page: PageRendererProps['page'] | null;
 }
 
 export const Page = () => {
-  const { t } = useTranslation('sign');
   const { page, error, loading } = usePage();
   const { setId } = useWorkspace();
   const [displayError, setDisplayError] = useState(false);
@@ -52,11 +50,7 @@ export const Page = () => {
     return null;
   }
 
-  return (
-    <div className="flex m-auto">
-      <SigninForm onSignin={(user) => {}} show403={t('pages.restricted')} />
-    </div>
-  );
+  return <FourHundredOne />;
 };
 
 export default Page;

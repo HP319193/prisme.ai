@@ -1,4 +1,3 @@
-import Cookie from 'js-cookie';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import context, { OperationSuccess, UserContext } from './context';
 import api from '../../utils/api';
@@ -168,13 +167,16 @@ export const UserProvider: FC<UserProviderProps> = ({
 
   // 1. Initialize authentication flow
   const initAuthentication: UserContext['initAuthentication'] = useCallback(
-    async (redirect: boolean = true) => {
+    async ({ redirect = true, signup } = {}) => {
       const redirectOnceAuthenticated = window.location.href.includes('/signin')
         ? new URL('/', window.location.href).toString()
         : window.location.href;
       Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
       // redirect_uri must be on the same domain we want the session on (i.e current one)
-      const redirectionUrl = new URL('/signin', window.location.href);
+      const redirectionUrl = new URL(
+        signup ? '/signup' : '/signin',
+        window.location.href
+      );
 
       const { url, codeVerifier, clientId } = await api.getAuthorizationURL(
         redirectionUrl.toString(),
