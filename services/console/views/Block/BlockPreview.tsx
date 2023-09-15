@@ -148,7 +148,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
             </button>
           </Tooltip>
         </div>
-        {cleanedSchema && mounted && (
+        {cleanedSchema && cleanedSchema.type && mounted && (
           <SchemaForm
             schema={cleanedSchema}
             onChange={setValues}
