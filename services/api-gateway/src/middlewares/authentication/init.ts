@@ -27,6 +27,13 @@ export async function init(app: Application) {
       (_: Error, user: Prismeai.User, info: any) => {
         if (
           info instanceof Error &&
+          req.path.startsWith('/v2/workspaces') &&
+          req.path.includes('/webhooks/')
+        ) {
+          return next();
+        }
+        if (
+          info instanceof Error &&
           !(info.message || '').includes('No auth token') &&
           !(info.message || '').includes('jwt malformed')
         ) {
