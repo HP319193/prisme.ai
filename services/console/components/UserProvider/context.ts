@@ -19,7 +19,10 @@ export interface UserContext<
   error?: ApiError;
   success?: ApiSuccess;
   signin: (email: string, password: string) => Promise<boolean>;
-  initAuthentication: (redirect?: boolean) => Promise<string>;
+  initAuthentication: (options?: {
+    redirect?: boolean;
+    signup?: true;
+  }) => Promise<string>;
   completeAuthentication: (authorizationCode: string) => Promise<void>;
   signup: (
     email: string,

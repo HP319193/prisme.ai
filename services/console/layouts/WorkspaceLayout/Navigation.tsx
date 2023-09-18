@@ -24,6 +24,7 @@ import ItemsGroup, {
 } from '../../components/Navigation/ItemsGroup';
 import SearchInput from '../../components/Navigation/SearchInput';
 import { useTracking } from '../../components/Tracking';
+import AddPageButton from './AddPageButton';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onCreateAutomation?: () => void;
@@ -238,6 +239,7 @@ export const Navigation = ({
             onAdd={onCreatePage}
             creating={creatingPage}
             tooltip={t('workspace.add.page')}
+            addButtonRender={AddPageButton}
           >
             {filteredPages.map(([slug, { name }]) => (
               <Item

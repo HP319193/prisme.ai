@@ -14,6 +14,10 @@ export interface BlocksDependenciesContext {
   utils: Partial<SchemaFormContext['utils']> & {
     BlockLoader: TBlockLoader;
     getWorkspaceHost: () => string;
+    auth?: {
+      getSigninUrl: () => Promise<string>;
+      getSignupUrl: () => Promise<string>;
+    };
   };
 }
 
@@ -30,6 +34,10 @@ export const blocksContext = createContext<BlocksDependenciesContext>({
     uploadFile: async (base64: string) => '',
     getWorkspaceHost() {
       return `${window.location.protocol}//${window.location.host}`;
+    },
+    auth: {
+      getSigninUrl: async () => '',
+      getSignupUrl: async () => '',
     },
   },
 });
