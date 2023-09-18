@@ -44,6 +44,12 @@ export default async function initRoutes(
     res.send(`Prisme.ai API Gateway`);
   });
 
+  app.get('/sys/healthcheck', (req: any, res: any) => {
+    res.send({
+      healthy: true,
+    });
+  });
+
   app.use(
     bodyParser.json({ limit: syscfg.REQUEST_MAX_SIZE }),
     validationMiddleware({
