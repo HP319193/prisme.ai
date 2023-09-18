@@ -626,7 +626,13 @@
     "edit": "Éditer",
     "create": {
       "label": "Ajouter une Page",
-      "defaultName": "Page"
+      "defaultName": "Page",
+      "template": {
+        "title": "Modèles de pages",
+        "index": "Page d'accueil",
+        "_401": "Accès restreint (401)",
+        "_404": "Page introuvable (404)"
+      }
     },
     "duplicate": {
       "help": "Créer une copie de cette page",
