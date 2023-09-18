@@ -19,7 +19,7 @@ export default function init(runtime: Runtime) {
       body,
       broker,
     } = req;
-    const DO_NOT_SEND_HEADERS = ['cookie', 'host'];
+    const DO_NOT_SEND_HEADERS = ['cookie', 'host', 'authorization'];
     const filteredHeaders = Object.entries(headers)
       .filter(
         ([k, v]) =>
