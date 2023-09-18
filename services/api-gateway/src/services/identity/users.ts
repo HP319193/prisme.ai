@@ -265,6 +265,9 @@ const filterUserFields = (user: User): Prismeai.User => {
     id,
     meta,
   } = user;
+  if (authData?.prismeai && !authData?.prismeai?.id) {
+    authData.prismeai.id = id;
+  }
   return {
     email,
     status,
@@ -363,6 +366,18 @@ export const externalLoginOrSignup = (
         });
         newAccount = true;
       }
+    }
+
+    // Keep emails in sync
+    if (user.email && authData.email && user.email !== authData.email) {
+      user = await Users.save({
+        ...user,
+        email: authData.email,
+        authData: {
+          ...user.authData,
+          [provider]: authData,
+        },
+      });
     }
 
     if (user.status && user.status !== UserStatus.Validated) {

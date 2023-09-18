@@ -43,7 +43,7 @@ class AuthProvider {
          * By default, MSAL Node will add OIDC scopes to the auth code request. For more information, visit:
          * https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
          */
-        scopes: options.scopes || [],
+        scopes: options.scopes?.length ? options.scopes : ['profile', 'email'],
         redirectUri: options.redirectUri,
       };
 
@@ -113,7 +113,9 @@ class AuthProvider {
         req.session.authData = {
           id: tokenResponse.uniqueId,
           firstName: tokenResponse.account.name,
-          email: tokenResponse.account.username,
+          email:
+            tokenResponse.account.idTokenClaims?.email ||
+            tokenResponse.account.username,
 
           authority: tokenResponse.authority,
           scopes: tokenResponse.scopes,
