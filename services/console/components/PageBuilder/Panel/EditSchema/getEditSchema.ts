@@ -16,6 +16,7 @@ import TabsView from './TabsView';
 import Carousel from './Carousel';
 import BlocksGrid from './BlocksGrid';
 import BlocksSplit from './BlocksSplit';
+import Signin from './Signin';
 
 const Schemas = {
   Cards,
@@ -30,6 +31,7 @@ const Schemas = {
   Image,
   Breadcrumbs,
   Action,
+  Signin,
   TabsView,
   Carousel,
   BlocksGrid,
