@@ -7,8 +7,8 @@ import PageRenderer, {
 } from '../components/Page/Page';
 import { usePage } from '../components/Page/PageProvider';
 import { useWorkspace } from '../components/Workspace';
-import FourFourOne from './401';
 import FourHundredOne from './401';
+import FourHundredFour from './404';
 
 export interface PageProps extends Omit<PageRendererProps, 'page'> {
   page: PageRendererProps['page'] | null;
@@ -41,7 +41,7 @@ export const Page = () => {
 
   if (error && ![401, 403].includes(error)) {
     if (displayError) {
-      return <DefaultErrorPage statusCode={error} />;
+      return <FourHundredFour />;
     }
     return <Loading />;
   }
