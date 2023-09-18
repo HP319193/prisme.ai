@@ -37,7 +37,7 @@ export const BlocksProvider: FC = ({ children }) => {
         return initAuthentication({ redirect: false });
       },
       getSignupUrl: async () => {
-        return initAuthentication({ redirect: false, signup: true });
+        return '/signup';
       },
     };
   }, [initAuthentication]);

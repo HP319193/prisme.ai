@@ -108,7 +108,7 @@ components:
                 prismeai:
                   type: object
                 azure:
-                  $ref: "#/components/schemas/AuthData"
+                  $ref: '#/components/schemas/AuthData'
               additionalProperties: true
             mfa:
               $ref: '#/components/schemas/SupportedMFA'
@@ -1777,7 +1777,7 @@ components:
               type: string
             authData:
               additionalProperties:
-                $ref: "#/components/schemas/AuthData"
+                $ref: '#/components/schemas/AuthData'
             session:
               type: object
               required:
@@ -2962,7 +2962,6 @@ paths:
       responses:
         '302':
           description: Redirection response
-
 
   /v2/me:
     get:
