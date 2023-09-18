@@ -83,6 +83,7 @@ export async function init(app: Application) {
       cookie: {
         maxAge: syscfg.SESSION_COOKIES_MAX_AGE * 1000,
         secure: process.env.NODE_ENV === 'production',
+        sameSite: syscfg.EXPRESS_SESSION_COOKIE_SAMESITE,
       },
       unset: 'destroy',
     })

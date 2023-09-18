@@ -45,6 +45,13 @@ export default {
   SESSION_COOKIES_SIGN_SECRET:
     process.env.SESSION_COOKIES_SIGN_SECRET || ',s6<Mt3=dE[7a#k{)4H)C4%',
 
+  // required by external SSO which redirects towards api & needs connect.sid to be set during this redirection
+  EXPRESS_SESSION_COOKIE_SAMESITE:
+    (process.env.EXPRESS_SESSION_COOKIE_SAMESITE as
+      | 'none'
+      | 'lax'
+      | 'strict') || 'none',
+
   INTERNAL_API_KEY: process.env.INTERNAL_API_KEY || '#pZFT>2.g9x8p9D',
 
   PASSWORD_VALIDATION_REGEXP: new RegExp(
