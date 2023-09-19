@@ -255,9 +255,11 @@ export default {
       },
 
       names: {
-        interaction: '_interaction',
-        resume: '_interaction_resume',
-        session: '_session',
+        interaction: process.env.OIDC_INTERACTION_COOKIE_NAME || '_interaction',
+        resume:
+          process.env.OIDC_INTERACTION_RESUME_COOKIE_NAME ||
+          '_interaction_resume',
+        session: process.env.OIDC_SESSION_COOKIE_NAME || '_session',
       },
     },
 
