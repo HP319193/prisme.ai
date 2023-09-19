@@ -29,9 +29,10 @@ async function signupHandler(
   res: Response<PrismeaiAPI.Signup.Responses.$200>,
   next: NextFunction
 ) {
-  const { context, body } = req;
+  const { context, body, headers } = req;
   const identity = services.identity(context, req.logger);
-  const user = await identity.signup(body);
+
+  const user = await identity.signup(body, `${headers?.['referer']}`);
   await req.broker.send(EventType.SucceededSignup, {
     ip: req.context?.http?.ip,
     user,

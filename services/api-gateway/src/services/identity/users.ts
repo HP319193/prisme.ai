@@ -21,7 +21,7 @@ import { syscfg, mails as mailConfig } from '../../config';
 import { logger, Logger } from '../../logger';
 import { AuthProviders, User } from '.';
 
-const { RESET_PASSWORD_URL, LOGIN_URL } = mailConfig;
+const { RESET_PASSWORD_URL, CONSOLE_URL } = mailConfig;
 
 export interface ResetPasswordRequest {
   token: string;
@@ -115,7 +115,7 @@ export const resetPassword =
 
 export const sendAccountValidationLink =
   (Users: StorageDriver<User>, ctx?: PrismeContext, logger?: Logger) =>
-  async ({ email = '', language = '' }: any) => {
+  async ({ email = '', language = '', host = CONSOLE_URL }: any) => {
     const existingUsers = await Users.find({
       email: email.toLowerCase().trim(),
     });
@@ -142,7 +142,7 @@ export const sendAccountValidationLink =
     });
 
     // Send email to the user
-    const validateLink = new URL(LOGIN_URL);
+    const validateLink = new URL('/signin', host);
     validateLink.searchParams.append('validationToken', token);
 
     await sendMail(
@@ -180,13 +180,16 @@ export const validateAccount =
   };
 
 export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
-  async function ({
-    email,
-    password,
-    firstName,
-    lastName,
-    language,
-  }: PrismeaiAPI.Signup.RequestBody): Promise<Prismeai.User> {
+  async function (
+    {
+      email,
+      password,
+      firstName,
+      lastName,
+      language,
+    }: PrismeaiAPI.Signup.RequestBody,
+    host?: string
+  ): Promise<Prismeai.User> {
     email = email.toLowerCase().trim();
 
     const existingUsers = await Users.find({ email });
@@ -224,7 +227,7 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
 
     if (user.status === UserStatus.Pending) {
       try {
-        await sendAccountValidationLink(Users, ctx)({ email, language });
+        await sendAccountValidationLink(Users, ctx)({ email, language, host });
       } catch (err) {
         (logger || console).warn({
           msg: 'Could not send account validation email',

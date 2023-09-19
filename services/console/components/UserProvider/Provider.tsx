@@ -167,16 +167,16 @@ export const UserProvider: FC<UserProviderProps> = ({
 
   // 1. Initialize authentication flow
   const initAuthentication: UserContext['initAuthentication'] = useCallback(
-    async ({ redirect = true, signup } = {}) => {
-      const redirectOnceAuthenticated = window.location.href.includes('/signin')
-        ? new URL('/', window.location.href).toString()
-        : window.location.href;
+    async ({ redirect = true } = {}) => {
+      const redirectOnceAuthenticated =
+        Storage.get('redirect-once-signup') ||
+        window.location.href.includes('/signin')
+          ? new URL('/', window.location.href).toString()
+          : window.location.href;
+      Storage.remove('redirect-once-signup');
       Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
       // redirect_uri must be on the same domain we want the session on (i.e current one)
-      const redirectionUrl = new URL(
-        signup ? '/signup' : '/signin',
-        window.location.href
-      );
+      const redirectionUrl = new URL('/signin', window.location.href);
 
       const { url, codeVerifier, clientId } = await api.getAuthorizationURL(
         redirectionUrl.toString(),
@@ -241,6 +241,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         api.token = null;
         Storage.remove('access-token');
       }
+
       if (anonymous) {
         const { token, ...user } = await api.createAnonymousSession();
         api.token = token;
