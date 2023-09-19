@@ -631,7 +631,8 @@
         "title": "Pages templates",
         "index": "Homepage",
         "_401": "Restricted access (401)",
-        "_404": "Page not found (404)"
+        "_404": "Page not found (404)",
+        "_doc": "App documentation"
       }
     },
     "duplicate": {
