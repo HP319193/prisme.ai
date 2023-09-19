@@ -1348,8 +1348,22 @@ components:
           type: string
         afterDate:
           type: string
+        interval:
+          type: string
         total:
           $ref: '#/components/schemas/UsageMetrics'
+        timeseries:
+          type: array
+          items:
+            properties:
+              date: 
+                type: string
+              total:
+                $ref: '#/components/schemas/UsageMetrics'
+              apps:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppUsageMetrics'
         apps:
           type: array
           items:
@@ -3746,6 +3760,14 @@ paths:
           description: 'Retrieve usage stats before this ISO8601 formatted date.'
           schema:
             type: string
+        - name: 'interval'
+          in: 'query'
+          description: If specified, this field will add a field to the result containing the usage over time at the specified interval. The queried data will be found in the timeseries field.
+          schema:
+            type: string
+            enum:
+                  - month
+                  - day                
         - name: 'details'
           in: 'query'
           description: 'Includes individual appInstances details'
