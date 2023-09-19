@@ -626,7 +626,13 @@
     "edit": "Éditer",
     "create": {
       "label": "Add a Page",
-      "defaultName": "Page"
+      "defaultName": "Page",
+      "template": {
+        "title": "Pages templates",
+        "index": "Homepage",
+        "_401": "Restricted access (401)",
+        "_404": "Page not found (404)"
+      }
     },
     "duplicate": {
       "help": "Create a copy of this Page",
@@ -788,6 +794,7 @@
       "name_TabsView": "Tabs view",
       "name_Carousel": "Carousel",
       "name_Image": "Image",
+      "name_Signin": "Signin button",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -807,6 +814,7 @@
       "description_Carousel": "Displaying Blocks in a horizontal Carousel",
       "description_Image": "Display a picture",
       "panelTitle_adding": "Add a Block",
+      "description_Signin": "Display a login or registration button",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "header": {
         "settings": {
@@ -1363,6 +1371,18 @@
                 "description": "The content displayed when the onget is selected."
               }
             }
+          }
+        }
+      },
+      "signin": {
+        "settings": {
+          "label": {
+            "label": "Button label (default \"connection\")",
+            "description": "Change the button label"
+          },
+          "up": {
+            "label": "Signup ?",
+            "description": "Check to display a button to create an account"
           }
         }
       }
