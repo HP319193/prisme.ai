@@ -29,6 +29,7 @@ export const validatorSchema = {
 
 export async function init(params: Params, gtwcfg: GatewayConfig) {
   const service = gtwcfg.service(params.service);
+  const timeout = params.timeout || 20000;
   const middleware = createProxyMiddleware({
     target: service.url,
     ws: params.websockets,
@@ -36,12 +37,20 @@ export async function init(params: Params, gtwcfg: GatewayConfig) {
     router: params.router,
     changeOrigin: true,
     followRedirects: true,
-    timeout: params.timeout || 20000,
+    timeout: timeout,
+    proxyTimeout: timeout,
     xfwd: syscfg.X_FORWARDED_HEADERS,
   });
 
   return (req: Request, res: Response, next: NextFunction) => {
+    const timeout = params.timeout || 20000;
     req.service = params.service;
+    res.setTimeout(timeout, () => {
+      res
+        .status(408)
+        .setHeader('Content-Type', 'application/json')
+        .send({ error: 'TimeoutError', timeout });
+    });
     return middleware(req, res, next);
   };
 }
