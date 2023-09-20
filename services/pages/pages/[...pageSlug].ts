@@ -1,3 +1,4 @@
+import { RichText } from '@prisme.ai/blocks/lib/Blocks';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import api, { HTTPError } from '../../console/utils/api';
@@ -5,6 +6,7 @@ import { getSubmodain } from '../../console/utils/urls';
 import { computePageStyles } from '../utils/computeBlocksStyles';
 import { getBlocksConfigFromServer } from '../utils/getBlocksConfigFromServer';
 import { PageProps } from '../views/Page';
+import BUILTIN_PAGES from '../builtinPages';
 
 export { default } from '../views/Page';
 
@@ -53,11 +55,28 @@ export const getServerSideProps: GetServerSideProps<
     styles = s;
   } catch (e) {
     res.statusCode = error = (e as HTTPError).code;
+    const fallbackSlug = [401, 403].includes((e as HTTPError).code)
+      ? '_401'
+      : pageSlug.join('/');
+    const builtinPage = BUILTIN_PAGES.find(({ slug }) => slug === fallbackSlug);
+    if (builtinPage) {
+      page = builtinPage;
+    }
+    if (page && page.slug === '_401') {
+      try {
+        page = await api.getPageBySlug(workspaceSlug, '_401');
+      } catch {}
+    }
     if (error === 404) {
-      console.error('404', workspaceSlug, pageSlug);
-      return {
-        notFound: true,
-      };
+      if (page) {
+        // Page has been replaced by a builtin one, become a 200
+        res.statusCode = error = 200;
+      } else {
+        console.error('404', workspaceSlug, pageSlug);
+        return {
+          notFound: true,
+        };
+      }
     }
   }
   return {

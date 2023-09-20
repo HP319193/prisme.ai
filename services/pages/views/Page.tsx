@@ -7,7 +7,6 @@ import PageRenderer, {
 } from '../components/Page/Page';
 import { usePage } from '../components/Page/PageProvider';
 import { useWorkspace } from '../components/Workspace';
-import FourHundredOne from './401';
 import FourHundredFour from './404';
 
 export interface PageProps extends Omit<PageRendererProps, 'page'> {
@@ -50,7 +49,7 @@ export const Page = () => {
     return null;
   }
 
-  return <FourHundredOne />;
+  return <DefaultErrorPage statusCode={error || 0} />;
 };
 
 export default Page;
