@@ -2605,7 +2605,14 @@ declare namespace Prismeai {
         description?: string;
         auth?: {
             prismeai?: {
-                [key: string]: any;
+                conditions?: {
+                    [name: string]: any;
+                };
+            };
+            azure?: {
+                conditions?: {
+                    [name: string]: any;
+                };
             };
             basic?: {
                 username?: string;

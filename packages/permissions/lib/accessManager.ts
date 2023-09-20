@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { guard } from '@ucast/mongo2js';
 import { ApiKey, BaseSchema, Roles as RolesSchema } from './schemas';
 import mongoose from 'mongoose';
 import { accessibleRecordsPlugin, AccessibleRecordModel } from '@casl/mongoose';
@@ -632,17 +633,25 @@ export class AccessManager<
     if (!Object.keys(user?.authData || {}).length) {
       return [];
     }
-    const matchingRoles = roles.filter((cur) => {
-      const commonProviders = Object.keys(cur.auth || {}).filter((cur) => {
-        if (cur == 'apiKey') {
-          return false;
+    const matchingRoles = roles.filter((role) => {
+      const commonProviders = Object.entries(role.auth || {}).filter(
+        ([authProvider, config]) => {
+          if (authProvider == 'apiKey') {
+            return false;
+          }
+          if (!(authProvider in user.authData!)) {
+            return false;
+          }
+          // Handle conditions
+          const conditions = (<any>config)?.conditions || {};
+          if (!Object.keys(conditions).length) {
+            return true;
+          }
+          return guard(conditions)({
+            authData: user.authData?.[authProvider] || {},
+          });
         }
-        if (!(cur in user.authData!)) {
-          return false;
-        }
-        // Handle conditions
-        return true;
-      });
+      );
       if (!commonProviders?.length) {
         return false;
       }
@@ -693,6 +702,22 @@ export class AccessManager<
           value: crypto.randomUUID(),
         },
       };
+    }
+
+    // Stringify auth conditions
+    if (role.auth) {
+      role.auth = Object.entries(role.auth || {}).reduce(
+        (obj, [provider, config]) => ({
+          ...obj,
+          [provider]: {
+            ...config,
+            conditions: (<any>config).conditions
+              ? JSON.stringify((<any>config).conditions)
+              : undefined,
+          },
+        }),
+        {}
+      );
     }
 
     const savedRole = await RolesModel.findOneAndUpdate(
@@ -751,14 +776,38 @@ export class AccessManager<
     const roles = docs
       .map((role) => role.toJSON())
       .map((role) => {
-        // Keep role.casl retro compatibility, but role.rules should now be stringified CASL
-        if (typeof (<any>role).casl === 'string') {
-          role.rules = JSON.parse((<any>role).casl);
-        } else if (typeof role.rules === 'string') {
-          role.rules = JSON.parse(role.rules);
-        } else {
-          role.rules = (<any>role).casl || role.rules;
+        try {
+          // Keep role.casl retro compatibility, but role.rules should now be stringified CASL
+          if (typeof (<any>role).casl === 'string') {
+            role.rules = JSON.parse((<any>role).casl);
+          } else if (typeof role.rules === 'string') {
+            role.rules = JSON.parse(role.rules);
+          } else {
+            role.rules = (<any>role).casl || role.rules;
+          }
+
+          if (role.auth) {
+            role.auth = Object.entries(role.auth || {}).reduce(
+              (obj, [provider, config]) => ({
+                ...obj,
+                [provider]: {
+                  ...config,
+                  conditions: (<any>config).conditions
+                    ? JSON.parse((<any>config).conditions)
+                    : undefined,
+                },
+              }),
+              {}
+            );
+          }
+        } catch (err) {
+          console.error({
+            msg: `Could not parse role ${role.id} from ${role.subjectType} ${role.subjectId}`,
+            err,
+          });
+          role.rules = [];
         }
+
         delete (<any>role).casl;
         return role;
       });

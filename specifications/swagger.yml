@@ -331,6 +331,16 @@ components:
           properties:
             prismeai:
               type: object
+              properties:
+                conditions:
+                  type: object
+                  additionalProperties: true
+            azure:
+              type: object
+              properties:
+                conditions:
+                  type: object
+                  additionalProperties: true
             basic:
               type: object
               properties:

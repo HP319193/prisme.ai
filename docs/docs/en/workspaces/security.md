@@ -236,9 +236,6 @@ authorizations:
       auth:
         prismeai: {}
 ```
-
-If one of the conerned users also have a specific role granted for the workspace, both role will add together.  
-
 This applies to every other existing providers like Microsoft azure :  
 ```yaml
 authorizations:
@@ -248,6 +245,57 @@ authorizations:
         prismeai: {}
 ```
 
+If one of the conerned users also have a specific role granted for the workspace, both role will add together.  
+
+Moreover, conditions can also be applied in order to filter only a subset of the provider's users :  
+
+```yaml
+authorizations:
+  roles:
+    guest:
+      auth:
+        prismeai:
+          conditions:
+            authData.email:
+              $regex: ^.*@gmail.com$
+```
+
+* Conditions syntax use the same [subset of MongoDB query syntax](https://casl.js.org/v4/en/guide/conditions-in-depth#supported-operators) as for **Rules structure**.
+* See below available auth data from auth providers (can also be checked with {{user.authData}} variable)
+
+### Auth data  
+
+**user.authData** variable is an object mapping providers key to their authentication data :  
+```json
+{
+  "prismeai": {
+    "id": "user id",
+    "email": "user email",
+  },
+  "anonymous": {},
+  "azure": {
+    "id": "Azure user id",
+    "firstName": "User displayed name",
+    "email": "Public email",
+    "authority": "https://login.microsoftonline.com/<TENANT_ID>/",
+    "scopes": [
+      "profile",
+      "openid",
+      "email",
+      "User.Read"
+    ],
+    "uniqueId": "Azure user id",
+    "account": {
+      "name": "User displayed name",
+      "environment": "login.windows.net",
+      "tenantId": "tenant id",
+      "username": "internal username"
+    }
+  }
+}
+```
+
+Role auth conditions can refer to the corresponding provider configuration using **authData** variable from the MongoDB query syntax.  
 
 ## API Keys
 In order to grant some request/user session with additional permissions not available to the authenticated user, we can create API Keys with same rules syntax as defined here, and inject it within a `x-prismeai-api-key` header.  
@@ -284,4 +332,3 @@ However, we can now use this api key for more permissions in Prismeai API / fetc
       name: workspace
     output: events
 ```
-
