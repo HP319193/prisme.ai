@@ -12,7 +12,10 @@ export interface RichTextEditorProps {
   value: string;
   onChange: (v: string) => void;
 }
-export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
+export const RichTextEditor = ({
+  value = '',
+  onChange,
+}: RichTextEditorProps) => {
   const [displayRaw, setDisplayRaw] = useState(value.includes(rawModeMarker));
   const ignoreValueChange = useRef(false);
   const [quillMounted, setQuillMounted] = useState(true);

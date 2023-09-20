@@ -15,7 +15,9 @@ import LinkInTrans from './LinkInTrans';
 import { useRouter } from 'next/router';
 import Storage from '../utils/Storage';
 
-interface SignupFormProps {}
+interface SignupFormProps {
+  onSignup?: (user: Prismeai.User) => void;
+}
 
 interface Values {
   email: string;
@@ -25,7 +27,7 @@ interface Values {
   cgu: boolean;
 }
 
-export const SignupForm = ({}: SignupFormProps) => {
+export const SignupForm = ({ onSignup }: SignupFormProps) => {
   const {
     t,
     i18n: { language },
@@ -50,9 +52,17 @@ export const SignupForm = ({}: SignupFormProps) => {
   const submit = useCallback(
     async ({ email, password, firstName, lastName }: Values) => {
       Storage.set('redirect-once-signup', `https://${window.location.host}`);
-      await signup(email, password, firstName, lastName, language);
+      const user = await signup(email, password, firstName, lastName, language);
+      if (!user) return;
+      if (onSignup) return onSignup(user);
+      push(
+        `/validate?${new URLSearchParams({
+          email: email,
+          sent: 'true',
+        }).toString()}`
+      );
     },
-    [signup, language]
+    [signup, language, onSignup, push]
   );
 
   const validate = (values: Values) => {

@@ -357,14 +357,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         setLoading(false);
         setTimeout(() => {
           setSuccess(undefined);
-          if (user.status === 'pending') {
-            push(
-              `/validate?${new URLSearchParams({
-                email: email,
-                sent: 'true',
-              }).toString()}`
-            );
-          } else {
+          if (user.status !== 'pending') {
             initAuthentication();
           }
         }, 2000);
