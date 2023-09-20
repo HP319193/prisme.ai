@@ -513,13 +513,17 @@ export class ElasticsearchStore implements EventsStore {
     };
 
     const timeseries = aggregations?.timeseries
-      ? aggregations?.timeseries?.buckets.map((dayAggregation) => {
-          const { key_as_string: date } = dayAggregation;
-          return {
-            date,
-            total: mapMetricsElasticBuckets(dayAggregation),
-          };
-        })
+      ? aggregations?.timeseries?.buckets.map(
+          (
+            dayAggregation: MetricsElasticBucket & { key_as_string: string }
+          ) => {
+            const { key_as_string: date } = dayAggregation;
+            return {
+              date,
+              total: mapMetricsElasticBuckets(dayAggregation),
+            };
+          }
+        )
       : undefined;
 
     const usage: Prismeai.WorkspaceUsage = {
