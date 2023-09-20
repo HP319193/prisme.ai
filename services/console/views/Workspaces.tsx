@@ -105,11 +105,14 @@ export const WorkspacesView = () => {
     [duplicateWorkspace, push, trackEvent]
   );
 
-  const handleImportArchive = useCallback(async (file: File) => {
-    const workspace = await importArchive(file);
-    if (!workspace) return;
-    push(`/workspaces/${workspace.id}`);
-  }, []);
+  const handleImportArchive = useCallback(
+    async (file: File) => {
+      const workspace = await importArchive(file);
+      if (!workspace) return;
+      push(`/workspaces/${workspace.id}`);
+    },
+    [importArchive, push]
+  );
 
   const handlePickArchive = useCallback(async () => {
     trackEvent({
@@ -131,7 +134,7 @@ export const WorkspacesView = () => {
       filePickr.parentNode?.removeChild(filePickr);
     });
     filePickr.click();
-  }, [importArchive, push, trackEvent]);
+  }, [handleImportArchive, trackEvent]);
 
   const [suggestions, setSuggestions] = useState<Workspace[]>([]);
   useEffect(() => {
