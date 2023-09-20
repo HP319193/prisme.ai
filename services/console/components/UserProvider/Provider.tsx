@@ -375,7 +375,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         return null;
       }
     },
-    [push, initAuthentication]
+    [initAuthentication]
   );
 
   const initialFetch = useRef(async () => {

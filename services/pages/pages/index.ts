@@ -5,6 +5,7 @@ import { getSubmodain } from '../../console/utils/urls';
 import { computePageStyles } from '../utils/computeBlocksStyles';
 import { getBlocksConfigFromServer } from '../utils/getBlocksConfigFromServer';
 import { PageProps } from '../views/Page';
+import BUILTIN_PAGES from '../builtinPages';
 
 export { default } from '../views/Page';
 
@@ -35,6 +36,15 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     styles = s;
   } catch (e) {
     res.statusCode = error = (e as HTTPError).code;
+    if ([401, 403].includes(error)) {
+      const builtinPage = BUILTIN_PAGES.find(({ slug }) => slug === '_401');
+      if (builtinPage) {
+        page = builtinPage;
+      }
+      try {
+        page = await api.getPageBySlug(workspaceSlug, '_401');
+      } catch {}
+    }
     if (error === 404) {
       console.error('404', workspaceSlug, 'index');
       return {
