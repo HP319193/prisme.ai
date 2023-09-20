@@ -19,11 +19,15 @@ export function accessManagerMiddleware(
         {
           id: req.context.userId,
           sessionId: req.context.sessionId,
+          authData: req.authData,
         },
         cache
       );
       req.accessManager = await accessManager.as(
-        { ...workspaceUser, role: role as Prismeai.Role },
+        {
+          ...workspaceUser,
+          role: role as Prismeai.Role,
+        },
         apiKey as string
       );
     } catch (error) {

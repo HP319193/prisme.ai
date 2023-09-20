@@ -13,6 +13,7 @@ export function accessManagerMiddleware(accessManager: AccessManager) {
           id: req.context.userId,
           sessionId: req.context.sessionId,
           role: role as Prismeai.Role,
+          authData: req.authData,
         },
         apiKey as string
       );

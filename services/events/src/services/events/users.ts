@@ -4,6 +4,7 @@ export interface WorkspaceUser {
   id: string;
   sessionId: string;
   topics: string[];
+  authData?: Prismeai.User['authData'];
 }
 
 export async function getWorkspaceUser(

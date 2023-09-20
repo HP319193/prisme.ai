@@ -225,6 +225,30 @@ This way, we can manage allowed users in a single central place (workspace share
 
 This can and should be combined with [automations securing](#securing-automations) in order to restrict sensitive automations/data to the same roles we already shared our pages with.  
 
+## Binding roles with auth providers
+For many users to be granted the same role without manual intervention, we can also configure a role to be binded with some auth providers.  
+
+For example, in order to automatically grant a "guest" role to anyone registered with Prisme.ai, the following role configuration can be applied :  
+```yaml
+authorizations:
+  roles:
+    guest:
+      auth:
+        prismeai: {}
+```
+
+If one of the conerned users also have a specific role granted for the workspace, both role will add together.  
+
+This applies to every other existing providers like Microsoft azure :  
+```yaml
+authorizations:
+  roles:
+    guest:
+      auth:
+        prismeai: {}
+```
+
+
 ## API Keys
 In order to grant some request/user session with additional permissions not available to the authenticated user, we can create API Keys with same rules syntax as defined here, and inject it within a `x-prismeai-api-key` header.  
 See our [API Swagger documentation](/api) in order to manage workspace API Keys.  

@@ -147,7 +147,7 @@ export class AccessManager<
         permissions: new Permissions(user, this.permissionsConfig),
         user: {
           ...user,
-          role: user.role || 'guest',
+          role: user.role,
         },
         alreadyPulledSubjectFieldRefs: new Set(),
       });
@@ -597,7 +597,23 @@ export class AccessManager<
       return [];
     }
 
-    // loadRules make generated rules immediately effective (i.e apiKey or forced role sent within a request),
+    // Set current user role if there is any role automatically matching current user authData
+    if (this.user && !this.user.role) {
+      const loadedRoles = await this.loadRolesFromAuthData(
+        permissions,
+        roles,
+        this.user
+      );
+      if (query.subjectType && query.subjectId && loadedRoles[0]) {
+        permissions.saveSubjectRole(
+          query.subjectType,
+          query.subjectId,
+          loadedRoles[0]
+        );
+      }
+    }
+
+    // loadRules make generated rules immediately effective (i.e apiKey, forced role sent within a request, or custom role binded to some authData),
     // while loadRoles make these rules available in case we load an object with one of these role names assigned
     if (opts?.loadRules) {
       permissions.loadRules(roles.flatMap((role) => role.rules));
@@ -606,6 +622,35 @@ export class AccessManager<
     }
 
     return roles;
+  }
+
+  async loadRolesFromAuthData(
+    permissions: Permissions<SubjectType>,
+    roles: CustomRole<SubjectType>[],
+    user: User
+  ) {
+    if (!Object.keys(user?.authData || {}).length) {
+      return [];
+    }
+    const matchingRoles = roles.filter((cur) => {
+      const commonProviders = Object.keys(cur.auth || {}).filter((cur) => {
+        if (cur == 'apiKey') {
+          return false;
+        }
+        if (!(cur in user.authData!)) {
+          return false;
+        }
+        // Handle conditions
+        return true;
+      });
+      if (!commonProviders?.length) {
+        return false;
+      }
+      return true;
+    });
+
+    permissions.loadRules(matchingRoles.flatMap((role) => role.rules));
+    return matchingRoles.map((cur) => cur.name);
   }
 
   async saveRole(

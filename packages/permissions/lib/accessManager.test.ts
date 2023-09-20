@@ -670,6 +670,62 @@ describe('API Keys', () => {
   });
 });
 
+describe('Custom roles granted from auth data', () => {
+  it('Roles can be automatically granted depending on given user auth data', async () => {
+    // Lets make adminA create a workspace
+    const workspace = await adminA.create(SubjectType.Workspace, {
+      name: 'workspaceName',
+    });
+    const workspaceId = workspace.id!;
+    let agent = await accessManager.as({
+      id: 'someAdminId',
+      authData: {
+        prismeai: {
+          id: 'someAdminId',
+          email: 'someAgent@prisme.ai',
+        },
+      },
+    });
+
+    // Check that agent cannot read createdWorkspace
+    await expect(
+      agent.get(SubjectType.Workspace, workspace.id)
+    ).rejects.toThrow();
+
+    await adminA.saveRole({
+      id: `workspaces/${workspaceId}/role/agent`,
+      name: 'agent',
+      type: 'role',
+      subjectType: SubjectType.Workspace,
+      subjectId: workspaceId,
+      rules: [
+        {
+          action: ['read', 'manage_permissions'],
+          subject: ['workspace'],
+          conditions: {
+            id: workspaceId,
+          },
+        },
+      ],
+      auth: {
+        prismeai: {
+          conditions: {
+            'authData.email': 'someAgent@prisme.ai',
+          },
+        },
+      },
+    });
+
+    // Check that agent now can read createdWorkspace
+    await expect(
+      agent.get(SubjectType.Workspace, workspaceId)
+    ).resolves.toMatchObject(workspace);
+    await expect(
+      agent.getLoadedSubjectRole(SubjectType.Workspace, workspaceId)
+    ).toBe('agent');
+  });
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
   if (mongod) {

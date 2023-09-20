@@ -2605,7 +2605,7 @@ declare namespace Prismeai {
         description?: string;
         auth?: {
             prismeai?: {
-                anonymous?: boolean;
+                [key: string]: any;
             };
             basic?: {
                 username?: string;

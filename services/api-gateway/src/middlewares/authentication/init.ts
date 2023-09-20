@@ -162,6 +162,7 @@ async function initPassportStrategies(
           prismeaiSessionId: token.prismeaiSessionId,
           mfaValidated: false,
         };
+        delete req.headers['authorization']; // Do not pass user JWT to backed services
         deserializeUser(token.sub, done as any);
       }
     )

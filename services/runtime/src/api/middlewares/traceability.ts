@@ -4,6 +4,7 @@ import {
   CORRELATION_ID_HEADER,
   USER_ID_HEADER,
   SESSION_ID_HEADER,
+  AUTH_DATA_HEADER,
 } from '../../../config';
 import { logger } from '../../logger';
 import { uniqueId } from '../../utils';
@@ -51,6 +52,16 @@ export function requestDecorator(broker: Broker) {
     req.context = context;
     req.logger = logger.child(context);
     req.broker = broker.child(context);
+
+    if (typeof req.header(AUTH_DATA_HEADER) === 'string') {
+      try {
+        req.authData = JSON.parse(req.header(AUTH_DATA_HEADER)!);
+      } catch {
+        req.logger.error({
+          msg: `Could not parse JSON from authData header '${AUTH_DATA_HEADER}'`,
+        });
+      }
+    }
 
     next();
   };

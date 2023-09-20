@@ -305,6 +305,10 @@ export class Permissions<SubjectType extends string> {
     return this.ability;
   }
 
+  saveSubjectRole(subjectType: string, subjectId: string, role: string) {
+    this.loadedSubjectRoles[`${subjectType}.${subjectId}`] = role;
+  }
+
   pullRoleFromSubject(subjectType: SubjectType, subject: Subject<Role>) {
     // Auto load 'default' role if defined, as it applies to everyone
     this.loadRole(DefaultRole as Role, subjectType, subject);
@@ -313,8 +317,7 @@ export class Permissions<SubjectType extends string> {
     const authorAssignedRole = this.subjects[subjectType]?.author?.assignRole;
     if (authorAssignedRole && subject.createdBy === this.user.id) {
       this.loadRole(authorAssignedRole, subjectType, subject);
-      this.loadedSubjectRoles[`${subjectType}.${subject.id}`] =
-        authorAssignedRole;
+      this.saveSubjectRole(subjectType, subject.id!, authorAssignedRole);
       return;
     }
 
@@ -322,7 +325,7 @@ export class Permissions<SubjectType extends string> {
     if (userRole) {
       this.loadRole(userRole, subjectType, subject);
       // Keep this in memory in case a child subject might given policies to this role
-      this.loadedSubjectRoles[`${subjectType}.${subject.id}`] = userRole;
+      this.saveSubjectRole(subjectType, subject.id!, userRole);
     }
 
     const { role: publicRole } = subject.permissions?.[PublicAccess] || {};

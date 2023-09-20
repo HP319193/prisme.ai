@@ -6,6 +6,7 @@ import { createClient } from '@redis/client';
 import {
   API_KEY_HEADER,
   APP_NAME,
+  AUTH_DATA_HEADER,
   SESSION_ID_HEADER,
   SOCKETIO_COOKIE_MAX_AGE,
   SOCKETIO_REDIS_HOST,
@@ -91,12 +92,25 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
       referer: socket.handshake.headers['referer'],
     };
 
+    let authData: Prismeai.User['authData'];
+    try {
+      authData = JSON.parse(
+        socket.handshake.headers[AUTH_DATA_HEADER] as string
+      );
+    } catch {
+      logger.error({
+        msg: `Could not parse JSON from authData header '${AUTH_DATA_HEADER}'`,
+        ...logsCtx,
+      });
+    }
+
     let subscription: Subscriber;
     const ready = events
       .subscribe(workspaceId, {
         id: userId as string,
         sessionId: sessionId as string,
         apiKey: apiKey as string,
+        authData,
         socketId,
         callback: (event: PrismeEvent<any>) => {
           socket.emit(event.type, event);

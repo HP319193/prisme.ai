@@ -27,6 +27,8 @@ export default {
 
   SESSION_ID_HEADER: process.env.SESSION_ID_HEADER || 'x-prismeai-session-id',
 
+  AUTH_DATA_HEADER: process.env.AUTH_DATA_HEADER || 'x-prismeai-auth-data',
+
   API_KEY_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-api-key',
 
   ROLE_HEADER: process.env.ROLE_HEADER || 'x-prismeai-role',

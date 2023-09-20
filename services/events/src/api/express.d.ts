@@ -4,5 +4,6 @@ declare namespace Express {
     logger: import('../logger').Logger;
     broker: import('@prisme.ai/broker').Broker;
     accessManager: Required<import('../permissions').AccessManager>;
+    authData?: Prismeai.User['authData'];
   }
 }

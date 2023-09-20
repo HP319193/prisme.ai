@@ -331,9 +331,6 @@ components:
           properties:
             prismeai:
               type: object
-              properties:
-                anonymous:
-                  type: boolean
             basic:
               type: object
               properties:
@@ -1356,7 +1353,7 @@ components:
           type: array
           items:
             properties:
-              date: 
+              date:
                 type: string
               total:
                 $ref: '#/components/schemas/UsageMetrics'
@@ -3766,7 +3763,7 @@ paths:
             type: string
             enum:
                   - month
-                  - day                
+                  - day
         - name: 'details'
           in: 'query'
           description: 'Includes individual appInstances details'

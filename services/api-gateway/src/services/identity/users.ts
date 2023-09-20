@@ -217,7 +217,7 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
         : UserStatus.Validated,
       language,
       authData: {
-        prismeai: {},
+        prismeai: { email },
       },
     };
     const savedUser = await Users.save({
@@ -256,7 +256,7 @@ export const get = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   };
 
 const filterUserFields = (user: User): Prismeai.User => {
-  const {
+  let {
     email,
     status,
     firstName,
@@ -268,8 +268,20 @@ const filterUserFields = (user: User): Prismeai.User => {
     id,
     meta,
   } = user;
-  if (authData?.prismeai && !authData?.prismeai?.id) {
-    authData.prismeai.id = id;
+  if (authData?.prismeai) {
+    authData.prismeai = {
+      ...authData.prismeai,
+      id,
+      email: authData.prismeai.email || email,
+    };
+  } else if (!authData && email) {
+    authData = {
+      prismeai: { id, email },
+    };
+  } else {
+    authData = {
+      anonymous: { id },
+    };
   }
   return {
     email,
