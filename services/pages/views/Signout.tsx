@@ -1,8 +1,15 @@
+import { useEffect } from 'react';
 import { useUser } from '../../console/components/UserProvider';
 
 export const Signout = () => {
   const { signout } = useUser();
-  signout();
+  useEffect(() => {
+    const t = setTimeout(signout, 200);
+    return () => {
+      clearInterval(t);
+    };
+  }, [signout]);
+
   return null;
 };
 

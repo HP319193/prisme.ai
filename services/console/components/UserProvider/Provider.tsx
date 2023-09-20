@@ -153,7 +153,7 @@ export const UserProvider: FC<UserProviderProps> = ({
 
       // Only redirect if api.token is set to avoid OIDC signout when we come from legacy tokens
       if (clearOpSession && !api.legacyToken) {
-        const redirectionUrl = new URL('/', window.location.href);
+        const redirectionUrl = new URL('/signin', window.location.href);
         const signoutUrl = api.getSignoutURL(redirectionUrl.toString());
         window.location.assign(signoutUrl);
       } else {
