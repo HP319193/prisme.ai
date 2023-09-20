@@ -33,7 +33,7 @@ export const PageProvider: FC<PageProviderProps> = ({
 }) => {
   const { page, setPage, loading, fetchPage } = usePageFetcher(
     pageFromServer || undefined,
-    error
+    error || undefined
   );
   const { events } = usePageEvents(page);
   usePageParent(events);
