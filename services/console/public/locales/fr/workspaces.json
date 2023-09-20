@@ -631,7 +631,8 @@
         "title": "Modèles de pages",
         "index": "Page d'accueil",
         "_401": "Accès restreint (401)",
-        "_404": "Page introuvable (404)"
+        "_404": "Page introuvable (404)",
+        "_doc": "Documentation d'App"
       }
     },
     "duplicate": {

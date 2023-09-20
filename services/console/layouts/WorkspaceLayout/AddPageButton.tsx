@@ -5,6 +5,90 @@ import { useCallback, useMemo } from 'react';
 import { useWorkspace } from '../../providers/Workspace';
 import { useWorkspaceLayout } from './context';
 
+const TEMPLATES = [
+  {
+    slug: 'index',
+  },
+  {
+    slug: '_401',
+  },
+  {
+    slug: '_404',
+  },
+  {
+    slug: '_doc',
+    blocks: [
+      {
+        slug: 'RichText',
+        content: {
+          fr: `<h1>Mon App</h1>
+<p class="description">Description de mon App</p><br />`,
+          en: `<h1>My App</h1>
+<p class="description">My App description</p><br />`,
+        },
+      },
+      {
+        slug: 'TabsView',
+        tabs: [
+          {
+            text: {
+              fr: 'Documentation',
+              en: 'Documentation',
+            },
+            type: 'event',
+            content: {
+              blocks: [
+                {
+                  slug: 'RichText',
+                  content: 'Documentation',
+                },
+              ],
+            },
+          },
+          {
+            text: {
+              fr: 'Journal des changements',
+              en: 'Changelog',
+            },
+            type: 'event',
+            content: {
+              blocks: [
+                {
+                  slug: 'RichText',
+                  content: `<div class="section">
+  <h2>1.0.0</h2>    
+  <div class="text">Published on <date>
+  Latest stable release.
+
+* This
+* That
+
+</div>`,
+                },
+              ],
+            },
+          },
+          {
+            text: {
+              fr: 'API',
+              en: 'API',
+            },
+            type: 'event',
+            content: {
+              blocks: [
+                {
+                  slug: 'RichText',
+                  content: 'API',
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  },
+];
+
 export const AddPageButton = () => {
   const { t } = useTranslation('workspaces');
   const {
@@ -12,11 +96,11 @@ export const AddPageButton = () => {
   } = useWorkspace();
   const { createPage } = useWorkspaceLayout();
   const addPage = useCallback(
-    (template?: string) => () => {
+    (template?: Prismeai.Page) => () => {
       if (!template) {
         return createPage();
       }
-      return createPage({ slug: template, public: true });
+      return createPage({ ...template, public: true });
     },
     [createPage]
   );
@@ -36,11 +120,11 @@ export const AddPageButton = () => {
       label: t('pages.create.template.title'),
       children: [] as any,
     };
-    ['index', '_401', '_404'].forEach((template, k) => {
-      if (allPages.includes(template)) return;
+    TEMPLATES.forEach((template, k) => {
+      if (allPages.includes(template.slug)) return;
       templates.children!.push({
         key: `2-${k}`,
-        label: t(`pages.create.template.${template}`),
+        label: t(`pages.create.template.${template.slug}`),
         onClick: addPage(template),
       });
     });

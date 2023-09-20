@@ -190,7 +190,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
   ]);
 
   const createPageHandler = useCallback(
-    async ({ slug, public: isPublic } = {}) => {
+    async ({ slug, public: isPublic, ...page } = {}) => {
       trackEvent({
         category: 'Workspace',
         name: slug
@@ -212,6 +212,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
         },
         slug,
         blocks: [],
+        ...page,
       });
       if (isPublic && createdPage && createdPage.id) {
         await addUserPermissions('pages', createdPage.id, {
