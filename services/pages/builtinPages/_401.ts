@@ -4,6 +4,7 @@ const _401 = {
     fr: 'Accès restreint (401)',
     en: 'Restricted access (401)',
   },
+  appInstances: [],
   blocks: [
     {
       slug: 'RichText',
