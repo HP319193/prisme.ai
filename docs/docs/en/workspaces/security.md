@@ -242,7 +242,7 @@ authorizations:
   roles:
     guest:
       auth:
-        prismeai: {}
+        azure: {}
 ```
 
 If one of the conerned users also have a specific role granted for the workspace, both role will add together.  

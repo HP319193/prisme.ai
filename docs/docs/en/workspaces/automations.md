@@ -470,7 +470,7 @@ Any set variable to one of these contexts is automatically synchronized with par
     </tr>           
     <tr>
       <td><b>user.authData</b></td>
-      <td>[Detailed authentication data](./security.md#auth-data) from various auth providers this user logged in with</td>
+      <td>Detailed authentication data from various auth providers this user logged in with</td>
     </tr>    
     <tr>
       <td><b>user.role</b></td>

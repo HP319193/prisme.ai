@@ -267,20 +267,21 @@ const filterUserFields = (user: User): Prismeai.User => {
     mfa,
     id,
     meta,
+    password,
   } = user;
-  if (authData?.prismeai) {
+  if (!authData) {
+    authData = email
+      ? {
+          prismeai: { id, email },
+        }
+      : {
+          anonymous: { id },
+        };
+  } else if (authData.prismeai || (!authData.prismeai && password)) {
     authData.prismeai = {
       ...authData.prismeai,
       id,
-      email: authData.prismeai.email || email,
-    };
-  } else if (!authData && email) {
-    authData = {
-      prismeai: { id, email },
-    };
-  } else {
-    authData = {
-      anonymous: { id },
+      email: authData.prismeai?.email || email,
     };
   }
   return {
