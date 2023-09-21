@@ -22,6 +22,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   const workspaceSlug = getSubmodain(req.headers.host || '');
   try {
+    api.token = req.cookies['access-token'] || null;
     page = await api.getPageBySlug(workspaceSlug, 'index');
     page = (await getBlocksConfigFromServer(
       page,

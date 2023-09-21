@@ -7,6 +7,7 @@ import Storage from '../../utils/Storage';
 import { Loading } from '@prisme.ai/design-system';
 import getConfig from 'next/config';
 import { useTranslation } from 'next-i18next';
+import cookie from 'js-cookie';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_URL = '' },
@@ -41,9 +42,11 @@ async function authFromConsole() {
         if (legacy) {
           api.legacyToken = token;
           Storage.set('auth-token', token);
+          cookie.set('auth-token', token);
         } else {
           api.token = token;
           Storage.set('access-token', token);
+          cookie.set('access-token', token);
         }
         clearTimeout(t);
         resolve(token);
@@ -149,6 +152,8 @@ export const UserProvider: FC<UserProviderProps> = ({
     async (clearOpSession: boolean = true) => {
       Storage.remove('access-token');
       Storage.remove('auth-token');
+      cookie.remove('access-token');
+      cookie.remove('auth-token');
       setUser(null);
 
       // Only redirect if api.token is set to avoid OIDC signout when we come from legacy tokens
@@ -240,6 +245,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       ) {
         api.token = null;
         Storage.remove('access-token');
+        cookie.remove('access-token');
       }
 
       if (anonymous) {
