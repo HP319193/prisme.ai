@@ -1,4 +1,3 @@
-import { RichText } from '@prisme.ai/blocks/lib/Blocks';
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import api, { HTTPError } from '../../console/utils/api';
@@ -35,6 +34,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const workspaceSlug = getSubmodain(req.headers.host || '');
   try {
+    api.token = req.cookies['access-token'] || null;
     page = await api.getPageBySlug(workspaceSlug, pageSlug.join('/'));
     page = (await getBlocksConfigFromServer(
       page,
