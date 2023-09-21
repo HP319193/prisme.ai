@@ -1,7 +1,7 @@
 import { LoadingOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { StretchContent } from '@prisme.ai/design-system';
 import { Tooltip } from 'antd';
-import { FC } from 'react';
+import { FC, ReactElement } from 'react';
 import ChevronIcon from '../../icons/chevron.svgr';
 
 export interface ItemsGroupProps {
@@ -11,6 +11,7 @@ export interface ItemsGroupProps {
   creating?: boolean;
   tooltip?: string;
   open: boolean;
+  addButtonRender?: () => ReactElement;
 }
 export const ItemsGroup: FC<ItemsGroupProps> = ({
   title,
@@ -19,6 +20,7 @@ export const ItemsGroup: FC<ItemsGroupProps> = ({
   onAdd,
   creating,
   tooltip = '',
+  addButtonRender: AddButton = PlusCircleOutlined,
   children,
 }) => {
   return (
@@ -50,7 +52,7 @@ export const ItemsGroup: FC<ItemsGroupProps> = ({
                 onClick={onAdd}
                 disabled={creating}
               >
-                {creating ? <LoadingOutlined /> : <PlusCircleOutlined />}
+                {creating ? <LoadingOutlined /> : <AddButton />}
               </button>
             </Tooltip>
           )}

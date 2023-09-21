@@ -10,7 +10,11 @@ export const Roles = new Schema({
   rules: Schema.Types.Mixed,
   casl: Schema.Types.Mixed,
   disabled: Boolean,
-  auth: Schema.Types.Mixed,
+  auth: {
+    type: Map,
+    required: false,
+    of: Schema.Types.Mixed,
+  },
 });
 
 Roles.index({ 'auth.apiKey.value': 1 });

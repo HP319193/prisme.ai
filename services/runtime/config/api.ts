@@ -21,6 +21,9 @@ export const API_KEY_HEADER =
 export const SESSION_ID_HEADER =
   process.env.SESSION_ID_HEADER || 'x-prismeai-session-id';
 
+export const AUTH_DATA_HEADER =
+  process.env.AUTH_DATA_HEADER || 'x-prismeai-auth-data';
+
 export const OPENAPI_FILEPATH =
   process.env.OPENAPI_FILEPATH ||
   path.resolve(__dirname, '../specifications/swagger.yml');

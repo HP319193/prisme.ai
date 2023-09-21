@@ -15,3 +15,4 @@ export { default as TabsView } from './TabsView';
 export { default as Carousel } from './Carousel';
 export { default as BlocksGrid } from './BlocksGrid';
 export { default as BlocksSplit } from './BlocksSplit';
+export { default as Signin } from './Signin';

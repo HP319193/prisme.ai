@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { guard } from '@ucast/mongo2js';
 import { ApiKey, BaseSchema, Roles as RolesSchema } from './schemas';
 import mongoose from 'mongoose';
 import { accessibleRecordsPlugin, AccessibleRecordModel } from '@casl/mongoose';
@@ -147,7 +148,7 @@ export class AccessManager<
         permissions: new Permissions(user, this.permissionsConfig),
         user: {
           ...user,
-          role: user.role || 'guest',
+          role: user.role,
         },
         alreadyPulledSubjectFieldRefs: new Set(),
       });
@@ -597,7 +598,23 @@ export class AccessManager<
       return [];
     }
 
-    // loadRules make generated rules immediately effective (i.e apiKey or forced role sent within a request),
+    // Set current user role if there is any role automatically matching current user authData
+    if (this.user && !this.user.role) {
+      const loadedRoles = await this.loadRolesFromAuthData(
+        permissions,
+        roles,
+        this.user
+      );
+      if (query.subjectType && query.subjectId && loadedRoles[0]) {
+        permissions.saveSubjectRole(
+          query.subjectType,
+          query.subjectId,
+          loadedRoles[0]
+        );
+      }
+    }
+
+    // loadRules make generated rules immediately effective (i.e apiKey, forced role sent within a request, or custom role binded to some authData),
     // while loadRoles make these rules available in case we load an object with one of these role names assigned
     if (opts?.loadRules) {
       permissions.loadRules(roles.flatMap((role) => role.rules));
@@ -606,6 +623,43 @@ export class AccessManager<
     }
 
     return roles;
+  }
+
+  async loadRolesFromAuthData(
+    permissions: Permissions<SubjectType>,
+    roles: CustomRole<SubjectType>[],
+    user: User
+  ) {
+    if (!Object.keys(user?.authData || {}).length) {
+      return [];
+    }
+    const matchingRoles = roles.filter((role) => {
+      const commonProviders = Object.entries(role.auth || {}).filter(
+        ([authProvider, config]) => {
+          if (authProvider == 'apiKey') {
+            return false;
+          }
+          if (!(authProvider in user.authData!)) {
+            return false;
+          }
+          // Handle conditions
+          const conditions = (<any>config)?.conditions || {};
+          if (!Object.keys(conditions).length) {
+            return true;
+          }
+          return guard(conditions)({
+            authData: user.authData?.[authProvider] || {},
+          });
+        }
+      );
+      if (!commonProviders?.length) {
+        return false;
+      }
+      return true;
+    });
+
+    permissions.loadRules(matchingRoles.flatMap((role) => role.rules));
+    return matchingRoles.map((cur) => cur.name);
   }
 
   async saveRole(
@@ -648,6 +702,22 @@ export class AccessManager<
           value: crypto.randomUUID(),
         },
       };
+    }
+
+    // Stringify auth conditions
+    if (role.auth) {
+      role.auth = Object.entries(role.auth || {}).reduce(
+        (obj, [provider, config]) => ({
+          ...obj,
+          [provider]: {
+            ...config,
+            conditions: (<any>config).conditions
+              ? JSON.stringify((<any>config).conditions)
+              : undefined,
+          },
+        }),
+        {}
+      );
     }
 
     const savedRole = await RolesModel.findOneAndUpdate(
@@ -706,14 +776,38 @@ export class AccessManager<
     const roles = docs
       .map((role) => role.toJSON())
       .map((role) => {
-        // Keep role.casl retro compatibility, but role.rules should now be stringified CASL
-        if (typeof (<any>role).casl === 'string') {
-          role.rules = JSON.parse((<any>role).casl);
-        } else if (typeof role.rules === 'string') {
-          role.rules = JSON.parse(role.rules);
-        } else {
-          role.rules = (<any>role).casl || role.rules;
+        try {
+          // Keep role.casl retro compatibility, but role.rules should now be stringified CASL
+          if (typeof (<any>role).casl === 'string') {
+            role.rules = JSON.parse((<any>role).casl);
+          } else if (typeof role.rules === 'string') {
+            role.rules = JSON.parse(role.rules);
+          } else {
+            role.rules = (<any>role).casl || role.rules;
+          }
+
+          if (role.auth) {
+            role.auth = Object.entries(role.auth || {}).reduce(
+              (obj, [provider, config]) => ({
+                ...obj,
+                [provider]: {
+                  ...config,
+                  conditions: (<any>config).conditions
+                    ? JSON.parse((<any>config).conditions)
+                    : undefined,
+                },
+              }),
+              {}
+            );
+          }
+        } catch (err) {
+          console.error({
+            msg: `Could not parse role ${role.id} from ${role.subjectType} ${role.subjectId}`,
+            err,
+          });
+          role.rules = [];
         }
+
         delete (<any>role).casl;
         return role;
       });

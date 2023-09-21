@@ -1,6 +1,6 @@
 import fs from 'fs';
 import inquirer from 'inquirer';
-import shell from 'shelljs-live';
+import shell from 'shelljs-live/promise';
 import { exec } from 'shelljs';
 import yaml from 'js-yaml';
 
@@ -26,7 +26,21 @@ interface Service {
   dev: boolean;
 }
 
-const runDocker = (services: Service[]) => {
+async function pullImages(images: string[]) {
+  console.log('Pulling latest images');
+  return Promise.all(
+    images.map((image) =>
+      shell(
+        `docker pull registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-${image}:latest`,
+        {
+          async: true,
+        }
+      )
+    )
+  );
+}
+
+async function runDocker(services: Service[]) {
   const devConfigPath = `docker-compose-dev.yml`;
   const dockerSharedEnvs: Record<string, string> = {};
   if (services.find(({ service, dev }) => service === GATEWAY_SERVICE && dev)) {
@@ -86,6 +100,10 @@ const runDocker = (services: Service[]) => {
   const dockerServices = services
     .filter((cur) => !cur.dev)
     .map((cur) => cur.service);
+
+  // Pull latest images
+  await pullImages(dockerServices);
+
   const command = ['docker-compose', '-f', devConfigPath];
   // Detach databases services to avoid killing them on every ctrl+c
   shell(
@@ -103,7 +121,7 @@ const runDocker = (services: Service[]) => {
       shell('docker-compose -p prismeai down ' + dockerServices.join(' '));
     }
   });
-};
+}
 
 const getEnvs = (localServices: string[]): Record<string, string> => {
   if (localServices.includes(GATEWAY_SERVICE)) {
@@ -186,8 +204,7 @@ const init = async () => {
     service,
     dev: !docker.includes(service),
   }));
-
-  runDocker(services);
+  await runDocker(services);
 
   await waitForContainers(['elastic']);
 

@@ -874,6 +874,9 @@ describe('Custom Roles', () => {
     // We cannot read this page until parent workspace permissions are loaded :
     expect(userPerms.can(ActionType.Read, SubjectType.Page, page)).toBe(false);
     userPerms.pullRoleFromSubject(SubjectType.Workspace, hisWorkspace);
+    expect(
+      userPerms.getLoadedSubjectRole(SubjectType.Workspace, hisWorkspace.id!)
+    ).toBe('agent');
 
     // Neither until page is shared to this role :
     expect(userPerms.can(ActionType.Read, SubjectType.Page, page)).toBe(false);

@@ -31,8 +31,7 @@ interface SigninFormProps {
 
 export const SigninForm = ({ show403 }: SigninFormProps) => {
   const { t } = useTranslation('sign');
-  const { loading, signin, initAuthentication, completeAuthentication } =
-    useUser();
+  const { loading, signin, initAuthentication } = useUser();
   const [error, setError] = useState(false);
   const submit = useCallback(
     async ({ email, password }: Values) => {

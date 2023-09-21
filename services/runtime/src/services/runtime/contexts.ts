@@ -220,6 +220,7 @@ export class ContextsManager {
       this.accessManager = await this.accessManager.as({
         id: this.session?.userId!,
         sessionId: this.session?.sessionId,
+        authData: this.session?.authData,
       });
     }
   }

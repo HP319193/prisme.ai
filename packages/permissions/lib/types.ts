@@ -35,6 +35,7 @@ export interface User {
   id: UserId;
   sessionId?: string;
   role?: string;
+  authData?: Prismeai.User['authData'];
   [k: string]: any;
 }
 

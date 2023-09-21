@@ -2,7 +2,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import { AccessManager, BaseSubject, ApiKey } from '..';
 import abacWithRoles, { Role } from '../examples/abacWithRoles';
-import apiKeys from '../examples/apiKeys';
 
 jest.setTimeout(2000);
 
@@ -667,6 +666,120 @@ describe('API Keys', () => {
       //@ts-ignore
       adminA.findApiKeys(SubjectType.Workspace, ourWorkspace.id)
     ).resolves.toMatchObject([]);
+  });
+});
+
+describe('Custom roles granted from auth data', () => {
+  it('Roles can be automatically granted depending on given user auth data', async () => {
+    // Lets make adminA create a workspace
+    const workspace = await adminA.create(SubjectType.Workspace, {
+      name: 'workspaceName',
+    });
+    const workspaceId = workspace.id!;
+    let agent = await accessManager.as({
+      id: 'someAdminId',
+      authData: {
+        prismeai: {
+          id: 'someAdminId',
+          email: 'someAgent@prisme.ai',
+        },
+      },
+    });
+
+    // Check that agent cannot read workspace
+    await expect(
+      agent.get(SubjectType.Workspace, workspace.id)
+    ).rejects.toThrow();
+
+    await adminA.saveRole({
+      id: `workspaces/${workspaceId}/role/agent`,
+      name: 'agent',
+      type: 'role',
+      subjectType: SubjectType.Workspace,
+      subjectId: workspaceId,
+      rules: [
+        {
+          action: ['read', 'manage_permissions'],
+          subject: ['workspace'],
+          conditions: {
+            id: workspaceId,
+          },
+        },
+      ],
+      auth: {
+        prismeai: {
+          conditions: {
+            'authData.email': 'someAgent@prisme.ai',
+          },
+        },
+      },
+    });
+
+    // Check that agent now can read workspace
+    await expect(
+      agent.get(SubjectType.Workspace, workspaceId)
+    ).resolves.toMatchObject(workspace);
+    await expect(
+      agent.getLoadedSubjectRole(SubjectType.Workspace, workspaceId)
+    ).toBe('agent');
+  });
+
+  it('Roles can targe a subset of users with conditions', async () => {
+    // Lets make adminA create a workspace
+    const workspace = await adminA.create(SubjectType.Workspace, {
+      name: 'workspaceName',
+    });
+    const workspaceId = workspace.id!;
+    let agent = await accessManager.as({
+      id: 'someAdminId',
+      authData: {
+        prismeai: {
+          id: 'someAdminId',
+          email: 'someAgent@prisme.ai',
+        },
+      },
+    });
+
+    await adminA.saveRole({
+      id: `workspaces/${workspaceId}/role/agent`,
+      name: 'agent',
+      type: 'role',
+      subjectType: SubjectType.Workspace,
+      subjectId: workspaceId,
+      rules: [
+        {
+          action: ['read', 'manage_permissions'],
+          subject: ['workspace'],
+          conditions: {
+            id: workspaceId,
+          },
+        },
+      ],
+      auth: {
+        prismeai: {
+          conditions: {
+            'authData.email': 'someOtherAgent@prisme.ai',
+          },
+        },
+      },
+    });
+
+    // Check that agent cannot read workspace
+    await expect(
+      agent.get(SubjectType.Workspace, workspace.id)
+    ).rejects.toThrow();
+
+    agent.user.authData = {
+      prismeai: {
+        id: 'someAdminId',
+        email: 'someOtherAgent@prisme.ai',
+      },
+    };
+
+    // Check that agent can now read workspace
+    await expect(
+      agent.get(SubjectType.Workspace, workspaceId)
+    ).resolves.toMatchObject(workspace);
   });
 });
 

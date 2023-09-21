@@ -1,5 +1,5 @@
 import { BlocksProvider as Provider } from '@prisme.ai/blocks';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import externals from '../../../console/utils/externals';
 import { useWorkspace } from '../Workspace';
 import api from '../../../console/utils/api';
@@ -10,12 +10,14 @@ import Loading from './Loading';
 import BlockLoader from '../Page/BlockLoader';
 import SchemaForm from './SchemaForm';
 import { useTranslation } from 'next-i18next';
+import { useUser } from '../../../console/components/UserProvider';
 
 export const BlocksProvider: FC = ({ children }) => {
   const { id } = useWorkspace();
   const {
     i18n: { language },
   } = useTranslation();
+  const { initAuthentication } = useUser();
   const uploadFile = useCallback(
     async (file: string) => {
       if (!id) return file;
@@ -29,11 +31,21 @@ export const BlocksProvider: FC = ({ children }) => {
     },
     [id]
   );
+  const auth = useMemo(() => {
+    return {
+      getSigninUrl: async () => {
+        return initAuthentication({ redirect: false });
+      },
+      getSignupUrl: async () => {
+        return '/signup';
+      },
+    };
+  }, [initAuthentication]);
   return (
     <Provider
       externals={externals}
       components={{ Link, Loading, DownIcon, SchemaForm }}
-      utils={{ uploadFile, BlockLoader }}
+      utils={{ uploadFile, BlockLoader, auth }}
       language={language}
     >
       {children}

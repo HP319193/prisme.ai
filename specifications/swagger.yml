@@ -108,7 +108,7 @@ components:
                 prismeai:
                   type: object
                 azure:
-                  $ref: "#/components/schemas/AuthData"
+                  $ref: '#/components/schemas/AuthData'
               additionalProperties: true
             mfa:
               $ref: '#/components/schemas/SupportedMFA'
@@ -332,8 +332,15 @@ components:
             prismeai:
               type: object
               properties:
-                anonymous:
-                  type: boolean
+                conditions:
+                  type: object
+                  additionalProperties: true
+            azure:
+              type: object
+              properties:
+                conditions:
+                  type: object
+                  additionalProperties: true
             basic:
               type: object
               properties:
@@ -1348,8 +1355,22 @@ components:
           type: string
         afterDate:
           type: string
+        interval:
+          type: string
         total:
           $ref: '#/components/schemas/UsageMetrics'
+        timeseries:
+          type: array
+          items:
+            properties:
+              date:
+                type: string
+              total:
+                $ref: '#/components/schemas/UsageMetrics'
+              apps:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppUsageMetrics'
         apps:
           type: array
           items:
@@ -1777,7 +1798,7 @@ components:
               type: string
             authData:
               additionalProperties:
-                $ref: "#/components/schemas/AuthData"
+                $ref: '#/components/schemas/AuthData'
             session:
               type: object
               required:
@@ -2963,7 +2984,6 @@ paths:
         '302':
           description: Redirection response
 
-
   /v2/me:
     get:
       description: Retrieve current authenticated user
@@ -3746,6 +3766,14 @@ paths:
           description: 'Retrieve usage stats before this ISO8601 formatted date.'
           schema:
             type: string
+        - name: 'interval'
+          in: 'query'
+          description: If specified, this field will add a field to the result containing the usage over time at the specified interval. The queried data will be found in the timeseries field.
+          schema:
+            type: string
+            enum:
+                  - month
+                  - day
         - name: 'details'
           in: 'query'
           description: 'Includes individual appInstances details'

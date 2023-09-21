@@ -20,6 +20,7 @@ import { BlocksProvider } from '../../components/BlocksProvider';
 import api, { ApiError } from '../../utils/api';
 import Tabs from './Tabs';
 import { TrackingCategory, useTracking } from '../../components/Tracking';
+import { usePermissions } from '../../components/PermissionsProvider';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
@@ -58,6 +59,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
 
   const [appStoreVisible, setAppStoreVisible] = useState(false);
   const { trackEvent } = useTracking();
+  const { addUserPermissions } = usePermissions();
 
   useEffect(() => {
     if (fullSidebar) {
@@ -187,37 +189,57 @@ export const WorkspaceLayout: FC = ({ children }) => {
     workspace.id,
   ]);
 
-  const createPageHandler = useCallback(async () => {
-    trackEvent({
-      category: 'Workspace',
-      name: 'Create Page from navigation',
-      action: 'click',
-    });
-    const name = incrementName(
-      t(`pages.create.defaultName`),
-      Object.values(workspace.pages || {}).map(({ name }) => localize(name))
-    );
-    const createdPage = await createPage({
-      name: {
-        [language]: name,
-      },
-      blocks: [],
-    });
-    if (createdPage) {
-      await router.push(
-        `/workspaces/${workspace.id}/pages/${createdPage.slug}`
-      );
-    }
-  }, [
-    createPage,
-    language,
-    localize,
-    router,
-    t,
-    trackEvent,
-    workspace.id,
-    workspace.pages,
-  ]);
+  const createPageHandler = useCallback(
+    async ({ slug, public: isPublic, ...page } = {}) => {
+      trackEvent({
+        category: 'Workspace',
+        name: slug
+          ? 'Create Page template from navigation'
+          : 'Create Page from navigation',
+        action: 'click',
+      });
+      const name = slug
+        ? t(`pages.create.template.${slug}`)
+        : incrementName(
+            t(`pages.create.defaultName`),
+            Object.values(workspace.pages || {}).map(({ name }) =>
+              localize(name)
+            )
+          );
+      const createdPage = await createPage({
+        name: {
+          [language]: name,
+        },
+        slug,
+        blocks: [],
+        ...page,
+      });
+      if (isPublic && createdPage && createdPage.id) {
+        await addUserPermissions('pages', createdPage.id, {
+          target: { public: true },
+          permissions: {
+            policies: { read: true },
+          },
+        });
+      }
+      if (createdPage) {
+        await router.push(
+          `/workspaces/${workspace.id}/pages/${createdPage.slug}`
+        );
+      }
+    },
+    [
+      addUserPermissions,
+      createPage,
+      language,
+      localize,
+      router,
+      t,
+      trackEvent,
+      workspace.id,
+      workspace.pages,
+    ]
+  );
 
   const installAppHandler = useCallback(() => {
     setAppStoreVisible(true);

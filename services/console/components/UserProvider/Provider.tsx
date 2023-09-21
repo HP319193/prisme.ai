@@ -1,4 +1,3 @@
-import Cookie from 'js-cookie';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import context, { OperationSuccess, UserContext } from './context';
 import api from '../../utils/api';
@@ -168,10 +167,13 @@ export const UserProvider: FC<UserProviderProps> = ({
 
   // 1. Initialize authentication flow
   const initAuthentication: UserContext['initAuthentication'] = useCallback(
-    async (redirect: boolean = true) => {
-      const redirectOnceAuthenticated = window.location.href.includes('/signin')
-        ? new URL('/', window.location.href).toString()
-        : window.location.href;
+    async ({ redirect = true } = {}) => {
+      const redirectOnceAuthenticated =
+        Storage.get('redirect-once-signup') ||
+        window.location.href.includes('/signin')
+          ? new URL('/', window.location.href).toString()
+          : window.location.href;
+      Storage.remove('redirect-once-signup');
       Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
       // redirect_uri must be on the same domain we want the session on (i.e current one)
       const redirectionUrl = new URL('/signin', window.location.href);
@@ -239,6 +241,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         api.token = null;
         Storage.remove('access-token');
       }
+
       if (anonymous) {
         const { token, ...user } = await api.createAnonymousSession();
         api.token = token;
@@ -354,14 +357,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         setLoading(false);
         setTimeout(() => {
           setSuccess(undefined);
-          if (user.status === 'pending') {
-            push(
-              `/validate?${new URLSearchParams({
-                email: email,
-                sent: 'true',
-              }).toString()}`
-            );
-          } else {
+          if (user.status !== 'pending') {
             initAuthentication();
           }
         }, 2000);
@@ -379,7 +375,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         return null;
       }
     },
-    [push, initAuthentication]
+    [initAuthentication]
   );
 
   const initialFetch = useRef(async () => {

@@ -27,6 +27,13 @@ export async function init(app: Application) {
       (_: Error, user: Prismeai.User, info: any) => {
         if (
           info instanceof Error &&
+          req.path.startsWith('/v2/workspaces') &&
+          req.path.includes('/webhooks/')
+        ) {
+          return next();
+        }
+        if (
+          info instanceof Error &&
           !(info.message || '').includes('No auth token') &&
           !(info.message || '').includes('jwt malformed')
         ) {
@@ -83,6 +90,7 @@ export async function init(app: Application) {
       cookie: {
         maxAge: syscfg.SESSION_COOKIES_MAX_AGE * 1000,
         secure: process.env.NODE_ENV === 'production',
+        sameSite: syscfg.EXPRESS_SESSION_COOKIE_SAMESITE,
       },
       unset: 'destroy',
     })
@@ -154,6 +162,7 @@ async function initPassportStrategies(
           prismeaiSessionId: token.prismeaiSessionId,
           mfaValidated: false,
         };
+        delete req.headers['authorization']; // Do not pass user JWT to backed services
         deserializeUser(token.sub, done as any);
       }
     )

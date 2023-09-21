@@ -21,7 +21,7 @@ import { syscfg, mails as mailConfig } from '../../config';
 import { logger, Logger } from '../../logger';
 import { AuthProviders, User } from '.';
 
-const { RESET_PASSWORD_URL, LOGIN_URL } = mailConfig;
+const { RESET_PASSWORD_URL, CONSOLE_URL } = mailConfig;
 
 export interface ResetPasswordRequest {
   token: string;
@@ -115,7 +115,7 @@ export const resetPassword =
 
 export const sendAccountValidationLink =
   (Users: StorageDriver<User>, ctx?: PrismeContext, logger?: Logger) =>
-  async ({ email = '', language = '' }: any) => {
+  async ({ email = '', language = '', host = CONSOLE_URL }: any) => {
     const existingUsers = await Users.find({
       email: email.toLowerCase().trim(),
     });
@@ -142,7 +142,7 @@ export const sendAccountValidationLink =
     });
 
     // Send email to the user
-    const validateLink = new URL(LOGIN_URL);
+    const validateLink = new URL('/signin', host);
     validateLink.searchParams.append('validationToken', token);
 
     await sendMail(
@@ -180,13 +180,16 @@ export const validateAccount =
   };
 
 export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
-  async function ({
-    email,
-    password,
-    firstName,
-    lastName,
-    language,
-  }: PrismeaiAPI.Signup.RequestBody): Promise<Prismeai.User> {
+  async function (
+    {
+      email,
+      password,
+      firstName,
+      lastName,
+      language,
+    }: PrismeaiAPI.Signup.RequestBody,
+    host?: string
+  ): Promise<Prismeai.User> {
     email = email.toLowerCase().trim();
 
     const existingUsers = await Users.find({ email });
@@ -214,7 +217,7 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
         : UserStatus.Validated,
       language,
       authData: {
-        prismeai: {},
+        prismeai: { email },
       },
     };
     const savedUser = await Users.save({
@@ -224,7 +227,7 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
 
     if (user.status === UserStatus.Pending) {
       try {
-        await sendAccountValidationLink(Users, ctx)({ email, language });
+        await sendAccountValidationLink(Users, ctx)({ email, language, host });
       } catch (err) {
         (logger || console).warn({
           msg: 'Could not send account validation email',
@@ -253,7 +256,7 @@ export const get = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   };
 
 const filterUserFields = (user: User): Prismeai.User => {
-  const {
+  let {
     email,
     status,
     firstName,
@@ -264,7 +267,23 @@ const filterUserFields = (user: User): Prismeai.User => {
     mfa,
     id,
     meta,
+    password,
   } = user;
+  if (!authData) {
+    authData = email
+      ? {
+          prismeai: { id, email },
+        }
+      : {
+          anonymous: { id },
+        };
+  } else if (authData.prismeai || (!authData.prismeai && password)) {
+    authData.prismeai = {
+      ...authData.prismeai,
+      id,
+      email: authData.prismeai?.email || email,
+    };
+  }
   return {
     email,
     status,
@@ -363,6 +382,18 @@ export const externalLoginOrSignup = (
         });
         newAccount = true;
       }
+    }
+
+    // Keep emails in sync
+    if (user.email && authData.email && user.email !== authData.email) {
+      user = await Users.save({
+        ...user,
+        email: authData.email,
+        authData: {
+          ...user.authData,
+          [provider]: authData,
+        },
+      });
     }
 
     if (user.status && user.status !== UserStatus.Validated) {

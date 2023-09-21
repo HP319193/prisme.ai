@@ -22,7 +22,7 @@ export interface WorkspaceLayoutContext {
   fullSidebar: boolean;
   setFullSidebar: (s: boolean) => void;
   createAutomation: () => void;
-  createPage: () => void;
+  createPage: (options?: { slug?: string; public?: true }) => void;
   installApp: () => void;
   createBlock: () => void;
 }

@@ -3,7 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 import api from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
 
-export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
+export const usePageFetcher = (
+  pageFromServer?: Prismeai.DetailedPage,
+  error?: number
+) => {
   const [page, setPage] = useState<Prismeai.DetailedPage | null>(
     pageFromServer || null
   );
@@ -46,10 +49,10 @@ export const usePageFetcher = (pageFromServer?: Prismeai.DetailedPage) => {
   }, [pageFromServer]);
 
   useEffect(() => {
-    if (pageFromServer) return;
+    if (pageFromServer && !error) return;
     setLoading(true);
     fetchPage();
-  }, [fetchPage, pageFromServer]);
+  }, [error, fetchPage, pageFromServer]);
 
   return { page, setPage: setPageFromChildren, loading, fetchPage };
 };

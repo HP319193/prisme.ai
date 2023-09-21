@@ -626,7 +626,14 @@
     "edit": "Éditer",
     "create": {
       "label": "Ajouter une Page",
-      "defaultName": "Page"
+      "defaultName": "Page",
+      "template": {
+        "title": "Modèles de pages",
+        "index": "Page d'accueil",
+        "_401": "Accès restreint (401)",
+        "_404": "Page introuvable (404)",
+        "_doc": "Documentation d'App"
+      }
     },
     "duplicate": {
       "help": "Créer une copie de cette page",
@@ -788,6 +795,7 @@
       "name_TabsView": "Vue en onglets",
       "name_Carousel": "Carousel",
       "name_Image": "Image",
+      "name_Signin": "Bouton de connexion",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Hero": "Afficher un Hero de page",
@@ -806,6 +814,7 @@
       "description_TabsView": "Afficher des onglets",
       "description_Carousel": "Afficher des Blocks dans un Carousel horizontal",
       "description_Image": "Afficher une image",
+      "description_Signin": "Afficher un bouton pour se connecter ou s'inscrire",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
       "header": {
@@ -1363,6 +1372,18 @@
                 "description": "Le contenu affiché quand l'onget est sélectionné."
               }
             }
+          }
+        }
+      },
+      "signin": {
+        "settings": {
+          "label": {
+            "label": "Libellé du bouton (par défaut \"connexion\")",
+            "description": "Changez le libellé du bouton"
+          },
+          "up": {
+            "label": "Inscription ?",
+            "description": "Cochez pour afficher un bouton vers la création de compte"
           }
         }
       }

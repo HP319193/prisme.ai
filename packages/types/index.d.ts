@@ -2605,7 +2605,14 @@ declare namespace Prismeai {
         description?: string;
         auth?: {
             prismeai?: {
-                anonymous?: boolean;
+                conditions?: {
+                    [name: string]: any;
+                };
+            };
+            azure?: {
+                conditions?: {
+                    [name: string]: any;
+                };
             };
             basic?: {
                 username?: string;
@@ -2626,7 +2633,13 @@ declare namespace Prismeai {
         workspaceId: string;
         beforeDate: string;
         afterDate: string;
+        interval?: string;
         total: UsageMetrics;
+        timeseries?: {
+            date?: string;
+            total?: UsageMetrics;
+            apps?: AppUsageMetrics[];
+        }[];
         apps: AppUsageMetrics[];
     }
     export interface WorkspaceVersion {
@@ -4007,6 +4020,7 @@ declare namespace PrismeaiAPI {
             export type AfterDate = string;
             export type BeforeDate = string;
             export type Details = boolean;
+            export type Interval = "month" | "day";
             export type WorkspaceId = string;
         }
         export interface PathParameters {
@@ -4015,6 +4029,7 @@ declare namespace PrismeaiAPI {
         export interface QueryParameters {
             afterDate: Parameters.AfterDate;
             beforeDate: Parameters.BeforeDate;
+            interval?: Parameters.Interval;
             details?: Parameters.Details;
         }
         namespace Responses {

@@ -7,6 +7,7 @@ export function accessManagerMiddleware(accessManager: AccessManager) {
       req.accessManager = await accessManager.as({
         id: req.context.userId,
         sessionId: req.context.sessionId,
+        authData: req.authData,
       });
     } catch (error) {
       next(error);

@@ -87,5 +87,9 @@ export function requestDecorator(
     res.set(syscfg.SESSION_ID_HEADER, sessionId);
   }
 
+  if (req.user?.authData) {
+    req.headers[syscfg.AUTH_DATA_HEADER] = JSON.stringify(req.user?.authData);
+  }
+
   next();
 }
