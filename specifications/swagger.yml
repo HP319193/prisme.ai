@@ -2720,13 +2720,13 @@ components:
       properties:
         type:
           type: string
-          example: runtime.waits.fulfilled.{{id}}
+          example: runtime.waits.fulfilled
           enum:
-            - runtime.waits.fulfilled.{{id}}
+            - runtime.waits.fulfilled
         payload:
           type: object
           required:
-            - wait
+            - id
             - event
           properties:
             id:

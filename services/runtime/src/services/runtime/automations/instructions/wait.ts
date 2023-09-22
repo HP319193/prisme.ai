@@ -11,27 +11,10 @@ export async function wait(
   ctx: ContextsManager,
   appContext?: AppContext
 ) {
-  const waitId = Date.now() + '-' + (Math.random() * 100000).toFixed(0);
+  const waitId =
+    'wait-' + Date.now() + '-' + (Math.random() * 100000).toFixed(0);
   const timeout = (wait.timeout || WAIT_DEFAULT_TIMEOUT) * 1000;
   const expiresAt = Date.now() + timeout;
-  const FulfilledWaitEvent = EventType.FulfilledWait.replace('{{id}}', waitId);
-
-  // First start waiting for the fulfilled event
-  const fulfilledWaitPromise: Promise<Prismeai.FulfilledWait | undefined> =
-    new Promise(async (resolve) => {
-      broker.on<Prismeai.FulfilledWait['payload']>(
-        FulfilledWaitEvent,
-        (event) => {
-          resolve(event as any);
-          return true;
-        },
-        {
-          GroupPartitions: false,
-          ListenOnlyOnce: true,
-          ListenOnlyOnceTimeout: timeout,
-        }
-      );
-    });
 
   // Declare that we are waiting
   broker
@@ -60,6 +43,10 @@ export async function wait(
   // Make current run context last longer than usually permitted
   ctx.save(ContextType.Run, timeout / 1000).catch(console.error);
 
-  const fulfilledWaitEvent = await fulfilledWaitPromise;
-  return fulfilledWaitEvent?.payload?.event;
+  const event = await new Promise((resolve) => {
+    ctx.observe(waitId, resolve);
+    setTimeout(resolve, timeout);
+  });
+
+  return event;
 }

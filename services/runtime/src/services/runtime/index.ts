@@ -33,6 +33,7 @@ interface PendingWait {
   cancelTriggers?: boolean;
   request: {
     id: string;
+    correlationId: string;
     expiresAt: number;
     alreadyFulfilled: boolean;
   };
@@ -85,9 +86,7 @@ export default class Runtime {
   async start() {
     // Redact emitted native events
     this.broker.beforeSendEventCallback = (event) => {
-      const contexts =
-        event?.source?.correlationId &&
-        this.contexts[event?.source?.correlationId];
+      const contexts = this.getContexts(event.source);
       if (
         event.payload &&
         event.source.serviceTopic !== RUNTIME_EMITS_BROKER_TOPIC &&
@@ -203,11 +202,17 @@ export default class Runtime {
       }
     );
 
-    // Listen to pending waits
+    // Listen to pending & fulfilled waits
     this.broker.on<Prismeai.PendingWait['payload']>(
-      EventType.PendingWait,
+      [EventType.PendingWait, EventType.FulfilledWait],
       (event) => {
-        this.registerPendingWait(event.payload!);
+        if (event?.source?.serviceTopic === EventType.PendingWait) {
+          this.registerPendingWait(event);
+        } else if (event?.source?.serviceTopic === EventType.FulfilledWait) {
+          const fulfilled = (event as any as Prismeai.FulfilledWait).payload;
+          const contexts = this.getContexts(event.source);
+          contexts.map((cur) => cur.notify(fulfilled.id, fulfilled.event));
+        }
         return true;
       },
       {
@@ -223,7 +228,7 @@ export default class Runtime {
         const updates = event.payload?.updates.filter((cur) =>
           SYNCHRONIZE_CONTEXTS.includes(cur.context)
         );
-        const contexts = this.contexts[event.source.correlationId!];
+        const contexts = this.getContexts(event.source);
         if (updates?.length && contexts?.length) {
           contexts.forEach((cur) => {
             cur.applyUpdateOpLogs(
@@ -267,9 +272,13 @@ export default class Runtime {
     );
   }
 
-  private registerPendingWait(payload: Prismeai.PendingWait['payload']) {
+  private registerPendingWait(
+    event: PrismeEvent<Prismeai.PendingWait['payload']>
+  ) {
+    const payload = event.payload!;
     const request = {
       id: payload.id,
+      correlationId: event.source?.correlationId!,
       expiresAt: payload.expiresAt,
       alreadyFulfilled: false,
     };
@@ -309,14 +318,16 @@ export default class Runtime {
 
     let cancelTriggers = false;
     matchingWaits.map((cur) => {
-      const FulfilledWaitEvent = EventType.FulfilledWait.replace(
-        '{{id}}',
-        cur.request.id
+      broker.send<Prismeai.FulfilledWait['payload']>(
+        EventType.FulfilledWait,
+        {
+          id: cur.request.id,
+          event,
+        },
+        {
+          correlationId: cur.request.correlationId,
+        }
       );
-      broker.send<Prismeai.FulfilledWait['payload']>(FulfilledWaitEvent, {
-        id: cur.request.id,
-        event,
-      });
 
       if (cur.cancelTriggers) {
         cancelTriggers = true;
@@ -326,7 +337,7 @@ export default class Runtime {
     return cancelTriggers;
   }
 
-  async getContexts(
+  async createContext(
     source: PrismeContext,
     session: PrismeaiSession
   ): Promise<ContextsManager> {
@@ -350,6 +361,19 @@ export default class Runtime {
     }
     this.contexts[source.correlationId].push(ctx);
     return ctx;
+  }
+
+  removeContext(ctx: ContextsManager) {
+    this.contexts[ctx.correlationId] = this.contexts[ctx.correlationId].filter(
+      (cur) => cur != ctx
+    );
+    if (!this.contexts[ctx.correlationId]?.length) {
+      delete this.contexts[ctx.correlationId];
+    }
+  }
+
+  getContexts(source: PrismeEvent['source']) {
+    return source?.correlationId ? this.contexts[source.correlationId] : [];
   }
 
   async processEvent(
@@ -484,7 +508,7 @@ export default class Runtime {
       sessionId: source.sessionId!!,
       authData: {},
     };
-    const ctx = await this.getContexts(source, session);
+    const ctx = await this.createContext(source, session);
     ctx.additionalGlobals = {
       ...ctx.additionalGlobals,
       workspaceName: workspace.dsul.name,
@@ -497,12 +521,7 @@ export default class Runtime {
         })
       );
     } finally {
-      this.contexts[source.correlationId] = this.contexts[
-        source.correlationId
-      ].filter((cur) => cur != ctx);
-      if (!this.contexts[source.correlationId]?.length) {
-        delete this.contexts[source.correlationId];
-      }
+      this.removeContext(ctx);
     }
     return result;
   }

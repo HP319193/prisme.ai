@@ -22,7 +22,7 @@ export enum EventType {
   TriggeredInteraction = 'runtime.interactions.triggered',
   UpdatedContexts = 'runtime.contexts.updated',
   PendingWait = 'runtime.waits.pending',
-  FulfilledWait = 'runtime.waits.fulfilled.{{id}}',
+  FulfilledWait = 'runtime.waits.fulfilled',
   FailedFetch = 'runtime.fetch.failed',
 
   CreatedWorkspace = 'workspaces.created',
