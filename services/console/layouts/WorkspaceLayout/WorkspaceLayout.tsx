@@ -189,7 +189,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
     workspace.id,
   ]);
 
-  const createPageHandler = useCallback(
+  const createPageHandler: WorkspaceLayoutContext['createPage'] = useCallback(
     async ({ slug, public: isPublic, ...page } = {}) => {
       trackEvent({
         category: 'Workspace',
@@ -341,10 +341,10 @@ export const WorkspaceLayout: FC = ({ children }) => {
               >
                 <div className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden onboarding-step-4">
                   <Navigation
-                    onCreateAutomation={createAutomationHandler}
-                    onCreatePage={createPageHandler}
-                    onInstallApp={installAppHandler}
-                    onCreateBlock={createBlockHandler}
+                    onCreateAutomation={() => createAutomationHandler()}
+                    onCreatePage={() => createPageHandler()}
+                    onInstallApp={() => installAppHandler()}
+                    onCreateBlock={() => createBlockHandler()}
                     onExpand={() => setFullSidebar(true)}
                     className="max-h-[calc(100%-3rem)]"
                   />

@@ -22,7 +22,9 @@ export interface WorkspaceLayoutContext {
   fullSidebar: boolean;
   setFullSidebar: (s: boolean) => void;
   createAutomation: () => void;
-  createPage: (options?: { slug?: string; public?: true }) => void;
+  createPage: (
+    options?: { slug?: string; public?: true } & Partial<Prismeai.Page>
+  ) => void;
   installApp: () => void;
   createBlock: () => void;
 }
