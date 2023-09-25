@@ -15,8 +15,8 @@ export interface BlocksDependenciesContext {
     BlockLoader: TBlockLoader;
     getWorkspaceHost: () => string;
     auth?: {
-      getSigninUrl: () => Promise<string>;
-      getSignupUrl: () => Promise<string>;
+      getSigninUrl: (options?: { redirect?: string }) => Promise<string>;
+      getSignupUrl: (options?: { redirect?: string }) => Promise<string>;
     };
   };
 }

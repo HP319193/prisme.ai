@@ -1384,6 +1384,10 @@
           "up": {
             "label": "Inscription ?",
             "description": "Cochez pour afficher un bouton vers la création de compte"
+          },
+          "redirect": {
+            "label": "Rediriger vers",
+            "description": "Par défaut, la page d'accueil sera affichée après la souscription. Vous pouvez choisir une autre page."
           }
         }
       }

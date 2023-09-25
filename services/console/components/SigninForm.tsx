@@ -1,7 +1,7 @@
 import { Form } from 'react-final-form';
 import { Button, Input, Title } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useUser } from './UserProvider';
 import { Trans, useTranslation } from 'next-i18next';
 import LinkInTrans from './LinkInTrans';
