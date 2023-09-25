@@ -1,0 +1,1746 @@
+{
+  "page_title": "{{elementName}} · Prisme.ai",
+  "workspaces": {
+    "title": "Workspaces — $t(common:main.title)",
+    "description": "Create new Workspaces and new Apps, edit them, and run them",
+    "welcome": {
+      "title": "Welcome {{name}},",
+      "title_noname": "Welcome,",
+      "content": "Here is your gallery, find our suggestions to help you start a workspace or search among your already created workspaces.",
+      "help": "<a href=\"https://docs.eda.prisme.ai/fr\">Need help?</a>"
+    },
+    "suggestions": {
+      "title": "Suggestions",
+      "error": "An error has occurred. Contact support if the problem persists"
+    },
+    "sectionTitle": "Your workspaces gallery",
+    "defaultDescription": "Created by you",
+    "search": "Search a workspace",
+    "install": {
+      "ok": "Your workspace has been deployed!",
+      "error": "The workspace could not be installed. Its identifier is invalid."
+    }
+  },
+  "workspace": {
+    "title": "\"{{name}}\" Workspace — $t(common:main.title)",
+    "description": "Editing Workspace \"{{name}}\"",
+    "share": "Share this workspace",
+    "empty": {
+      "title": "<0>Your Workspace has not yet generated any activity…</0><1>Start creating, add Pages, Automations, Apps!</1>",
+      "subtitle": "Not sure where to start?",
+      "suggestions": {
+        "page": {
+          "title": "Page",
+          "text": "Create a page according to the need and the role"
+        },
+        "automation": {
+          "title": "Automation",
+          "text": "Create an automation to execute instructions"
+        },
+        "app": {
+          "title": "App",
+          "text": "Install an App to add integrations"
+        }
+      }
+    },
+    "dirtyWarning": "Your current work haven't been saved. Quit anyway ?",
+    "dirtyOk": "Quit",
+    "delete": {
+      "label": "Delete Workspace",
+      "confirm": {
+        "title": "Do you want to delete the \"{{name}}\" workspace?",
+        "content": "Warning, the data will be lost.",
+        "ok": "Yes, delete",
+        "cancel": "No, please no"
+      },
+      "toast": "Workspace has been deleted"
+    },
+    "duplicate": {
+      "label": "Duplicate"
+    },
+    "create": {
+      "label": "Create a new empty Workspace"
+    },
+    "import": {
+      "label": "Import a Workspace from an archive"
+    },
+    "expandSidebar": "Expand",
+    "collapseSidebar": "Collapse",
+    "details": {
+      "name": {
+        "label": "Workspace name"
+      },
+      "slug": {
+        "label": "Subdomain",
+        "error": "Must be composed only of unaccented alphanumeric characters, spaces and \"-\", \"_\"",
+        "unique": "This subdomain is no longer available. Please choose another one."
+      },
+      "description": {
+        "label": "Description"
+      },
+      "photo": {
+        "label": "Photo"
+      }
+    },
+    "sections": {
+      "activity": "Activity",
+      "automations": "Automations",
+      "pages": "Pages",
+      "apps": "Apps",
+      "blocks": "Blocks"
+    },
+    "add": {
+      "automation": "Add an Automation",
+      "page": "Add a Page",
+      "app": "Install an App",
+      "block": "Create a Block"
+    },
+    "search": "Search",
+    "sidebar_extend": "Extend navigation",
+    "sidebar_minimize": "Minimize navigation",
+    "notFound": "Workspace not found.",
+    "versions": {
+      "create": {
+        "label": "Create a version",
+        "description": "Create a new version to which you can return at any time even after saving changes to your Workspace.",
+        "name": "Describe your version if you wish",
+        "success": "New version created. You will be able to find it in the Activity of your Workspace."
+      },
+      "rollback": {
+        "label": "Rollback to this version",
+        "description": "Rollback to this version. Please note that the current state of your Workspace will not be kept.",
+        "confirm": "Please note that the current state of your Workspace will be lost if you have not saved a version.",
+        "confirm_ok": "Rollback to this version",
+        "success": "Back to the previous version with success."
+      },
+      "export": {
+        "label": "Export"
+      }
+    },
+    "tabs": {
+      "closeAll": "Close all tabs"
+    }
+  },
+  "create": {
+    "description_first": "Create your first workspace to start automating your work",
+    "description": "New workspace",
+    "label": "Create a workspace",
+    "defaultName": "Workspace"
+  },
+  "edit": {
+    "label": "Edit"
+  },
+  "events": {
+    "title": "Activity",
+    "search": {
+      "placeholder": "Search by keywords"
+    },
+    "running": {
+      "label": "Events are displayed in real time",
+      "label_off": "The event update is paused",
+      "description": "Start the update in real time. Please note that the performance of your browser may be degraded.",
+      "description_off": "Stop the real time update"
+    },
+    "reload": {
+      "description": "Load the latest events.",
+      "description_off": "Disable real time update to reload events manually."
+    },
+    "filters": {
+      "title": "Filters",
+      "correlationId": "Correlation ID",
+      "submit": "Apply filters",
+      "text": "Keyword search",
+      "afterDate": "From",
+      "beforeDate": "Until",
+      "specific": {
+        "add": "Add a specific field",
+        "remove": "Delete this value",
+        "label": "Fields"
+      },
+      "query": {
+        "label": "Filter specific fields",
+        "description": "An object specifying the expected value for each field, eg: {\n  \"source.workspaceId\": \"Wl4RRUN\",\n}",
+        "field": "Field",
+        "value": "Value"
+      },
+      "empty": "No results were found using your filters. Try another search ?",
+      "suggestions": {
+        "title": "Filter suggestions",
+        "help": "Selection of pre-set filters to help you find your most useful events.",
+        "label_versions": "Workspace versions",
+        "label_updates": "Workspace updates",
+        "label_webhooks": "Webhooks calls",
+        "label_errors": "Errors",
+        "label_shares": "Workspace shares",
+        "label_application": "Applications events",
+        "label_inputEvents": "User events",
+        "label_mySession": "My session"
+      },
+      "reset": "Reset filters"
+    },
+    "empty": "Nothing has happened here yet…",
+    "details": {
+      "name": "Field",
+      "value": "Value"
+    },
+    "more": "Load older events",
+    "autocomplete": {
+      "label": "{{workspace}}",
+      "label_pages": "Pages",
+      "label_imports": "{{app}}"
+    }
+  },
+  "automations": {
+    "link": "Automations",
+    "create": {
+      "label": "Add an Automation",
+      "defaultName": "Automation",
+      "value": {
+        "event": "an event"
+      }
+    },
+    "empty": "An automation describes what to do and when to do it",
+    "back": "Back",
+    "design": {
+      "title": "Design"
+    },
+    "manifest": {
+      "title": "Manifest"
+    },
+    "save": {
+      "label": "Save",
+      "toast": "Automation has been saved",
+      "error": "Saving failed",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
+      "reason_InvalidSlugError": "Slug contains invalid characters."
+    },
+    "duplicate": {
+      "help": "Duplicate Automation",
+      "success": "Automation has been duplicated"
+    },
+    "source": {
+      "label": "See code",
+      "close": "Hide code",
+      "help": "Displays the structure of the automation in raw format"
+    },
+    "endpoint": {
+      "copied": "Endpoint has been copied"
+    },
+    "notFound": "Automation not found.",
+    "trigger": {
+      "panel": "Edit trigger",
+      "events": {
+        "title": "Events",
+        "item": "Event",
+        "add": "Add an event",
+        "display_one": "The event {{events}} occurs",
+        "display_other": "One of the events {{events}} occurs",
+        "help": "Automation will be run everytime one of this event will be fired."
+      },
+      "endpoint": {
+        "title": "URL",
+        "display": "<a>The URL <icon /></a> is hit",
+        "copied": "URL has been copied in your clipboard",
+        "help": "Automation will be run everytime the URL will be hit.",
+        "custom": "Accessible by URL",
+        "url": "Custom URL"
+      },
+      "schedules": {
+        "title": "Schedules",
+        "help": "You can schedule your Automation to run at certain recurring times. You can add several schedules in crontab format. Warning, the minimum time between two executions is 15mn.",
+        "display": "{{count}} schedule",
+        "display_other": "{{count}} schedules"
+      },
+      "save": "Save"
+    },
+    "instruction": {
+      "panel": "Edit instruction",
+      "title_builtin": "Logical",
+      "label": "{{context}}",
+      "label_emit": "Emit event",
+      "label_repeat": "Repeat on",
+      "label_repeat_until": "Repeat {{count}} time",
+      "label_repeat_until_other": "Repeat {{count}} times",
+      "label_all": "All instructions",
+      "label_wait": "Wait",
+      "label_set": "Set var",
+      "label_delete": "Delete var",
+      "label_conditions": "Conditions",
+      "label_conditions_default": "Else",
+      "label_conditions_add": "Add condition",
+      "label_fetch": "HTTP Request",
+      "label_break": "Break",
+      "label_comment": "Comment",
+      "description": "{{default}}",
+      "description_emit": "Issue an event of your choice to which you can associate a data object. If you choose to make this event private, it will not be heard by other workspaces and Apps.",
+      "description_repeat": "Repeats a list of instructions on each element of a data array passed in parameter (`on`) or up to a certain number of iterations (`until`).",
+      "description_all": "Executes all the instructions of the group in parallel. The following instructions will be executed only after all the instructions of this group are finished.",
+      "description_wait": "Blocks the processing of the instruction list until the event passed in parameter is triggered.",
+      "description_set": "Sets a value in a variable.",
+      "description_delete": "Delete a variable.",
+      "description_conditions": "Test conditions in order to execute this or that group of instructions.",
+      "description_fetch": "Send an HTTP request.",
+      "description_break": "Stop current automation execution.",
+      "description_comment": "Do nothing more than display a comment in the list of instructions.",
+      "search": "Search",
+      "anyFieldError": "Invalid JSON",
+      "anyFieldErrorTooltip": "This is just a warning, the instruction will still save",
+      "additionnalProperties": {
+        "label": "Additional properties",
+        "description": "Define additional properties in the form of a JSON"
+      },
+      "link": "Edit Automation",
+      "item": {
+        "add": "Add an item",
+        "remove": "Delete item"
+      },
+      "output": {
+        "label": "Assign the output to the variable",
+        "description": "The output of this Automation can be stored in a variable to be used in a next instruction."
+      },
+      "delete": "Delete instruction?",
+      "delete_condition": "Delete condition?",
+      "form": {
+        "addItem": "Add an item",
+        "removeItem": "Remove item",
+        "addProperty": "Add a property",
+        "removeProperty": "Remove property",
+        "propertyKey": "Property",
+        "propertyValue": "Value",
+        "uploadLabel": "Choose a file",
+        "uploadRemove": "Remove file",
+        "emit": {
+          "event": {
+            "label": "Event name",
+            "description": "Enter the name of the event you want to trigger."
+          },
+          "payload": {
+            "label": "Payload (optional, JSON format)",
+            "description": "You can attach any type of data to your event."
+          },
+          "target": {
+            "label": "Target",
+            "description": "By default, the event is sent to everyone. You can target a specific recipient with these settings.",
+            "userTopic": {
+              "label": "Topic",
+              "description": "Specify a topic to categorize the message."
+            },
+            "userId": {
+              "label": "User ID",
+              "description": "Target a particular user by his ID."
+            },
+            "sessionId": {
+              "label": "Session ID",
+              "description": "Target a particular user session by its ID."
+            }
+          },
+          "private": {
+            "label": "Private",
+            "description": "The event will not be autocomplete for users of your workspace once it is transformed into an App."
+          },
+          "autocomplete": {
+            "label": "Autocompletion",
+            "description": "Specifies how your event will be offered to autocomplete for users of your workspace once transformed into an App."
+          },
+          "options": {
+            "persist": {
+              "label": "Persist",
+              "description": "Whether to persist this event or not. Defaults to true"
+            }
+          }
+        },
+        "wait": {
+          "oneOf": {
+            "label": "One of these events:",
+            "description": "The automation can wait until a particular event is triggered.",
+            "items": {
+              "label": "Event",
+              "add": "Add an event",
+              "remove": "Remove event",
+              "event": {
+                "label": "Event name",
+                "description": "Indicate the name of the event that will restart your automation."
+              },
+              "filters": {
+                "label": "Filters",
+                "description": "Filter the event according to the values of the properties that accompany it."
+              },
+              "cancelTriggers": {
+                "label": "Cancel trigger",
+                "description": "By checking this option, the event will be cancelled and will not trigger any other automation."
+              }
+            }
+          },
+          "timeout": {
+            "label": "Timeout in seconds",
+            "description": "Time in seconds to wait before resuming the execution of the automation."
+          },
+          "output": {
+            "label": "Output variable name",
+            "description": "Indicate the name of a variable in which the data accompanying the event that unlocked this step will be stored."
+          }
+        },
+        "set": {
+          "interface": {
+            "label": "Value structure",
+            "description": "You can choose the data structure of one of the blocks available in your Workspace to facilitate its filling."
+          },
+          "name": {
+            "label": "Variable name",
+            "description": "Indicate the name of the variable in which your data will be stored. You can then access it using the interpolation syntax. For example, a variable named `foo` will be accessible elsewhere using `{{foo}}`."
+          },
+          "value": {
+            "label": "Value",
+            "description": "Put any value of any type here. You can also use interpolation to store data from another variable."
+          },
+          "type": {
+            "label": "Merge type",
+            "description": "Choose merge to merge the target variable with the value. The value has priority."
+          }
+        },
+        "delete": {
+          "name": {
+            "label": "Variable name",
+            "description": "Enter the name of the variable you want to delete. Its value will no longer be accessible."
+          }
+        },
+        "break": {
+          "scope": {
+            "label": "Scope",
+            "description": "Scope of the stop. By default, only this automation will be stopped. If you choose \"$t(automations.instruction.form.break.scope.enum.all)\", the parent automations that called this one will also be stopped.",
+            "enum": {
+              "all": "All",
+              "automation": "This automation"
+            }
+          }
+        },
+        "fetch": {
+          "url": {
+            "label": "HTTP address",
+            "description": "URL of a publicly accessible web service."
+          },
+          "method": {
+            "label": "HTTP method",
+            "enum": {
+              "get": "GET",
+              "post": "POST",
+              "put": "PUT",
+              "patch": "PATCH",
+              "delete": "DELETE"
+            },
+            "description": "HTTP method to use for the request."
+          },
+          "headers": {
+            "label": "Headers",
+            "description": "List of key values constituting the headers of the query."
+          },
+          "query": {
+            "label": "Query string",
+            "description": "Query string parameters"
+          },
+          "body": {
+            "label": "Body",
+            "description": "The body accompanying the request. Can be of any type."
+          },
+          "emitErrors": {
+            "label": "Emit event when errors occur",
+            "description": "If the status code of the HTTP response is 4xx or 5xx, emits a runtime.fetch.failed event by default."
+          },
+          "multipart": {
+            "label": "multipart/form-data",
+            "description": "Data to be sent as multipart/form-data.",
+            "items": {
+              "label": "Fields",
+              "add": "Add a field",
+              "remove": "Delete field",
+              "fieldname": {
+                "label": "Field name"
+              },
+              "value": {
+                "label": "Value",
+                "description": "Must be a string. Raw files must be given in base64."
+              },
+              "filename": {
+                "label": "File name",
+                "description": "The file name is required when the value is a base64 encoded file."
+              },
+              "contentType": {
+                "label": "Content type",
+                "description": "Optional MIME content type"
+              }
+            }
+          },
+          "output": {
+            "label": "Output variable name",
+            "description": "Save the answer of the query in a variable accessible in the rest of your automation thanks to the interpolation."
+          }
+        },
+        "repeat": {
+          "on": {
+            "label": "On an array's items",
+            "description": "Name of the array variable to loop on."
+          },
+          "until": {
+            "label": "Until",
+            "description": "Loop a specific number of times"
+          }
+        }
+      }
+    },
+    "output": {
+      "panel": "Edit output",
+      "label": "<pre><code>{{output}}</code></pre>",
+      "edit": {
+        "title": "Return value:",
+        "description": "Value returned by the automation. Can be a static value in the form of a string or a JSON object or even a variable generated during the execution of your automation surrounded by braces (ex: {{maVar}})",
+        "label": "Value",
+        "save": "Add"
+      },
+      "description": "Indicate the name of a variable in which to store the output of this instruction in order to exploit it in the continuation of the automation"
+    },
+    "node": {
+      "title": "",
+      "title_trigger": "Triggered when",
+      "title_output": "Output",
+      "label": "{{instruction}} {{value}}"
+    },
+    "edit": {
+      "select": "Select instruction",
+      "builtin": "Logical",
+      "save": "Add"
+    },
+    "condition": {
+      "panel": "Edit condition",
+      "edit": {
+        "title": "Condition",
+        "description": "Condition to choose this path",
+        "save": "Add",
+        "submit_new": "Add"
+      }
+    },
+    "details": {
+      "slug": {
+        "label": "Slug"
+      },
+      "name": {
+        "label": "Automation title"
+      },
+      "description": {
+        "label": "Description"
+      },
+      "private": {
+        "label": "Internal use",
+        "description": "If you enable this setting, Automation will be visible as an instruction only in this same Workspace. When you publish your app, its users will not see it."
+      },
+      "disabled": {
+        "label": "Disabled",
+        "description": "If you enable this setting, Automation will not be executed anymore and simply ignored"
+      }
+    },
+    "arguments": {
+      "title": "Arguments",
+      "description": "Specification of the parameters that can be passed to your automation when it is used as a statement of another automation. A form will be generated according to the structure you specify here.",
+      "add": "Add an argument"
+    },
+    "play": {
+      "help": "Run Automation",
+      "title": "Run the Automation",
+      "parameters": "Parameters",
+      "results": "Result",
+      "label": "Run",
+      "empty": "Run your Automation here <1>Start</1>",
+      "activity": "see activity…",
+      "body": {
+        "label": "Request body",
+        "description": "Parameters passed in the request body if automation is called as Endpoint."
+      },
+      "query": {
+        "label": "URL query string",
+        "description": "Parameters passed in the request URL if automation is called as Endpoint."
+      },
+      "payload": {
+        "label": "Event payload",
+        "description": "Parameters passed in the event payload if automation is called via event."
+      },
+      "curl": {
+        "copy": "Copy to cURL format"
+      }
+    }
+  },
+  "apps": {
+    "link": "Apps",
+    "empty": "All is App",
+    "install": "Add an App",
+    "configTooltip": "Configuration",
+    "search": "Search for an app...",
+    "title": "App Store",
+    "save": {
+      "label": "Save",
+      "toast": "App has been saved",
+      "error": "Save failed",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
+      "reason_InvalidSlugError": "Slug contains invalid characters."
+    },
+    "saveSuccess": "App config saved successfully",
+    "notFound": "App not found.",
+    "source": {
+      "label": "See code",
+      "close": "Hide code",
+      "help": "Displays the App structure in raw format"
+    },
+    "details": {
+      "title": "App details",
+      "appName": {
+        "label": "App Name"
+      },
+      "slug": {
+        "label": "Technical name"
+      },
+      "disabled": {
+        "label": "Disabled",
+        "description": "A disabled app will never be executed but simply ignored"
+      }
+    },
+    "publish": {
+      "menuLabel": "Publish as an app",
+      "confirm": {
+        "alreadyPublished": "The workspace is already published as an app with this name, which can't be changed",
+        "slugInput": "App name",
+        "slugInvalid": "Only allowed characters are letters, numbers, whitespaces, . _ and -",
+        "title": "Publish the workspace as an app",
+        "ok": "Publish",
+        "toast": "App Published",
+        "content": "Automations, Pages, Blocks as well as Workspace configuration will be accessible to anyone installing your App.\nFirst, remove any private API key you want to keep private."
+      }
+    },
+    "doc": "Documentation",
+    "config": "Configuration"
+  },
+  "pages": {
+    "private": "Private",
+    "public": "Public",
+    "link": "Pages",
+    "preview": "Preview",
+    "edit": "Éditer",
+    "create": {
+      "label": "Add a Page",
+      "defaultName": "Page",
+      "template": {
+        "title": "Pages templates",
+        "index": "Homepage",
+        "_401": "Restricted access (401)",
+        "_404": "Page not found (404)",
+        "_doc": "App documentation"
+      }
+    },
+    "duplicate": {
+      "help": "Create a copy of this Page",
+      "success": "Page has been duplicated"
+    },
+    "source": {
+      "label": "See code",
+      "close": "Hide code",
+      "help": "Displays the Page structure in raw format"
+    },
+    "notFound": "Page not found.",
+    "empty": {
+      "title": "<0>This page is empty…</0><1>Start creating, add your first block!</1>",
+      "subtitle": "Not sure where to start?",
+      "suggestions": {
+        "header": {
+          "title": "Header",
+          "text": "Present your brand with your logo and navigation"
+        },
+        "cards": {
+          "title": "Cards group",
+          "text": "Display cards"
+        },
+        "richtext": {
+          "title": "Rich text",
+          "text": "Write down everything you want"
+        },
+        "form": {
+          "title": "Form",
+          "text": "Need to get leads? Add a form"
+        }
+      }
+    },
+    "delete": {
+      "label": "Delete the page",
+      "confirm": {
+        "title": "Do you want to delete the page \"{{name}}\"?",
+        "content": "Warning, the data will be lost.",
+        "ok": "Yes, delete",
+        "cancel": "No, please no"
+      },
+      "toast": "Page has been deleted"
+    },
+    "save": {
+      "label": "Save",
+      "toast": "Page has been saved",
+      "error": "Save failed",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
+      "reason_InvalidSlugError": "Slug contains invalid characters."
+    },
+    "share": {
+      "label": "Share this page",
+      "access": "Access",
+      "access_private": "Users",
+      "copy": "Copy the public address of the page",
+      "copied": "The address is copied into your clipboard",
+      "notme": "You are already the owner of this Page."
+    },
+    "details": {
+      "title": "Edit details",
+      "name": {
+        "label": "Page title"
+      },
+      "description": {
+        "label": "Description"
+      },
+      "slug": {
+        "label": "Slug"
+      },
+      "styles": {
+        "label": "CSS styles of the page",
+        "description": "You can edit the style sheet of your web page to customize it. Don't hesitate to add identifiers to your blocks to be able to target them with the # prefix in your CSS.",
+        "reset": {
+          "label": "Reset",
+          "description": "Revert to the default theme. ⚠️ You will lose your changes."
+        }
+      }
+    },
+    "blocks": {
+      "add": "Add a block",
+      "edit": "Edit",
+      "remove": "Remove the block",
+      "search": "Search a block",
+      "settings": {
+        "blockTitle": {
+          "label": "Title",
+          "description": "Title shown above the block"
+        },
+        "generic": "Advanced",
+        "schema": "Configuration",
+        "title": "Block settings",
+        "toggle_on": "Display settings",
+        "toggle_off": "Hide settings",
+        "onInit": {
+          "label": "Initial event",
+          "description": "This event will be triggered during the initialization of the block each time the page is viewed."
+        },
+        "updateOn": {
+          "label": "Update event",
+          "description": "When one of your automations emits this event, the content of the block will be updated with the content of the payload."
+        },
+        "automation": {
+          "label": "Automation",
+          "description": "Run an automation at page load to retrieve the block configuration."
+        },
+        "sectionId": {
+          "label": "HTML identifier of the section",
+          "description": "Allows you to identify the section to apply particular CSS styles or point a link to it like an automatic scroll. Optional."
+        },
+        "action": {
+          "title": "Action",
+          "description": "Action triggered by a click on the card",
+          "event": "Event",
+          "url": "Link",
+          "valueEvent": {
+            "label": "Event to trigger",
+            "description": "The name of the event that will be sent to the click."
+          },
+          "valueLink": {
+            "label": "Url",
+            "description": "Web address in https."
+          },
+          "popup": {
+            "label": "Open in new tab",
+            "description": "Opens the link in a new tab instead of replacing the current page."
+          },
+          "payload": {
+            "label": "Payload",
+            "description": "Data object that accompanies the event."
+          }
+        },
+        "className": {
+          "label": "Element class name",
+          "description": "Specify a custom class for the element containing the Block to facilitate the layout in CSS."
+        },
+        "css": {
+          "label": "CSS styles applied to the Block",
+          "description": "You can use the keyword \":block\" to target the element containing the Block.",
+          "reset": "Reset styles"
+        }
+      },
+      "builtin": "Built-in Blocks",
+      "name": "{{context}}",
+      "name_Header": "Header",
+      "name_Hero": "Hero",
+      "name_Cards": "Cards group",
+      "name_DataTable": "Data table",
+      "name_Form": "Form",
+      "name_RichText": "Rich text",
+      "name_StackedNavigation": "Stacked Navigation",
+      "name_Buttons": "Buttons group",
+      "name_BlocksList": "Blocks list",
+      "name_BlocksGrid": "Blocks grid",
+      "name_BlocksSplit": "Split blocks view",
+      "name_Footer": "Footer",
+      "name_Breadcrumbs": "Breadcrumbs",
+      "name_Action": "Action",
+      "name_TabsView": "Tabs view",
+      "name_Carousel": "Carousel",
+      "name_Image": "Image",
+      "name_Signin": "Signin button",
+      "description": "",
+      "description_Header": "Display page header",
+      "description_Hero": "Display a Hero of page",
+      "description_Cards": "Display a cards group",
+      "description_DataTable": "Display a data table",
+      "description_Form": "Display form",
+      "description_RichText": "Display text formatted with Markdown or HTML",
+      "description_StackedNavigation": "Display navigable block pages. Must be used through automations.",
+      "description_Buttons": "Display a buttons group",
+      "description_BlocksList": "Display a Blocks list",
+      "description_BlocksGrid": "Display a Blocks grid",
+      "description_BlocksSplit": "Display two blocks with expansible border",
+      "description_Footer": "Display a Footer",
+      "description_Breadcrumbs": "Display Breadcrumbs",
+      "description_Action": "Display an action button capable of navigating to a link, a page, a section of the page or triggering an event.",
+      "description_TabsView": "Display tabs",
+      "description_Carousel": "Displaying Blocks in a horizontal Carousel",
+      "description_Image": "Display a picture",
+      "panelTitle_adding": "Add a Block",
+      "description_Signin": "Display a login or registration button",
+      "panelTitle_editing": "Edit Block {{blockName}}",
+      "header": {
+        "settings": {
+          "title": {
+            "label": "Title",
+            "description": "Title of your page."
+          },
+          "level": {
+            "label": "Title level",
+            "description": "Defines the level of the tag applied to the title."
+          },
+          "logo": {
+            "label": "Logo",
+            "description": "Image displayed next to the title. Optional.",
+            "src": {
+              "label": "Image",
+              "description": "Choose an image"
+            },
+            "alt": {
+              "label": "Alternative text",
+              "description": "Text displayed in place of the image for non-graphical browsers."
+            },
+            "action": {
+              "label": "Action",
+              "description": "Action on logo click.",
+              "type": {
+                "label": "Action type"
+              },
+              "none": {
+                "label": "None"
+              }
+            }
+          },
+          "nav": {
+            "label": "Navigation",
+            "description": "You can add links to web addresses or buttons sending events.",
+            "items": {
+              "label": "Button",
+              "description": "Button configuration",
+              "add": "Add a button",
+              "remove": "Remove button",
+              "type": {
+                "label": "Action type"
+              },
+              "external": {
+                "label": "External page",
+                "description": "HTTP address to any web page",
+                "value": {
+                  "label": "Web address",
+                  "description": "Indicate the web address of the page (https://...)."
+                },
+                "popup": {
+                  "label": "Open in new tab",
+                  "description": "Enable to have the page open in a new tab instead of replacing the current page."
+                }
+              },
+              "internal": {
+                "label": "Workspace's page",
+                "description": "Link to a Workspace Page",
+                "value": {
+                  "label": "Page",
+                  "description": "Choose a page in your Workspace."
+                }
+              },
+              "inside": {
+                "label": "Scroll to a section",
+                "description": "Anchor in this same page. You can define an anchor name in the \"Advanced\" section of any Block's settings.",
+                "value": {
+                  "label": "Block ID",
+                  "description": "Choose one of the blocks on your page to scroll to."
+                }
+              },
+              "event": {
+                "label": "Trigger an event",
+                "description": "The defined event will be triggered on this action. You can then proceed to an Automation.",
+                "value": {
+                  "label": "Event",
+                  "description": "Specify the name of the event to be triggered."
+                },
+                "payload": {
+                  "label": "Payload",
+                  "description": "Payload sent with event."
+                }
+              },
+              "text": {
+                "label": "Button text",
+                "description": "Text displayed in the navigation button."
+              }
+            }
+          },
+          "fixed": {
+            "label": "Fixed header",
+            "description": "If enabled, the header will remain hanging at the top of the screen during the scroll."
+          }
+        }
+      },
+      "buttons": {
+        "settings": {
+          "label": "Buttons",
+          "description": "You can add as many buttons as you want.",
+          "items": {
+            "label": "Button",
+            "description": "Button configuration",
+            "add": "Add a Button",
+            "remove": "Remove Button",
+            "text": {
+              "label": "Text",
+              "description": "Button text"
+            },
+            "variant": {
+              "label": "Display",
+              "description": "Button display mode",
+              "label_default": "Simple",
+              "label_primary": "Primary",
+              "label_grey": "Monochrome",
+              "label_link": "Link"
+            },
+            "tag": {
+              "label": "Tag",
+              "description": "Text to be displayed in a label on the right of the button"
+            },
+            "disabled": {
+              "label": "Disabled"
+            },
+            "unselected": {
+              "label": "Unselected",
+              "description": "Displays the button in a secondary, grayed out state. Used for example to indicate an inactive tab"
+            }
+          }
+        }
+      },
+      "carousel": {
+        "settings": {
+          "autoscroll": {
+            "label": "Auto scroll",
+            "description": "You can activate and configure the automatic scrolling of the content.",
+            "active": {
+              "label": "Activate",
+              "description": "Activate automatic scrolling. Scrolling will still be possible manually with the buttons and the keyboard."
+            },
+            "speed": {
+              "label": "Scroll speed",
+              "description": "Setting the page change speed in seconds."
+            }
+          },
+          "displayIndicators": {
+            "label": "Page indicators",
+            "description": "Displays as many buttons as pages available."
+          }
+        }
+      },
+      "cards": {
+        "settings": {
+          "title": "Title",
+          "description": "Description",
+          "cover": "Cover image",
+          "variant": {
+            "label": "Cards style"
+          },
+          "classic": {
+            "label": "Classic",
+            "content": {
+              "label": "Content",
+              "item": "Line",
+              "add": "Add a line",
+              "remove": "Remove line",
+              "type": "Type",
+              "type_text": "Text",
+              "type_button": "Button",
+              "type_accordion": "Accordion",
+              "text": {
+                "value": "Text",
+                "value_description": "You can use HTML or Markdown."
+              },
+              "button": {
+                "value": "Label",
+                "value_description": "Button label.",
+                "url": "Web address",
+                "url_description": "The button can be a link to a web page.",
+                "popup": "Open the link in a new tab",
+                "popup_description": "The link will open in a new tab.",
+                "event": "Event",
+                "event_description": "The button can trigger an event.",
+                "payload": "Payload",
+                "payload_description": "Data accompanying the event.",
+                "icon": "Icon"
+              },
+              "accordion": {
+                "title": "Title",
+                "title_description": "Always displayed text.",
+                "content": "Content",
+                "content_description": "Hidden content. Can be HTML or markdown.",
+                "icon": "Icon"
+              }
+            }
+          },
+          "short": {
+            "label": "Short",
+            "subtitle": "Subtitle",
+            "backgroundColor": "Background color",
+            "backgroundColor_black": "Black",
+            "backgroundColor_white": "White",
+            "backgroundColor_transparent-white": "Transparent white",
+            "backgroundColor_transparent-black": "Transparent black"
+          },
+          "article": {
+            "label": "Article",
+            "subtitle": "Subtitle",
+            "tag": "Tag"
+          },
+          "square": {
+            "label": "Square"
+          },
+          "blocks": {
+            "label": "Blocks",
+            "content": {
+              "label": "Contenu de la carte",
+              "description": "Composez votre carte à l'aide de Blocks"
+            }
+          },
+          "actions": {
+            "label": "Actions",
+            "content": {
+              "label": "Buttons",
+              "add": "Add a button",
+              "remove": "Remove button",
+              "item": "Button",
+              "type": "Type",
+              "type_event": "Event",
+              "text": "Text",
+              "value_event": "Event name",
+              "payload": "Payload",
+              "type_url": "Web address",
+              "value_url": "Web address"
+            }
+          },
+          "cards": "Cards",
+          "cards_add": "Add a card",
+          "cards_remove": "Remove card",
+          "card": "Card",
+          "layout": {
+            "title": "Layout",
+            "description": "You can change the display mode. By default, cards will be displayed using a carousel.",
+            "style": "Style",
+            "carousel": "Carousel",
+            "grid": "Grid",
+            "column": "Column",
+            "autoScroll": {
+              "title": "Auto scroll",
+              "description": "Activate this option to have the carousel scroll automatically every 5 seconds"
+            }
+          }
+        }
+      },
+      "datatable": {
+        "settings": {
+          "data": {
+            "label": "Table of data to be displayed",
+            "description": "This block waits for an array of objects whose structure is at your convenience but identical for each element of the array.",
+            "items": {
+              "label": "Line",
+              "description": "The keys of the object will be the columns of the table.",
+              "add": "Add a line of data",
+              "remove": "Delete the data line",
+              "properties": {
+                "add": "Add a cell",
+                "remove": "Delete the cell"
+              }
+            }
+          },
+          "columns": {
+            "label": "Columns",
+            "description": "Specifying the columns. If you don't change anything, all your data will be displayed as raw.",
+            "items": {
+              "label": "Column",
+              "description": "Specification of the column",
+              "add": "Add a column",
+              "remove": "Delete the column",
+              "_label": {
+                "label": "Title",
+                "description": "Column title"
+              },
+              "key": {
+                "label": "Key",
+                "description": "The key corresponding to the data to be displayed"
+              },
+              "type": {
+                "label": "Type",
+                "description": "The type of data format. By default, the data is displayed as text",
+                "string": "Text",
+                "number": "Number",
+                "boolean": "Boolean",
+                "date": "Date",
+                "tags": "Tags"
+              },
+              "format": {
+                "label": "Format",
+                "description": "Format to apply to the data in case of number or date type."
+              },
+              "actions": {
+                "label": "Action buttons",
+                "description": "You can display action buttons if you have not chosen a key",
+                "items": {
+                  "label": "Action button",
+                  "description": "What does the action button do?",
+                  "add": "Add an action",
+                  "remove": "Delete action",
+                  "_label": {
+                    "label": "Label",
+                    "description": "Button text"
+                  },
+                  "event": {
+                    "label": "Event",
+                    "description": "A click on the button will send an event"
+                  },
+                  "payload": {
+                    "label": "Payload",
+                    "description": "The event can be sent with data"
+                  },
+                  "url": {
+                    "label": "URL",
+                    "description": "A click on the button will open a new page. The URL can contain parameters in the form {{key}}. For example, if data contains a \"_id\" property, the URL can be \"http://host/user/{{_id}}\" and will be filled with the value of the concerned line"
+                  }
+                }
+              },
+
+              "onEdit": {
+                "label": "Event on edition",
+                "description": "Makes the cell editable. The event passed in value will be sent each time it is modified"
+              }
+            }
+          },
+          "pagination": {
+            "label": "Manual pagination",
+            "description": "By default, paging is done automatically on all the data sent. If you want to paginate on the server side, use this configuration structure.",
+            "event": {
+              "label": "Event",
+              "description": "Name of the event sent when a page is changed. The number of the requested page will be send in payload."
+            },
+            "page": {
+              "label": "Current page number",
+              "description": "Will display the number of the page displayed."
+            },
+            "itemCount": {
+              "label": "Item count",
+              "description": "Total number of items."
+            },
+            "pageSize": {
+              "label": "Pages size",
+              "description": "Number of item per page."
+            }
+          },
+          "customProps": {
+            "label": "Additional properties",
+            "description": "Additional properties to send to the Table, as supported by ant design : https://ant.design/components/table"
+          }
+        }
+      },
+      "form": {
+        "submitLabel": {
+          "label": "Submit button text",
+          "description": "Modify the text of the form validation button"
+        },
+        "hideSubmit": {
+          "label": "Hide submit button",
+          "description": "You can hide the form validation button, for example if you prefer to validate the form as you type."
+        },
+        "onSubmit": {
+          "label": "On submit event",
+          "description": "When the form is validated, the event will be sent with all its values."
+        },
+        "onChange": {
+          "label": "On change event",
+          "description": "Each time the form is modified, the event will be sent with all its values."
+        },
+        "schema": {
+          "label": "Form specification",
+          "description": "Use the form builder interface to add the fields of your choice.",
+          "add": "Add a control"
+        },
+        "disabledSubmit": {
+          "label": "Disable the validation button",
+          "description": "Allows you to disable the form validation button. This parameter is useful to be sent by an Automation during the operation of the page, for example immediately after receiving the event corresponding to onSubmit, to show the user that his request is taken into account."
+        }
+      },
+      "richtext": {
+        "settings": {
+          "content": {
+            "label": "Content in HTML or Markdown format",
+            "description": "Here you can display any rich content using HTML or Markdown. You can even mix the two."
+          },
+          "allowScripts": {
+            "label": "Allow scripts",
+            "description": "Allow execution of javascript code included in <script> tags"
+          },
+          "values": {
+            "label": "Interpolated values",
+            "description": "You can insert values using the {{variableName}} notation into your HTML content.",
+            "add": "Add a value",
+            "remove": "Delete the value"
+          },
+          "markdown": {
+            "label": "Interpreting content as Markdown",
+            "description": "Your content can contain both HTML and Markdown for easy formatting. However, if you prefer to keep it unaltered by the Markdown rendering engine, enable this option."
+          },
+          "container": {
+            "label": "HTML tag containing",
+            "description": "Your rich text will be contained in a <div> tag by default. You can choose another one by indicating it here."
+          }
+        }
+      },
+      "hero": {
+        "settings": {
+          "title": {
+            "label": "Title",
+            "description": "Hero title."
+          },
+          "lead": {
+            "label": "Lead",
+            "description": "Hero lead."
+          },
+          "content": {
+            "label": "Content",
+            "description": "You can customize this section with a list of any available Blocks."
+          },
+          "img": {
+            "label": "Image",
+            "description": "Une image idéealement au format carré et de bonne taille."
+          },
+          "backgroundColor": {
+            "label": "Couleur de fond",
+            "description": "La couleur de fond du Hero."
+          },
+          "level": {
+            "label": "Title level",
+            "description": "Defines the level of the tag applied to the title."
+          }
+        }
+      },
+      "blockslist": {
+        "settings": {
+          "blocks": {
+            "label": "Blocks",
+            "description": "You can complete your content with a list of Blocks.",
+            "add": "Add a Block",
+            "remove": "Delete Block",
+            "items": {
+              "label": "Block",
+              "description": "Block specification.",
+              "name": {
+                "label": "Block name",
+                "description": "Name of Block to display"
+              }
+            }
+          }
+        }
+      },
+      "blocksSplit": {
+        "settings": {
+          "blocks": {
+            "firstBlock": {
+              "label": "First block"
+            },
+            "secondBlock": {
+              "label": "Second block"
+            },
+            "genericBlocks": {
+              "description": "Block specification."
+            }
+          }
+        }
+      },
+      "blocksGrid": {
+        "settings": {
+          "blocks": {
+            "label": "Blocks",
+            "description": "You can complete your content with a list of Blocks.",
+            "add": "Add a Block",
+            "remove": "Delete Block",
+            "items": {
+              "label": "Block",
+              "description": "Block specification.",
+              "name": {
+                "label": "Block name",
+                "description": "Name of Block to display"
+              }
+            }
+          }
+        }
+      },
+      "footer": {
+        "settings": {
+          "content": {
+            "label": "Footer content",
+            "description": "You can configure your footer using a list of Blocks."
+          }
+        }
+      },
+      "image": {
+        "settings": {
+          "src": {
+            "label": "Image",
+            "description": "Choose an image on your storage space."
+          },
+          "caption": {
+            "label": "Caption",
+            "description": "Enter a text to accompany your image."
+          },
+          "alt": {
+            "label": "Textual alternative",
+            "description": "Text describing the image to help with accessibility."
+          }
+        }
+      },
+      "breadcrumbs": {
+        "settings": {
+          "links": {
+            "label": "Links",
+            "description": "Breadcrumb links in order of display.",
+            "items": {
+              "label": "Link",
+              "description": "Link settings",
+              "add": "Add a link",
+              "remove": "Delete link",
+              "href": {
+                "label": "Link to one of your Pages",
+                "description": "Web address to one of your Workspace's Page."
+              },
+              "_label": {
+                "label": "Link label",
+                "description": "Displayed label."
+              }
+            }
+          }
+        }
+      },
+      "tabsview": {
+        "settings": {
+          "direction": {
+            "horizontal": "Horizontal",
+            "vertical": "Vertical",
+            "label": "Direction"
+          },
+          "tabs": {
+            "label": "Tabs",
+            "description": "Define your tabs and their associated content",
+            "items": {
+              "label": "Tab",
+              "description": "Define a tab",
+              "add": "Add a tab",
+              "remove": "Remove tab",
+              "content": {
+                "label": "Content",
+                "description": "The content displayed when the onget is selected."
+              }
+            }
+          }
+        }
+      },
+      "signin": {
+        "settings": {
+          "label": {
+            "label": "Button label (default \"connection\")",
+            "description": "Change the button label"
+          },
+          "up": {
+            "label": "Signup ?",
+            "description": "Check to display a button to create an account"
+          }
+        }
+      }
+    },
+    "reload": "Reload page"
+  },
+  "blocks": {
+    "create": {
+      "defaultName": "Block"
+    },
+    "source": {
+      "label": "See code",
+      "close": "Hide code",
+      "help": "Displays the structure of the automation in raw format"
+    },
+    "details": {
+      "title": "Edit details",
+      "name": {
+        "label": "Block title"
+      },
+      "description": {
+        "label": "Description"
+      },
+      "slug": {
+        "label": "Slug"
+      },
+      "photo": {
+        "label": "Preview image"
+      },
+      "url": {
+        "label": "Javascript module URL (advanced)",
+        "description": "You can create your Block as a React component using <a href=\"https://gitlab.com/prisme.ai/block-starter\">this template</a>."
+      }
+    },
+    "save": {
+      "label": "Save",
+      "toast": "Block has been saved",
+      "error": "Saving failed",
+      "reason": "{{context}}",
+      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
+      "reason_InvalidSlugError": "Slug contains invalid characters."
+    },
+    "duplicate": {
+      "help": "Duplicate Block",
+      "success": "Block has been duplicated",
+      "error": "An error occurs while trying to duplicate Block."
+    },
+    "preview": {
+      "label": "Preview",
+      "config": {
+        "label": "Block setup",
+        "reset": "Reset to default values"
+      },
+      "toggleWidth": {
+        "desktop": "Display full width",
+        "tablet": "Display in tablet width",
+        "mobile": "Display in mobile width"
+      }
+    },
+    "edit": "Edit",
+    "builder": {
+      "add": {
+        "label": "Add a Block"
+      },
+      "className": {
+        "help": "Identify the Block with a CSS class.",
+        "placeholder": "unknown-block"
+      },
+      "setup": {
+        "label": "Settings"
+      },
+      "lifecycle": {
+        "label": "Lifecycle"
+      },
+      "picker": {
+        "builtIn": "Built-in",
+        "workspace": "{{from}} (this Workspace)",
+        "title": "Choose a Block. You can access new Blocks by installing their Apps."
+      },
+      "delete": {
+        "label": "Delete",
+        "confirm": "Are you sure you want to remove this Block?"
+      }
+    }
+  },
+  "expert": {
+    "show": "Edit the source code",
+    "security": "Manage roles",
+    "hide": "Hide the source code",
+    "exit": {
+      "confirm_title": "Changes in progress",
+      "confirm_message": "You are about to leave without saving. Are you sure?",
+      "cancel": "Wait",
+      "confirm": "Leave !"
+    },
+    "save": {
+      "help": "Save",
+      "confirm": "Your workspace is saved",
+      "fail": "Your workspace is invalid and could not be saved."
+    }
+  },
+  "404": "This workspace does not exist. Return to your home page.",
+  "whatsNew": "What's new",
+  "help": "Help?",
+  "share": {
+    "label": "Share",
+    "email": "Email",
+    "emailOrRole": "Email or Role",
+    "displayName": "User",
+    "role": "Role",
+    "access": "Access",
+    "actions": "Actions",
+    "delete": "Remove access",
+    "roles": {
+      "owner": "Owner",
+      "editor": "Editor"
+    },
+    "leave": "You no longer have access to the {{name}} Workspace.",
+    "notme": "You are already the owner of this Workspace."
+  },
+  "languages": {
+    "add": {
+      "tooltip": "Add {{lang}}"
+    },
+    "available": {
+      "title": "Available languages"
+    },
+    "delete": {
+      "tooltip": "Delete this language"
+    },
+    "set": {
+      "tooltip": "Add a translation",
+      "title": "Added languages"
+    }
+  },
+  "details": {
+    "title": "",
+    "title_workspaces": "Workspace settings",
+    "title_automations": "Automation settings",
+    "title_pages": "Page settings",
+    "title_apps": "App settings",
+    "title_blocks": "Block settings",
+    "save": "Save",
+    "delete": {
+      "label": "Delete",
+      "label_workspaces": "Delete Workspace",
+      "label_automations": "Delete automation",
+      "label_pages": "Delete page",
+      "confirm": {
+        "title": "Do you want to delete \"{{name}}\" ?",
+        "title_workspaces": "Do you want to delete the \"{{name}}\" Workspace?",
+        "title_automation": "Do you want to delete the \"{{name}}\" automation?",
+        "title_pages": "Do you want to delete the \"{{name}}\" page?",
+        "title_apps": "Uninstall",
+        "content": "Warning, the data will be lost.",
+        "content_apps": "Are you sure you want to remove \"{{name}}\" from your workspace ?",
+        "ok": "Yes, delete",
+        "ok_apps": "Uninstall {{name}}",
+        "cancel": "No, please no"
+      },
+      "toast_automations": "Automation has been deleted",
+      "toast_pages": "Page has been deleted"
+    }
+  },
+  "schema": {
+    "property": {
+      "edit": "Edit",
+      "add": "Add a property",
+      "delete": "Delete the property",
+      "name": "Property name:",
+      "details": "Details",
+      "items": "Array items",
+      "required": "Required",
+      "title": "Field label",
+      "description": {
+        "label": "Field description",
+        "description": "This text will be displayed in a bubble exactly like this one."
+      },
+      "placeholder": {
+        "label": "Placeholder",
+        "description": "This text will be shown inside the input."
+      },
+      "type": {
+        "label": "Type of value",
+        "description": "The value will be of the type you specify"
+      },
+      "widget": {
+        "label": "Display mode",
+        "description": "Each type offers a particular display, but some offer alternatives. For example, you can force the choice of a date with the Date display."
+      },
+      "enum": {
+        "label": "List of specific values",
+        "description": "You can impose a value from a specific selection. A drop-down menu will then be displayed to the user.",
+        "add": "Add a value",
+        "remove": "Delete this value",
+        "key": "Label",
+        "value": "Value"
+      }
+    },
+    "types": {
+      "string": "Text",
+      "localized_string": "Localized text",
+      "boolean": "Boolean",
+      "localized_boolean": "Localized boolean",
+      "number": "Number",
+      "localized_number": "Localized number",
+      "object": "Object",
+      "array": "Array",
+      "any": "Any type"
+    },
+    "widget": {
+      "default": "By default",
+      "default_description": "A basic field related to the value type.",
+      "name": "{{context}}",
+      "name_upload": "Sending a file",
+      "description_upload": "An upload area will be displayed. The file will be uploaded to our cloud and the url will be stored as a value in your data object.",
+      "name_textarea": "Text area",
+      "description_textarea": "A more comfortable writing area than a simple field.",
+      "name_date": "Date",
+      "description_date": "A calendar will be displayed. The value will be formatted as a date.",
+      "name_enum": "Drop-down list",
+      "description_enum": "You choose the list of possible values. Only one of these values will be allowed.",
+      "name_radio": "Radio",
+      "description_radio": "List of values in the form of radio buttons",
+      "name_autocomplete": "Autocompletion",
+      "description_autocomplete": "Provides autocompletion during typing",
+      "name_color": "Color",
+      "description_color": "Color selector",
+      "name_html": "HTML",
+      "description_html": "Rich content (HTML)",
+      "name_slider": "Slider",
+      "description_slider": "Select a numeric value on a slider",
+      "name_tags": "Multiple select",
+      "description_tags": "Select multiple values"
+    },
+    "properties": {
+      "label": "Object properties",
+      "description": "Definition of the object's properties",
+      "add": "Add a property"
+    },
+    "items": {
+      "label": "Items",
+      "description": "Definition of each element of the table"
+    },
+    "uiOptions": {
+      "label": "Field options",
+      "tags": {
+        "title": "Tags",
+        "options": {
+          "title": "Option"
+        },
+        "value": {
+          "title": "Value"
+        },
+        "label": {
+          "title": "Label"
+        },
+        "color": {
+          "title": "Color"
+        },
+        "allowNew": {
+          "title": "Allow new entris",
+          "description": "Allow additional properties, other than the listed ones"
+        }
+      },
+      "slider": {
+        "steps": {
+          "add": "Add a step",
+          "remove": "Delete step",
+          "label": "Steps",
+          "value": {
+            "label": "Value"
+          },
+          "_label": {
+            "label": "Label"
+          },
+          "description": {
+            "label": "Description"
+          }
+        }
+      }
+    }
+  },
+  "feed": {
+    "filter": "Filters",
+    "type": "The <event>{{context}}</event> event has been fired",
+    "type_workspaces.created": "The Workspace was created",
+    "type_workspaces.updated": "The Workspace has been updated",
+    "type_workspaces.deleted": "The Workspace has been removed",
+    "type_workspaces.configured": "The Workspace configuration has been updated",
+    "type_workspaces.apps.installed": "The {{appSlug}} app has been installed as <app>{{appName}}</app>",
+    "type_workspaces.apps.uninstalled": "The app {{appName}} has been uninstalled",
+    "type_workspaces.apps.configured": "The app <app>{{appName}}</app> has been configured",
+    "type_workspaces.automations.created": "The automation <automation>{{automation}}</automation> has been created",
+    "type_workspaces.automations.updated": "The automation <automation>{{automation}}</automation> has been updated",
+    "type_workspaces.automations.deleted": "The automation <automation>{{automation}}</automation> has been removed",
+    "type_workspaces.pages.updated": "The <page>{{page}}</page> has been updated",
+    "type_workspaces.versions.published": "The <tooltip title=\"{{event.payload.version.description}}\">{{event.payload.version.name}}</tooltip> version has been created. <rollback>Rollback to this version</rollback>",
+    "type_workspaces.versions.rollback": "Version {{event.payload.version.name}} has been rollbacked",
+    "type_workspaces.permissions.shared": "The Workspace has been shared with {{share}}",
+    "type_workspaces.permissions.deleted": "The Workspace is no longer shared with {{share}}",
+    "type_apps.published": "The app {{appName}} has been published",
+    "type_runtime.automations.executed": "The automation <automation>{{automation}}</automation> has been executed",
+    "type_runtime.interactions.triggered": "Interaction triggered from a {{event.payload.trigger.type}} {{event.payload.trigger.value}} on automation <automation>{{event.payload.automation}}</automation>",
+    "type_runtime.automations.scheduled": "The automation <automation>{{automation}}</automation> has been scheduled",
+    "type_runtime.webhooks.triggered": "The automation <automation>{{automation}}</automation> was triggered by URL",
+    "type_runtime.schedules.triggered": "The automation <automation>{{automation}}</automation> was triggered according to its schedule",
+    "type_runtime.waits.pending": "Automation <automation>{{automation}}</automation> is pending {{waits}}",
+    "type_runtime.waits.pending_oneOf_one": "of the event <event>{{events}}</event>",
+    "type_runtime.waits.pending_oneOf_other": "of events <event>{{events}}</event>",
+    "type_runtime.waits.pending_timeout": "for {{timeout}}s",
+    "type_runtime.waits.fulfilled": "The automation <automation>{{automation}}</automation> allowed another to resume following the event <event>{{event}}</event>",
+    "type_runtime.fetch.failed": "HTTP request failed",
+    "type_runtime.contexts.updated": "Updated context",
+    "type_apikeys.updated": "An API key has been updated",
+    "type_apikeys.created": "An API key has been created",
+    "type_apikeys.deleted": "An API key has been deleted",
+    "type_error": "<error>An error has occurred</error>",
+    "replay": "Emit this event again with same payload."
+  },
+  "panel": {
+    "close": "Close",
+    "enlarge": "Enlarge",
+    "enlarge_off": "Reduce"
+  },
+  "form": {
+    "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",
+    "raw_hide": "Respect the type of data required",
+    "html": "Edit in HTML format",
+    "html_hide": "Be careful, by returning to the simple editing mode, you risk losing tags or HTML attributes not managed by it.",
+    "blockSelector": {
+      "name": {
+        "label": "Choice of Block",
+        "description": "Choose a Block among those proposed by Prisme.ai and those from the Apps you have installed on your Workspace."
+      }
+    }
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Ready to use the next level of IA low-code platform ?",
+      "text": "Firstable you can find help in the Prisme.ai chat just here, please go to the next step or skip this to begin your project"
+    },
+    "step2": {
+      "title": "You can choose a template or dedicated workspace",
+      "text": "Feel free to use some of our workspace to accelerate the creation of your project"
+    },
+    "step3": {
+      "title": "You can choose a template or dedicated workspace",
+      "text": "Or you can create from scratch your workspace and follow the documentation"
+    },
+    "step4": {
+      "title": "Welcome in your first workspace",
+      "text": "On the left you can find the sidebar with the different content"
+    },
+    "step5": {
+      "title": "Welcome in your first workspace",
+      "text": "On the center you can find in the first tab the activity, you can find more information if you <a href=\"{{link}}\">click here</a>."
+    }
+  }
+}
