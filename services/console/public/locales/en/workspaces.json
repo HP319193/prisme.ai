@@ -1384,6 +1384,10 @@
           "up": {
             "label": "Signup ?",
             "description": "Check to display a button to create an account"
+          },
+          "redirect": {
+            "label": "Redirect to",
+            "description": "By default, the home page will be displayed after subscription. You can choose another page."
           }
         }
       }

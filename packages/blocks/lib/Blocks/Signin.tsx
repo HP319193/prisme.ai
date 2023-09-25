@@ -8,21 +8,27 @@ import { BaseBlockConfig } from './types';
 export interface SigninConfig extends BaseBlockConfig {
   label: string | Prismeai.LocalizedText;
   up?: true;
+  redirect?: string;
 }
 
-export const Signin = ({ label = 'Signin', up, className }: SigninConfig) => {
+export const Signin = ({
+  label = 'Signin',
+  up,
+  redirect,
+  className,
+}: SigninConfig) => {
   const {
     utils: { auth: { getSigninUrl, getSignupUrl } = {} },
   } = useBlocks();
   const { localize } = useLocalizedText();
   const signin = useCallback(async () => {
     if (!getSigninUrl) return;
-    const url = await getSigninUrl();
+    const url = await getSigninUrl({ redirect });
     window.location.assign(url);
   }, []);
   const signup = useCallback(async () => {
     if (!getSignupUrl) return;
-    const url = await getSignupUrl();
+    const url = await getSignupUrl({ redirect });
     window.location.assign(url);
   }, []);
 

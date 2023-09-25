@@ -33,11 +33,11 @@ export const BlocksProvider: FC = ({ children }) => {
   );
   const auth = useMemo(() => {
     return {
-      getSigninUrl: async () => {
-        return initAuthentication({ redirect: false });
+      getSigninUrl: async ({ redirect = '' } = {}) => {
+        return initAuthentication({ redirect });
       },
-      getSignupUrl: async () => {
-        return '/signup';
+      getSignupUrl: async ({ redirect = '' } = {}) => {
+        return `/signup${redirect ? `?redirect=${redirect}` : ''}`;
       },
     };
   }, [initAuthentication]);

@@ -172,12 +172,13 @@ export const UserProvider: FC<UserProviderProps> = ({
 
   // 1. Initialize authentication flow
   const initAuthentication: UserContext['initAuthentication'] = useCallback(
-    async ({ redirect = true } = {}) => {
+    async ({ redirect } = {}) => {
       const redirectOnceAuthenticated =
-        Storage.get('redirect-once-signup') ||
+        redirect ||
+        (Storage.get('redirect-once-signup') ||
         window.location.href.includes('/signin')
           ? new URL('/', window.location.href).toString()
-          : window.location.href;
+          : window.location.href);
       Storage.remove('redirect-once-signup');
       Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
       // redirect_uri must be on the same domain we want the session on (i.e current one)
@@ -190,9 +191,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       );
       Storage.set('code-verifier', codeVerifier);
       Storage.set('client-id', clientId);
-      if (redirect || typeof redirect === 'undefined') {
-        window.location.assign(url);
-      }
+
       return url;
     },
     [language]
@@ -249,15 +248,19 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
 
       if (anonymous) {
-        const { token, ...user } = await api.createAnonymousSession();
-        api.token = token;
-        Storage.set('access-token', token);
-        setUser(user);
-        setLoading(false);
-        return;
+        try {
+          const { token, ...user } = await api.createAnonymousSession();
+          api.token = token;
+          Storage.set('access-token', token);
+          setUser(user);
+          setLoading(false);
+          return;
+        } catch {
+          setLoading(false);
+        }
       }
-      signout(false);
       setLoading(false);
+      signout(false);
     }
   }, [anonymous, initAuthentication, push, redirectTo, route, signout]);
 
@@ -372,6 +375,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         const { error } = e as ApiError;
         if (error === 'AlreadyUsed') {
           setError(e as ApiError);
+          setLoading(false);
           return null;
         }
         api.token = null;
