@@ -173,7 +173,7 @@ export const BlockLoader: TBlockLoader = ({
     };
   }, [config, name, recursiveConfig, page?.appInstances, debug]);
 
-  const { onInit, updateOn, automation } = initialConfig || {};
+  const { onInit, updateOn, automation } = computedConfig || {};
   const onBlockLoad = useCallback(() => {
     setLoaded(true);
   }, []);
