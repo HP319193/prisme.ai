@@ -105,7 +105,7 @@ export const UserAccessibleContexts: ContextType[] = [
 export class ContextsManager {
   public workspaceId: string;
   public session?: PrismeaiSession;
-  private correlationId: string;
+  public correlationId: string;
   public cache: Cache;
   private contexts: Contexts;
   private logger: Logger;
@@ -123,6 +123,7 @@ export class ContextsManager {
   private alreadyProcessedUpdateIds: Set<string>;
   private accessManager: Required<AccessManager>;
   private workspaceApiKeys: Record<string, string>;
+  private observers: Record<string, ((data?: any) => void)[]>;
 
   constructor(
     ctx: PrismeContext,
@@ -166,6 +167,7 @@ export class ContextsManager {
     this.alreadyProcessedUpdateIds = new Set();
     this.accessManager = accessManager as any;
     this.workspaceApiKeys = {};
+    this.observers = {};
   }
 
   async fetch(contexts?: ContextType[]) {
@@ -634,5 +636,20 @@ export class ContextsManager {
     }
     this.workspaceApiKeys[name] = apiKey?.auth?.apiKey?.value;
     return this.workspaceApiKeys[name];
+  }
+
+  observe(id: string, observer: (data?: any) => void) {
+    if (!(id in this.observers)) {
+      this.observers[id] = [];
+    }
+    this.observers[id].push(observer);
+  }
+
+  notify(id: string, data: any, deleteObservers: boolean = true) {
+    const result = (this.observers[id] || []).map((observer) => observer(data));
+    if (deleteObservers) {
+      delete this.observers[id];
+    }
+    return result;
   }
 }

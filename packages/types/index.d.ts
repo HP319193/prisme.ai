@@ -1677,11 +1677,11 @@ declare namespace Prismeai {
     export interface FulfilledWait {
         /**
          * example:
-         * runtime.waits.fulfilled.{{id}}
+         * runtime.waits.fulfilled
          */
-        type: "runtime.waits.fulfilled.{{id}}";
+        type: "runtime.waits.fulfilled";
         payload: {
-            id?: string;
+            id: string;
             event: PrismeEvent;
         };
     }
