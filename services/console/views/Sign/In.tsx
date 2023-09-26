@@ -17,8 +17,8 @@ export const SignIn = () => {
   useEffect(() => {
     if (!token || typeof token !== 'string') return;
     validateMail(token).then(() => {
-      setTimeout(() => {
-        initAuthentication();
+      setTimeout(async () => {
+        window.location.assign(await initAuthentication());
       }, 2000);
     });
   }, [initAuthentication, token, validateMail]);

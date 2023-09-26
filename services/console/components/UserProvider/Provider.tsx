@@ -235,7 +235,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         }
       }
       if (!user.id && !PUBLIC_URLS.includes(route)) {
-        initAuthentication();
+        window.location.assign(await initAuthentication());
       }
     } catch (e) {
       if (
@@ -364,10 +364,10 @@ export const UserProvider: FC<UserProviderProps> = ({
         );
         setSuccess({ type: OperationSuccess.signupSuccess });
         setLoading(false);
-        setTimeout(() => {
+        setTimeout(async () => {
           setSuccess(undefined);
           if (user.status !== 'pending') {
-            initAuthentication();
+            window.location.assign(await initAuthentication());
           }
         }, 2000);
         return user;
