@@ -3,6 +3,7 @@ import { action } from '@storybook/addon-actions';
 import { FC, LinkHTMLAttributes, useState } from 'react';
 import { BlockProvider, BlocksProvider } from '../Provider';
 import RichText from './RichText';
+//@ts-ignore
 import { tw } from 'twind';
 import { PreviewInStory } from './PreviewInStory';
 import { BlockLoader } from '../BlockLoader';
@@ -63,7 +64,7 @@ export const NestedDivs = Template.bind({});
 NestedDivs.args = {
   content: `<div class="contacts" prout-truc="chose">
                     <div class="contactElement">
-                      Hello 
+                      Hello
                     </div>
                     </div>
 `,

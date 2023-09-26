@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+//@ts-ignore
 import { tw } from 'twind';
 import { useBlocks } from '../Provider/blocksContext';
 import { useBlock } from '../Provider';
