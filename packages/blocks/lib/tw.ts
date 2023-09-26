@@ -1,4 +1,5 @@
 // Tailwind setup
+//@ts-nocheck
 import { setup, tw } from 'twind';
 
 setup({
