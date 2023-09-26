@@ -935,6 +935,7 @@ describe('Custom Roles', () => {
       false
     );
     userPerms.pullRoleFromSubject(SubjectType.Workspace, hisWorkspace);
+
     // User now can read it !
     expect(userPerms.can(ActionType.Read, SubjectType.Event, event)).toBe(true);
   });

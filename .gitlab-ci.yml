@@ -86,22 +86,23 @@ backend_npm_install:
 .npm_test:
   stage: test
   script:
-    - >
-      if ! [[ -d node_modules/ ]] ; then
-        BUILD_PACKAGES=0 npm ci $OPTIONS
-      fi
+    # - >
+    #   if ! [[ -d node_modules/ ]] ; then
+    #     BUILD_PACKAGES=0 npm ci $OPTIONS
+    #   fi
+    - BUILD_PACKAGES=0 npm ci $OPTIONS
     - npm run build:packages
     - npm test -- $DIRECTORY --coveragePathIgnorePatterns "./packages/*"
   coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
   artifacts:
     paths:
       - coverage
-  cache: &cache
-    key:
-      files: &lockFiles
-        - package-lock.json
-    paths:
-      - node_modules/
+  # cache: &cache
+  #   key:
+  #     files: &lockFiles
+  #       - package-lock.json
+  #   paths:
+  #     - node_modules/
 
 .build_docker:
   stage: build_docker
