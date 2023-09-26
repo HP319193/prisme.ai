@@ -1,7 +1,7 @@
 import { Form } from 'react-final-form';
 import { Button, Input, Title } from '@prisme.ai/design-system';
 import Field from '../layouts/Field';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useUser } from './UserProvider';
 import { Trans, useTranslation } from 'next-i18next';
 import LinkInTrans from './LinkInTrans';
@@ -51,6 +51,19 @@ export const SigninForm = ({ show403 }: SigninFormProps) => {
     return errors;
   };
 
+  useEffect(() => {
+    async function init() {
+      const url = await initAuthentication();
+      window.location.assign(url);
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const interactionUid = urlParams.get('interaction');
+    const code = urlParams.get('code');
+    if (!code && !interactionUid && !urlParams.get('error') && !show403) {
+      init();
+    }
+  }, [initAuthentication, show403]);
+
   // 1. Init authentication flow
   if (typeof window !== 'undefined') {
     const urlParams = new URLSearchParams(window.location.search);
@@ -58,7 +71,6 @@ export const SigninForm = ({ show403 }: SigninFormProps) => {
     const code = urlParams.get('code');
     if (!code && !interactionUid && !urlParams.get('error')) {
       if (!show403) {
-        initAuthentication();
         return null;
       }
       return (
