@@ -1,6 +1,6 @@
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Story } from '@storybook/react';
-import SchemaForm, { FormProps } from './SchemaForm';
+import SchemaForm, { SchemaFormProps } from './SchemaForm';
 import { useField } from 'react-final-form';
 import { FieldProps, Schema } from './types';
 import TextArea from '../TextArea';
@@ -13,7 +13,7 @@ export default {
   component: SchemaForm,
 };
 
-const Template: Story<FormProps> = (props) => {
+const Template: Story<SchemaFormProps> = (props) => {
   document.body.classList.remove('sb-main-padded');
   const [value, setValue] = useState<{ values: any }>(props.initialValues);
   return (
@@ -495,6 +495,11 @@ UIWidgets.args = {
         title: 'date',
         description: 'Display a date picker. Only available for string types.',
         'ui:widget': 'date',
+        'ui:options': {
+          date: {
+            format: 'DD/MM/YY HH:mm',
+          },
+        },
       },
       color: {
         type: 'string',

@@ -4,13 +4,12 @@ import {
 } from 'antd';
 import moment from 'moment';
 
-export type DatePickerProps = {
+export type DatePickerProps = AntdDatePickerProps & {
   stringValue?: string;
   stringOnChange?: (value: string) => void;
   label?: string;
-} & AntdDatePickerProps;
-
-const dateFormat = ['DD/MM/YYYY', ''];
+  format?: string;
+};
 
 const DatePicker = ({
   stringValue,
@@ -18,16 +17,20 @@ const DatePicker = ({
   value,
   onChange,
   className,
+  format = 'DD/MM/YYYY',
   ...props
 }: DatePickerProps) => {
   const _value = stringValue ? moment(stringValue) : value;
+  const [timeFormat] = format.match(/HH(:mm)?(:ss)?/) || [];
 
   return (
     <AntdDatePicker
-      format={dateFormat}
+      format={[format]}
       value={_value}
       onChange={onChange}
       className={`h-[2.5rem] basis-[2.5rem] flex flex-1 ${className}`}
+      //@ts-ignore
+      showTime={timeFormat ? { format: timeFormat } : undefined}
       {...props}
     />
   );

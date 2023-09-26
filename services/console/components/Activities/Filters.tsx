@@ -114,7 +114,7 @@ const Filters = () => {
                           showTime={{
                             defaultValue: moment('00:00:00', 'HH:mm:ss'),
                           }}
-                          format={'DD/MM/YYYY HH:mm:ss'}
+                          format="DD/MM/YYYY HH:mm:ss"
                           {...input}
                         />
                       </label>
