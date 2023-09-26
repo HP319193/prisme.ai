@@ -31,7 +31,7 @@ const Usages = ({ appsUsages, wpId, error }: UsagesProps) => {
             <div className="ml-2 uppercase">{t('usage.title')}</div>
           </div>
           <iframe
-            height={150}
+            height={450}
             src={`${BILLING_USAGE.replace(
               /\{\{lang\}\}/,
               language
