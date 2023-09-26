@@ -27,15 +27,6 @@ function compareKeys(a: any, b: any): boolean {
   }, true);
 }
 
-function compareKeys2(a: any, b: any): boolean {
-  return Object.entries(a).reduce((prev, [k, v]) => {
-    return (
-      (prev && b.hasOwnProperty(k) && typeof v !== 'object') ||
-      compareKeys(v, b[k])
-    );
-  }, true);
-}
-
 function check(path: string) {
   const files = fs.readdirSync(getPath(path, MAIN_LANGUAGE));
   return files.reduce((prev, file) => {

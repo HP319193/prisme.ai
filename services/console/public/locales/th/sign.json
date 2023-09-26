@@ -1,0 +1,82 @@
+{
+  "in": {
+    "title": "Connection",
+    "header": "From idea to solution,<br /><b>10x faster.</b>",
+    "topForm1": "Good to have you back",
+    "topForm2": "Connect to Prisme.ai",
+    "topForm3": "Don't have an account yet? <a>Sign up</a>",
+    "signin": "Sign in",
+    "or": "OR",
+    "withAzure": "Continue with Microsoft",
+    "forgot": "<a>Reset your password</a>",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "signup": "Signup?",
+    "error": "An error has occurred.",
+    "error_AuthenticationError": "Wrong email or password.",
+    "error_ValidateEmailError": "Please verify your email",
+    "error_InvalidOrExpiredToken": "This validation link is invalid. Your account might already be validated, try to sign in.",
+    "success": "Operation successful!",
+    "success_mailValidated": "Your email was succesfully validated, you can now login!"
+  },
+  "up": {
+    "title": "Signup — $t(common:main.title)",
+    "topForm1": "Hello",
+    "topForm2": "Try Prisme.ai",
+    "topForm3": "Already have an account? <a>Sign in</a>",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "Firstname",
+    "lastName": "Lastname",
+    "cgu": "By continuing you agree to the <a>Terms of Service</a>.",
+    "submit": "Start",
+    "error": "An error has occurred, please contact support",
+    "error_AlreadyUsed": "An account already exists for this email !",
+    "error_InvalidEmail": "The email is invalid.",
+    "error_InvalidPassword": "The password is invalid : must be at least 8 characters long.",
+    "error_ValidateEmailError": "Please verify your email",
+    "success": "Operation successful!",
+    "success_signupSuccess": "You just created your account. We sent you a validation email, please check your inbox before logging in."
+  },
+  "out": {
+    "link": "Logout"
+  },
+  "forgot": {
+    "title": "Reset your password",
+    "topForm1": "No worries",
+    "topForm2": "Reset your password",
+    "topForm3": "Don't have an account yet? <a>Sign up</a>",
+    "signin": "<a>Remembered your password?</a>",
+    "email": "Email",
+    "error": "An error has occurred.",
+    "error_InvalidPassword": "The password is invalid : must be at least 8 characters long.",
+    "success": "Operation successful!",
+    "success_emailSent": "We just sent you an email, please check your inbox!",
+    "success_passwordReset": "Your password has been changed! You will be redirected to the login page...",
+    "submit": "Send me an email"
+  },
+  "reset": {
+    "topForm1": "Almost there",
+    "topForm2": "Pick a new password",
+    "topForm3": "Don't have an account yet? <a>Sign up</a>",
+    "password": "New password",
+    "confirm": "Confirm your new password",
+    "submit": "Save my password"
+  },
+  "validate": {
+    "topForm1": "Almost there",
+    "topForm2": "Validate your email",
+    "topForm3": "Check your email inbox",
+    "email": "Email",
+    "submit": "Send another validation email",
+    "error": "An error has occurred",
+    "success": "Operation successful!",
+    "success_emailSent": "We just sent you a new email, please check your inbox!",
+    "emailSentAt": "We sent you an email at:",
+    "followInstructions": "Please, follow its instructions in order to validate your account"
+  },
+  "pages": {
+    "restricted": "Access to this page is restricted."
+  }
+}
