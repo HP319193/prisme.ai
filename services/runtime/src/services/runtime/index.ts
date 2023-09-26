@@ -234,7 +234,7 @@ export default class Runtime {
             cur.applyUpdateOpLogs(
               updates as ContextUpdateOpLog[],
               event.id,
-              event.source?.sessionId!
+              event.source
             );
           });
         }
@@ -339,7 +339,7 @@ export default class Runtime {
 
   async createContext(
     source: PrismeContext,
-    session: PrismeaiSession
+    session: Omit<PrismeaiSession, 'socketId'>
   ): Promise<ContextsManager> {
     const ctx = new ContextsManager(
       source,

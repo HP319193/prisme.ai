@@ -18,10 +18,15 @@ import sendEvent from '../../services/events/send';
 import { SearchOptions } from '../../services/events/store';
 import { Subscriber, Subscriptions } from '../../services/events/Subscriptions';
 import { cleanSearchQuery } from './events';
+import { Cache } from '../../cache';
 
 const WORKSPACE_PATH = /^\/v2\/workspaces\/([\w-_]+)\/events$/;
 
-export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
+export function initWebsockets(
+  httpServer: http.Server,
+  events: Subscriptions,
+  cache: Cache
+) {
   const io = new Server(httpServer, {
     cors: {
       origin: true,
@@ -137,13 +142,16 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
         ((<any>socket).recovered ? ' (RECOVERED)' : ''),
       ...logsCtx,
     });
+    cache
+      .registerSocketId(workspaceId, sessionId as string, socketId)
+      .catch(logger.error);
 
     // Handle events creation
     const userIp = Array.isArray(socket.handshake.headers?.['x-forwarded-for'])
       ? socket.handshake.headers?.['x-forwarded-for'][0]
       : socket.handshake.headers?.['x-forwarded-for'] ||
         socket.handshake.address;
-    const childBroker = events.broker.child({
+    let childBroker = events.broker.child({
       workspaceId,
       userId: userId as string,
       sessionId: sessionId as string,
@@ -169,6 +177,43 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
             );
           } else if (type === 'filters') {
             subscription.searchOptions = payload as SearchOptions;
+          } else if (
+            type === 'reconnection' &&
+            (<any>payload)?.socketId &&
+            sessionId
+          ) {
+            // Allow keeping same socketIds accross reconnection
+            // in order to make runtime socket context persistent through reconnections
+            const allowed = await cache.isKnownSocketId(
+              workspaceId,
+              sessionId as string,
+              (<any>payload).socketId
+            );
+            if (!allowed) {
+              logger.warn({
+                msg: `Detected an attempt to reconnect with a forbidden socketId !`,
+                userId,
+                sessionId,
+                socketId,
+              });
+              return;
+            }
+
+            const previousSocketId = subscription.socketId;
+            subscription.socketId = (<any>payload).socketId;
+            logsCtx.socketId = (<any>payload).socketId;
+            childBroker = events.broker.child({
+              workspaceId,
+              userId: userId as string,
+              sessionId: sessionId as string,
+              socketId: subscription.socketId,
+              ip: userIp,
+            });
+            logger.info({
+              msg: 'Websocket reconnected with its previous socketId.',
+              ...logsCtx,
+              previousSocketId,
+            });
           }
         } catch (err) {
           logger.error({
@@ -192,7 +237,7 @@ export function initWebsockets(httpServer: http.Server, events: Subscriptions) {
         subscription.unsubscribe();
       }
     });
-    socket.on('connect', () => {
+    socket.on('connect', async () => {
       logger.info({
         msg: 'Websocket connected.',
         ...logsCtx,

@@ -21,6 +21,7 @@ export interface PrismeContext {
   app?: string;
   correlationId: string;
   userId: string;
+  socketId?: string;
   ip?: string;
   sessionId: string;
   workspaceId?: string;

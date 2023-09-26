@@ -20,6 +20,7 @@ export class Events {
   private listenedUserTopics: Map<string, string[]>;
   private listeners: Map<string, Function[]> = new Map();
   private lastReceivedEventDate: Date;
+  private socketId?: string;
 
   constructor({
     workspaceId,
@@ -60,7 +61,14 @@ export class Events {
     );
 
     const onConnect = () => {
-      // Reset last filters
+      // First connection
+      if (!this.socketId) {
+        this.socketId = this.client.id;
+        return;
+      }
+
+      // Reconnection : Reset last filters, retrieve lost history & sent previous socketId
+      this.client.emit('reconnection', { socketId: this.socketId });
       this.updateFilters({
         payloadQuery: this.filters,
       });
@@ -76,6 +84,8 @@ export class Events {
         });
       }, 2000);
     };
+    this.client.on('connect', onConnect);
+
     this.client.on('disconnect', () => {
       if (!this.lastReceivedEventDate) {
         this.lastReceivedEventDate = new Date();

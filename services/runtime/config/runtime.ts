@@ -10,6 +10,10 @@ export const CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME = parseInt(
   process.env.CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME || `${60 * 60}`
 );
 
+export const CONTEXT_SOCKET_EXPIRE_TIME = parseInt(
+  process.env.CONTEXT_SOCKET_EXPIRE_TIME || `${60 * 60 * 6}`
+);
+
 export const RUNTIME_EMITS_BROKER_TOPIC =
   process.env.RUNTIME_EMITS_BROKER_TOPIC || 'topic:runtime:emit';
 
@@ -37,6 +41,7 @@ export const SYNCHRONIZE_CONTEXTS = [
   'run',
   'config',
   'session',
+  'socket',
   'user',
   'global',
 ];

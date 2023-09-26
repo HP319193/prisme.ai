@@ -71,7 +71,7 @@ export function initAPI(
     httpServer,
     eventsSubscription,
     eventsStore,
-    accessManager
+    cache
   );
 
   /**
