@@ -8,7 +8,6 @@
   ],
   "scripts": {
     "start": "ts-node scripts/start-dev.ts",
-    "postinstall": "patch-package",
     "clean": "npx rimraf packages/**/dist",
     "build:console": "npm run build --prefix services/console",
     "build:pages": "npm run build --prefix services/pages",

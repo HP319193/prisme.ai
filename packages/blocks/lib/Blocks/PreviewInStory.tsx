@@ -1,5 +1,6 @@
 import { StretchContent } from '@prisme.ai/design-system';
 import { useState } from 'react';
+//@ts-ignore
 import { tw } from 'twind';
 import { BlockComponent } from '../BlockLoader';
 import { useBlock } from '../Provider';

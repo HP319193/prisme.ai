@@ -9,16 +9,16 @@ import { initWebsockets } from './websockets';
 import { initCleanupRoutes } from './cleanup';
 import { Subscriptions } from '../../services/events/Subscriptions';
 import { EventsStore } from '../../services/events/store';
-import { AccessManager } from '../../permissions';
+import { Cache } from '../../cache';
 
 export const init = (
   app: Application,
   httpServer: http.Server,
   eventsSubscription: Subscriptions,
   eventsStore: EventsStore,
-  accessManager: AccessManager
+  cache: Cache
 ) => {
-  const io = initWebsockets(httpServer, eventsSubscription);
+  const io = initWebsockets(httpServer, eventsSubscription, cache);
 
   const root = '/v2';
   app.use(`/sys/cleanup`, initCleanupRoutes(eventsStore));

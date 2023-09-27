@@ -7,7 +7,11 @@ export interface CacheDriver {
   getObject<T = object>(key: string): Promise<T | undefined>;
   setObject(key: string, value: object, opts?: SetOptions): Promise<any>;
 
-  addToSet(key: string, value: any | any[]): Promise<number>;
+  addToSet(
+    key: string,
+    value: any | any[],
+    opts?: { ttl?: number }
+  ): Promise<number>;
   isInSet(key: string, value: any): Promise<boolean>;
   listSet(key: string): Promise<any>;
 }
@@ -24,10 +28,15 @@ export interface SetOptions {
 
 export enum CacheKeyType {
   UserTopics = 'userTopics',
+  SessionSockets = 'sessionSockets',
 }
 type CacheKeyArguments = {
   [CacheKeyType.UserTopics]: {
     userId: string;
+    workspaceId: string;
+  };
+  [CacheKeyType.SessionSockets]: {
+    sessionId: string;
     workspaceId: string;
   };
 };
@@ -41,6 +50,11 @@ export function getCacheKey<T extends CacheKeyType>(
       const { userId, workspaceId } =
         opts as any as CacheKeyArguments[CacheKeyType.UserTopics];
       return `events:workspace:${workspaceId}:user:${userId}:topics`;
+    }
+    case CacheKeyType.SessionSockets: {
+      const { sessionId, workspaceId } =
+        opts as any as CacheKeyArguments[CacheKeyType.SessionSockets];
+      return `events:workspace:${workspaceId}:session:${sessionId}:sockets`;
     }
   }
 

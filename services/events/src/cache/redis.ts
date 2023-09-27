@@ -45,8 +45,20 @@ export default class RedisCache implements CacheDriver {
     return await this.set(key, raw, opts);
   }
 
-  async addToSet(key: string, value: any | any[]) {
-    return await this.client.sAdd(key, value);
+  async addToSet(
+    key: string,
+    value: any | any[],
+    { ttl }: { ttl?: number } = {}
+  ) {
+    if (!ttl) {
+      return await this.client.sAdd(key, value);
+    }
+    const result = await this.client
+      .multi()
+      .sAdd(key, value)
+      .expire(key, ttl)
+      .exec();
+    return result[0] as number;
   }
 
   async isInSet(key: string, value: any): Promise<boolean> {

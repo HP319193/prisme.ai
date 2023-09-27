@@ -402,6 +402,7 @@ If `session.myObjectVariable` equals to `{"mickey": "house"}` and `item.field` e
 * **user** : this context holds user-specific data and spans accross sessions    
 * **session** : this context holds session-specific data. It is automatically removed when the user session expires, as defined by Gateway API. In case of a manually set session, it expires **1 hour**  after the last set (configurable with **CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME** env var)
 * **run** : this context holds some technical information about current run, and is automatically removed **60 seconds** after the last automation run (configurable with **CONTEXT_RUN_EXPIRE_TIME** env var)  
+* **socket** : If user is connected through an events websocket, this context holds a temporary state local to this websocket, useful to separate state between multiple browser tabs for example.  This context automatically expires after 6h without any set  
 * **config** : this context holds current [workspace](../#config) or [AppInstance](../apps#config-variable) config 
 * **$workspace** : this read-only context holds current workspace definition, allowing to read any of its sections like installed apps config (i.e $workspace.imports.myApp.config)
 
@@ -512,6 +513,10 @@ If current user comes from an unauthenticated [**endpoint**](#url) call, its **s
       <td><b>run.correlationId</b></td>
       <td>Current run correlationId</td>
     </tr>    
+    <tr>
+      <td><b>run.socketId</b></td>
+      <td>Current socket id, if connected by websocket</td>
+    </tr>        
     <tr>
       <td><b>run.appSlug</b></td>
       <td>If running from an appInstance, current app slug</td>

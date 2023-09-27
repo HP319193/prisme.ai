@@ -1,7 +1,8 @@
-import { Broker } from '@prisme.ai/broker';
+import { Broker, PrismeEvent } from '@prisme.ai/broker';
 import _ from 'lodash';
 import {
   CONTEXT_RUN_EXPIRE_TIME,
+  CONTEXT_SOCKET_EXPIRE_TIME,
   CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
   MAXIMUM_SUCCESSIVE_CALLS,
   STUDIO_URL,
@@ -27,6 +28,7 @@ type RecursivePartial<T> = {
 export interface RunContext {
   depth: number; // Depth of current automation.
   correlationId: string;
+  socketId?: string;
   automationSlug?: string;
   date?: string; // ISO8601 date
   trigger?: Trigger; // Current call origin (event/endpoint/automation)
@@ -50,6 +52,7 @@ export interface PrismeaiSession {
   email?: string;
   authData: Prismeai.User['authData'];
   sessionId: string;
+  socketId?: string;
   expiresIn?: number;
   expires?: string;
   origin?: PrismeaiSession; // Set when session has been changed from runtime instructions
@@ -76,6 +79,7 @@ export interface Contexts {
   global: GlobalContext;
   user: UserContext;
   session: Record<string, any>;
+  socket: Record<string, any>;
   local: LocalContext;
   config: object;
   $workspace: Partial<Prismeai.DSUL>;
@@ -89,6 +93,7 @@ export enum ContextType {
   Global = 'global',
   User = 'user',
   Session = 'session',
+  Socket = 'socket',
   Config = 'config',
   Local = 'local',
 }
@@ -99,6 +104,7 @@ export const UserAccessibleContexts: ContextType[] = [
   ContextType.Global,
   ContextType.User,
   ContextType.Session,
+  ContextType.Socket,
   ContextType.Config,
   ContextType.Run,
 ];
@@ -133,7 +139,7 @@ export class ContextsManager {
     accessManager: AccessManager
   ) {
     this.workspaceId = ctx.workspaceId!;
-    this.session = session;
+    this.session = { ...session, socketId: ctx.socketId };
     this.correlationId = ctx.correlationId;
     this.cache = cache;
     this.depth = ctx.automationDepth || 0;
@@ -147,10 +153,12 @@ export class ContextsManager {
         id: session.userId,
       },
       session: {},
+      socket: {},
       config: {},
       run: {
         depth: this.depth,
         correlationId: ctx.correlationId!,
+        socketId: session.socketId,
         ip: ctx.ip,
       },
     };
@@ -218,6 +226,16 @@ export class ContextsManager {
       };
     }
 
+    if (!contexts || contexts.includes(ContextType.Socket)) {
+      fetchedContexts.socket = await this.cache.getObject(
+        this.cacheKey(ContextType.Socket)
+      );
+      this.contexts.socket = {
+        ...this.contexts?.socket,
+        ...fetchedContexts.socket,
+      };
+    }
+
     if (fetchedContexts.user) {
       this.accessManager = await this.accessManager.as({
         id: this.session?.userId!,
@@ -228,7 +246,7 @@ export class ContextsManager {
   }
 
   async save(context?: ContextType, ttl?: number) {
-    const { global, user, local: _, session } = this.contexts;
+    const { global, user, local: _, session, socket } = this.contexts;
 
     if (!context || context === ContextType.Global) {
       await this.cache.setObject(this.cacheKey(ContextType.Global), global);
@@ -246,6 +264,11 @@ export class ContextsManager {
         ttl:
           this.session?.expiresIn ||
           CONTEXT_UNAUTHENTICATED_SESSION_EXPIRE_TIME,
+      });
+    }
+    if (!context || context === ContextType.Socket) {
+      await this.cache.setObject(this.cacheKey(ContextType.Socket), socket, {
+        ttl: CONTEXT_SOCKET_EXPIRE_TIME,
       });
     }
 
@@ -279,12 +302,14 @@ export class ContextsManager {
   public async applyUpdateOpLogs(
     updates: ContextUpdateOpLog[],
     updateId: string,
-    sourceSessionId: string
+    eventSource: PrismeEvent['source']
   ) {
     if (this.alreadyProcessedUpdateIds.has(updateId)) {
       return;
     }
     this.alreadyProcessedUpdateIds.add(updateId);
+    const { sessionId: sourceSessionId, socketId: sourceSocketId } =
+      eventSource;
     for (const update of updates) {
       // For user/session op logs, check that they come from the same sessionId
       if (
@@ -295,6 +320,13 @@ export class ContextsManager {
       ) {
         continue;
       }
+      if (
+        update.context === ContextType.Socket &&
+        sourceSocketId !== this.session?.socketId
+      ) {
+        continue;
+      }
+
       await this.set(update.fullPath, update.value, {
         persist: false,
         type: update.type,
@@ -317,6 +349,14 @@ export class ContextsManager {
         this.session?.sessionId || this.session?.userId || this.correlationId;
       return `contexts:${this.workspaceId}:session:${sessionId}`;
     }
+    if (context === ContextType.Socket) {
+      const socketId =
+        this.session?.socketId ||
+        this.session?.sessionId ||
+        this.session?.userId ||
+        this.correlationId;
+      return `contexts:${this.workspaceId}:socket:${socketId}`;
+    }
     throw new Error(`Unknown context '${context} inside context store'`);
   }
 
@@ -337,6 +377,7 @@ export class ContextsManager {
       depth: this.depth,
       date: new Date().toISOString(),
       trigger: this.trigger,
+      socketId: this.session?.socketId,
     };
   }
 
@@ -524,6 +565,7 @@ export class ContextsManager {
           this.session = {
             userId: value,
             sessionId: value,
+            socketId: this.session?.origin?.socketId || this.session?.socketId!,
             authData: {},
             origin: this.session?.origin || this.session,
           };
@@ -544,6 +586,7 @@ export class ContextsManager {
             sessionId: value,
             authData: {},
             ...targetSession,
+            socketId: this.session?.origin?.socketId || this.session?.socketId!,
             origin: this.session?.origin || this.session,
           };
           this.contexts.session = { id: value };

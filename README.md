@@ -31,6 +31,15 @@ this monorepo.
 Please check our [guidelines](https://docs.eda.prisme.ai/en/contributing/) if you wish to
 contribute! 🙌
 
+## Translations
+
+You can translate everything by push a contribution with any alterations of translations files located in :
+
+* services/console/public/locales/<language identifier>/*.json
+* services/api-gateway/locales/<language identifier>.json
+
+New language can be added by creating new files from english and modifying services/console/next-i18next.config.js
+
 # Acknowledgments
 
 🔧 This project is tested with BrowserStack.

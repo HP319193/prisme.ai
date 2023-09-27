@@ -81,9 +81,6 @@ export async function init(app: Application) {
   app.use(
     expressSession({
       store: sessionsStore,
-      //@ts-ignore
-      sessionid: (req: express.Request) =>
-        !req.user && req.headers[syscfg.SESSION_HEADER],
       saveUninitialized: false,
       secret: syscfg.SESSION_COOKIES_SIGN_SECRET,
       resave: false,

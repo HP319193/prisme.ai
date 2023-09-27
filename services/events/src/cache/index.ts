@@ -14,6 +14,17 @@ export interface Cache extends CacheDriver {
     userId: string,
     topic: string
   ): Promise<number>;
+
+  registerSocketId(
+    workspaceId: string,
+    sessionId: string,
+    socketId: string
+  ): Promise<void>;
+  isKnownSocketId(
+    workspaceId: string,
+    sessionId: string,
+    socketId: string
+  ): Promise<boolean>;
 }
 
 export function buildCache(opts: CacheOptions): Cache {
@@ -40,6 +51,31 @@ export function buildCache(opts: CacheOptions): Cache {
     async listUserTopics(workspaceId: string, userId: string) {
       return await this.listSet(
         getCacheKey(CacheKeyType.UserTopics, { workspaceId, userId })
+      );
+    }
+
+    async registerSocketId(
+      workspaceId: string,
+      sessionId: string,
+      socketId: string
+    ): Promise<void> {
+      await this.addToSet(
+        getCacheKey(CacheKeyType.SessionSockets, { workspaceId, sessionId }),
+        socketId,
+        {
+          ttl: 3600 * 12,
+        }
+      );
+    }
+
+    async isKnownSocketId(
+      workspaceId: string,
+      sessionId: string,
+      socketId: string
+    ): Promise<boolean> {
+      return await this.isInSet(
+        getCacheKey(CacheKeyType.SessionSockets, { workspaceId, sessionId }),
+        socketId
       );
     }
   };

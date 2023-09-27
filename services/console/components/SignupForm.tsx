@@ -17,6 +17,7 @@ import Storage from '../utils/Storage';
 
 interface SignupFormProps {
   onSignup?: (user: Prismeai.User) => void;
+  redirect?: string;
 }
 
 interface Values {
@@ -27,7 +28,10 @@ interface Values {
   cgu: boolean;
 }
 
-export const SignupForm = ({ onSignup }: SignupFormProps) => {
+export const SignupForm = ({
+  onSignup,
+  redirect = `https://${window.location.host}`,
+}: SignupFormProps) => {
   const {
     t,
     i18n: { language },
@@ -51,7 +55,7 @@ export const SignupForm = ({ onSignup }: SignupFormProps) => {
 
   const submit = useCallback(
     async ({ email, password, firstName, lastName }: Values) => {
-      Storage.set('redirect-once-signup', `https://${window.location.host}`);
+      Storage.set('redirect-once-signup', redirect);
       const user = await signup(email, password, firstName, lastName, language);
       if (!user) return;
       if (onSignup) return onSignup(user);
@@ -62,7 +66,7 @@ export const SignupForm = ({ onSignup }: SignupFormProps) => {
         }).toString()}`
       );
     },
-    [signup, language, onSignup, push]
+    [redirect, signup, language, onSignup, push]
   );
 
   const validate = (values: Values) => {

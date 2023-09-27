@@ -86,22 +86,23 @@ backend_npm_install:
 .npm_test:
   stage: test
   script:
-    - >
-      if ! [[ -d node_modules/ ]] ; then
-        BUILD_PACKAGES=0 npm ci
-      fi
+    # - >
+    #   if ! [[ -d node_modules/ ]] ; then
+    #     BUILD_PACKAGES=0 npm ci $OPTIONS
+    #   fi
+    - BUILD_PACKAGES=0 npm ci $OPTIONS
     - npm run build:packages
     - npm test -- $DIRECTORY --coveragePathIgnorePatterns "./packages/*"
   coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
   artifacts:
     paths:
       - coverage
-  cache: &cache
-    key:
-      files: &lockFiles
-        - package-lock.json
-    paths:
-      - node_modules/
+  # cache: &cache
+  #   key:
+  #     files: &lockFiles
+  #       - package-lock.json
+  #   paths:
+  #     - node_modules/
 
 .build_docker:
   stage: build_docker
@@ -185,6 +186,7 @@ console_test:
     - !reference [console_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$CONSOLE_DIRECTORY
+    - export OPTIONS="--include-workspace-root -w services/console -w packages/"
 
 console_check_translations:
   stage: test
@@ -254,6 +256,7 @@ pages_test:
     - !reference [pages_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$PAGES_DIRECTORY
+    - export OPTIONS="--include-workspace-root -w services/pages -w packages/"
 
 pages_check_translations:
   stage: test
@@ -306,6 +309,7 @@ workspaces_test:
     - !reference [workspaces_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$WORKSPACES_DIRECTORY/src
+    - export OPTIONS="--include-workspace-root -w services/workspaces -w packages/"
 
 workspaces_build_docker:
   extends: .build_docker
@@ -354,6 +358,7 @@ runtime_test:
     - !reference [runtime_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$RUNTIME_DIRECTORY
+    - export OPTIONS="--include-workspace-root -w services/runtime -w packages/"
 
 runtime_build_docker:
   extends: .build_docker
@@ -430,6 +435,7 @@ events_test:
     - !reference [events_build_docker, rules]
   before_script:
     - export DIRECTORY=services/$EVENTS_DIRECTORY
+    - export OPTIONS="--include-workspace-root -w services/events -w packages/"
 
 events_build_docker:
   extends: .build_docker

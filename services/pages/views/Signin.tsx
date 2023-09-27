@@ -13,8 +13,9 @@ export const Signin = () => {
     async function validate() {
       if (!validationToken || typeof validationToken !== 'string') return;
       await validateMail(validationToken);
-      setTimeout(() => {
-        initAuthentication();
+      setTimeout(async () => {
+        const url = await initAuthentication();
+        window.location.assign(url);
       }, 500);
     }
     validate();

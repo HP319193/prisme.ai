@@ -14,6 +14,11 @@ const schema: Schema = {
       title: 'pages.blocks.signin.settings.up.label',
       description: 'pages.blocks.signin.settings.up.description',
     },
+    redirect: {
+      type: 'string',
+      title: 'pages.blocks.signin.settings.redirect.label',
+      description: 'pages.blocks.signin.settings.redirect.description',
+    },
     ...commonSchema.properties,
   },
 };
