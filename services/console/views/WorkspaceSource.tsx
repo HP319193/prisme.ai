@@ -42,6 +42,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
       createdAt,
       createdBy,
       updatedAt,
+      blocks,
       ...workspace
     },
   } = useWorkspace();
