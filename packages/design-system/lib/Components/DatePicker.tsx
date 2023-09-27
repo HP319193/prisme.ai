@@ -25,7 +25,7 @@ const DatePicker = ({
 
   return (
     <AntdDatePicker
-      format={[format]}
+      format={format}
       value={_value}
       onChange={onChange}
       className={`h-[2.5rem] basis-[2.5rem] flex flex-1 ${className}`}
