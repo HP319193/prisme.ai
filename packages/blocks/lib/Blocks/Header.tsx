@@ -33,13 +33,14 @@ const isAction = (
 
 interface MenuItemProps extends Pick<ActionProps, 'Link' | 'events'> {
   item: HeaderConfig['nav'][number];
+  onClick?: () => void;
 }
-const MenuItem = ({ item, events, Link }: MenuItemProps) => {
+const MenuItem = ({ item, events, Link, onClick }: MenuItemProps) => {
   const {
     utils: { BlockLoader },
   } = useBlocks();
   if (isAction(item)) {
-    return <Action {...item} events={events} Link={Link} />;
+    return <Action {...item} events={events} Link={Link} onClick={onClick} />;
   }
   return <BlockLoader name="BlocksList" config={item} />;
 };
@@ -121,7 +122,12 @@ export const Header = ({
             >
               {nav.map((item, k) => (
                 <div key={k} className="pr-block__menu-item">
-                  <MenuItem item={item} events={events} Link={Link} />
+                  <MenuItem
+                    item={item}
+                    events={events}
+                    Link={Link}
+                    onClick={toggle}
+                  />
                 </div>
               ))}
               <button
