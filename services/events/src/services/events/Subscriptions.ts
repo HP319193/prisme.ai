@@ -21,7 +21,8 @@ type UserId = string;
 const searchFilters: {
   [k in keyof Required<SearchOptions>]: (
     event: PrismeEvent,
-    opts: SearchOptions[k]
+    opts: SearchOptions[k],
+    ctx: { socketId?: string }
   ) => boolean;
 } = {
   text: (event, value) => {
@@ -38,13 +39,30 @@ const searchFilters: {
     typeof depth === 'number' && event.source?.appInstanceDepth
       ? event.source?.appInstanceDepth <= depth
       : true,
-  payloadQuery: function matchQuery(event, query): boolean {
+  payloadQuery: function matchQuery(
+    event,
+    query,
+    ctx?: { socketId?: string }
+  ): boolean {
     if (!query) {
       return true;
     }
     if (Array.isArray(query)) {
-      return query.some((query) => matchQuery(event, query));
+      return query.some((query) => matchQuery(event, query, ctx));
     }
+    const { currentSocket: currentSocketOnly = true } = event?.target || {};
+    // By default, events coming from a socket are not sent to others sockets listening to the same session
+    if (
+      'source.sessionId' in query &&
+      !('source.socketId' in query) &&
+      ctx?.socketId &&
+      event?.source?.socketId &&
+      currentSocketOnly &&
+      event?.source?.socketId !== ctx?.socketId
+    ) {
+      return false; // Do not send
+    }
+
     return Object.entries(query)
       .map(([k, expected]) => {
         const found = extractObjectsByPath(event, k);
@@ -210,28 +228,13 @@ export class Subscriptions {
     if (!searchOptions || !Object.keys(searchOptions).length) {
       return true;
     }
-    const sessionListener = Array.isArray(searchOptions['payloadQuery'])
-      ? searchOptions['payloadQuery'].find((cur) => cur['source.sessionId'])
-      : 'source.sessionId' in (searchOptions?.['payloadQuery'] || {}) &&
-        searchOptions?.['payloadQuery'];
-    // By default, events coming from a socket are not sent to others sockets listening to the same session
-    // Disable this behaviour if the event has another target (i.e userTopic)
-    const currentSocketOnly =
-      data?.target?.currentSocket === true ||
-      Object.keys(data?.target || {}).length == 0;
-    if (
-      sessionListener &&
-      !('source.socketId' in sessionListener) &&
-      data?.source?.socketId &&
-      currentSocketOnly &&
-      data?.source?.socketId !== socketId
-    ) {
-      return false; // Do not send
-    }
+
     return Object.entries(searchOptions)
       .map(([k, v]) =>
         (<any>searchFilters)[k]?.apply
-          ? searchFilters[k as keyof SearchOptions](data, v as any)
+          ? searchFilters[k as keyof SearchOptions](data, v as any, {
+              socketId,
+            })
           : true
       )
       .every(Boolean);
