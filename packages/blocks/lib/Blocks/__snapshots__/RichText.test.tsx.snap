@@ -29,6 +29,18 @@ exports[`should render 1`] = `
 </div>
 `;
 
+exports[`should render without crashing 1`] = `
+<div
+  className="pr-block-rich-text  __block-unique-id"
+>
+  <div>
+    <a
+      div=""
+    />
+  </div>
+</div>
+`;
+
 exports[`should render without markdown 1`] = `
 <div
   className="pr-block-rich-text  __block-unique-id"

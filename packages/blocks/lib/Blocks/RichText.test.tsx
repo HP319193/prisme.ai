@@ -49,3 +49,18 @@ it('should render without markdown', () => {
   );
   expect(root.toJSON()).toMatchSnapshot();
 });
+
+it('should render without crashing', () => {
+  const content = '<div><a</div>';
+  const root = renderer.create(
+    <BlocksProvider
+      components={{ Link, Loading, DownIcon, SchemaForm }}
+      externals={{}}
+    >
+      <BlockProvider config={{ content, markdown: false }}>
+        <RichText />
+      </BlockProvider>
+    </BlocksProvider>
+  );
+  expect(root.toJSON()).toMatchSnapshot();
+});

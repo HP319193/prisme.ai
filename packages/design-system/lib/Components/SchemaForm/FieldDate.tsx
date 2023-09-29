@@ -14,7 +14,8 @@ function isUiOptionsDate(
 export const FieldDate = (props: FieldProps) => {
   const field = useField(props.name);
   const { 'ui:options': uiOptions } = props.schema;
-
+  const dateOptions =
+    uiOptions && isUiOptionsDate(uiOptions) ? uiOptions.date : {};
   return (
     <FieldContainer {...props} className="pr-form-date">
       <Label
@@ -27,10 +28,17 @@ export const FieldDate = (props: FieldProps) => {
       <div className="pr-form-date__input pr-form-input">
         <DatePicker
           stringValue={field.input.value}
-          onChange={(date) => field.input.onChange(date && date.toDate())}
-          {...(uiOptions && isUiOptionsDate(uiOptions)
-            ? uiOptions.date
-            : undefined)}
+          onChange={(date) => {
+            if (!date) return;
+            const timezoneOffset = date.toDate().getTimezoneOffset() / 60;
+            const hours = `${timezoneOffset > 0 ? '-' : '+'}${Math.abs(
+              timezoneOffset
+            )}`.padStart(2, '0');
+            field.input.onChange(
+              date.utcOffset(`${hours}:00`, true).toString()
+            );
+          }}
+          {...dateOptions}
           className="!flex-[unset]"
           placeholder={props.schema.placeholder}
         />

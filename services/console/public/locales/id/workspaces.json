@@ -1221,7 +1221,7 @@
             "label": "Interpreting content as Markdown",
             "description": "Your content can contain both HTML and Markdown for easy formatting. However, if you prefer to keep it unaltered by the Markdown rendering engine, enable this option."
           },
-          "container": {
+          "tag": {
             "label": "HTML tag containing",
             "description": "Your rich text will be contained in a <div> tag by default. You can choose another one by indicating it here."
           }

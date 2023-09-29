@@ -6,7 +6,7 @@
     "welcome": {
       "title": "Bienvenue {{name}},",
       "title_noname": "Bienvenue,",
-      "content": "Voici votre galerie, retrouvez-y nos suggestions pour vous aider a démarrer un workspace ou recherchez parmis vos workspaces déjà créés.",
+      "content": "Voici votre galerie, retrouvez-y nos suggestions pour vous aider à démarrer un workspace ou recherchez parmi vos workspaces déjà créés.",
       "help": "<a href=\"https://docs.eda.prisme.ai/fr\">Besoin d’aide ?</a>"
     },
     "suggestions": {
@@ -1221,7 +1221,7 @@
             "label": "Interpréter le contenu comme du Markdown",
             "description": "Votre contenu peut contenir du HTML et du Markdown pour faciliter sa mise en page. Cependant, si vous préférez qu'il reste inaltéré par le moteur de rendu Markdown, activez cette option."
           },
-          "container": {
+          "tag": {
             "label": "Balise HTML contenant",
             "description": "Votre texte enrichi sera contenu par défaut dans une balise <div>. Vous pouvez en choisir une autre en l'indiquant ici."
           }
