@@ -178,7 +178,9 @@ export const RichText = ({
       : typeof text === 'object'
       ? text
       : `${text}`;
-  const Container = tag as keyof JSX.IntrinsicElements;
+
+  const Container =
+    typeof tag === 'string' ? (tag as keyof JSX.IntrinsicElements) : null;
   let child: string | JSX.Element | JSX.Element[] = '';
   try {
     child = parser(mustache.render(toRender, values), options);
