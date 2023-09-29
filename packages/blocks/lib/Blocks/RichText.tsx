@@ -165,6 +165,11 @@ export const RichText = ({
             />
           );
         default:
+          // This fixes crashes when html is invalid and tags contains invalid
+          // characters
+          if (!domNode.name.match(/^[a-z\-]+$/)) {
+            domNode.name = domNode.name.replace(/[^a-z\-]/, '');
+          }
           return domNode;
       }
     },
