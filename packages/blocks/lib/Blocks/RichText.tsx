@@ -165,6 +165,11 @@ export const RichText = ({
             />
           );
         default:
+          // This fixes crashes when html is invalid and tags contains invalid
+          // characters
+          if (!domNode.name.match(/^[a-z\-]+$/)) {
+            domNode.name = domNode.name.replace(/[^a-z\-]/, '');
+          }
           return domNode;
       }
     },
@@ -178,7 +183,9 @@ export const RichText = ({
       : typeof text === 'object'
       ? text
       : `${text}`;
-  const Container = tag as keyof JSX.IntrinsicElements;
+
+  const Container =
+    typeof tag === 'string' ? (tag as keyof JSX.IntrinsicElements) : null;
   let child: string | JSX.Element | JSX.Element[] = '';
   try {
     child = parser(mustache.render(toRender, values), options);

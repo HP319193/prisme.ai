@@ -209,6 +209,7 @@ export const Carousel = ({
                       ? 'pr-block-carousel__indicator--current'
                       : ''
                   }`}
+                  aria-label={`display page ${k}`}
                   onClick={() => scrollTo(k)}
                 />
               ))}
@@ -220,6 +221,7 @@ export const Carousel = ({
                 <button
                   onClick={scroll(-1)}
                   className="pr-block-carousel__arrow__button"
+                  aria-label="display previous page"
                 >
                   <ArrowLeftOutlined className="pr-block-carousel__arrow__icon" />
                 </button>
@@ -230,6 +232,7 @@ export const Carousel = ({
                 <button
                   onClick={scroll(1)}
                   className="pr-block-carousel__arrow__button"
+                  aria-label="display next page"
                 >
                   <ArrowRightOutlined className="pr-block-carousel__arrow__icon" />
                 </button>

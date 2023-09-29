@@ -66,11 +66,10 @@ const schema: Schema = {
       description: 'pages.blocks.richtext.settings.markdown.description',
       default: true,
     },
-    container: {
+    tag: {
       type: 'string',
-      title: 'pages.blocks.richtext.settings.container.label',
-      description: 'pages.blocks.richtext.settings.container.description',
-      default: true,
+      title: 'pages.blocks.richtext.settings.tag.label',
+      description: 'pages.blocks.richtext.settings.tag.description',
     },
     ...commonSchema.properties,
   },
