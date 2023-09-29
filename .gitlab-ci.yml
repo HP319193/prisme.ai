@@ -161,10 +161,7 @@ backend_npm_install:
 console_check:
   stage: test
   script:
-    - >
-      if ! [[ -d node_modules/ ]] ; then
-        BUILD_PACKAGES=0 npm ci
-      fi
+    - BUILD_PACKAGES=0 npm ci --include-workspace-root -w services/console -w packages/
     - npm run build:packages
     - npm run check:console
   needs: []
@@ -231,10 +228,7 @@ console_deploy:
 pages_check:
   stage: test
   script:
-    - >
-      if ! [[ -d node_modules/ ]] ; then
-        BUILD_PACKAGES=0 npm ci
-      fi
+    - BUILD_PACKAGES=0 npm ci --include-workspace-root -w services/pages -w packages/
     - npm run build:packages
     - npm run check:pages
   needs: []
