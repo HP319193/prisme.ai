@@ -1,5 +1,4 @@
 import { Schema } from '@prisme.ai/design-system';
-import commonSchema from './commonSchema';
 import blocksListSchema from './BlocksList';
 
 const schema: Schema = {
@@ -33,7 +32,6 @@ const schema: Schema = {
         'pages.blocks.carousel.settings.displayIndicators.description',
     },
     ...blocksListSchema.properties,
-    ...commonSchema.properties,
   },
 };
 

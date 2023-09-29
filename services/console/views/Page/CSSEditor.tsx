@@ -27,6 +27,7 @@ interface CSSEditorProps extends FieldProps {
   description?: string;
   reset?: string;
   defaultStyles?: string;
+  opened?: true;
 }
 
 export const CSSEditor = ({
@@ -36,6 +37,7 @@ export const CSSEditor = ({
   description = 'pages.details.styles.description',
   reset = 'pages.details.styles.reset.description',
   defaultStyles = _defaultStyles,
+  opened,
 }: CSSEditorProps) => {
   const { t } = useTranslation('workspaces');
   const field = useField(name);
@@ -81,6 +83,7 @@ export const CSSEditor = ({
   const items = useMemo(
     () => [
       {
+        key: 'csseditor',
         label: (
           <div>
             <div className="flex w-full justify-between items-center">
@@ -119,6 +122,7 @@ export const CSSEditor = ({
             )}
           </div>
         ),
+        opened,
       },
     ],
     [
@@ -127,6 +131,7 @@ export const CSSEditor = ({
       field.input.onChange,
       field.input.value,
       label,
+      opened,
       reset,
       reseting,
       t,

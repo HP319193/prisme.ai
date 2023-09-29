@@ -1,6 +1,5 @@
 import { builtinBlocks } from '@prisme.ai/blocks';
 import { Schema } from '@prisme.ai/design-system';
-import { getCommonSchema } from './commonSchema';
 import eventOrLink from './eventOrLink';
 
 // text, action, tag, unselected, variant = 'default'
@@ -61,7 +60,6 @@ const schema: Schema = {
         },
       },
     },
-    ...getCommonSchema(builtinBlocks.Buttons.styles || ''),
   },
 };
 

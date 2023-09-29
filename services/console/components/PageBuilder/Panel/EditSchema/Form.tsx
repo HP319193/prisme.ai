@@ -4,7 +4,6 @@ import { useField } from 'react-final-form';
 import { useTranslation } from 'next-i18next';
 import Properties from '../../../SchemaFormBuilder/Properties';
 import { Button } from 'antd';
-import { getCommonSchema } from './commonSchema';
 import { builtinBlocks } from '@prisme.ai/blocks';
 
 const SchemaEditor = ({ name }: FieldProps) => {
@@ -93,7 +92,6 @@ const schema: Schema = {
       title: 'pages.blocks.form.disabledSubmit.label',
       description: 'pages.blocks.form.disabledSubmit.description',
     },
-    ...getCommonSchema(builtinBlocks.Form.styles || ''),
   },
 };
 
