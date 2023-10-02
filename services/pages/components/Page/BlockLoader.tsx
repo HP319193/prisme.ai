@@ -33,20 +33,12 @@ function getBlockName(name: string) {
 const recursiveConfigContext = createContext<Record<string, any>>({});
 const useRecursiveConfigContext = () => useContext(recursiveConfigContext);
 
-const automationCache = new Map<string, Promise<any>>();
 async function callAutomation(
   workspaceId: string,
   automation: string,
   query: any
 ) {
-  const key = JSON.stringify({ workspaceId, automation, query });
-  if (!automationCache.has(key)) {
-    automationCache.set(
-      key,
-      await api.callAutomation(workspaceId, automation, query)
-    );
-  }
-  return automationCache.get(key);
+  return await api.callAutomation(workspaceId, automation, query);
 }
 
 export const BlockLoader: TBlockLoader = ({
@@ -179,9 +171,19 @@ export const BlockLoader: TBlockLoader = ({
   }, []);
 
   const redirect = useRedirect();
+  const automationLoadingState = useRef(-1);
   const initWithAutomation = useCallback(async () => {
-    if (!user || !page || !page.workspaceId || !loaded) return;
+    if (
+      !user ||
+      !page ||
+      !page.workspaceId ||
+      !loaded ||
+      automationLoadingState.current > -1
+    )
+      return;
+
     try {
+      automationLoadingState.current = 0;
       const urlSearchParams = new URLSearchParams(window.location.search);
       const query = {
         pageSlug: page.slug,
@@ -196,6 +198,7 @@ export const BlockLoader: TBlockLoader = ({
       redirect(newConfig);
       setConfig((prev = {}) => ({ ...prev, ...newConfig }));
     } catch {}
+    automationLoadingState.current = 1;
   }, [automation, loaded, page, redirect, user]);
 
   useEffect(() => {
