@@ -55,7 +55,7 @@ export function findSecretValues(
   secretSet?: Set<string>
 ): Set<string> {
   if (typeof payload !== 'object') {
-    return payload;
+    return secretSet || new Set();
   }
 
   if (!secretSet) {
