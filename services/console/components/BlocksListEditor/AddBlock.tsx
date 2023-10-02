@@ -7,7 +7,6 @@ interface AddBlockProps {
   children: ReactNode;
 }
 const AddBlock = ({ onClick, children }: AddBlockProps) => {
-  const { t } = useTranslation('workspaces');
   const labelRef = useRef<HTMLButtonElement>(null);
   const [maxWidth, setMaxWidth] = useState(0);
   const [width, setWidth] = useState('auto');
@@ -31,7 +30,7 @@ const AddBlock = ({ onClick, children }: AddBlockProps) => {
       />
       <button
         ref={labelRef}
-        className="relative flex flex-row bg-accent p-1 rounded transition-all whitespace-nowrap overflow-hidden"
+        className="relative flex flex-row !bg-accent p-1 rounded transition-all whitespace-nowrap overflow-hidden"
         style={{
           width,
           boxShadow: '0 0 0px 10px inherit',
@@ -39,6 +38,7 @@ const AddBlock = ({ onClick, children }: AddBlockProps) => {
         onMouseEnter={() => setWidth(`${maxWidth}px`)}
         onMouseLeave={() => setWidth(`${26}px`)}
         onClick={onClick}
+        type="button"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={plus.src} alt="" className="w-[13px] h-[13px] m-1" />
