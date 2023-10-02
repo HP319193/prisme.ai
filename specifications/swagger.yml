@@ -2665,8 +2665,11 @@ components:
         payload:
           type: object
           required:
+            - updateId
             - updates
           properties:
+            updateId:
+              type: string
             updates:
               type: array
               items:

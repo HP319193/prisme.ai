@@ -278,24 +278,25 @@ export class ContextsManager {
 
     this.opLogs = [];
     if (updates.length) {
-      const updatedEvent = await this.broker.send<
-        Prismeai.UpdatedContexts['payload']
-      >(
-        EventType.UpdatedContexts,
-        {
-          updates,
-        },
-        {},
-        {
-          options: {
-            persist: false,
+      const updateId =
+        'update-' + Date.now() + '-' + (Math.random() * 100000).toFixed(0);
+      this.alreadyProcessedUpdateIds.add(updateId);
+      this.broker
+        .send<Prismeai.UpdatedContexts['payload']>(
+          EventType.UpdatedContexts,
+          {
+            updateId,
+            updates,
           },
-        },
-        true
-      );
-      if (updatedEvent !== false) {
-        this.alreadyProcessedUpdateIds.add(updatedEvent.id);
-      }
+          {},
+          {
+            options: {
+              persist: false,
+            },
+          },
+          true
+        )
+        .catch(logger.error);
     }
   }
 
