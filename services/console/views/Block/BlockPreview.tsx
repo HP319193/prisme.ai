@@ -1,7 +1,15 @@
 import { Block } from '../../providers/Block';
 import { useWorkspace } from '../../providers/Workspace';
 import getConfig from 'next/config';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { SchemaForm, Tooltip } from '@prisme.ai/design-system';
 import { getDefaults } from './getDefaults';
 import { useTranslation } from 'next-i18next';
@@ -11,10 +19,39 @@ import {
   MobileOutlined,
   TabletOutlined,
 } from '@ant-design/icons';
+import { useContext } from '../../utils/useContext';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = `${global?.location?.origin}/pages` },
 } = getConfig();
+interface BlockPreviewContext {
+  reload: () => void;
+  mounted: boolean;
+}
+
+const blockPreviewContext = createContext<BlockPreviewContext | undefined>(
+  undefined
+);
+export const useBlockPreview = () =>
+  useContext<BlockPreviewContext>(blockPreviewContext);
+
+interface BlockPreviewProviderProps {
+  children: ReactNode;
+}
+export const BlockPreviewProvider = ({
+  children,
+}: BlockPreviewProviderProps) => {
+  const [mounted, setMounted] = useState(true);
+  const reload = useCallback(() => {
+    setMounted(false);
+    setTimeout(() => setMounted(true), 1);
+  }, []);
+  return (
+    <blockPreviewContext.Provider value={{ mounted, reload }}>
+      {children}
+    </blockPreviewContext.Provider>
+  );
+};
 
 interface BlockPreviewProps extends Block {}
 
@@ -28,6 +65,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
   const { t } = useTranslation('workspaces');
   const { workspace } = useWorkspace();
   const [width, setWidth] = useState<'full' | 'tablet' | 'mobile'>('full');
+  const { mounted } = useBlockPreview();
 
   useEffect(() => {
     Storage.set(storageKey, values);
@@ -96,18 +134,20 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
     return schema;
   }, [schema, t]);
 
-  const [mounted, setMounted] = useState(true);
+  const [formMounted, setFormMounted] = useState(true);
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center">
-        <iframe
-          ref={iframeRef}
-          className={`flex flex-1 ${width === 'full' ? 'w-full' : ''}
+        {mounted && (
+          <iframe
+            ref={iframeRef}
+            className={`flex flex-1 ${width === 'full' ? 'w-full' : ''}
             ${width === 'tablet' ? 'w-[800px] shadow-lg' : ''}
             ${width === 'mobile' ? 'w-[420px] shadow-lg' : ''}`}
-          src={`${window.location.protocol}//${slug}${PAGES_HOST}/__preview/block`}
-        />
+            src={`${window.location.protocol}//${slug}${PAGES_HOST}/__preview/block`}
+          />
+        )}
       </div>
       <div className="flex pb-6 relative">
         <div className="absolute right-0 m-2 z-10 justify-center">
@@ -148,7 +188,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
             </button>
           </Tooltip>
         </div>
-        {cleanedSchema && cleanedSchema.type && mounted && (
+        {cleanedSchema && cleanedSchema.type && formMounted && (
           <SchemaForm
             schema={cleanedSchema}
             onChange={setValues}
@@ -157,9 +197,9 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
                 key="reset"
                 className="absolute bottom-2 right-4 text-sm"
                 onClick={async () => {
-                  setMounted(false);
+                  setFormMounted(false);
                   await setValues(getDefaults(schema || {}));
-                  setMounted(true);
+                  setFormMounted(true);
                 }}
               >
                 {t('blocks.preview.config.reset')}
