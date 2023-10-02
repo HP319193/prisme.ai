@@ -34,7 +34,9 @@ const Template: Story<SchemaFormProps> = (props) => {
       ></style>
       <SchemaForm
         {...props}
-        initialValues={props.initialValues}
+        initialValues={value}
+        onSubmit={setValue}
+        onChange={setValue}
         locales={{
           freeAdditionalPropertiesLabel: 'Free additional properties',
         }}
