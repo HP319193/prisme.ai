@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import BlocksListEditor from '../BlocksListEditor';
 
 interface PageBuilderProps {
@@ -7,10 +7,13 @@ interface PageBuilderProps {
 }
 
 export const PageBuilder = ({ value, onChange }: PageBuilderProps) => {
-  const pageAsBlocksList = {
-    slug: 'BlocksList',
-    blocks: value,
-  };
+  const pageAsBlocksList = useMemo(
+    () => ({
+      slug: 'BlocksList',
+      blocks: value,
+    }),
+    [value]
+  );
 
   const onPageBlocksChange = useCallback(
     ({ blocks }) => {
