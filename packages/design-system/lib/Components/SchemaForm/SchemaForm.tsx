@@ -4,6 +4,7 @@ import {
   MutableRefObject,
   ReactElement,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
 } from 'react';
@@ -27,6 +28,7 @@ import FieldRadio from './FieldRadio';
 import FieldText from './FieldText';
 import { OnChange } from 'react-final-form-listeners';
 import { FormApi } from 'final-form';
+import equal from 'fast-deep-equal';
 
 export interface SchemaFormProps {
   schema: Schema;
@@ -59,6 +61,13 @@ export const SchemaForm = ({
 }: SchemaFormProps) => {
   if (!schema) return null;
   const values = useRef({ values: initialValues });
+
+  const prevInitialValues = useRef(initialValues);
+  useEffect(() => {
+    if (equal(initialValues, prevInitialValues.current)) return;
+    prevInitialValues.current = initialValues;
+    values.current = { values: initialValues };
+  }, [initialValues]);
 
   const onSubmitHandle = useCallback(
     async (values: any) => {
