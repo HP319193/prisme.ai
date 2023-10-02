@@ -307,7 +307,7 @@ export const PageRenderer = ({
                     ),
                   },
                 ]}
-                value={(value.blocks || []).length === 0 ? 1 : viewMode}
+                value={viewMode}
                 className="pr-segmented-accent"
                 onChange={(v) => setViewMode(+v)}
               />
