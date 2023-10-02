@@ -346,7 +346,11 @@ export const PageRenderer = ({
             displayEditor ? '' : 'translate-x-full'
           }`}
         >
-          <PageBuilder value={value.blocks} onChange={saveBlocks} />
+          <PageBuilder
+            key={value.id}
+            value={value.blocks}
+            onChange={saveBlocks}
+          />
         </div>
       </div>
     </>

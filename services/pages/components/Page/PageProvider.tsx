@@ -36,7 +36,7 @@ export const PageProvider: FC<PageProviderProps> = ({
     error || undefined
   );
   const { events } = usePageEvents(page);
-  usePageParent(events);
+  usePageParent(events, setPage);
 
   return (
     <pageContext.Provider

@@ -94,7 +94,7 @@ export const usePageEvents = (page: Prismeai.Page | null) => {
     return () => {
       offs.forEach((off) => off());
     };
-  }, [events, page, push]);
+  }, [events, page, push, redirect]);
 
   return { events };
 };
