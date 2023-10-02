@@ -145,21 +145,6 @@ export const PageRenderer = ({
     });
   }, [shareOpen, trackEvent]);
 
-  useEffect(() => {
-    const listener = (e: KeyboardEvent) => {
-      if (e.code === 'KeyR' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        reload();
-      }
-    };
-    window.addEventListener('keydown', listener);
-    return () => {
-      window.removeEventListener('keydown', listener);
-    };
-  }, [reload]);
-
-  const displayEditor = (value.blocks || []).length === 0 || viewMode === 1;
-
   return (
     <>
       <Head>
@@ -343,7 +328,7 @@ export const PageRenderer = ({
         />
         <div
           className={`absolute top-0 bottom-0 left-0 right-0 bg-white transition-transform ${
-            displayEditor ? '' : 'translate-x-full'
+            viewMode === 1 ? '' : 'translate-x-full'
           }`}
         >
           <PageBuilder
