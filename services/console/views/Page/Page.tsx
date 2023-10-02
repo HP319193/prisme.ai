@@ -16,6 +16,10 @@ import {
   PagePreviewProvider,
   usePagePreview,
 } from '../../components/PagePreview';
+import {
+  getBackTemplateDots,
+  removeTemplateDots,
+} from '../../utils/templatesInBlocks';
 
 const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -27,10 +31,11 @@ const Page = () => {
     workspace: { id: workspaceId, pages = {} },
     createPage,
   } = useWorkspace();
-  const [value, setValue] = useState(page);
+  const [value, setValue] = useState(removeTemplateDots(page));
   const [viewMode, setViewMode] = useState(0);
   useEffect(() => {
     setViewMode(page.blocks?.length === 0 ? 1 : 0);
+    setValue(removeTemplateDots(page));
   }, [page]);
   const [dirty] = useDirtyWarning(page, value);
   const [duplicating, setDuplicating] = useState(false);
@@ -64,7 +69,7 @@ const Page = () => {
   }, [createPage, page, pages, push, t, trackEvent, workspaceId]);
 
   useEffect(() => {
-    setValue(page);
+    setValue(getBackTemplateDots(page));
   }, [page]);
 
   const onDelete = useCallback(() => {
@@ -83,7 +88,7 @@ const Page = () => {
       action: 'click',
     });
     try {
-      const saved = await savePage(value);
+      const saved = await savePage(getBackTemplateDots(value));
       if (!saved) return;
       notification.success({
         message: t('pages.save.toast'),
@@ -139,7 +144,7 @@ const Page = () => {
   return (
     <PageRenderer
       value={value}
-      onChange={setValue}
+      onChange={(page) => setValue(getBackTemplateDots(page))}
       onDelete={onDelete}
       onSave={save}
       saving={saving}

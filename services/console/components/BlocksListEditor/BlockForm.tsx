@@ -116,6 +116,40 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
     [localizeSchemaForm]
   );
 
+  const logicalSchema: Schema = useMemo(
+    () =>
+      localizeSchemaForm({
+        type: 'object',
+        properties: {
+          template_if: {
+            type: 'string',
+            title: 'pages.blocks.settings.logical.if.label',
+            description: 'pages.blocks.settings.logical.if.description',
+          },
+          template_repeat: {
+            type: 'object',
+            title: 'pages.blocks.settings.logical.repeat.label',
+            description: 'pages.blocks.settings.logical.repeat.description',
+            properties: {
+              on: {
+                type: 'string',
+                title: 'pages.blocks.settings.logical.repeat.on.label',
+                description:
+                  'pages.blocks.settings.logical.repeat.on.description',
+              },
+              as: {
+                type: 'string',
+                title: 'pages.blocks.settings.logical.repeat.on.label',
+                description:
+                  'pages.blocks.settings.logical.repeat.on.description',
+              },
+            },
+          },
+        },
+      }),
+    [localizeSchemaForm]
+  );
+
   return (
     <Collapse
       items={[
@@ -167,6 +201,27 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                       children: (
                         <SchemaForm
                           schema={lifecycleSchema}
+                          locales={locales}
+                          buttons={[]}
+                          initialValues={field.input.value}
+                          utils={utils}
+                          components={componentsWithBlocksList}
+                          onChange={(v) => {
+                            field.input.onChange({
+                              ...field.input.value,
+                              ...v,
+                              slug: field.input.value.slug,
+                            });
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      key: 'logical',
+                      label: t('blocks.builder.logical.label'),
+                      children: (
+                        <SchemaForm
+                          schema={logicalSchema}
                           locales={locales}
                           buttons={[]}
                           initialValues={field.input.value}

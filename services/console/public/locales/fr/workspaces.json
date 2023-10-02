@@ -744,6 +744,24 @@
           "label": "Identifiant HTML de la section",
           "description": "Permet d'identifier la section pour y appliquer des styles CSS particulier ou y faire pointer un lien de type défilement automatique. Optionnel."
         },
+        "logical": {
+          "if": {
+            "label": "Condition d'affichage du Block (if)",
+            "description": "Le Block sera affiché seulement si la valeur passée est vraie (truthy)."
+          },
+          "repeat": {
+            "label": "Répéter le Block (repeat)",
+            "description": "Le Block sera répété pour chaque élément du tableau passé en paramètre.",
+            "on": {
+              "label": "Sur le tableau",
+              "description": "Le tableau contenant les éléments à appliquer à chacun des Blocks répétés."
+            },
+            "as": {
+              "label": "Nom de la variable représentant chaque item.",
+              "description": "Dans la boucle, chaque élément sera accessible par une variable, par défaut `{{item}}`, ou celle que vous indiquerez ici."
+            }
+          }
+        },
         "action": {
           "title": "Action",
           "description": "Action déclenchée au click sur l'élément",
@@ -1464,6 +1482,9 @@
       },
       "style": {
         "label": "Style"
+      },
+      "logical": {
+        "label": "Logique"
       },
       "picker": {
         "builtIn": "Communs",
