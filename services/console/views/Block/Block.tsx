@@ -410,7 +410,7 @@ const Block = () => {
         ]}
       />
 
-      <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
+      <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto overflow-x-hidden">
         <BlockPreview {...value} />
         <SourceEdit
           value={source}
