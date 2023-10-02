@@ -76,7 +76,11 @@ export const Page = ({ page }: PageProps) => {
         className="flex flex-1 flex-col page-blocks w-full"
         ref={containerEl}
       >
-        <BlockLoader name="BlocksList" config={blocksListConfig} />
+        <BlockLoader
+          key={page.id}
+          name="BlocksList"
+          config={blocksListConfig}
+        />
       </div>
       <PoweredBy />
       <Debug />

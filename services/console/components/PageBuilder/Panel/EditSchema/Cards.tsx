@@ -5,7 +5,6 @@ import article from './CardsVariant/article';
 import square from './CardsVariant/square';
 import actions from './CardsVariant/actions';
 import blocks from './CardsVariant/blocks';
-import commonSchema from './commonSchema';
 
 const schema: Schema = {
   type: 'object',
@@ -51,7 +50,6 @@ const schema: Schema = {
         },
       },
     },
-    ...commonSchema.properties,
   },
 };
 export default schema;

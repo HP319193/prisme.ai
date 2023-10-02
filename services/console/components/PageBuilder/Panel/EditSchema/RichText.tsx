@@ -4,7 +4,6 @@ import { Tooltip } from 'antd';
 import { useField } from 'react-final-form';
 import LocalizedInput from '../../../LocalizedInput';
 import RichTextEditor from '../../../RichTextEditor';
-import commonSchema from './commonSchema';
 
 const Editor = ({ name, schema, label }: FieldProps) => {
   const field = useField(name);
@@ -71,7 +70,6 @@ const schema: Schema = {
       title: 'pages.blocks.richtext.settings.tag.label',
       description: 'pages.blocks.richtext.settings.tag.description',
     },
-    ...commonSchema.properties,
   },
 };
 

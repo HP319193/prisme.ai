@@ -50,12 +50,16 @@ const Collapse = ({
     return null;
   }
 
+  const { key } = items.find(({ opened }) => opened) || {};
+  const defaultActiveKey = key ? [key] : undefined;
+
   return (
     <AntdCollapse
       bordered={false}
       expandIcon={icon}
       expandIconPosition={expandIconPosition}
       onChange={click}
+      defaultActiveKey={defaultActiveKey}
       className={`${className || ''} ${
         light ? 'pr-collapse-light rounded' : ''
       }`}

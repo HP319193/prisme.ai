@@ -233,7 +233,7 @@ export default class Runtime {
           contexts.forEach((cur) => {
             cur.applyUpdateOpLogs(
               updates as ContextUpdateOpLog[],
-              event.id,
+              event.payload?.updateId!,
               event.source
             );
           });

@@ -1,14 +1,12 @@
-import { usePageBuilder } from './context';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import plus from '../../icons/plus.svg';
-import { useEffect, useRef, useState } from 'react';
 
 interface AddBlockProps {
-  after: number;
+  onClick: () => void;
+  children: ReactNode;
 }
-const AddBlock = ({ after }: AddBlockProps) => {
-  const { t } = useTranslation('workspaces');
-  const { addBlock } = usePageBuilder();
+const AddBlock = ({ onClick, children }: AddBlockProps) => {
   const labelRef = useRef<HTMLButtonElement>(null);
   const [maxWidth, setMaxWidth] = useState(0);
   const [width, setWidth] = useState('auto');
@@ -32,18 +30,19 @@ const AddBlock = ({ after }: AddBlockProps) => {
       />
       <button
         ref={labelRef}
-        className="relative flex flex-row bg-accent p-1 rounded transition-all whitespace-nowrap overflow-hidden"
+        className="relative flex flex-row !bg-accent p-1 rounded transition-all whitespace-nowrap overflow-hidden"
         style={{
           width,
-          boxShadow: '0 0 0px 10px white',
+          boxShadow: '0 0 0px 10px inherit',
         }}
         onMouseEnter={() => setWidth(`${maxWidth}px`)}
         onMouseLeave={() => setWidth(`${26}px`)}
-        onClick={() => addBlock(after + 1)}
+        onClick={onClick}
+        type="button"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={plus.src} alt="" className="w-[13px] h-[13px] m-1" />
-        <span className="text-white mx-2">{t('pages.blocks.add')}</span>
+        <span className="text-white mx-2">{children}</span>
       </button>
     </div>
   );

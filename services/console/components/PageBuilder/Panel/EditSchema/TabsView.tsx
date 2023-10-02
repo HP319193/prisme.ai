@@ -1,6 +1,5 @@
 import { builtinBlocks } from '@prisme.ai/blocks';
 import { Schema } from '@prisme.ai/design-system';
-import { getCommonSchema } from './commonSchema';
 import actionConfig from './Action';
 import blocksListConfig from './BlocksList';
 
@@ -41,7 +40,6 @@ export const schema: Schema = {
       ],
       default: 'horizontal',
     },
-    ...getCommonSchema(builtinBlocks.TabsView.styles),
   },
 };
 

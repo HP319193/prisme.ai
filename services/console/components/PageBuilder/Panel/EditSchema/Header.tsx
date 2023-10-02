@@ -1,7 +1,6 @@
 import { builtinBlocks } from '@prisme.ai/blocks';
 import { Schema } from '@prisme.ai/design-system';
-import { getCommonSchema } from './commonSchema';
-import actionSchema from './Action'
+import actionSchema from './Action';
 
 export const schema: Schema = {
   type: 'object',
@@ -135,7 +134,6 @@ export const schema: Schema = {
       title: 'pages.blocks.header.settings.fixed.label',
       description: 'pages.blocks.header.settings.fixed.description',
     },
-    ...getCommonSchema(builtinBlocks.Header.styles || ''),
   },
 };
 

@@ -1,15 +1,23 @@
 import { useEffect } from 'react';
 import { Events } from '@prisme.ai/sdk/lib/events';
 
-export const usePageParent = (events: Events | undefined) => {
+export const usePageParent = (
+  events: Events | undefined,
+  setPage: (
+    page: Prismeai.DetailedPage | null,
+    error?: number | null | undefined
+  ) => void
+) => {
   // Listen to update page events
-
   useEffect(() => {
     if (!window || !events || !window.addEventListener) return;
     const listener = (e: MessageEvent) => {
-      const { type, event, payload } = e.data || {};
+      const { type, event, payload, page } = e.data || {};
       if (type === 'emit') {
         events.emit(event, payload);
+      }
+      if (type === 'updatePagePreview' && page) {
+        setPage(page);
       }
     };
     window.addEventListener('message', listener);
@@ -17,7 +25,7 @@ export const usePageParent = (events: Events | undefined) => {
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, [events]);
+  }, [events, setPage]);
 };
 
 export default usePageParent;

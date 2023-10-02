@@ -1,5 +1,4 @@
 import { Schema } from '@prisme.ai/design-system';
-import commonSchema from './commonSchema';
 
 const schema: Schema = {
   type: 'object',
@@ -21,7 +20,6 @@ const schema: Schema = {
       title: 'pages.blocks.image.settings.alt.label',
       description: 'pages.blocks.image.settings.alt.description',
     },
-    ...commonSchema.properties,
   },
 };
 

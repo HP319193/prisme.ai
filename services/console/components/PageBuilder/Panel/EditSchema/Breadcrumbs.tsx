@@ -1,5 +1,4 @@
 import { Schema } from '@prisme.ai/design-system';
-import { getCommonSchema } from './commonSchema';
 import { builtinBlocks } from '@prisme.ai/blocks';
 import actionSchema from './Action';
 
@@ -38,7 +37,6 @@ const schema: Schema = {
         },
       },
     },
-    ...getCommonSchema(builtinBlocks.Breadcrumbs.styles || ''),
   },
 };
 

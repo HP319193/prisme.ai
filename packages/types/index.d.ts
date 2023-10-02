@@ -2304,6 +2304,7 @@ declare namespace Prismeai {
          */
         type: "runtime.contexts.updated";
         payload: {
+            updateId: string;
             updates: {
                 type: ContextSetType;
                 path: string;

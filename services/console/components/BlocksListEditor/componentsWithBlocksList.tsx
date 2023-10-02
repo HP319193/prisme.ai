@@ -4,6 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useState } from 'react';
 import { useField } from 'react-final-form';
 import { Block } from '../../providers/Block';
+import AddBlock from './AddBlock';
 
 import components from '../SchemaForm/schemaFormComponents';
 import { SortableList, SortableListItem } from '../SortableList';
@@ -67,13 +68,9 @@ const BlocksList: FieldComponent = ({ name }) => {
         <BlockPicker blocks={blocks} onAdd={reallyAdd} />
       </Modal>
       <div className="flex justify-center">
-        <button
-          type="button"
-          className="ant-btn ant-btn-primary flex flex-row"
-          onClick={() => add(0)}
-        >
+        <AddBlock onClick={() => add(0)}>
           {t('blocks.builder.add.label')}
-        </button>
+        </AddBlock>
       </div>
       <SortableList onSort={sort}>
         {(Array.isArray(value) ? value : []).map((block, k) => (
@@ -82,13 +79,9 @@ const BlocksList: FieldComponent = ({ name }) => {
               <BlockForm name={`${name}[${k}]`} onRemove={removeBlock(block)} />
             </div>
             <div className="flex justify-center">
-              <button
-                type="button"
-                className="ant-btn ant-btn-primary flex flex-row"
-                onClick={() => add(k + 1)}
-              >
+              <AddBlock onClick={() => add(k + 1)}>
                 {t('blocks.builder.add.label')}
-              </button>
+              </AddBlock>
             </div>
           </SortableListItem>
         ))}

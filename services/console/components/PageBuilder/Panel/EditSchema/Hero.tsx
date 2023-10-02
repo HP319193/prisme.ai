@@ -1,7 +1,6 @@
 import { builtinBlocks } from '@prisme.ai/blocks';
 import { Schema } from '@prisme.ai/design-system';
 import blocksListSchema from './BlocksList';
-import { getCommonSchema } from './commonSchema';
 
 const schema: Schema = {
   type: 'object',
@@ -46,7 +45,6 @@ const schema: Schema = {
       description: 'pages.blocks.lead.settings.backgroundColor.description',
       'ui:widget': 'color',
     },
-    ...getCommonSchema(builtinBlocks.Hero.styles || ''),
   },
 };
 

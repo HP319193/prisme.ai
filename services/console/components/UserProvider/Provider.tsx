@@ -208,6 +208,7 @@ export const UserProvider: FC<UserProviderProps> = ({
       }
 
       api.token = Storage.get('access-token');
+      api.token && cookie.set('access-token', api.token);
 
       const user = await api.me();
       if (user.authData && user.authData.anonymous && !anonymous) {

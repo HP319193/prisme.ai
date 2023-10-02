@@ -302,6 +302,7 @@ class Workspaces {
       slug: fromSlug,
       id: _,
       name: fromName,
+      customDomains: __,
       ...fromWorkspace
     } = await this.getWorkspace(workspaceId, version);
     const newWorkspace = await this.createWorkspace(

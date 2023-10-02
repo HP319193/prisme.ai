@@ -36,6 +36,7 @@ services:
       CONSOLE_URL: '${CONSOLE_URL}'
       API_URL: '${API_URL}'
       PAGES_HOST: '${PAGES_HOST}'
+      EMAIL_VALIDATION_ENABLED: false
   console:
     entrypoint: npm start  --prefix services/console
     restart: on-failure
@@ -51,7 +52,7 @@ services:
     restart: on-failure
     image: 'registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-pages:latest'
     ports:
-      - '3000:3100'
+      - '3100:3100'
     environment:
       API_URL: '${API_URL}'
       CONSOLE_URL: '${CONSOLE_URL}'

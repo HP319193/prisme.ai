@@ -28,9 +28,7 @@ const Page = () => {
     createPage,
   } = useWorkspace();
   const [value, setValue] = useState(page);
-  const [viewMode, setViewMode] = useState(
-    Object.keys(page.blocks || {}).length === 0 ? 1 : 0
-  );
+  const [viewMode, setViewMode] = useState(page.blocks?.length === 0 ? 0 : 1);
   const [dirty] = useDirtyWarning(page, value);
   const [duplicating, setDuplicating] = useState(false);
   const duplicate = useCallback(async () => {
@@ -185,7 +183,7 @@ const PageWithProvider = () => {
     <TrackingCategory category="Page Builder">
       <PageProvider workspaceId={`${workspaceId}`} slug={`${slug}`}>
         <PagePreviewProvider>
-          <Page />
+          <Page key={slug} />
         </PagePreviewProvider>
       </PageProvider>
     </TrackingCategory>
