@@ -1462,6 +1462,9 @@
       "lifecycle": {
         "label": "Cycle de vie"
       },
+      "style": {
+        "label": "Style"
+      },
       "picker": {
         "builtIn": "Communs",
         "workspace": "{{from}} (ce Workspace)",

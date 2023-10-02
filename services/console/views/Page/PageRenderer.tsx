@@ -158,6 +158,8 @@ export const PageRenderer = ({
     };
   }, [reload]);
 
+  const displayEditor = (value.blocks || []).length === 0 || viewMode === 1;
+
   return (
     <>
       <Head>
@@ -329,7 +331,7 @@ export const PageRenderer = ({
         ]}
       />
 
-      <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto">
+      <div className="relative flex flex-1 bg-blue-200 h-full overflow-y-auto overflow-x-hidden">
         <PagePreview page={value} visible={viewMode === 0} />
         <SourceEdit
           value={source}
@@ -339,11 +341,13 @@ export const PageRenderer = ({
           validate={validateSource}
           error={validationError}
         />
-        {((value.blocks || []).length === 0 || viewMode === 1) && (
-          <div className="absolute top-0 bottom-0 left-0 right-0 bg-white">
-            <PageBuilder value={value.blocks} onChange={saveBlocks} />
-          </div>
-        )}
+        <div
+          className={`absolute top-0 bottom-0 left-0 right-0 bg-white transition-transform ${
+            displayEditor ? '' : 'translate-x-full'
+          }`}
+        >
+          <PageBuilder value={value.blocks} onChange={saveBlocks} />
+        </div>
       </div>
     </>
   );

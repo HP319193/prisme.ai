@@ -27,6 +27,7 @@ import {
   EditOutlined,
   EyeOutlined,
   LoadingOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
 import SourceEdit from '../../components/SourceEdit/SourceEdit';
 import { validateBlock } from '@prisme.ai/validation';
@@ -34,7 +35,10 @@ import { ValidationError } from '../../utils/yaml';
 import { replaceSilently } from '../../utils/urls';
 import { ApiError } from '../../utils/api';
 import { incrementName } from '../../utils/incrementName';
-import BlockPreview from './BlockPreview';
+import BlockPreview, {
+  BlockPreviewProvider,
+  useBlockPreview,
+} from './BlockPreview';
 import BlockEditor from '../../components/BlocksListEditor';
 
 const Block = () => {
@@ -47,6 +51,8 @@ const Block = () => {
     workspace: { id: workspaceId, blocks = {} },
     createBlock,
   } = useWorkspace();
+  const { reload } = useBlockPreview();
+
   const [value, setValue] = useState(block);
   const [viewMode, setViewMode] = useState(
     (value?.blocks || []).length === 0 ? 1 : 0
@@ -362,6 +368,13 @@ const Block = () => {
               {t('blocks.save.label')}
             </Button>
           </div>,
+          <div className="ml-4 overflow-hidden" key="reload">
+            <Tooltip title={t('pages.reload')} placement="bottom">
+              <Button onClick={reload} variant="primary">
+                <ReloadOutlined />
+              </Button>
+            </Tooltip>
+          </div>,
           <div key="views">
             <div className="ml-3">
               <Segmented
@@ -407,21 +420,23 @@ const Block = () => {
           validate={validateSource}
           error={validationError}
         />
-        {viewMode === 1 && (
-          <div className="absolute top-0 bottom-0 left-0 right-0 bg-white overflow-auto">
-            <div className="m-4">
-              <BlockEditor
-                value={value}
-                onChange={(b) =>
-                  setValue((prev) => {
-                    const { blocks, ...block } = prev;
-                    return { ...block, ...b };
-                  })
-                }
-              />
-            </div>
+        <div
+          className={`absolute top-0 bottom-0 left-0 right-0 bg-white overflow-auto transition-transform ${
+            viewMode === 1 ? '' : 'translate-x-full'
+          }`}
+        >
+          <div className="m-4">
+            <BlockEditor
+              value={value}
+              onChange={(b) =>
+                setValue((prev) => {
+                  const { blocks, ...block } = prev;
+                  return { ...block, ...b };
+                })
+              }
+            />
           </div>
-        )}
+        </div>
       </div>
     </>
   );
@@ -437,7 +452,9 @@ const BlockWithProvider = () => {
   return (
     <TrackingCategory category="Block Builder">
       <BlockProvider workspaceId={`${workspaceId}`} slug={`${slug}`}>
-        <Block />
+        <BlockPreviewProvider>
+          <Block />
+        </BlockPreviewProvider>
       </BlockProvider>
     </TrackingCategory>
   );

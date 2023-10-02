@@ -1,11 +1,10 @@
 import {
   Collapse,
-  Input,
+  FieldProps,
   Loading,
   Schema,
   SchemaForm,
   Tabs,
-  Tooltip,
   useSchemaForm,
 } from '@prisme.ai/design-system';
 import { TabsProps } from 'antd';
@@ -13,6 +12,7 @@ import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
 import useLocalizedText from '../../utils/useLocalizedText';
+import CSSEditor from '../../views/Page/CSSEditor';
 import ConfirmButton from '../ConfirmButton';
 import { useBlocksListEditor } from './BlocksListEditorProvider';
 import componentsWithBlocksList from './componentsWithBlocksList';
@@ -21,6 +21,26 @@ interface SchemaFormProps {
   name: string;
   onRemove: () => void;
 }
+
+const getCSSEditorField = (styles: string) =>
+  function CSSEditorField(props: FieldProps) {
+    return (
+      <div className="m-4">
+        <CSSEditor
+          {...props}
+          label="pages.blocks.settings.css.label"
+          description="pages.blocks.settings.css.description"
+          reset="pages.blocks.settings.css.reset"
+          defaultStyles={styles}
+          opened
+        />
+      </div>
+    );
+  };
+
+const defaultStyles = `:block {
+  
+}`;
 
 export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
   const { t } = useTranslation('workspaces');
@@ -51,11 +71,6 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
             title: 'pages.blocks.settings.onInit.label',
             description: 'pages.blocks.settings.onInit.description',
           },
-          updateOn: {
-            type: 'string',
-            title: 'pages.blocks.settings.updateOn.label',
-            description: 'pages.blocks.settings.updateOn.description',
-          },
           automation: {
             type: 'string',
             title: 'pages.blocks.settings.automation.label',
@@ -66,10 +81,35 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
               filter: 'endpoint',
             },
           },
+          updateOn: {
+            type: 'string',
+            title: 'pages.blocks.settings.updateOn.label',
+            description: 'pages.blocks.settings.updateOn.description',
+          },
+        },
+      }),
+    [localizeSchemaForm]
+  );
+
+  const styleSchema: Schema = useMemo(
+    () =>
+      localizeSchemaForm({
+        type: 'object',
+        properties: {
           sectionId: {
             type: 'string',
             title: 'pages.blocks.settings.sectionId.label',
             description: 'pages.blocks.settings.sectionId.description',
+          },
+          className: {
+            type: 'string',
+            title: 'pages.blocks.settings.className.label',
+            description: 'pages.blocks.settings.className.description',
+          },
+          css: {
+            type: 'string',
+            'ui:widget': getCSSEditorField(defaultStyles),
+            defaut: defaultStyles,
           },
         },
       }),
@@ -83,19 +123,10 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
           label: (
             <div className="flex flex-row items-center">
               <div>{field.input.value.slug}</div>
-              <div className="ml-4 flex-1" onClick={(e) => e.stopPropagation()}>
-                <Tooltip title={t('blocks.builder.className.help')}>
-                  <Input
-                    value={field.input.value.className}
-                    onChange={({ target: { value } }) =>
-                      field.input.onChange({
-                        ...field.input.value,
-                        className: value,
-                      })
-                    }
-                    placeholder={t('blocks.builder.className.placeholder')}
-                  />
-                </Tooltip>
+              <div className="ml-4 flex-1 text-gray">
+                {field.input.value.sectionId
+                  ? `#${field.input.value.sectionId}`
+                  : ''}
               </div>
             </div>
           ),
@@ -136,6 +167,27 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                       children: (
                         <SchemaForm
                           schema={lifecycleSchema}
+                          locales={locales}
+                          buttons={[]}
+                          initialValues={field.input.value}
+                          utils={utils}
+                          components={componentsWithBlocksList}
+                          onChange={(v) => {
+                            field.input.onChange({
+                              ...field.input.value,
+                              ...v,
+                              slug: field.input.value.slug,
+                            });
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      key: 'style',
+                      label: t('blocks.builder.style.label'),
+                      children: (
+                        <SchemaForm
+                          schema={styleSchema}
                           locales={locales}
                           buttons={[]}
                           initialValues={field.input.value}
