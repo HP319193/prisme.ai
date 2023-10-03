@@ -50,6 +50,12 @@ On a single machine setup with Docker, this is just another domain pointing to t
   * **API_URL** : Public URL serving the API, ended with /v2.  
 Again, on a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** and **CONSOLE_URL** do, served through a third port.    
 
+Other environment variables which might be tuned from the start :  
+- **EMAIL_VALIDATION_ENABLED** : defaults to 'true', set it to 'false' if you don't have any mailgun api key available (api-gateway)
+- **REQUEST_MAX_SIZE** : defaults to '1mb', can be set to '10mb' or bigger to allow processing bigger requests (api-gateway)
+
+See full description of available environements variable [here](https://docs.eda.prisme.ai/en/getstarted/configuration/).  
+
 
 ### Start
 ```
