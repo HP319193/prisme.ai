@@ -216,7 +216,7 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
               },
             ]}
             bordered
-            pagination={{ pageSize: 10, position: [] }}
+            pagination={{ pageSize: 10, position: ['bottomRight'] }}
             scroll={{ y: 500 }}
           />
         </>

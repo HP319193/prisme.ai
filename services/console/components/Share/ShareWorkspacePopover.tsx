@@ -210,7 +210,7 @@ const ShareWorkspacePopover = ({
           },
         ]}
         bordered
-        pagination={{ pageSize: 10, position: [] }}
+        pagination={{ pageSize: 10, position: ['bottomRight'] }}
         scroll={{ y: 500 }}
       />
     </div>
