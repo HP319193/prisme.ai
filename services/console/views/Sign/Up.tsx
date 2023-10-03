@@ -4,7 +4,7 @@ import SignupForm from '../../components/SignupForm';
 export const SignIn = () => {
   return (
     <SignLayout type={SignType.Up} link="signin">
-      <SignupForm />
+      <SignupForm redirect={'/'} />
     </SignLayout>
   );
 };

@@ -98,7 +98,7 @@ export const Automation = () => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { workspace, createAutomation } = useWorkspace();
-  const [value, setValue] = useState(automation);
+  const [value, setValue] = useState({ ...automation, do: [...automation.do] });
   const [displaySource, setDisplaySource] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
   const [dirty] = useDirtyWarning(automation, value);
