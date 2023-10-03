@@ -1462,6 +1462,9 @@
       "lifecycle": {
         "label": "Lifecycle"
       },
+      "style": {
+        "label": "Style"
+      },
       "picker": {
         "builtIn": "Built-in",
         "workspace": "{{from}} (this Workspace)",
