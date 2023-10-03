@@ -3,6 +3,7 @@ import { Modal } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import equal from 'fast-deep-equal';
 
 export const useDirtyWarning = <T,>(original: T, newValue: T) => {
   const { t } = useTranslation('workspaces');
@@ -10,7 +11,7 @@ export const useDirtyWarning = <T,>(original: T, newValue: T) => {
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
-    if (original !== newValue) {
+    if (!equal(original, newValue)) {
       setDirty(true);
     }
   }, [newValue, original]);
