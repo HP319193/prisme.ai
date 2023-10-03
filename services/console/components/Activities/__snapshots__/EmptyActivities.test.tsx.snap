@@ -35,6 +35,7 @@ exports[`should render 1`] = `
         hover:shadow-2xl hover:-translate-y-2
         !ml-0
       "
+        onClick={[Function]}
         style={
           Object {
             "backgroundColor": "#F7F8D0",
