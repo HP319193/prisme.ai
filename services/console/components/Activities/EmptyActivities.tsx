@@ -21,7 +21,7 @@ export const EmptyActivities = () => {
             text={t('workspace.empty.suggestions.page.text')}
             className="!ml-0"
             color="#F7F8D0"
-            onClick={createPage}
+            onClick={() => createPage()}
           />
           <SuggestionButton
             title={t('workspace.empty.suggestions.automation.title')}
