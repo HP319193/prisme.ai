@@ -28,7 +28,10 @@ const Page = () => {
     createPage,
   } = useWorkspace();
   const [value, setValue] = useState(page);
-  const [viewMode, setViewMode] = useState(page.blocks?.length === 0 ? 0 : 1);
+  const [viewMode, setViewMode] = useState(0);
+  useEffect(() => {
+    setViewMode(page.blocks?.length === 0 ? 1 : 0);
+  }, [page]);
   const [dirty] = useDirtyWarning(page, value);
   const [duplicating, setDuplicating] = useState(false);
   const duplicate = useCallback(async () => {
