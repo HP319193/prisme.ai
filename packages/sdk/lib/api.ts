@@ -259,7 +259,7 @@ export class Api extends Fetcher {
 
   // Workspaces
   async getWorkspaces(): Promise<Workspace[]> {
-    return await this.get('/workspaces?limit=600');
+    return await this.get('/workspaces?limit=2000');
   }
 
   async getWorkspace(
