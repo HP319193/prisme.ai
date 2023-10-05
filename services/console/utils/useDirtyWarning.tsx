@@ -27,7 +27,7 @@ export const useDirtyWarning = <T,>(original: T, newValue: T) => {
         content: t('workspace.dirtyWarning'),
         onOk: () => {
           setDirty(false);
-          setTimeout(() => router.push(url));
+          setTimeout(() => router.push(url), 1);
         },
         okText: t('workspace.dirtyOk'),
         cancelText: t('cancel', { ns: 'common' }),
