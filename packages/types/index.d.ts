@@ -2033,6 +2033,10 @@ declare namespace Prismeai {
         type: "apps.published";
         payload: {
             app: App;
+            /**
+             * Whether we should rebuild this app model, true when this follows a bulk import
+             */
+            rebuildModel?: boolean;
         };
     }
     export interface PublishedWorkspaceVersion {

@@ -29,19 +29,18 @@ export class Apps extends Storage {
     return this.apps[appSlug].versions[version];
   }
 
+  modelPath(appSlug: string, appVersion: string) {
+    return `apps/${appSlug}/versions/${appVersion}/runtime.yml`;
+  }
+
   public async fetchApp(
     appSlug: string,
     appVersion: string
   ): Promise<Prismeai.RuntimeModel> {
     try {
-      const raw = await this.driver.get(
-        `apps/${appSlug}/versions/${appVersion}/runtime.yml`
-      );
+      const raw = await this.driver.get(this.modelPath(appSlug, appVersion));
       const dsul = yaml.load(raw) as Prismeai.RuntimeModel;
-      if (!(appSlug in this.apps)) {
-        this.apps[appSlug] = { versions: {} };
-      }
-      this.apps[appSlug].versions[appVersion] = dsul;
+      this.loadAppDSUL(appSlug, appVersion, dsul);
       return dsul;
     } catch (err) {
       if (err instanceof ObjectNotFoundError) {
@@ -49,5 +48,28 @@ export class Apps extends Storage {
       }
       throw err;
     }
+  }
+
+  public loadAppDSUL(
+    appSlug: string,
+    appVersion: string,
+    dsul: Prismeai.RuntimeModel
+  ) {
+    if (!(appSlug in this.apps)) {
+      this.apps[appSlug] = { versions: {} };
+    }
+    this.apps[appSlug].versions[appVersion] = dsul;
+  }
+
+  public async saveAppDSUL(
+    appSlug: string,
+    appVersion: string,
+    dsul: Prismeai.RuntimeModel
+  ) {
+    await this.driver.save(
+      this.modelPath(appSlug, appVersion),
+      yaml.dump(dsul)
+    );
+    this.loadAppDSUL(appSlug, appVersion, dsul);
   }
 }

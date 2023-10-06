@@ -1922,6 +1922,9 @@ components:
           properties:
             app:
               $ref: '#/components/schemas/App'
+            rebuildModel:
+              type: boolean
+              description: "Whether we should rebuild this app model, true when this follows a bulk import"
 
     DeletedApp:
       type: object

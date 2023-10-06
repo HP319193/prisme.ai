@@ -182,7 +182,7 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>INTERNAL_API_KEY</td>
     <td>api-gateway, workspaces</td>
-    <td>API Key allowing internal services fetching /contacts API</td>
+    <td>API Key allowing internal services fetching events /sys/cleanup API</td>
     <td></td>
   </tr>       
   <tr>

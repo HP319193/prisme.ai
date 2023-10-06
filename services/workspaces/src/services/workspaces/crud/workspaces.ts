@@ -1322,12 +1322,14 @@ class Workspaces {
         allErrors = allErrors.concat(errors);
 
         if (publishApp) {
-          // How can we avoid this ugly wait & make sure the runtime updated the runtime.yml with latest updates before publishing ??
-          await new Promise((resolve) => setTimeout(resolve, 1000));
           publishApp.workspaceId = target.id;
-          await apps.publishApp(publishApp, {
-            description: 'Imported app release',
-          });
+          await apps.publishApp(
+            publishApp,
+            {
+              description: 'Imported app release',
+            },
+            true
+          );
           publishedApps.push(publishApp);
         }
       } catch (err) {

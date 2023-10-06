@@ -88,7 +88,8 @@ class Apps {
 
   publishApp = async (
     publish: PrismeaiAPI.PublishApp.RequestBody,
-    versionRequest: Prismeai.WorkspaceVersion
+    versionRequest: Prismeai.WorkspaceVersion,
+    rebuildRuntimeModel?: boolean
   ) => {
     if (!publish.workspaceId) {
       throw new PrismeError('Please specify workspaceId', {});
@@ -255,6 +256,7 @@ class Apps {
       EventType.PublishedApp,
       {
         app,
+        rebuildModel: rebuildRuntimeModel,
       },
       {
         workspaceId: app.workspaceId,

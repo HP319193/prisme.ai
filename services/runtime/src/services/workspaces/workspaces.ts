@@ -132,10 +132,23 @@ export class Workspaces extends Storage {
           const { workspaceId } = (event as any as Prismeai.PrismeEvent).source;
           await this.fetchWorkspace(workspaceId!);
         } else if (event.type === EventType.PublishedApp) {
-          const publishedApp = (event as any as Prismeai.PublishedApp).payload
-            .app;
-          if (publishedApp.slug && publishedApp.slug in this.watchedApps) {
+          const publishedPayload = (event as any as Prismeai.PublishedApp)
+            .payload;
+          const publishedApp = publishedPayload.app;
+          if (publishedPayload.rebuildModel) {
+            const rebuilt = await this.rebuildWorkspaceDSUL(
+              `workspaces/${publishedApp.workspaceId!}/versions/current`
+            );
+            await this.apps.saveAppDSUL(
+              publishedApp.slug,
+              'current',
+              rebuilt.dsul
+            );
+          } else {
             await this.apps.fetchApp(publishedApp.slug, 'current');
+          }
+
+          if (publishedApp.slug && publishedApp.slug in this.watchedApps) {
             const updateWorkspaceIds = this.watchedApps[publishedApp.slug];
             updateWorkspaceIds.map((workspaceId) =>
               this.fetchWorkspace(workspaceId)
@@ -233,7 +246,7 @@ export class Workspaces extends Storage {
             setTimeout(async () => {
               try {
                 const rebuilt = await this.rebuildWorkspaceDSUL(
-                  importPayload.workspace.id!
+                  `workspaces/${importPayload.workspace.id!}/versions/current`
                 );
                 resolve(rebuilt);
               } catch (err) {
@@ -368,15 +381,14 @@ export class Workspaces extends Storage {
     );
   }
 
-  async rebuildWorkspaceDSUL(workspaceId: string) {
-    const workspaceDirectory = `workspaces/${workspaceId}/versions/current`;
-    const automationsDirectory = `${workspaceDirectory}/automations`;
-    const importsDirectory = `${workspaceDirectory}/imports`;
+  async rebuildWorkspaceDSUL(rootPath: string) {
+    const automationsDirectory = `${rootPath}/automations`;
+    const importsDirectory = `${rootPath}/imports`;
     const [workspaceIndexRaw, automationFiles, importFiles] = await Promise.all(
       [
-        this.driver.get(`${workspaceDirectory}/index.yml`),
-        this.driver.find(automationsDirectory),
-        this.driver.find(importsDirectory),
+        this.driver.get(`${rootPath}/index.yml`),
+        this.driver.find(automationsDirectory).catch(() => []),
+        this.driver.find(importsDirectory).catch(() => []),
       ]
     );
     const workspaceIndex = yaml.load(workspaceIndexRaw) as Prismeai.DSUL;
@@ -403,7 +415,7 @@ export class Workspaces extends Storage {
         } catch (err) {
           logger.warn({
             msg: `Could not load/parse the following file during a model rebuild : '${path}'`,
-            workspaceId,
+            rootPath,
             err,
           });
           return false;
