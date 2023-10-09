@@ -49,7 +49,8 @@ const workspacesSynchroBroker = initEDA(`${APP_NAME}-workspaces-synchro`);
     WORKSPACES_STORAGE_TYPE,
     WORKSPACES_STORAGE_OPTIONS[WORKSPACES_STORAGE_TYPE],
     apps,
-    workspacesSynchroBroker
+    workspacesSynchroBroker,
+    accessManager
   );
   const runtime = new Runtime(broker, workspaces, cache, accessManager);
   const schedules = new Schedules(schedulesBroker, apps);

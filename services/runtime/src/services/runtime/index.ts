@@ -353,7 +353,7 @@ export default class Runtime {
       apiUrl: API_URL,
       studioUrl: STUDIO_URL,
       pagesHost: PAGES_HOST,
-      publicWorkspaces: this.workspaces.publicWorkspaces,
+      workspacesRegistry: this.workspaces.workspacesRegistry,
     };
     await ctx.fetch();
 

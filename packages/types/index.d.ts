@@ -1228,9 +1228,9 @@ declare namespace Prismeai {
         labels?: string[];
         customDomains?: string[];
         /**
-         * If true, make current workspace id available to all workspaces with this variable : {{global.publicWorkspaces[WORKSPACE_SLUG].id}}
+         * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
          */
-        publicWorkspace?: boolean;
+        registerWorkspace?: boolean;
     }
     export interface DSULPatch {
         name?: string;
@@ -1245,9 +1245,9 @@ declare namespace Prismeai {
         labels?: string[];
         customDomains?: string[];
         /**
-         * If true, make current workspace id available to all workspaces with this variable : {{global.publicWorkspaces[WORKSPACE_SLUG].id}}
+         * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
          */
-        publicWorkspace?: boolean;
+        registerWorkspace?: boolean;
     }
     export interface DSULReadOnly {
         name: string;
@@ -1262,9 +1262,9 @@ declare namespace Prismeai {
         labels?: string[];
         customDomains?: string[];
         /**
-         * If true, make current workspace id available to all workspaces with this variable : {{global.publicWorkspaces[WORKSPACE_SLUG].id}}
+         * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
          */
-        publicWorkspace?: boolean;
+        registerWorkspace?: boolean;
         automations?: {
             [name: string]: AutomationMeta;
         };
@@ -2098,9 +2098,9 @@ declare namespace Prismeai {
         labels?: string[];
         customDomains?: string[];
         /**
-         * If true, make current workspace id available to all workspaces with this variable : {{global.publicWorkspaces[WORKSPACE_SLUG].id}}
+         * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
          */
-        publicWorkspace?: boolean;
+        registerWorkspace?: boolean;
         automations?: {
             [name: string]: Automation;
         };

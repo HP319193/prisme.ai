@@ -8,15 +8,17 @@ import { DriverType } from '../../storage/types';
 import { Workspace } from './workspace';
 import { Apps } from '../apps';
 import { logger } from '../../logger';
+import { AccessManager, SubjectType, getSuperAdmin } from '../../permissions';
 
 export * from './workspace';
 
 export class Workspaces extends Storage {
   private broker: Broker;
   private apps: Apps;
+  private accessManager: AccessManager;
   private workspaces: Record<string, Workspace>;
   private watchedApps: Record<string, string[]>;
-  public publicWorkspaces: Record<
+  public workspacesRegistry: Record<
     string,
     {
       id: string;
@@ -28,18 +30,20 @@ export class Workspaces extends Storage {
     driverType: DriverType,
     driverOptions: StorageOptions[DriverType],
     apps: Apps,
-    broker: Broker
+    broker: Broker,
+    accessManager: AccessManager
   ) {
     super(driverType, driverOptions);
     this.workspaces = {};
     this.apps = apps;
     this.broker = broker;
     this.watchedApps = {};
-    this.publicWorkspaces = {};
+    this.workspacesRegistry = {};
+    this.accessManager = accessManager;
   }
 
   startLiveUpdates() {
-    this.loadPublicWorkspaces();
+    this.loadWorkspacesRegistry();
     const onceListenedEvents = [
       EventType.CreatedWorkspace,
       EventType.UpdatedWorkspace,
@@ -84,11 +88,7 @@ export class Workspaces extends Storage {
         msg: 'Received an updated workspace through events',
         event,
       });
-      const updatedWorkspace = await this.applyWorkspaceEvent(
-        workspace,
-        event,
-        true
-      );
+      const updatedWorkspace = await this.applyWorkspaceEvent(workspace, event);
 
       await this.saveWorkspace(
         updatedWorkspace.dsul,
@@ -183,8 +183,7 @@ export class Workspaces extends Storage {
 
   async applyWorkspaceEvent(
     workspace: Workspace,
-    event: PrismeEvent,
-    isAppliedOnce?: boolean
+    event: PrismeEvent
   ): Promise<Workspace> {
     switch (event.type) {
       case EventType.DeletedWorkspace:
@@ -195,14 +194,14 @@ export class Workspaces extends Storage {
         break;
       case EventType.UpdatedWorkspace:
         const {
-          payload: { workspace: updatedDSUL },
+          payload: { workspace: updatedDSUL, oldSlug: oldWorkspaceSlug },
         } = event as any as Prismeai.UpdatedWorkspace;
         workspace.dsul = {
           ...workspace.dsul,
           ...updatedDSUL,
         };
         workspace.name = updatedDSUL.name;
-        this.updatePublicWorkspace(updatedDSUL, !!isAppliedOnce);
+        this.updateWorkspacesRegistry(updatedDSUL, oldWorkspaceSlug);
         break;
       case EventType.ConfiguredWorkspace:
         const {
@@ -314,47 +313,50 @@ export class Workspaces extends Storage {
     }
   }
 
-  async loadPublicWorkspaces() {
+  async loadWorkspacesRegistry() {
     try {
-      const publicWorkspaces = await this.driver.get(
-        `workspaces/publicWorkspaces.yml`
+      const superAdmin = await getSuperAdmin(this.accessManager);
+      const workspacesRegistry = await superAdmin.findAll(
+        SubjectType.Workspace,
+        {
+          registerWorkspace: true,
+        }
       );
-      this.publicWorkspaces = yaml.load(
-        publicWorkspaces
-      ) as typeof this.publicWorkspaces;
+      this.workspacesRegistry = workspacesRegistry.reduce(
+        (workspacesRegistry, cur) => ({
+          ...workspacesRegistry,
+          [cur.slug!]: {
+            id: cur.id,
+            name: cur.name,
+          },
+        }),
+        {}
+      );
     } catch (err) {
       logger.warn({
-        msg: 'Could not load public workspaces from file workspaces/publicWorkspaces.yml',
+        msg: 'Could not load workspaces registry',
         err,
       });
     }
   }
 
-  updatePublicWorkspace(dsul: Prismeai.RuntimeModel, persist: boolean) {
-    const isPublic = !!dsul.publicWorkspace;
-    let updated = false;
+  updateWorkspacesRegistry(dsul: Prismeai.RuntimeModel, oldSlug?: string) {
+    const isPublic = !!dsul.registerWorkspace;
     if (
       isPublic &&
-      (!(dsul.slug! in this.publicWorkspaces) ||
-        this.publicWorkspaces[dsul.slug!].id !== dsul.id)
+      (!(dsul.slug! in this.workspacesRegistry) ||
+        this.workspacesRegistry[dsul.slug!].id !== dsul.id)
     ) {
-      this.publicWorkspaces[dsul.slug!] = {
+      this.workspacesRegistry[dsul.slug!] = {
         id: dsul.id!,
         name: dsul.name,
       };
-      updated = true;
-    } else if (!isPublic && dsul.slug! in this.publicWorkspaces) {
-      delete this.publicWorkspaces[dsul.slug!];
-      updated = true;
+    } else if (!isPublic && dsul.slug! in this.workspacesRegistry) {
+      delete this.workspacesRegistry[dsul.slug!];
     }
 
-    if (updated && persist) {
-      this.driver
-        .save(
-          `workspaces/publicWorkspaces.yml`,
-          yaml.dump(this.publicWorkspaces)
-        )
-        .catch(logger.warn);
+    if (oldSlug) {
+      delete this.workspacesRegistry[oldSlug];
     }
   }
 
@@ -418,7 +420,7 @@ export class Workspaces extends Storage {
       this.watchAppCurrentVersions(this.workspaces[workspace.id!]);
     }
 
-    this.updatePublicWorkspace(workspace, true);
+    this.updateWorkspacesRegistry(workspace);
     return this.workspaces[workspace.id!];
   }
 
