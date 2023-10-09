@@ -1227,6 +1227,10 @@ declare namespace Prismeai {
         id?: string;
         labels?: string[];
         customDomains?: string[];
+        /**
+         * If true, make current workspace id available to all workspaces with this variable : {{global.publicWorkspaces[WORKSPACE_SLUG].id}}
+         */
+        publicWorkspace?: boolean;
     }
     export interface DSULPatch {
         name?: string;
@@ -1240,6 +1244,10 @@ declare namespace Prismeai {
         id?: string;
         labels?: string[];
         customDomains?: string[];
+        /**
+         * If true, make current workspace id available to all workspaces with this variable : {{global.publicWorkspaces[WORKSPACE_SLUG].id}}
+         */
+        publicWorkspace?: boolean;
     }
     export interface DSULReadOnly {
         name: string;
@@ -1253,6 +1261,10 @@ declare namespace Prismeai {
         id?: string;
         labels?: string[];
         customDomains?: string[];
+        /**
+         * If true, make current workspace id available to all workspaces with this variable : {{global.publicWorkspaces[WORKSPACE_SLUG].id}}
+         */
+        publicWorkspace?: boolean;
         automations?: {
             [name: string]: AutomationMeta;
         };
@@ -2085,6 +2097,10 @@ declare namespace Prismeai {
         id?: string;
         labels?: string[];
         customDomains?: string[];
+        /**
+         * If true, make current workspace id available to all workspaces with this variable : {{global.publicWorkspaces[WORKSPACE_SLUG].id}}
+         */
+        publicWorkspace?: boolean;
         automations?: {
             [name: string]: Automation;
         };

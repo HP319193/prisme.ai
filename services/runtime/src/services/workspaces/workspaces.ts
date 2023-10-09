@@ -16,6 +16,13 @@ export class Workspaces extends Storage {
   private apps: Apps;
   private workspaces: Record<string, Workspace>;
   private watchedApps: Record<string, string[]>;
+  public publicWorkspaces: Record<
+    string,
+    {
+      id: string;
+      name: string;
+    }
+  >;
 
   constructor(
     driverType: DriverType,
@@ -28,9 +35,11 @@ export class Workspaces extends Storage {
     this.apps = apps;
     this.broker = broker;
     this.watchedApps = {};
+    this.publicWorkspaces = {};
   }
 
   startLiveUpdates() {
+    this.loadPublicWorkspaces();
     const onceListenedEvents = [
       EventType.CreatedWorkspace,
       EventType.UpdatedWorkspace,
@@ -75,7 +84,11 @@ export class Workspaces extends Storage {
         msg: 'Received an updated workspace through events',
         event,
       });
-      const updatedWorkspace = await this.applyWorkspaceEvent(workspace, event);
+      const updatedWorkspace = await this.applyWorkspaceEvent(
+        workspace,
+        event,
+        true
+      );
 
       await this.saveWorkspace(
         updatedWorkspace.dsul,
@@ -170,7 +183,8 @@ export class Workspaces extends Storage {
 
   async applyWorkspaceEvent(
     workspace: Workspace,
-    event: PrismeEvent
+    event: PrismeEvent,
+    isAppliedOnce?: boolean
   ): Promise<Workspace> {
     switch (event.type) {
       case EventType.DeletedWorkspace:
@@ -188,6 +202,7 @@ export class Workspaces extends Storage {
           ...updatedDSUL,
         };
         workspace.name = updatedDSUL.name;
+        this.updatePublicWorkspace(updatedDSUL, !!isAppliedOnce);
         break;
       case EventType.ConfiguredWorkspace:
         const {
@@ -299,6 +314,50 @@ export class Workspaces extends Storage {
     }
   }
 
+  async loadPublicWorkspaces() {
+    try {
+      const publicWorkspaces = await this.driver.get(
+        `workspaces/publicWorkspaces.yml`
+      );
+      this.publicWorkspaces = yaml.load(
+        publicWorkspaces
+      ) as typeof this.publicWorkspaces;
+    } catch (err) {
+      logger.warn({
+        msg: 'Could not load public workspaces from file workspaces/publicWorkspaces.yml',
+        err,
+      });
+    }
+  }
+
+  updatePublicWorkspace(dsul: Prismeai.RuntimeModel, persist: boolean) {
+    const isPublic = !!dsul.publicWorkspace;
+    let updated = false;
+    if (
+      isPublic &&
+      (!(dsul.slug! in this.publicWorkspaces) ||
+        this.publicWorkspaces[dsul.slug!].id !== dsul.id)
+    ) {
+      this.publicWorkspaces[dsul.slug!] = {
+        id: dsul.id!,
+        name: dsul.name,
+      };
+      updated = true;
+    } else if (!isPublic && dsul.slug! in this.publicWorkspaces) {
+      delete this.publicWorkspaces[dsul.slug!];
+      updated = true;
+    }
+
+    if (updated && persist) {
+      this.driver
+        .save(
+          `workspaces/publicWorkspaces.yml`,
+          yaml.dump(this.publicWorkspaces)
+        )
+        .catch(logger.warn);
+    }
+  }
+
   async watchAppCurrentVersions(workspace: Workspace) {
     const nestedApps = [
       ...new Set(Object.values(workspace.listNestedImports())),
@@ -358,6 +417,8 @@ export class Workspaces extends Storage {
     if (workspace.imports) {
       this.watchAppCurrentVersions(this.workspaces[workspace.id!]);
     }
+
+    this.updatePublicWorkspace(workspace, true);
     return this.workspaces[workspace.id!];
   }
 

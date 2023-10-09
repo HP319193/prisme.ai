@@ -462,6 +462,9 @@ components:
           type: array
           items:
             type: string
+        publicWorkspace:
+          type: boolean
+          description: "If true, make current workspace id available to all workspaces with this variable : {{global.publicWorkspaces[WORKSPACE_SLUG].id}}"
 
     RuntimeModel:
       allOf:
