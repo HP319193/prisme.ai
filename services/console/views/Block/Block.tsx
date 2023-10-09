@@ -40,6 +40,10 @@ import BlockPreview, {
   useBlockPreview,
 } from './BlockPreview';
 import BlockEditor from '../../components/BlocksListEditor';
+import {
+  getBackTemplateDots,
+  removeTemplateDots,
+} from '../../utils/templatesInBlocks';
 
 const Block = () => {
   const { t } = useTranslation('workspaces');
@@ -53,7 +57,8 @@ const Block = () => {
   } = useWorkspace();
   const { reload } = useBlockPreview();
 
-  const [value, setValue] = useState(block);
+  const [value, setValue] = useState<typeof block>(removeTemplateDots(block));
+
   const [viewMode, setViewMode] = useState(
     (value?.blocks || []).length === 0 ? 1 : 0
   );
@@ -93,7 +98,7 @@ const Block = () => {
   }, [block, blocks, createBlock, push, t, trackEvent, workspaceId]);
 
   useEffect(() => {
-    setValue(block);
+    setValue(getBackTemplateDots(block));
     setViewMode((block?.blocks || []).length === 0 ? 1 : 0);
   }, [block]);
 
@@ -114,7 +119,7 @@ const Block = () => {
       action: 'click',
     });
     try {
-      const saved = await saveBlock(value);
+      const saved = await saveBlock(getBackTemplateDots(value));
       if (!saved) return;
       notification.success({
         message: t('blocks.save.toast'),
@@ -242,13 +247,18 @@ const Block = () => {
     }),
     [value]
   );
+  const [blockKey, setBlockKey] = useState(value.slug);
+  useEffect(() => {
+    setBlockKey(value.slug);
+  }, [value.slug]);
   const source = useMemo(() => {
     return value;
   }, [value]);
 
   const setSource = useCallback(
     (source: any) => {
-      setValue(mergeSource(source));
+      setValue(getBackTemplateDots(mergeSource(source)));
+      setBlockKey(`${Math.random()}`);
     },
     [mergeSource]
   );
@@ -278,10 +288,12 @@ const Block = () => {
                 <EditableTitle
                   value={value.name || ''}
                   onChange={(name) => {
-                    setValue({
-                      ...value,
-                      name,
-                    });
+                    setValue(
+                      getBackTemplateDots({
+                        ...value,
+                        name,
+                      })
+                    );
                   }}
                   onEnter={() => {
                     trackEvent({
@@ -308,10 +320,12 @@ const Block = () => {
                       name: 'Save Page details',
                       action: 'click',
                     });
-                    setValue({
-                      ...value,
-                      ...v,
-                    });
+                    setValue(
+                      getBackTemplateDots({
+                        ...value,
+                        ...v,
+                      })
+                    );
                     // Need to wait after the onChange changed the value
                     setTimeout(() => {
                       saveAfterChange.current();
@@ -427,11 +441,12 @@ const Block = () => {
         >
           <div className="m-4">
             <BlockEditor
+              key={blockKey}
               value={value}
               onChange={(b) =>
                 setValue((prev) => {
                   const { blocks, ...block } = prev;
-                  return { ...block, ...b };
+                  return getBackTemplateDots({ ...block, ...b });
                 })
               }
             />

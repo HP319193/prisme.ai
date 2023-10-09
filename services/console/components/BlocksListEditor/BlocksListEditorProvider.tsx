@@ -24,6 +24,7 @@ interface BlocksListEditorProviderProps {
 }
 
 const SCHEMAS = new Map<string, Schema>();
+const CACHE = new Map<string, Schema | null>();
 
 export const BlocksListEditorProvider = ({
   children,
@@ -47,12 +48,15 @@ export const BlocksListEditorProvider = ({
         return schema;
       }
       if (inCatalog.url) {
-        const module = await loadModule<BlockComponent>(inCatalog.url);
-        if (module && module.schema) {
-          SCHEMAS.set(slug, module.schema);
-          setSchemas(SCHEMAS);
-          return module.schema;
+        if (!CACHE.has(inCatalog.url)) {
+          const module = await loadModule<BlockComponent>(inCatalog.url);
+          if (module && module.schema) {
+            SCHEMAS.set(slug, module.schema || null);
+            setSchemas(SCHEMAS);
+            CACHE.set(inCatalog.url, module.schema);
+          }
         }
+        return CACHE.get(inCatalog.url);
       }
       if (inCatalog.schema) {
         SCHEMAS.set(slug, localizeSchemaForm(inCatalog.schema));
@@ -65,10 +69,7 @@ export const BlocksListEditorProvider = ({
 
   const getSchema = useCallback(
     async (slug) => {
-      if (!SCHEMAS.has(slug)) {
-        await fetchSchema(slug);
-      }
-      return SCHEMAS.get(slug);
+      return (await fetchSchema(slug)) || undefined;
     },
     [fetchSchema]
   );

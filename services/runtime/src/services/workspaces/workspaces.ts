@@ -8,29 +8,42 @@ import { DriverType } from '../../storage/types';
 import { Workspace } from './workspace';
 import { Apps } from '../apps';
 import { logger } from '../../logger';
+import { AccessManager, SubjectType, getSuperAdmin } from '../../permissions';
 
 export * from './workspace';
 
 export class Workspaces extends Storage {
   private broker: Broker;
   private apps: Apps;
+  private accessManager: AccessManager;
   private workspaces: Record<string, Workspace>;
   private watchedApps: Record<string, string[]>;
+  public workspacesRegistry: Record<
+    string,
+    {
+      id: string;
+      name: string;
+    }
+  >;
 
   constructor(
     driverType: DriverType,
     driverOptions: StorageOptions[DriverType],
     apps: Apps,
-    broker: Broker
+    broker: Broker,
+    accessManager: AccessManager
   ) {
     super(driverType, driverOptions);
     this.workspaces = {};
     this.apps = apps;
     this.broker = broker;
     this.watchedApps = {};
+    this.workspacesRegistry = {};
+    this.accessManager = accessManager;
   }
 
   startLiveUpdates() {
+    this.loadWorkspacesRegistry();
     const onceListenedEvents = [
       EventType.CreatedWorkspace,
       EventType.UpdatedWorkspace,
@@ -132,10 +145,23 @@ export class Workspaces extends Storage {
           const { workspaceId } = (event as any as Prismeai.PrismeEvent).source;
           await this.fetchWorkspace(workspaceId!);
         } else if (event.type === EventType.PublishedApp) {
-          const publishedApp = (event as any as Prismeai.PublishedApp).payload
-            .app;
-          if (publishedApp.slug && publishedApp.slug in this.watchedApps) {
+          const publishedPayload = (event as any as Prismeai.PublishedApp)
+            .payload;
+          const publishedApp = publishedPayload.app;
+          if (publishedPayload.rebuildModel) {
+            const rebuilt = await this.rebuildWorkspaceDSUL(
+              `workspaces/${publishedApp.workspaceId!}/versions/current`
+            );
+            await this.apps.saveAppDSUL(
+              publishedApp.slug,
+              'current',
+              rebuilt.dsul
+            );
+          } else {
             await this.apps.fetchApp(publishedApp.slug, 'current');
+          }
+
+          if (publishedApp.slug && publishedApp.slug in this.watchedApps) {
             const updateWorkspaceIds = this.watchedApps[publishedApp.slug];
             updateWorkspaceIds.map((workspaceId) =>
               this.fetchWorkspace(workspaceId)
@@ -168,13 +194,14 @@ export class Workspaces extends Storage {
         break;
       case EventType.UpdatedWorkspace:
         const {
-          payload: { workspace: updatedDSUL },
+          payload: { workspace: updatedDSUL, oldSlug: oldWorkspaceSlug },
         } = event as any as Prismeai.UpdatedWorkspace;
         workspace.dsul = {
           ...workspace.dsul,
           ...updatedDSUL,
         };
         workspace.name = updatedDSUL.name;
+        this.updateWorkspacesRegistry(updatedDSUL, oldWorkspaceSlug);
         break;
       case EventType.ConfiguredWorkspace:
         const {
@@ -233,7 +260,7 @@ export class Workspaces extends Storage {
             setTimeout(async () => {
               try {
                 const rebuilt = await this.rebuildWorkspaceDSUL(
-                  importPayload.workspace.id!
+                  `workspaces/${importPayload.workspace.id!}/versions/current`
                 );
                 resolve(rebuilt);
               } catch (err) {
@@ -283,6 +310,53 @@ export class Workspaces extends Storage {
         await this.driver.delete(`workspaces/${status.workspaceId}/status.yml`);
       } catch {} // Since all instances would try to delete only 1 can succeed
       await this.fetchWorkspace(status.workspaceId);
+    }
+  }
+
+  async loadWorkspacesRegistry() {
+    try {
+      const superAdmin = await getSuperAdmin(this.accessManager);
+      const workspacesRegistry = await superAdmin.findAll(
+        SubjectType.Workspace,
+        {
+          registerWorkspace: true,
+        }
+      );
+      this.workspacesRegistry = workspacesRegistry.reduce(
+        (workspacesRegistry, cur) => ({
+          ...workspacesRegistry,
+          [cur.slug!]: {
+            id: cur.id,
+            name: cur.name,
+          },
+        }),
+        {}
+      );
+    } catch (err) {
+      logger.warn({
+        msg: 'Could not load workspaces registry',
+        err,
+      });
+    }
+  }
+
+  updateWorkspacesRegistry(dsul: Prismeai.RuntimeModel, oldSlug?: string) {
+    const isPublic = !!dsul.registerWorkspace;
+    if (
+      isPublic &&
+      (!(dsul.slug! in this.workspacesRegistry) ||
+        this.workspacesRegistry[dsul.slug!].id !== dsul.id)
+    ) {
+      this.workspacesRegistry[dsul.slug!] = {
+        id: dsul.id!,
+        name: dsul.name,
+      };
+    } else if (!isPublic && dsul.slug! in this.workspacesRegistry) {
+      delete this.workspacesRegistry[dsul.slug!];
+    }
+
+    if (oldSlug) {
+      delete this.workspacesRegistry[oldSlug];
     }
   }
 
@@ -345,6 +419,8 @@ export class Workspaces extends Storage {
     if (workspace.imports) {
       this.watchAppCurrentVersions(this.workspaces[workspace.id!]);
     }
+
+    this.updateWorkspacesRegistry(workspace);
     return this.workspaces[workspace.id!];
   }
 
@@ -368,15 +444,14 @@ export class Workspaces extends Storage {
     );
   }
 
-  async rebuildWorkspaceDSUL(workspaceId: string) {
-    const workspaceDirectory = `workspaces/${workspaceId}/versions/current`;
-    const automationsDirectory = `${workspaceDirectory}/automations`;
-    const importsDirectory = `${workspaceDirectory}/imports`;
+  async rebuildWorkspaceDSUL(rootPath: string) {
+    const automationsDirectory = `${rootPath}/automations`;
+    const importsDirectory = `${rootPath}/imports`;
     const [workspaceIndexRaw, automationFiles, importFiles] = await Promise.all(
       [
-        this.driver.get(`${workspaceDirectory}/index.yml`),
-        this.driver.find(automationsDirectory),
-        this.driver.find(importsDirectory),
+        this.driver.get(`${rootPath}/index.yml`),
+        this.driver.find(automationsDirectory).catch(() => []),
+        this.driver.find(importsDirectory).catch(() => []),
       ]
     );
     const workspaceIndex = yaml.load(workspaceIndexRaw) as Prismeai.DSUL;
@@ -403,7 +478,7 @@ export class Workspaces extends Storage {
         } catch (err) {
           logger.warn({
             msg: `Could not load/parse the following file during a model rebuild : '${path}'`,
-            workspaceId,
+            rootPath,
             err,
           });
           return false;

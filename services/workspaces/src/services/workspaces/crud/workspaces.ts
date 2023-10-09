@@ -223,6 +223,7 @@ class Workspaces {
       id: workspace.id,
       name: workspace.name,
       slug: workspace.slug!,
+      registerWorkspace: workspace.registerWorkspace,
     });
     await this.storage.save({ workspaceId: workspace.id }, workspace);
 
@@ -459,6 +460,7 @@ class Workspaces {
       slug: workspace.slug || hri.random(),
       labels: workspace.labels,
       customDomains: workspace.customDomains,
+      registerWorkspace: workspace.registerWorkspace,
     };
 
     try {
@@ -1203,6 +1205,7 @@ class Workspaces {
           name: content.name,
           slug: workspace.slug,
           id: workspace.id,
+          customDomains: [],
         });
         break;
 
@@ -1322,12 +1325,14 @@ class Workspaces {
         allErrors = allErrors.concat(errors);
 
         if (publishApp) {
-          // How can we avoid this ugly wait & make sure the runtime updated the runtime.yml with latest updates before publishing ??
-          await new Promise((resolve) => setTimeout(resolve, 1000));
           publishApp.workspaceId = target.id;
-          await apps.publishApp(publishApp, {
-            description: 'Imported app release',
-          });
+          await apps.publishApp(
+            publishApp,
+            {
+              description: 'Imported app release',
+            },
+            true
+          );
           publishedApps.push(publishApp);
         }
       } catch (err) {

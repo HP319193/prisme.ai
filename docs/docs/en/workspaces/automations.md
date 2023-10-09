@@ -450,7 +450,11 @@ Any set variable to one of these contexts is automatically synchronized with par
     <tr>
       <td><b>global.pagesHost</b></td>
       <td>Current pages instance base domain (fulfilled by runtime **PAGES_HOST** variable)</td>
-    </tr>                           
+    </tr>           
+    <tr>
+      <td><b>global.workspacesRegistry</b></td>
+      <td>Map public workspaces' slug to their id & name</td>
+    </tr>                               
   </table>
 </center>
 

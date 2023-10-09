@@ -744,6 +744,24 @@
           "label": "HTML identifier of the section",
           "description": "Allows you to identify the section to apply particular CSS styles or point a link to it like an automatic scroll. Optional."
         },
+        "logical": {
+          "if": {
+            "label": "Block display condition (if)",
+            "description": "The Block will be displayed only if the value passed is true (truthy)."
+          },
+          "repeat": {
+            "label": "Repeat Block",
+            "description": "The Block will be repeated for each element of the array passed in parameter.",
+            "on": {
+              "label": "On array",
+              "description": "The array containing the elements to be applied to each of the repeated Blocks."
+            },
+            "as": {
+              "label": "Name of the variable representing each item.",
+              "description": "In the loop, each element will be accessed by a variable, the default `{{item}}`, or the one you specify here."
+            }
+          }
+        },
         "action": {
           "title": "Action",
           "description": "Action triggered by a click on the card",
@@ -1464,6 +1482,9 @@
       },
       "style": {
         "label": "Style"
+      },
+      "logical": {
+        "label": "Logical"
       },
       "picker": {
         "builtIn": "Built-in",

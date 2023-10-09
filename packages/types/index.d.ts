@@ -1227,6 +1227,10 @@ declare namespace Prismeai {
         id?: string;
         labels?: string[];
         customDomains?: string[];
+        /**
+         * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
+         */
+        registerWorkspace?: boolean;
     }
     export interface DSULPatch {
         name?: string;
@@ -1240,6 +1244,10 @@ declare namespace Prismeai {
         id?: string;
         labels?: string[];
         customDomains?: string[];
+        /**
+         * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
+         */
+        registerWorkspace?: boolean;
     }
     export interface DSULReadOnly {
         name: string;
@@ -1253,6 +1261,10 @@ declare namespace Prismeai {
         id?: string;
         labels?: string[];
         customDomains?: string[];
+        /**
+         * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
+         */
+        registerWorkspace?: boolean;
         automations?: {
             [name: string]: AutomationMeta;
         };
@@ -2033,6 +2045,10 @@ declare namespace Prismeai {
         type: "apps.published";
         payload: {
             app: App;
+            /**
+             * Whether we should rebuild this app model, true when this follows a bulk import
+             */
+            rebuildModel?: boolean;
         };
     }
     export interface PublishedWorkspaceVersion {
@@ -2081,6 +2097,10 @@ declare namespace Prismeai {
         id?: string;
         labels?: string[];
         customDomains?: string[];
+        /**
+         * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
+         */
+        registerWorkspace?: boolean;
         automations?: {
             [name: string]: Automation;
         };

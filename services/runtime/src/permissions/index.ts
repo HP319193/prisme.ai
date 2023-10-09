@@ -10,7 +10,12 @@ import { APP_NAME } from '../../config';
 export { SubjectType, Role, ActionType };
 
 type SubjectInterfaces = {
-  [SubjectType.Workspace]: { id: string; name?: string };
+  [SubjectType.Workspace]: {
+    id: string;
+    name?: string;
+    slug?: string;
+    registerWorkspace?: boolean;
+  };
   [SubjectType.Automation]: Prismeai.Automation;
 };
 
@@ -39,6 +44,8 @@ export function initAccessManager(
       schemas: {
         [SubjectType.Workspace]: {
           name: String,
+          slug: { type: String, index: true, unique: true, sparse: true },
+          registerWorkspace: Boolean,
         },
         [SubjectType.Automation]: false,
       },

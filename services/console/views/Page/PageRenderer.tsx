@@ -125,6 +125,10 @@ export const PageRenderer = ({
     setValidationError(error as ValidationError);
     return isValid;
   }, []);
+  const [pageKey, setPageKey] = useState(value.id);
+  useEffect(() => {
+    setPageKey(value.id);
+  }, [value.id]);
   const source = useMemo(() => {
     const { id, workspaceSlug, workspaceId, apiKey, ...page } =
       value as Prismeai.Page & { apiKey: string };
@@ -133,6 +137,7 @@ export const PageRenderer = ({
   const setSource = useCallback(
     (source: any) => {
       onChange(mergeSource(source));
+      setPageKey(`${Math.random()}`);
     },
     [mergeSource, onChange]
   );
@@ -332,7 +337,7 @@ export const PageRenderer = ({
           }`}
         >
           <PageBuilder
-            key={value.id}
+            key={pageKey}
             value={value.blocks}
             onChange={saveBlocks}
           />

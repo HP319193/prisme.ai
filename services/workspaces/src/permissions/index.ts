@@ -22,6 +22,7 @@ export interface WorkspaceMetadata {
   labels?: string[];
   customDomains?: string[];
   clientId?: string;
+  registerWorkspace?: boolean;
 }
 
 export type SubjectInterfaces = {
@@ -65,6 +66,7 @@ export function initAccessManager(
           labels: [String],
           customDomains: [String],
           clientId: String,
+          registerWorkspace: Boolean,
         },
         [SubjectType.App]: {
           workspaceId: { type: String, index: true },

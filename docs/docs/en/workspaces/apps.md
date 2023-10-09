@@ -87,7 +87,14 @@ This way, only automations from current app will be able to call **privateAutoma
 
 In the context of an AppInstance, the [**config**](../automations#contexts) variable will hold current AppInstance config only. In case some config fields are left undefined, they will retrieve the value from the source App config as a default value.  
 
-**An AppInstance automation cannot access parent workspace's configuration or automations**.
+**An AppInstance automation cannot access parent workspace's configuration or automations**.  
+
+As for workspaces, sensitive app config values like credentials can be passed from environment variables built using the target app slug, for example :  
+```
+APP_CONFIG_openai_API_KEY=https://api.mycompany.com
+```
+This will set a variable `config.API_KEY` inside `openai` AppInstances.  
+AppInstances configuration (i.e as seen in studio) takes precedence over environment variables.  
 
 
 ### Run context

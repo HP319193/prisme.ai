@@ -17,6 +17,7 @@ For now, workspace config is only configurable from source code :
 
 ```yaml
 name: MyConfiguredWorkspace
+slug: test
 config:
   value:
     API_URL: https://api.mycompany.com
@@ -35,6 +36,14 @@ automations:
 
 The **config.value** field defined at the top of this workspace is exposed as a **config** variable inside your automations.  
 This **config** variable is also avaible in the workspace config itself, as well as in installed apps config.  
+
+Sensitive config values like credentials can also be passed from environment variables built using the target workspace slug, for example :  
+```
+WORKSPACE_CONFIG_test_API_URL=https://api.mycompany.com
+```
+This will set the same `config.API_URL` variable as in above example. Workspace config takes precedence over environment variables.  
+
+
 [More details on variables usage](automations#variables).  
 
 The **config** object accepts an additional field specific to apps : [**config.schema**](apps#defining-an-app-config-schema)
@@ -81,3 +90,15 @@ Every event includes a **source** field with many useful information including t
 * **source.http** : Source http request details, if any  
 
 For security reason, events emitted from a nested app (i.e an app installed within an app installed in your workspace) will not be visible to the root workspace events feed.  
+
+## Custom domains
+
+You can attach a custom domain name to your workspace to be able to display your pages under your own host. You'll need to complete this steps:
+
+1. Add a CNAME entry to your domain name with value `pages.prisme.ai.`. If you want to use a root domain, you can use an ALIAS instead.
+2. Set the domain in your Workspace by adding it in `customDomains` value. Ex:
+```yaml
+customDomains:
+  - www.acme.fr
+```
+3. [Call us](mailto:support@prisme.ai) to do the final step.
