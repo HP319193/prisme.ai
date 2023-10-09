@@ -427,6 +427,7 @@ const Block = () => {
         >
           <div className="m-4">
             <BlockEditor
+              key={value.slug}
               value={value}
               onChange={(b) =>
                 setValue((prev) => {
