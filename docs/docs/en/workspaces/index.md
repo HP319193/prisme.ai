@@ -17,6 +17,7 @@ For now, workspace config is only configurable from source code :
 
 ```yaml
 name: MyConfiguredWorkspace
+slug: test
 config:
   value:
     API_URL: https://api.mycompany.com
@@ -35,6 +36,14 @@ automations:
 
 The **config.value** field defined at the top of this workspace is exposed as a **config** variable inside your automations.  
 This **config** variable is also avaible in the workspace config itself, as well as in installed apps config.  
+
+Sensitive config values like credentials can also be passed from environment variables built using the target workspace slug, for example :  
+```
+WORKSPACE_CONFIG_test_API_URL=https://api.mycompany.com
+```
+This will set the same `config.API_URL` variable as in above example. Workspace config takes precedence over environment variables.  
+
+
 [More details on variables usage](automations#variables).  
 
 The **config** object accepts an additional field specific to apps : [**config.schema**](apps#defining-an-app-config-schema)

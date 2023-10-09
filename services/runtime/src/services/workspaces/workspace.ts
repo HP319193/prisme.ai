@@ -3,6 +3,7 @@ import { EventType } from '../../eda';
 import { PrismeError } from '../../errors';
 import { logger } from '../../logger';
 import { interpolate } from '../../utils';
+import { extractConfigFromEnv } from '../../utils/extractConfigFromEnv';
 import { findSecretValues, findSecretPaths } from '../../utils/secrets';
 import { Apps } from '../apps';
 import { Trigger } from '../runtime/contexts';
@@ -155,10 +156,28 @@ export class Workspace {
   }
 
   updateConfig(config: Prismeai.Config) {
+    let additionalConfigFromEnv = {};
+    if (this.appContext?.appSlug) {
+      additionalConfigFromEnv = extractConfigFromEnv(
+        'app',
+        this.appContext.appSlug
+      );
+    } else if (this.dsul?.slug) {
+      additionalConfigFromEnv = extractConfigFromEnv(
+        'workspace',
+        this.dsul.slug
+      );
+    }
+
+    const configValue = {
+      ...additionalConfigFromEnv,
+      ...config?.value,
+    };
     this.config = interpolate(
-      config?.value || {},
+      configValue,
       {
-        config: config?.value || {},
+        // App config var from env vars should not be accessible to workspace appInstances config (only from the app automations)
+        config: this.appContext?.appSlug ? config?.value || {} : configValue,
       },
       {
         undefinedVars: 'leave',
