@@ -150,7 +150,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
         )}
       </div>
       <div className="flex pb-6 relative">
-        <div className="absolute right-0 m-2 z-10 justify-center">
+        <div className="absolute right-0 m-2 justify-center">
           <Tooltip title={t('blocks.preview.toggleWidth.desktop')}>
             <button
               onClick={() => {
@@ -188,26 +188,28 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
             </button>
           </Tooltip>
         </div>
-        {cleanedSchema && cleanedSchema.type && formMounted && (
-          <SchemaForm
-            schema={cleanedSchema}
-            onChange={setValues}
-            buttons={[
-              <button
-                key="reset"
-                className="absolute bottom-2 right-4 text-sm"
-                onClick={async () => {
-                  setFormMounted(false);
-                  await setValues(getDefaults(schema || {}));
-                  setFormMounted(true);
-                }}
-              >
-                {t('blocks.preview.config.reset')}
-              </button>,
-            ]}
-            initialValues={values}
-          />
-        )}
+        <div className="flex flex-1 min-h-[4rem]">
+          {cleanedSchema && cleanedSchema.type && formMounted && (
+            <SchemaForm
+              schema={cleanedSchema}
+              onChange={setValues}
+              buttons={[
+                <button
+                  key="reset"
+                  className="absolute bottom-2 right-4 text-sm"
+                  onClick={async () => {
+                    setFormMounted(false);
+                    await setValues(getDefaults(schema || {}));
+                    setFormMounted(true);
+                  }}
+                >
+                  {t('blocks.preview.config.reset')}
+                </button>,
+              ]}
+              initialValues={values}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
