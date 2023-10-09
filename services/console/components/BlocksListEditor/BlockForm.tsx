@@ -3,7 +3,6 @@ import {
   FieldProps,
   Loading,
   Schema,
-  SchemaForm,
   Tabs,
   useSchemaForm,
 } from '@prisme.ai/design-system';
@@ -14,6 +13,7 @@ import { useField } from 'react-final-form';
 import useLocalizedText from '../../utils/useLocalizedText';
 import CSSEditor from '../../views/Page/CSSEditor';
 import ConfirmButton from '../ConfirmButton';
+import SchemaForm from '../SchemaForm/SchemaForm';
 import { useBlocksListEditor } from './BlocksListEditorProvider';
 import componentsWithBlocksList from './componentsWithBlocksList';
 
@@ -178,11 +178,8 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                           {schema !== 'loading' && (
                             <SchemaForm
                               schema={localizeSchemaForm(schema)}
-                              locales={locales}
                               buttons={[]}
                               initialValues={field.input.value}
-                              utils={utils}
-                              components={componentsWithBlocksList}
                               onChange={(v) => {
                                 field.input.onChange({
                                   ...field.input.value,
@@ -201,11 +198,8 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                       children: (
                         <SchemaForm
                           schema={lifecycleSchema}
-                          locales={locales}
                           buttons={[]}
                           initialValues={field.input.value}
-                          utils={utils}
-                          components={componentsWithBlocksList}
                           onChange={(v) => {
                             field.input.onChange({
                               ...field.input.value,
@@ -222,11 +216,8 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                       children: (
                         <SchemaForm
                           schema={logicalSchema}
-                          locales={locales}
                           buttons={[]}
                           initialValues={field.input.value}
-                          utils={utils}
-                          components={componentsWithBlocksList}
                           onChange={(v) => {
                             field.input.onChange({
                               ...field.input.value,
@@ -243,11 +234,8 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                       children: (
                         <SchemaForm
                           schema={styleSchema}
-                          locales={locales}
                           buttons={[]}
                           initialValues={field.input.value}
-                          utils={utils}
-                          components={componentsWithBlocksList}
                           onChange={(v) => {
                             field.input.onChange({
                               ...field.input.value,

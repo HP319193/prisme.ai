@@ -81,7 +81,6 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
 }) => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
-  const { trackEvent } = useTracking();
 
   const zoomPanHelper = useZoomPanHelper();
   const [panelIsOpen, setPanelIsOpen] = useState(false);

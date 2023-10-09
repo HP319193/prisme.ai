@@ -1,6 +1,12 @@
 import ConditionForm from './ConditionForm';
 import renderer, { act } from 'react-test-renderer';
-import { SchemaForm } from '@prisme.ai/design-system';
+import SchemaForm from '../../SchemaForm/SchemaForm';
+
+jest.mock('../../SchemaForm/SchemaForm', () => {
+  return function SchemaForm() {
+    return null;
+  };
+});
 
 it('should render', () => {
   const onChange = jest.fn();

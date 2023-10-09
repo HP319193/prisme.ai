@@ -3,7 +3,6 @@ import {
   Loading,
   notification,
   Schema,
-  SchemaForm,
 } from '@prisme.ai/design-system';
 import { BlockLoader } from '@prisme.ai/blocks';
 import api from '../utils/api';
@@ -12,6 +11,7 @@ import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import useLocalizedText from '../utils/useLocalizedText';
 import { useWorkspace } from '../providers/Workspace';
+import SchemaForm from './SchemaForm/SchemaForm';
 
 interface AppEditorProps {
   schema?: Schema;

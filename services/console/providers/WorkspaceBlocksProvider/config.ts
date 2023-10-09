@@ -1,0 +1,18 @@
+export const builtInBlocksOrder = [
+  'Header',
+  'Hero',
+  'RichText',
+  'Image',
+  'Action',
+  'Buttons',
+  'Form',
+  'DataTable',
+  'Cards',
+  'Breadcrumbs',
+  'Footer',
+  'BlocksList',
+  'BlocksGrid',
+  'Carousel',
+  'StackedNavigation',
+  'TabsView',
+];

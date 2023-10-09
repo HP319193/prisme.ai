@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { SchemaForm, Tooltip } from '@prisme.ai/design-system';
+import { Tooltip } from '@prisme.ai/design-system';
 import { getDefaults } from './getDefaults';
 import { useTranslation } from 'next-i18next';
 import Storage from '../../utils/Storage';
@@ -20,6 +20,9 @@ import {
   TabletOutlined,
 } from '@ant-design/icons';
 import { useContext } from '../../utils/useContext';
+import useLocalizedText from '../../utils/useLocalizedText';
+import componentsWithBlocksList from '../../components/BlocksListEditor/componentsWithBlocksList';
+import SchemaForm from '../../components/SchemaForm/SchemaForm';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = `${global?.location?.origin}/pages` },
@@ -66,6 +69,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
   const { workspace } = useWorkspace();
   const [width, setWidth] = useState<'full' | 'tablet' | 'mobile'>('full');
   const { mounted } = useBlockPreview();
+  const { localizeSchemaForm } = useLocalizedText();
 
   useEffect(() => {
     Storage.set(storageKey, values);
@@ -131,8 +135,9 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
     if (schema && schema.type === 'object' && !schema.title) {
       return { ...schema, title: t('blocks.preview.config.label') };
     }
-    return schema;
-  }, [schema, t]);
+    if (!schema) return schema;
+    return localizeSchemaForm(schema);
+  }, [localizeSchemaForm, schema, t]);
 
   const [formMounted, setFormMounted] = useState(true);
 
