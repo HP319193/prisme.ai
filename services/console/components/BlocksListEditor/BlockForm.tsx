@@ -177,7 +177,7 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                           {schema === 'loading' && <Loading />}
                           {schema !== 'loading' && (
                             <SchemaForm
-                              schema={schema}
+                              schema={localizeSchemaForm(schema)}
                               locales={locales}
                               buttons={[]}
                               initialValues={field.input.value}
