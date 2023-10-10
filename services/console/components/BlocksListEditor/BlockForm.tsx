@@ -139,9 +139,9 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
               },
               as: {
                 type: 'string',
-                title: 'pages.blocks.settings.logical.repeat.on.label',
+                title: 'pages.blocks.settings.logical.repeat.as.label',
                 description:
-                  'pages.blocks.settings.logical.repeat.on.description',
+                  'pages.blocks.settings.logical.repeat.as.description',
               },
             },
           },
