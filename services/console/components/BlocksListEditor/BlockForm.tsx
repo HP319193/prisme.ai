@@ -139,9 +139,9 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
               },
               as: {
                 type: 'string',
-                title: 'pages.blocks.settings.logical.repeat.on.label',
+                title: 'pages.blocks.settings.logical.repeat.as.label',
                 description:
-                  'pages.blocks.settings.logical.repeat.on.description',
+                  'pages.blocks.settings.logical.repeat.as.description',
               },
             },
           },
@@ -177,7 +177,7 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                           {schema === 'loading' && <Loading />}
                           {schema !== 'loading' && (
                             <SchemaForm
-                              schema={schema}
+                              schema={localizeSchemaForm(schema)}
                               locales={locales}
                               buttons={[]}
                               initialValues={field.input.value}
