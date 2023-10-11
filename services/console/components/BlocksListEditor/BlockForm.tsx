@@ -4,7 +4,6 @@ import {
   Loading,
   Schema,
   Tabs,
-  useSchemaForm,
 } from '@prisme.ai/design-system';
 import { TabsProps } from 'antd';
 import { useTranslation } from 'next-i18next';
@@ -15,7 +14,6 @@ import CSSEditor from '../../views/Page/CSSEditor';
 import ConfirmButton from '../ConfirmButton';
 import SchemaForm from '../SchemaForm/SchemaForm';
 import { useBlocksListEditor } from './BlocksListEditorProvider';
-import componentsWithBlocksList from './componentsWithBlocksList';
 
 interface SchemaFormProps {
   name: string;

@@ -98,8 +98,8 @@ const Block = () => {
   }, [block, blocks, createBlock, push, t, trackEvent, workspaceId]);
 
   useEffect(() => {
-    setValue(getBackTemplateDots(block));
     setViewMode((block?.blocks || []).length === 0 ? 1 : 0);
+    setValue(removeTemplateDots(block));
   }, [block]);
 
   const onDelete = useCallback(() => {
