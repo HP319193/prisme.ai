@@ -68,10 +68,6 @@ const Page = () => {
     });
   }, [createPage, page, pages, push, t, trackEvent, workspaceId]);
 
-  useEffect(() => {
-    setValue(getBackTemplateDots(page));
-  }, [page]);
-
   const onDelete = useCallback(() => {
     trackEvent({
       name: 'Delete Page',
