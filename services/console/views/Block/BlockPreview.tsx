@@ -155,7 +155,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
         )}
       </div>
       <div className="flex pb-6 relative">
-        <div className="absolute right-0 m-2 justify-center">
+        <div className="absolute right-6 m-2 z-10 justify-center">
           <Tooltip title={t('blocks.preview.toggleWidth.desktop')}>
             <button
               onClick={() => {

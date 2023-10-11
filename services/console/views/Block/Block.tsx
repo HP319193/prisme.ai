@@ -435,7 +435,7 @@ const Block = () => {
           error={validationError}
         />
         <div
-          className={`absolute top-0 bottom-0 left-0 right-0 bg-white overflow-auto transition-transform ${
+          className={`absolute top-0 bottom-0 left-0 right-0 bg-white overflow-auto transition-transform z-10 ${
             viewMode === 1 ? '' : 'translate-x-full'
           }`}
         >
