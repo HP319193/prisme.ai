@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
-import { Schema, SchemaForm } from '@prisme.ai/design-system';
+import { Schema } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import components from '../../SchemaForm/schemaFormComponents';
+import SchemaForm from '../../SchemaForm/SchemaForm';
 
 interface OutputFormProps {
   output?: string;
@@ -32,7 +32,6 @@ export const OutputForm: FC<OutputFormProps> = ({ output, onChange }) => {
         schema={schema}
         onChange={onChange}
         initialValues={output}
-        components={components}
         buttons={buttons}
       />
     </div>

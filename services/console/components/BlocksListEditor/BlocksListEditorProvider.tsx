@@ -5,6 +5,7 @@ import { useContext } from '../../utils/useContext';
 import useLocalizedText from '../../utils/useLocalizedText';
 import getEditSchema from '../PageBuilder/Panel/EditSchema/getEditSchema';
 import useBlocks, { BlockInCatalog } from '../PageBuilder/useBlocks';
+import { extendsSchema } from './extendsSchema';
 
 interface BlocksListEditorContext {
   blocks: BlockInCatalog[];
@@ -68,8 +69,10 @@ export const BlocksListEditorProvider = ({
   );
 
   const getSchema = useCallback(
-    async (slug) => {
-      return (await fetchSchema(slug)) || undefined;
+    async (slug): Promise<Schema | undefined> => {
+      const schema = (await fetchSchema(slug)) || undefined;
+      if (!schema) return schema;
+      return await extendsSchema(schema, getSchema);
     },
     [fetchSchema]
   );

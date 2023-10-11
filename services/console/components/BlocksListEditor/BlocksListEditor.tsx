@@ -1,5 +1,6 @@
-import { Schema, SchemaForm } from '@prisme.ai/design-system';
+import { Schema } from '@prisme.ai/design-system';
 import { Block } from '../../providers/Block';
+import SchemaForm from '../SchemaForm/SchemaForm';
 
 import BlocksListEditorProvider from './BlocksListEditorProvider';
 import componentsWithBlocksList from './componentsWithBlocksList';
