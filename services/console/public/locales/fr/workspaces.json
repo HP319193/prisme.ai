@@ -1413,6 +1413,7 @@
     "reload": "Recharger la page"
   },
   "blocks": {
+    "notFound": "Le Block n'existe pas.",
     "create": {
       "defaultName": "Block"
     },
