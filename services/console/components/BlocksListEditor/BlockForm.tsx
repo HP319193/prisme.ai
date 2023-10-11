@@ -48,14 +48,11 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
   const { getSchema } = useBlocksListEditor();
   const [schema, setSchema] = useState<Schema | 'loading' | null>(null);
   const field = useField(name);
-  const { utils, locales } = useSchemaForm();
 
   useEffect(() => {
     const loadSchema = async () => {
       setSchema('loading');
       const schema = await getSchema(field.input.value.slug);
-      // Remove classname because its moved to collapse title position
-      delete schema?.properties?.className;
       setSchema(schema || null);
     };
     loadSchema();

@@ -31,7 +31,6 @@ export const BlocksListEditorProvider = ({
   children,
 }: BlocksListEditorProviderProps) => {
   const { variants: blocks } = useBlocks();
-  const { localizeSchemaForm } = useLocalizedText();
   const [schemas, setSchemas] = useState(SCHEMAS);
 
   const fetchSchema = useCallback(
@@ -44,7 +43,7 @@ export const BlocksListEditorProvider = ({
       if (inCatalog.builtIn) {
         const schema = getEditSchema(slug);
         if (!schema) return;
-        SCHEMAS.set(slug, localizeSchemaForm(schema));
+        SCHEMAS.set(slug, schema);
         setSchemas(SCHEMAS);
         return schema;
       }
@@ -60,19 +59,22 @@ export const BlocksListEditorProvider = ({
         return CACHE.get(inCatalog.url);
       }
       if (inCatalog.schema) {
-        SCHEMAS.set(slug, localizeSchemaForm(inCatalog.schema));
+        SCHEMAS.set(slug, inCatalog.schema);
         setSchemas(SCHEMAS);
         return inCatalog.schema;
       }
     },
-    [blocks, localizeSchemaForm]
+    [blocks]
   );
 
   const getSchema = useCallback(
     async (slug): Promise<Schema | undefined> => {
-      const schema = (await fetchSchema(slug)) || undefined;
+      async function getSchema(slug: string, path?: string) {
+        return (await fetchSchema(slug)) || undefined;
+      }
+      const schema = await getSchema(slug);
       if (!schema) return schema;
-      return await extendsSchema(schema, getSchema);
+      return extendsSchema(schema, getSchema);
     },
     [fetchSchema]
   );

@@ -166,3 +166,43 @@ it('should extends Schema with path', async () => {
     },
   });
 });
+
+it('should extends Schema with arrays', async () => {
+  async function getSchema(slug: string, path: string) {
+    return undefined;
+  }
+  expect(
+    await extendsSchema(
+      {
+        type: 'object',
+        properties: {
+          foo: {
+            oneOf: [
+              {
+                type: 'string',
+              },
+              {
+                type: 'string',
+              },
+            ],
+          },
+        },
+      },
+      getSchema
+    )
+  ).toEqual({
+    type: 'object',
+    properties: {
+      foo: {
+        oneOf: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'string',
+          },
+        ],
+      },
+    },
+  });
+});
