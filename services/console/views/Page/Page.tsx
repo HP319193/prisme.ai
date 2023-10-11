@@ -37,7 +37,7 @@ const Page = () => {
     setViewMode(page.blocks?.length === 0 ? 1 : 0);
     setValue(removeTemplateDots(page));
   }, [page]);
-  const [dirty] = useDirtyWarning(page, value);
+  const [dirty] = useDirtyWarning(page, getBackTemplateDots(value));
   const [duplicating, setDuplicating] = useState(false);
   const duplicate = useCallback(async () => {
     if (!page.id || !page.slug) return;

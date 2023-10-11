@@ -62,7 +62,7 @@ const Block = () => {
   const [viewMode, setViewMode] = useState(
     (value?.blocks || []).length === 0 ? 1 : 0
   );
-  const [dirty] = useDirtyWarning(block, value);
+  const [dirty] = useDirtyWarning(block, getBackTemplateDots(value));
   const [saving, setSaving] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
   const duplicate = useCallback(async () => {
