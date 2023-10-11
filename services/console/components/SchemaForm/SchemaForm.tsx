@@ -12,7 +12,6 @@ import { extendsSchema } from '../BlocksListEditor/extendsSchema';
 
 interface SchemaFormProviderProps extends SchemaFormProps {
   schema: Schema;
-  onChange?: (values: any) => void;
 }
 
 export const SchemaForm = ({

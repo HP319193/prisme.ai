@@ -7,7 +7,7 @@ import {
 } from '@prisme.ai/design-system';
 import { TabsProps } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
 import useLocalizedText from '../../utils/useLocalizedText';
 import CSSEditor from '../../views/Page/CSSEditor';
@@ -144,7 +144,27 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
       }),
     [localizeSchemaForm]
   );
-
+  const onChange = useCallback(
+    (schema: Schema) => (value: any) => {
+      let values: any = {};
+      if (schema.properties) {
+        values = Object.entries(schema.properties).reduce((prev, [k, v]) => {
+          return {
+            ...prev,
+            [k]: value[k],
+          };
+        }, {});
+      } else {
+        values = value;
+      }
+      field.input.onChange({
+        ...field.input.value,
+        ...values,
+        slug: field.input.value.slug,
+      });
+    },
+    [field.input]
+  );
   return (
     <Collapse
       items={[
@@ -175,13 +195,7 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                               schema={localizeSchemaForm(schema)}
                               buttons={[]}
                               initialValues={field.input.value}
-                              onChange={(v) => {
-                                field.input.onChange({
-                                  ...field.input.value,
-                                  ...v,
-                                  slug: field.input.value.slug,
-                                });
-                              }}
+                              onChange={onChange(schema)}
                             />
                           )}
                         </>
@@ -195,13 +209,7 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                           schema={lifecycleSchema}
                           buttons={[]}
                           initialValues={field.input.value}
-                          onChange={(v) => {
-                            field.input.onChange({
-                              ...field.input.value,
-                              ...v,
-                              slug: field.input.value.slug,
-                            });
-                          }}
+                          onChange={onChange(lifecycleSchema)}
                         />
                       ),
                     },
@@ -213,13 +221,7 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                           schema={logicalSchema}
                           buttons={[]}
                           initialValues={field.input.value}
-                          onChange={(v) => {
-                            field.input.onChange({
-                              ...field.input.value,
-                              ...v,
-                              slug: field.input.value.slug,
-                            });
-                          }}
+                          onChange={onChange(logicalSchema)}
                         />
                       ),
                     },
@@ -231,13 +233,7 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
                           schema={styleSchema}
                           buttons={[]}
                           initialValues={field.input.value}
-                          onChange={(v) => {
-                            field.input.onChange({
-                              ...field.input.value,
-                              ...v,
-                              slug: field.input.value.slug,
-                            });
-                          }}
+                          onChange={onChange(styleSchema)}
                         />
                       ),
                     },

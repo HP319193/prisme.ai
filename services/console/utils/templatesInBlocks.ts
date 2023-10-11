@@ -1,4 +1,7 @@
 export function replaceCharacter(block: any, from: RegExp, to: string): any {
+  if (!block || typeof block !== 'object') {
+    return block;
+  }
   if (Array.isArray(block)) {
     return block.map((value) => {
       return typeof value === 'object'

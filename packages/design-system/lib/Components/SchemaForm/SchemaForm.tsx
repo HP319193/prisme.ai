@@ -34,7 +34,7 @@ export interface SchemaFormProps {
     values: any
   ) => void | Record<string, any> | Promise<Record<string, any>>;
   buttons?: ReactElement[];
-  onChange?: (values: any) => void;
+  onChange?: (values: any, previous: any) => void;
   initialValues?: any;
   locales?: SchemaFormContext['locales'];
   components?: Partial<SchemaFormContext['components']>;
@@ -125,7 +125,7 @@ export const SchemaForm = ({
                 <OnChange name="values">
                   {(value, previous) => {
                     if (previous === value) return;
-                    onChange(value);
+                    onChange(value, previous);
                   }}
                 </OnChange>
               )}
