@@ -39,7 +39,7 @@ interface Item {
 let context: any;
 let setValue: any;
 const T = ({ item }: { item: Item }) => {
-  const [value, _setValue] = useState();
+  const [value, _setValue] = useState(item);
   setValue = _setValue;
   context = useDirtyWarning(item, value);
 

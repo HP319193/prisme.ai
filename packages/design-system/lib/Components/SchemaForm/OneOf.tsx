@@ -49,7 +49,9 @@ export const OneOf = ({
 }: FieldProps & { locales: SchemaFormContext['locales'] }) => {
   const field = useField(props.name);
 
-  const { oneOf = [], 'ui:options': uiOptions } = props.schema;
+  const { 'ui:options': uiOptions } = props.schema;
+  const oneOf =
+    (Array.isArray(props.schema?.oneOf) && props.schema.oneOf) || [];
   const [selected, setSelected] = useState(
     getInitialIndex(
       field.input.value,

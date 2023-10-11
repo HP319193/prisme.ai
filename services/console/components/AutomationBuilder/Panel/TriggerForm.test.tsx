@@ -2,6 +2,8 @@ import TriggerForm from './TriggerForm';
 import renderer from 'react-test-renderer';
 import { workspaceContext } from '../../../providers/Workspace';
 
+jest.mock('../../SchemaForm/SchemaForm', () => () => null);
+
 it('should render', () => {
   const trigger = {
     events: ['foo'],

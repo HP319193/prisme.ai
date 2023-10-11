@@ -70,6 +70,7 @@ export function initAPI(
       ignorePaths: [
         '^/sys',
         '^/v2/pages', // expres-openapi-validator always rejects pages.appInstances[*].blocks although our schema seems correct
+        '/v2/workspaces/.*/pages', // same
         '^/v2/files/',
         '^/v2/workspaces/.*/files',
         '^/v2/workspaces/import',

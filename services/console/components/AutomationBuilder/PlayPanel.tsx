@@ -1,11 +1,5 @@
 import { CloseCircleOutlined, CopyOutlined } from '@ant-design/icons';
-import {
-  Loading,
-  Popover,
-  Schema,
-  SchemaForm,
-  Tooltip,
-} from '@prisme.ai/design-system';
+import { Loading, Popover, Schema, Tooltip } from '@prisme.ai/design-system';
 import { Trans, useTranslation } from 'next-i18next';
 import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
@@ -20,6 +14,7 @@ import PlayIcon from '../../icons/play.svgr';
 import { useTracking } from '../Tracking';
 import useLocalizedText from '../../utils/useLocalizedText';
 import copy from '../../utils/Copy';
+import SchemaForm from '../SchemaForm/SchemaForm';
 
 const PlayView = () => {
   const {
@@ -134,7 +129,7 @@ const PlayView = () => {
   }, [automation.slug, trackEvent, values, wId]);
 
   return (
-    <div className="flex flex-row flex-1 min-w-[40vw]">
+    <div className="flex flex-row flex-1 min-w-[70vw]">
       {hasParam && (
         <div className="flex flex-col flex-1">
           <div className="font-bold">{t('automations.play.parameters')}</div>
@@ -151,7 +146,7 @@ const PlayView = () => {
           />
         </div>
       )}
-      <div className="flex flex-col w-[20rem] mr-2">
+      <div className="flex flex-col w-[50%] mr-2">
         <div className="flex flex-row justify-between">
           <div className="font-bold">{t('automations.play.results')}</div>
           <div className="flex flex-row">

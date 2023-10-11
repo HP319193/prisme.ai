@@ -1,10 +1,11 @@
 import { useTranslation } from 'next-i18next';
-import { FC, FunctionComponent, useMemo } from 'react';
-import { FieldProps, Schema, SchemaForm } from '@prisme.ai/design-system';
+import { FC, useMemo } from 'react';
+import { FieldProps, Schema } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
 import { useAutomationBuilder } from '../context';
 import { useWorkspace } from '../../../providers/Workspace';
 import dynamic from 'next/dynamic';
+import SchemaForm from '../../SchemaForm/SchemaForm';
 
 const Schedule = dynamic(() => import('./Schedule'), {
   ssr: false,

@@ -27,7 +27,10 @@ jest.mock('../../utils/api', () => {
 it('should render', async () => {
   const root = renderer.create(
     <workspaceContext.Provider value={workspaceContextValue}>
-      <BlockProvider workspaceId={workspaceContextValue.workspace.id} slug="42">
+      <BlockProvider
+        workspaceId={workspaceContextValue.workspace.id}
+        slug="my-block"
+      >
         Foo
       </BlockProvider>
     </workspaceContext.Provider>

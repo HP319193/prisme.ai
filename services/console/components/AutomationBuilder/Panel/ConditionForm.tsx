@@ -1,6 +1,7 @@
 import { useTranslation } from 'next-i18next';
-import { Schema, SchemaForm } from '@prisme.ai/design-system';
+import { Schema } from '@prisme.ai/design-system';
 import { FC, useCallback, useMemo } from 'react';
+import SchemaForm from '../../SchemaForm/SchemaForm';
 
 interface ConditionFormProps {
   condition?: string;

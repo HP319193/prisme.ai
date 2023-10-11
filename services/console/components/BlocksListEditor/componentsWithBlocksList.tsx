@@ -2,7 +2,7 @@ import { FieldComponent } from '@prisme.ai/design-system/lib/Components/SchemaFo
 import { Modal } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useState } from 'react';
-import { useField } from 'react-final-form';
+import { Field } from 'react-final-form';
 import { Block } from '../../providers/Block';
 import AddBlock from './AddBlock';
 
@@ -11,13 +11,13 @@ import { SortableList, SortableListItem } from '../SortableList';
 import BlockForm from './BlockForm';
 import BlockPicker from './BlockPicker';
 import { useBlocksListEditor } from './BlocksListEditorProvider';
+import { useFieldArray } from 'react-final-form-arrays';
 
 const BlocksList: FieldComponent = ({ name }) => {
   const { t } = useTranslation('workspaces');
   const { blocks } = useBlocksListEditor();
-  const {
-    input: { value, onChange },
-  } = useField<Block[]>(name);
+  const { fields } = useFieldArray(name);
+  const [mounted, setMounted] = useState(true);
 
   const [displayBlocksSelection, setDisplayBlocksSelection] = useState(false);
 
@@ -27,32 +27,32 @@ const BlocksList: FieldComponent = ({ name }) => {
     setDisplayBlocksSelection(true);
   }, []);
   const reallyAdd = useCallback(
-    (block: Block) => {
+    async (block: Block) => {
       if (adding === null) return;
-      const newValue = [...value];
-      newValue.splice(adding, 0, { slug: block.slug });
-      onChange(newValue);
+      setMounted(false);
+      await fields.insert(adding, { slug: block.slug });
+      setMounted(true);
       setAdding(null);
       setDisplayBlocksSelection(false);
     },
-    [adding, onChange, value]
+    [adding, fields]
   );
   const removeBlock = useCallback(
-    (block: Block) => () => {
-      const newValue = value.filter((item) => item !== block);
-      onChange(newValue);
+    (block: Block) => async () => {
+      setMounted(false);
+      const pos = fields.value.indexOf(block);
+      await fields.remove(pos);
+      setMounted(true);
     },
-    [onChange, value]
+    [fields]
   );
   const sort = useCallback(
-    (from: number, to: number) => {
-      const item = value[from];
-      if (!item) return;
-      const newValue = value.filter((i) => i !== item);
-      newValue.splice(to, 0, item);
-      onChange(newValue);
+    async (from: number, to: number) => {
+      setMounted(false);
+      await fields.move(from, to);
+      setMounted(true);
     },
-    [onChange, value]
+    [fields]
   );
 
   return (
@@ -73,18 +73,27 @@ const BlocksList: FieldComponent = ({ name }) => {
         </AddBlock>
       </div>
       <SortableList onSort={sort}>
-        {(Array.isArray(value) ? value : []).map((block, k) => (
-          <SortableListItem key={k} id={`${k}`} item={block}>
-            <div className="my-4 p-2 border rounded">
-              <BlockForm name={`${name}[${k}]`} onRemove={removeBlock(block)} />
-            </div>
-            <div className="flex justify-center">
-              <AddBlock onClick={() => add(k + 1)}>
-                {t('blocks.builder.add.label')}
-              </AddBlock>
-            </div>
-          </SortableListItem>
-        ))}
+        {mounted &&
+          fields.map((name, k) => (
+            <Field name={name} key={name}>
+              {({ input: { value, name: itemName } }) => (
+                <SortableListItem id={`${k}`} item={value} key={itemName}>
+                  <div className="my-4 p-2 border rounded">
+                    <BlockForm
+                      key={itemName}
+                      name={itemName}
+                      onRemove={removeBlock(value)}
+                    />
+                  </div>
+                  <div className="flex justify-center">
+                    <AddBlock onClick={() => add(k + 1)}>
+                      {t('blocks.builder.add.label')}
+                    </AddBlock>
+                  </div>
+                </SortableListItem>
+              )}
+            </Field>
+          ))}
       </SortableList>
     </div>
   );

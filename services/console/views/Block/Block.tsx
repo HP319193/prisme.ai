@@ -62,7 +62,7 @@ const Block = () => {
   const [viewMode, setViewMode] = useState(
     (value?.blocks || []).length === 0 ? 1 : 0
   );
-  const [dirty] = useDirtyWarning(block, value);
+  const [dirty] = useDirtyWarning(block, getBackTemplateDots(value));
   const [saving, setSaving] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
   const duplicate = useCallback(async () => {
@@ -98,8 +98,8 @@ const Block = () => {
   }, [block, blocks, createBlock, push, t, trackEvent, workspaceId]);
 
   useEffect(() => {
-    setValue(getBackTemplateDots(block));
     setViewMode((block?.blocks || []).length === 0 ? 1 : 0);
+    setValue(removeTemplateDots(block));
   }, [block]);
 
   const onDelete = useCallback(() => {
@@ -435,7 +435,7 @@ const Block = () => {
           error={validationError}
         />
         <div
-          className={`absolute top-0 bottom-0 left-0 right-0 bg-white overflow-auto transition-transform ${
+          className={`absolute top-0 bottom-0 left-0 right-0 bg-white overflow-auto transition-transform z-10 ${
             viewMode === 1 ? '' : 'translate-x-full'
           }`}
         >

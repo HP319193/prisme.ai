@@ -21,6 +21,7 @@ import api, { ApiError } from '../../utils/api';
 import Tabs from './Tabs';
 import { TrackingCategory, useTracking } from '../../components/Tracking';
 import { usePermissions } from '../../components/PermissionsProvider';
+import WorkspaceBlocksProvider from '../../providers/WorkspaceBlocksProvider';
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
@@ -297,19 +298,20 @@ export const WorkspaceLayout: FC = ({ children }) => {
         }}
       >
         <BlocksProvider>
-          <Head>
-            <title>
-              {t('workspace.title', { name: localize(workspace.name) })}
-            </title>
-            <meta
-              name="description"
-              content={t('workspace.description', {
-                name: localize(workspace.name),
-              })}
-            />
-          </Head>
-          <div
-            className={`
+          <WorkspaceBlocksProvider>
+            <Head>
+              <title>
+                {t('workspace.title', { name: localize(workspace.name) })}
+              </title>
+              <meta
+                name="description"
+                content={t('workspace.description', {
+                  name: localize(workspace.name),
+                })}
+              />
+            </Head>
+            <div
+              className={`
           absolute top-[72px] bottom-0 right-0 left-0
           bg-white
           flex flex-1
@@ -319,53 +321,56 @@ export const WorkspaceLayout: FC = ({ children }) => {
           z-20
           ${displaySourceView ? '' : '-translate-y-full'}
         `}
-          >
-            {mountSourceComponent && (
-              <WorkspaceSource
-                key={sourceDisplayed}
-                sourceDisplayed={sourceDisplayed}
-                onLoad={() => setDisplaySourceView(true)}
-              />
-            )}
-          </div>
-          <Layout Header={<HeaderWorkspace />} className="max-w-full">
-            <AppsStore
-              visible={appStoreVisible}
-              onCancel={() => setAppStoreVisible(false)}
-            />
-            <div className="h-full flex flex-row">
-              <Layout
-                className={`${
-                  fullSidebar ? 'max-w-xs' : 'max-w-[4.2rem]'
-                } transition-all p-0`}
-              >
-                <div className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden onboarding-step-4">
-                  <Navigation
-                    onCreateAutomation={() => createAutomationHandler()}
-                    onCreatePage={() => createPageHandler()}
-                    onInstallApp={() => installAppHandler()}
-                    onCreateBlock={() => createBlockHandler()}
-                    onExpand={() => setFullSidebar(true)}
-                    className="max-h-[calc(100%-3rem)]"
-                  />
-                  <Expand
-                    expanded={fullSidebar}
-                    onToggle={() => {
-                      trackEvent({
-                        name: `${fullSidebar ? 'Minimize' : 'Expand'} sidebar`,
-                        action: 'click',
-                      });
-                      setFullSidebar(!fullSidebar);
-                    }}
-                  />
-                </div>
-              </Layout>
-              <div className="flex h-full flex-col flex-1 min-w-[1px] max-w-full onboarding-step-5">
-                <Tabs />
-                {creatingAutomation || creatingPage ? <Loading /> : children}
-              </div>
+            >
+              {mountSourceComponent && (
+                <WorkspaceSource
+                  key={sourceDisplayed}
+                  sourceDisplayed={sourceDisplayed}
+                  onLoad={() => setDisplaySourceView(true)}
+                />
+              )}
             </div>
-          </Layout>
+            <Layout Header={<HeaderWorkspace />} className="max-w-full">
+              <AppsStore
+                visible={appStoreVisible}
+                onCancel={() => setAppStoreVisible(false)}
+              />
+              <div className="h-full flex flex-row">
+                <Layout
+                  className={`${
+                    fullSidebar ? 'max-w-xs' : 'max-w-[4.2rem]'
+                  } transition-all p-0`}
+                >
+                  <div className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden onboarding-step-4">
+                    <Navigation
+                      onCreateAutomation={() => createAutomationHandler()}
+                      onCreatePage={() => createPageHandler()}
+                      onInstallApp={() => installAppHandler()}
+                      onCreateBlock={() => createBlockHandler()}
+                      onExpand={() => setFullSidebar(true)}
+                      className="max-h-[calc(100%-3rem)]"
+                    />
+                    <Expand
+                      expanded={fullSidebar}
+                      onToggle={() => {
+                        trackEvent({
+                          name: `${
+                            fullSidebar ? 'Minimize' : 'Expand'
+                          } sidebar`,
+                          action: 'click',
+                        });
+                        setFullSidebar(!fullSidebar);
+                      }}
+                    />
+                  </div>
+                </Layout>
+                <div className="flex h-full flex-col flex-1 min-w-[1px] max-w-full onboarding-step-5">
+                  <Tabs />
+                  {creatingAutomation || creatingPage ? <Loading /> : children}
+                </div>
+              </div>
+            </Layout>
+          </WorkspaceBlocksProvider>
         </BlocksProvider>
       </workspaceLayoutContext.Provider>
     </TrackingCategory>

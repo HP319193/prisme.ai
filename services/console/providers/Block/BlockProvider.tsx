@@ -52,6 +52,9 @@ export const BlockProvider = ({
       const { blocks: { [slug]: block } = {} } = await api.getWorkspace(
         workspaceId
       );
+      if (!block) {
+        throw new Error('not found');
+      }
       return { slug, ...block } || null;
     } catch (e) {
       setNotFound(true);
@@ -112,7 +115,7 @@ export const BlockProvider = ({
 
   if (loading) return <Loading />;
   if (notFound)
-    return <NotFound icon={FileUnknownOutlined} text={t('pages.notFound')} />;
+    return <NotFound icon={FileUnknownOutlined} text={t('blocks.notFound')} />;
 
   if (!block || !slug) return null;
 

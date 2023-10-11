@@ -9,6 +9,8 @@ import { useWorkspace } from '../../providers/Workspace';
 
 jest.useFakeTimers();
 
+jest.mock('../SchemaForm/SchemaForm', () => () => null);
+
 jest.mock('react-flow-renderer', () => {
   const { useAutomationBuilder } = require('./context');
   const ReactFlow: any = () => {
