@@ -12,7 +12,7 @@ import { useTranslation } from 'next-i18next';
 import EditableTitle from '../../components/EditableTitle';
 import HorizontalSeparatedNav from '../../components/HorizontalSeparatedNav';
 import SharePage from '../../components/Share/SharePage';
-import EditDetails from '../../layouts/EditDetails';
+import EditDetails from './EditDetails';
 import CopyIcon from '../../icons/copy.svgr';
 import Head from 'next/head';
 import useLocalizedText from '../../utils/useLocalizedText';
@@ -25,7 +25,6 @@ import SourceEdit, {
   ValidationError,
 } from '../../components/SourceEdit/SourceEdit';
 import { defaultStyles } from './defaultStyles';
-import useSectionsIds from '../../providers/Page/useSectionsIds';
 import { useTracking } from '../../components/Tracking';
 import { getBackTemplateDots } from '../../utils/templatesInBlocks';
 
@@ -56,38 +55,9 @@ export const PageRenderer = ({
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const [displaySource, setDisplaySource] = useState(false);
-  const sectionsIds = useSectionsIds();
+
   const { trackEvent } = useTracking();
   const { reload } = usePagePreview();
-
-  const detailsFormSchema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        name: {
-          type: 'localized:string',
-          title: t('pages.details.name.label'),
-        },
-        slug: {
-          type: 'string',
-          title: t('pages.details.slug.label'),
-        },
-        description: {
-          type: 'localized:string',
-          title: t('pages.details.description.label'),
-          'ui:widget': 'textarea',
-          'ui:options': { textarea: { rows: 10 } },
-        },
-        styles: {
-          type: 'string',
-          'ui:widget': (props: FieldProps) => (
-            <CSSEditor {...props} sectionIds={sectionsIds} />
-          ),
-        },
-      },
-    }),
-    [t, sectionsIds]
-  );
 
   const saveBlocks = useCallback(
     (blocks: Prismeai.Page['blocks']) => {
@@ -192,7 +162,6 @@ export const PageRenderer = ({
                 placement="bottom"
               >
                 <EditDetails
-                  schema={detailsFormSchema}
                   value={{
                     ...value,
                     styles:
