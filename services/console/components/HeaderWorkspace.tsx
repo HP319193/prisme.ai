@@ -268,7 +268,6 @@ const HeaderWorkspace = () => {
             <Popover
               content={() => <ShareWorkspace workspaceId={workspace.id} />}
               title={t('share.label')}
-              titleClassName="!bg-white !text-black"
               onOpenChange={(open) => {
                 trackEvent({
                   name: `${open ? 'Open' : 'Close'} Share Panel`,

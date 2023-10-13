@@ -22,7 +22,7 @@ const Popover: FC<PopoverProps> = ({
   content,
   open,
   onOpenChange,
-  titleClassName,
+  titleClassName = 'flex w-full items-center justify-between flex-row p-[2.5rem] !pb-[1.4rem] font-semibold overflow-hidden rounded-t-[0.6rem]',
   ...otherProps
 }) => {
   const [visible, setVisible] = useState(open);
@@ -49,11 +49,7 @@ const Popover: FC<PopoverProps> = ({
       }
       title={
         title ? (
-          <div
-            className={`flex w-full items-center justify-between flex-row p-[2.5rem] !pb-[1.4rem] font-semibold overflow-hidden rounded-t-[0.6rem] ${
-              titleClassName || ''
-            }`}
-          >
+          <div className={titleClassName}>
             {typeof title === 'function'
               ? title({ setOpen: toggleVisible })
               : title}

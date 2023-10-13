@@ -199,6 +199,10 @@
         "event": "un événement"
       }
     },
+    "delete": {
+      "label": "Supprimer",
+      "confirm": "Êtes vous sur de vouloir supprimer cette Automatisation ?"
+    },
     "empty": "Une automatisation décrit ce qu'il faut faire et quand il faut le faire",
     "back": "Retour",
     "design": {
@@ -520,6 +524,7 @@
       }
     },
     "details": {
+      "setup": "Configuration",
       "slug": {
         "label": "Nom technique"
       },
@@ -529,6 +534,7 @@
       "description": {
         "label": "Description"
       },
+      "advanced": "Avancé",
       "private": {
         "label": "Usage interne",
         "description": "Si vous activez ce paramètre, l'Automatisation ne sera visible en tant qu'instruction que dans ce même Workspace. Quand vous publierez votre App, ses utilisateurs ne la verront pas."
@@ -668,13 +674,8 @@
       }
     },
     "delete": {
-      "label": "Supprimer la page",
-      "confirm": {
-        "title": "Voulez vous supprimer la page \"{{name}}\" ?",
-        "content": "Attention, les données seront perdues.",
-        "ok": "Oui, supprimer",
-        "cancel": "Non, je regrette"
-      },
+      "label": "Supprimer",
+      "confirm": "Êtes vous sur de vouloir supprimer cette Page ?",
       "toast": "La page a bien été supprimée"
     },
     "save": {
@@ -1553,35 +1554,6 @@
     "set": {
       "tooltip": "Ajouter une traduction",
       "title": "Langues ajoutées"
-    }
-  },
-  "details": {
-    "title": "",
-    "title_workspaces": "Réglages du Workspace",
-    "title_automations": "Réglages de l'Automatisation",
-    "title_pages": "Réglages de la Page",
-    "title_apps": "Détails de l'App",
-    "title_blocks": "Réglages du Block",
-    "save": "Enregistrer",
-    "delete": {
-      "label": "Supprimer",
-      "label_workspaces": "Supprimer le Workspace",
-      "label_automations": "Supprimer l'automatisation",
-      "label_pages": "Supprimer la page",
-      "confirm": {
-        "title": "Voulez vous supprimer \"{{name}}\" ?",
-        "title_workspaces": "Voulez vous supprimer le Workspace \"{{name}}\" ?",
-        "title_automation": "Voulez vous supprimer l'automatisation \"{{name}}\" ?",
-        "title_pages": "Voulez vous supprimer la page \"{{name}}\" ?",
-        "title_apps": "Désinstaller",
-        "content": "Attention, les données seront perdues.",
-        "content_apps": "Êtes vous sûr de vouloir supprimer \"{{name}}\" de votre workspace ?",
-        "ok": "Oui, supprimer",
-        "ok_apps": "Désinstaller {{name}}",
-        "cancel": "Non, je regrette"
-      },
-      "toast_automations": "L'automatisation a bien été supprimée",
-      "toast_pages": "La page a bien été supprimée"
     }
   },
   "schema": {

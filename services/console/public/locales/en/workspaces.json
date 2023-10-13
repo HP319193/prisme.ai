@@ -199,6 +199,10 @@
         "event": "an event"
       }
     },
+    "delete": {
+      "label": "Delete",
+      "confirm": "Are you sure you want to remove this Automation?"
+    },
     "empty": "An automation describes what to do and when to do it",
     "back": "Back",
     "design": {
@@ -520,6 +524,7 @@
       }
     },
     "details": {
+      "setup": "Setup",
       "slug": {
         "label": "Slug"
       },
@@ -529,6 +534,7 @@
       "description": {
         "label": "Description"
       },
+      "advanced": "Advanced",
       "private": {
         "label": "Internal use",
         "description": "If you enable this setting, Automation will be visible as an instruction only in this same Workspace. When you publish your app, its users will not see it."
@@ -669,12 +675,7 @@
     },
     "delete": {
       "label": "Delete the page",
-      "confirm": {
-        "title": "Do you want to delete the page \"{{name}}\"?",
-        "content": "Warning, the data will be lost.",
-        "ok": "Yes, delete",
-        "cancel": "No, please no"
-      },
+      "confirm": "Are you sure you want to remove this Page?",
       "toast": "Page has been deleted"
     },
     "save": {
@@ -1553,35 +1554,6 @@
     "set": {
       "tooltip": "Add a translation",
       "title": "Added languages"
-    }
-  },
-  "details": {
-    "title": "",
-    "title_workspaces": "Workspace settings",
-    "title_automations": "Automation settings",
-    "title_pages": "Page settings",
-    "title_apps": "App settings",
-    "title_blocks": "Block settings",
-    "save": "Save",
-    "delete": {
-      "label": "Delete",
-      "label_workspaces": "Delete Workspace",
-      "label_automations": "Delete automation",
-      "label_pages": "Delete page",
-      "confirm": {
-        "title": "Do you want to delete \"{{name}}\" ?",
-        "title_workspaces": "Do you want to delete the \"{{name}}\" Workspace?",
-        "title_automation": "Do you want to delete the \"{{name}}\" automation?",
-        "title_pages": "Do you want to delete the \"{{name}}\" page?",
-        "title_apps": "Uninstall",
-        "content": "Warning, the data will be lost.",
-        "content_apps": "Are you sure you want to remove \"{{name}}\" from your workspace ?",
-        "ok": "Yes, delete",
-        "ok_apps": "Uninstall {{name}}",
-        "cancel": "No, please no"
-      },
-      "toast_automations": "Automation has been deleted",
-      "toast_pages": "Page has been deleted"
     }
   },
   "schema": {

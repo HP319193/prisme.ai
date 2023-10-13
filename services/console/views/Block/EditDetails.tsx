@@ -157,6 +157,7 @@ export const EditDetails = ({
 
   return (
     <Popover
+      titleClassName="flex m-0 pb-0 pt-4 pl-4 pr-4"
       title={({ setOpen }) => (
         <div className="flex flex-1 justify-between">
           {t('details.title', { context })}
@@ -227,9 +228,7 @@ export const EditDetails = ({
               })}
             >
               <DeleteOutlined />
-              <span className="flex">
-                {t('details.delete.label', { context })}
-              </span>
+              <span className="flex">{t('blocks.builder.delete.label')}</span>
             </ConfirmButton>
           }
         />

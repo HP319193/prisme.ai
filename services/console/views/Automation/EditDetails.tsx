@@ -1,5 +1,6 @@
 import {
   CloseCircleOutlined,
+  CodepenOutlined,
   DeleteOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
@@ -8,17 +9,18 @@ import {
   FieldProps,
   Popover,
   Schema,
+  SchemaForm,
   Tabs,
 } from '@prisme.ai/design-system';
 import { PopoverProps } from '@prisme.ai/design-system/lib/Components/Popover';
-import { useTranslation } from 'next-i18next';
+import { Trans, useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import useSectionsIds from '../../providers/Page/useSectionsIds';
 import { useTracking } from '../../components/Tracking';
 import useLocalizedText from '../../utils/useLocalizedText';
-import CSSEditor from './CSSEditor';
+import CSSEditor from '../Page/CSSEditor';
 import ConfirmButton from '../../components/ConfirmButton';
-import SchemaForm from '../../components/SchemaForm/SchemaForm';
+import ArgumentsEditor from '../../components/SchemaFormBuilder/ArgumentsEditor';
+import { SLUG_VALIDATION_REGEXP } from '../../utils/regex';
 
 interface EditDetailsprops extends Omit<PopoverProps, 'content'> {
   value: any;
@@ -41,7 +43,6 @@ export const EditDetails = ({
   const { localize } = useLocalizedText();
   const { trackEvent } = useTracking();
   const [open, setOpen] = useState(false);
-  const sectionsIds = useSectionsIds();
   const [values, setValues] = useState(value);
 
   const configSchema: Schema = useMemo(
@@ -50,63 +51,71 @@ export const EditDetails = ({
       properties: {
         name: {
           type: 'localized:string',
-          title: t('pages.details.name.label'),
+          title: t('automations.details.name.label'),
         },
         slug: {
           type: 'string',
-          title: t('pages.details.slug.label'),
+          title: t('automations.details.slug.label'),
+          pattern: SLUG_VALIDATION_REGEXP.source,
+          errors: {
+            pattern: t('automations.save.error_InvalidSlugError'),
+          },
         },
         description: {
           type: 'localized:string',
-          title: t('pages.details.description.label'),
+          title: t('automations.details.description.label'),
           'ui:widget': 'textarea',
-          'ui:options': { textarea: { rows: 10 } },
+          'ui:options': { textarea: { rows: 6 } },
+        },
+      },
+      'ui:options': {
+        grid: [
+          [['name', 'slug'], ['description']],
+          [['arguments']],
+          [['private']],
+          [['disabled']],
+        ],
+      },
+    }),
+    [t]
+  );
+
+  const schemaSchema: Schema = useMemo(
+    () => ({
+      type: 'object',
+      properties: {
+        arguments: {
+          'ui:widget': ArgumentsEditor,
         },
       },
     }),
     [t]
   );
-  const lifecycleSchema: Schema = useMemo(
+  const advancedSchema: Schema = useMemo(
     () => ({
       type: 'object',
       properties: {
-        onInit: {
-          type: 'string',
-          title: t('pages.blocks.settings.onInit.label'),
-          description: t('pages.blocks.settings.onInit.description'),
+        private: {
+          type: 'boolean',
+          title: t('automations.details.private.label'),
+          description: t('automations.details.private.description'),
         },
-        automation: {
-          type: 'string',
-          title: t('pages.blocks.settings.automation.label'),
-          description: t('pages.blocks.settings.automation.description'),
-          'ui:widget': 'select',
-          'ui:options': {
-            from: 'automations',
-            filter: 'endpoint',
-          },
+        disabled: {
+          type: 'boolean',
+          title: t('automations.details.disabled.label'),
+          description: t('automations.details.disabled.description'),
         },
-        updateOn: {
-          type: 'string',
-          title: t('pages.blocks.settings.updateOn.label'),
-          description: t('pages.blocks.settings.updateOn.description'),
-        },
+      },
+      'ui:options': {
+        grid: [
+          [['name', 'slug'], ['description']],
+          [['arguments']],
+          [['private']],
+          [['disabled']],
+        ],
       },
     }),
     [t]
-  );
-  const stylesSchema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        styles: {
-          type: 'string',
-          'ui:widget': (props: FieldProps) => (
-            <CSSEditor {...props} sectionIds={sectionsIds} opened />
-          ),
-        },
-      },
-    }),
-    [sectionsIds]
   );
 
   const initialOpenState = useRef(false);
@@ -140,7 +149,7 @@ export const EditDetails = ({
     () => [
       <div key="1" className="flex flex-1 justify-end !mt-2 mx-4">
         <Button variant="primary" type="submit" disabled={disabled}>
-          {t('details.save', { context: 'page' })}
+          {t('details.save', { context: 'automation' })}
         </Button>
       </div>,
     ],
@@ -173,7 +182,7 @@ export const EditDetails = ({
           items={[
             {
               key: 'config',
-              label: t('blocks.builder.setup.label'),
+              label: t('automations.details.setup'),
               children: (
                 <SchemaForm
                   schema={configSchema}
@@ -186,26 +195,26 @@ export const EditDetails = ({
               active: true,
             },
             {
-              key: 'lifecycle',
-              label: t('blocks.builder.lifecycle.label'),
+              key: 'schema',
+              label: t('automations.arguments.title'),
               children: (
                 <SchemaForm
-                  schema={lifecycleSchema}
+                  schema={schemaSchema}
                   initialValues={values}
-                  onChange={onChange(lifecycleSchema)}
+                  onChange={onChange(schemaSchema)}
                   onSubmit={submit}
                   buttons={buttons}
                 />
               ),
             },
             {
-              key: 'styles',
-              label: t('blocks.builder.style.label'),
+              key: 'advanced',
+              label: t('automations.details.advanced'),
               children: (
                 <SchemaForm
-                  schema={stylesSchema}
+                  schema={advancedSchema}
                   initialValues={values}
-                  onChange={onChange(stylesSchema)}
+                  onChange={onChange(advancedSchema)}
                   onSubmit={submit}
                   buttons={buttons}
                 />
@@ -215,12 +224,12 @@ export const EditDetails = ({
           tabBarExtraContent={
             <ConfirmButton
               onConfirm={onDelete}
-              confirmLabel={t('pages.delete.confirm', {
+              confirmLabel={t('automations.delete.confirm', {
                 name: localize(value.name),
               })}
             >
               <DeleteOutlined />
-              <span className="flex">{t('pages.delete.label')}</span>
+              <span className="flex">{t('automations.delete.label')}</span>
             </ConfirmButton>
           }
         />

@@ -1,15 +1,15 @@
 import { Automation } from './Automation';
 import renderer, { act } from 'react-test-renderer';
-import AutomationBuilder from '../components/AutomationBuilder';
+import AutomationBuilder from '../../components/AutomationBuilder';
 import { useRouter } from 'next/router';
-import useKeyboardShortcut from '../components/useKeyboardShortcut';
+import useKeyboardShortcut from '../../components/useKeyboardShortcut';
 import { notification } from '@prisme.ai/design-system';
-import EditDetails from '../layouts/EditDetails';
-import { workspaceContext } from '../providers/Workspace';
-import { automationContext } from '../providers/Automation';
-import { workspaceLayoutContext } from '../layouts/WorkspaceLayout/context';
+import EditDetails from './EditDetails';
+import { workspaceContext } from '../../providers/Workspace';
+import { automationContext } from '../../providers/Automation';
+import { workspaceLayoutContext } from '../../layouts/WorkspaceLayout/context';
 import { PageHeader } from 'antd';
-import { replaceSilently } from '../utils/urls';
+import { replaceSilently } from '../../utils/urls';
 
 jest.useFakeTimers();
 
@@ -43,19 +43,19 @@ jest.mock('next/router', () => {
   };
 });
 
-jest.mock('../components/useKeyboardShortcut', () => jest.fn());
+jest.mock('../../components/useKeyboardShortcut', () => jest.fn());
 
-jest.mock('../components/AutomationBuilder', () => () => null);
+jest.mock('../../components/AutomationBuilder', () => () => null);
 
 jest.mock(
-  '../components/SourceEdit/SourceEdit',
+  '../../components/SourceEdit/SourceEdit',
   () =>
     function SourceEdit() {
       return null;
     }
 );
 
-jest.mock('../utils/urls', () => ({
+jest.mock('../../utils/urls', () => ({
   replaceSilently: jest.fn(),
 }));
 
