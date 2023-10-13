@@ -1491,6 +1491,9 @@
       "logical": {
         "label": "Logical"
       },
+      "advanced": {
+        "label": "Advanced"
+      },
       "picker": {
         "builtIn": "Built-in",
         "workspace": "{{from}} (this Workspace)",

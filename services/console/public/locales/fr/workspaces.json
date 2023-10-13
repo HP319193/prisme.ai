@@ -1491,6 +1491,9 @@
       "logical": {
         "label": "Logique"
       },
+      "advanced": {
+        "label": "Avancé"
+      },
       "picker": {
         "builtIn": "Communs",
         "workspace": "{{from}} (ce Workspace)",
