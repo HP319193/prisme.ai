@@ -42,6 +42,9 @@ function trackEvent({
   if (TRACKING_WEBHOOK) {
     fetch(TRACKING_WEBHOOK, {
       method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
       body: JSON.stringify({
         event: name,
       }),
