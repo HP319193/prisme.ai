@@ -4,7 +4,8 @@ import { useRouter } from 'next/router';
 import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
-const { TRACKING: { url = '', siteId = '' } = {} } = publicRuntimeConfig;
+const { TRACKING: { url = '', siteId = '' } = {}, TRACKING_WEBHOOK } =
+  publicRuntimeConfig;
 
 declare global {
   interface Window {
@@ -38,6 +39,14 @@ function trackEvent({
   value?: string;
   dimensions?: Record<string, string>;
 }) {
+  if (TRACKING_WEBHOOK) {
+    fetch(TRACKING_WEBHOOK, {
+      method: 'POST',
+      body: JSON.stringify({
+        event: name,
+      }),
+    });
+  }
   if (!window._paq) {
     console.log('trackEvent', category, action, name, value, dimensions);
     return;

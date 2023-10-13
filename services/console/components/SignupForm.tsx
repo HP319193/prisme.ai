@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import Storage from '../utils/Storage';
 
 interface SignupFormProps {
-  onSignup?: (user: Prismeai.User) => void;
+  onSignup?: (user: Prismeai.User, next: () => void) => void;
   redirect?: string;
 }
 
@@ -58,13 +58,16 @@ export const SignupForm = ({
       Storage.set('redirect-once-signup', redirect);
       const user = await signup(email, password, firstName, lastName, language);
       if (!user) return;
-      if (onSignup) return onSignup(user);
-      push(
-        `/validate?${new URLSearchParams({
-          email: email,
-          sent: 'true',
-        }).toString()}`
-      );
+      function next() {
+        push(
+          `/validate?${new URLSearchParams({
+            email: email,
+            sent: 'true',
+          }).toString()}`
+        );
+      }
+      if (onSignup) return onSignup(user, next);
+      return next();
     },
     [redirect, signup, language, onSignup, push]
   );
