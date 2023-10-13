@@ -1,23 +1,24 @@
 import {
+  AppstoreAddOutlined,
   CloseCircleOutlined,
+  CodeOutlined,
   DeleteOutlined,
+  ExportOutlined,
+  LoadingOutlined,
   SettingOutlined,
+  TagOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Popover,
-  Schema,
-  SchemaForm,
-  Tabs,
-} from '@prisme.ai/design-system';
+import { Button, Popover, Schema, Tabs } from '@prisme.ai/design-system';
 import { PopoverProps } from '@prisme.ai/design-system/lib/Components/Popover';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTracking } from '../../components/Tracking';
 import useLocalizedText from '../../utils/useLocalizedText';
 import ConfirmButton from '../../components/ConfirmButton';
-import ArgumentsEditor from '../../components/SchemaFormBuilder/ArgumentsEditor';
+import SchemaForm from '../../components/SchemaForm/SchemaForm';
 import { SLUG_VALIDATION_REGEXP } from '../../utils/regex';
+import ArgumentsEditor from '../SchemaFormBuilder/ArgumentsEditor';
+import { Workspace } from '../../providers/Workspace';
 
 interface EditDetailsprops extends Omit<PopoverProps, 'content'> {
   value: any;
@@ -25,6 +26,14 @@ interface EditDetailsprops extends Omit<PopoverProps, 'content'> {
   onDelete: () => void;
   context?: string;
   disabled?: boolean;
+  onDisplaySource: () => void;
+  sourceDisplayed: boolean;
+  onDisplayRoles: () => void;
+  rolesDisplayed: boolean;
+  onPublishAsApp: () => void;
+  onVersion: () => void;
+  onExport: () => void;
+  exporting: boolean;
 }
 
 export const EditDetails = ({
@@ -34,6 +43,14 @@ export const EditDetails = ({
   context,
   disabled,
   onOpenChange,
+  onDisplaySource,
+  sourceDisplayed,
+  onDisplayRoles,
+  rolesDisplayed,
+  onPublishAsApp,
+  onVersion,
+  onExport,
+  exporting,
   ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
@@ -47,31 +64,28 @@ export const EditDetails = ({
       type: 'object',
       properties: {
         name: {
-          type: 'localized:string',
-          title: t('automations.details.name.label'),
+          type: 'string',
+          title: t('workspace.details.name.label'),
         },
         slug: {
           type: 'string',
-          title: t('automations.details.slug.label'),
+          title: t('workspace.details.slug.label'),
           pattern: SLUG_VALIDATION_REGEXP.source,
           errors: {
-            pattern: t('automations.save.error_InvalidSlugError'),
+            pattern: t('workspace.details.slug.error'),
           },
         },
         description: {
           type: 'localized:string',
-          title: t('automations.details.description.label'),
+          title: t('workspace.details.description.label'),
           'ui:widget': 'textarea',
           'ui:options': { textarea: { rows: 6 } },
         },
-      },
-      'ui:options': {
-        grid: [
-          [['name', 'slug'], ['description']],
-          [['arguments']],
-          [['private']],
-          [['disabled']],
-        ],
+        photo: {
+          type: 'string',
+          title: t('workspace.details.photo.label'),
+          'ui:widget': 'upload',
+        },
       },
     }),
     [t]
@@ -81,38 +95,17 @@ export const EditDetails = ({
     () => ({
       type: 'object',
       properties: {
-        arguments: {
-          'ui:widget': ArgumentsEditor,
+        config: {
+          type: 'object',
+          properties: {
+            schema: {
+              'ui:widget': ArgumentsEditor,
+            },
+          },
         },
       },
     }),
     []
-  );
-  const advancedSchema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        private: {
-          type: 'boolean',
-          title: t('automations.details.private.label'),
-          description: t('automations.details.private.description'),
-        },
-        disabled: {
-          type: 'boolean',
-          title: t('automations.details.disabled.label'),
-          description: t('automations.details.disabled.description'),
-        },
-      },
-      'ui:options': {
-        grid: [
-          [['name', 'slug'], ['description']],
-          [['arguments']],
-          [['private']],
-          [['disabled']],
-        ],
-      },
-    }),
-    [t]
   );
 
   const initialOpenState = useRef(false);
@@ -129,9 +122,19 @@ export const EditDetails = ({
 
   const onChange = useCallback(
     (schema: Schema) => (changedValues: any) => {
-      const newValues = { ...values };
+      const {
+        automations,
+        pages,
+        blocks,
+        imports,
+        id,
+        createdAt,
+        updatedAt,
+        registerWorkspace,
+        ...newValues
+      } = { ...values } as Workspace;
       Object.keys(schema?.properties || {}).forEach((k) => {
-        newValues[k] = changedValues[k];
+        newValues[k as keyof typeof newValues] = changedValues[k];
       });
       setValues(newValues);
     },
@@ -146,7 +149,7 @@ export const EditDetails = ({
     () => [
       <div key="1" className="flex flex-1 justify-end !mt-2 mx-4">
         <Button variant="primary" type="submit" disabled={disabled}>
-          {t('details.save', { context: 'automation' })}
+          {t('details.save', { context: 'page' })}
         </Button>
       </div>,
     ],
@@ -179,7 +182,7 @@ export const EditDetails = ({
           items={[
             {
               key: 'config',
-              label: t('automations.details.setup'),
+              label: t('workspace.details.setup.label'),
               children: (
                 <SchemaForm
                   schema={configSchema}
@@ -192,8 +195,53 @@ export const EditDetails = ({
               active: true,
             },
             {
+              key: 'actions',
+              label: t('workspace.details.actions.label'),
+              children: (
+                <div className="!flex flex-1 justify-between !mt-4 !mb-6">
+                  <div className="flex flex-col items-start">
+                    <Button
+                      className="flex items-center"
+                      onClick={onDisplaySource}
+                    >
+                      <CodeOutlined className="mr-2" />
+                      {t(`expert.${sourceDisplayed ? 'hide' : 'show'}`)}
+                    </Button>
+                    <Button
+                      className="flex items-center"
+                      onClick={onDisplayRoles}
+                    >
+                      <CodeOutlined className="mr-2" />
+                      {t(`expert.${rolesDisplayed ? 'hide' : 'security'}`)}
+                    </Button>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <Button
+                      className="flex items-center"
+                      onClick={onPublishAsApp}
+                    >
+                      <AppstoreAddOutlined className="mr-2" />
+                      {t(`apps.publish.menuLabel`)}
+                    </Button>
+                    <Button onClick={onVersion}>
+                      <TagOutlined className="mr-2" />
+                      {t('workspace.versions.create.label')}
+                    </Button>
+                    <Button onClick={onExport}>
+                      {exporting ? (
+                        <LoadingOutlined className="mr-2" />
+                      ) : (
+                        <ExportOutlined className="mr-2" />
+                      )}
+                      {t('workspace.versions.export.label')}
+                    </Button>
+                  </div>
+                </div>
+              ),
+            },
+            {
               key: 'schema',
-              label: t('automations.arguments.title'),
+              label: t('workspace.details.schema.label'),
               children: (
                 <SchemaForm
                   schema={schemaSchema}
@@ -204,29 +252,16 @@ export const EditDetails = ({
                 />
               ),
             },
-            {
-              key: 'advanced',
-              label: t('automations.details.advanced'),
-              children: (
-                <SchemaForm
-                  schema={advancedSchema}
-                  initialValues={values}
-                  onChange={onChange(advancedSchema)}
-                  onSubmit={submit}
-                  buttons={buttons}
-                />
-              ),
-            },
           ]}
           tabBarExtraContent={
             <ConfirmButton
               onConfirm={onDelete}
-              confirmLabel={t('automations.delete.confirm', {
+              confirmLabel={t('workspace.delete.confirm', {
                 name: localize(value.name),
               })}
             >
               <DeleteOutlined />
-              <span className="flex">{t('automations.delete.label')}</span>
+              <span className="flex">{t('workspace.delete.label')}</span>
             </ConfirmButton>
           }
         />

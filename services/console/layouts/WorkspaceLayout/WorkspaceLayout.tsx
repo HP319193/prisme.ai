@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Layout, Loading, notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import HeaderWorkspace from '../../components/HeaderWorkspace';
+import HeaderWorkspace from '../../components/HeaderWorkspace/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import workspaceLayoutContext, {
   DisplayedSourceType,

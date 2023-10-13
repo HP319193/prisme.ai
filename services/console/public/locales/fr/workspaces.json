@@ -47,12 +47,7 @@
     "dirtyOk": "Quitter",
     "delete": {
       "label": "Supprimer le workspace",
-      "confirm": {
-        "title": "Voulez vous supprimer le workspace \"{{name}}\" ?",
-        "content": "Attention, les données seront perdues.",
-        "ok": "Oui, supprimer",
-        "cancel": "Non, je regrette"
-      },
+      "confirm": "Êtes vous sur de vouloir supprimer ce Workspace ?",
       "toast": "le workspace a bien été supprimé"
     },
     "duplicate": {
@@ -67,6 +62,15 @@
     "expandSidebar": "Agrandir",
     "collapseSidebar": "Réduire",
     "details": {
+      "setup": {
+        "label": "Configuration"
+      },
+      "actions": {
+        "label": "Actions"
+      },
+      "schema": {
+        "label": "Avancé"
+      },
       "name": {
         "label": "Nom du Workspace"
       },

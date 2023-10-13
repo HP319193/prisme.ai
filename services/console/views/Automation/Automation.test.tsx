@@ -14,14 +14,14 @@ import { replaceSilently } from '../../utils/urls';
 jest.useFakeTimers();
 
 jest.mock(
-  '../utils/useDirtyWarning',
+  '../../utils/useDirtyWarning',
   () =>
     function useDirtyWarning() {
       return [];
     }
 );
 
-jest.mock('../utils/useYaml', () => {
+jest.mock('../../utils/useYaml', () => {
   const toJSON = jest.fn();
   const toYaml = jest.fn();
   const useYaml = jest.fn(() => ({
