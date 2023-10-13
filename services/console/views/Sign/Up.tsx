@@ -12,6 +12,7 @@ export const SignIn = () => {
           trackEvent({
             category: 'Sign up',
             action: 'New Account Created',
+            name: 'new account',
           });
           next();
         }}

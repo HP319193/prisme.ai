@@ -22,6 +22,7 @@ module.exports = {
     BILLING_HOME: process.env.BILLING_HOME || '',
     BILLING_USAGE: process.env.BILLING_USAGE || '',
     TRACKING: getTracking(),
+    TRACKING_WEBHOOK: process.env.TRACKING_WEBHOOK || '',
     OIDC_PROVIDER_URL:
       process.env.OIDC_PROVIDER_URL ||
       (process.env.API_URL && process.env.API_URL.replace('/v2', '')) ||
