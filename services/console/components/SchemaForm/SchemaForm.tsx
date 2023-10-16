@@ -19,7 +19,7 @@ export const SchemaForm = ({
   schema: originalSchema,
   ...props
 }: SchemaFormProviderProps) => {
-  const { localizeSchemaForm, localize } = useLocalizedText();
+  const { localizeSchemaForm } = useLocalizedText();
   const [schema, setSchema] = useState(originalSchema);
   const { getSchema } = useWorkspaceBlocks();
   const { locales } = useSchemaForm();

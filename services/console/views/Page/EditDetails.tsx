@@ -74,6 +74,10 @@ export const EditDetails = ({
           type: 'string',
           title: t('pages.blocks.settings.onInit.label'),
           description: t('pages.blocks.settings.onInit.description'),
+          'ui:widget': 'autocomplete',
+          'ui:options': {
+            autocomplete: 'events:listen',
+          },
         },
         automation: {
           type: 'string',
@@ -89,6 +93,10 @@ export const EditDetails = ({
           type: 'string',
           title: t('pages.blocks.settings.updateOn.label'),
           description: t('pages.blocks.settings.updateOn.description'),
+          'ui:widget': 'autocomplete',
+          'ui:options': {
+            autocomplete: 'events:emit',
+          },
         },
       },
     }),

@@ -1,4 +1,4 @@
-import { Schema } from '@prisme.ai/design-system';
+import { Schema, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import { useWorkspace } from '../../providers/Workspace';
@@ -57,27 +57,23 @@ export const useSchema = (store: Record<string, any> = {}) => {
               label: '',
               value: '',
             },
-            ...Object.entries(automations).flatMap(
-              ([key, { slug = key, name, description, when }]) => {
-                if (
-                  uiOptions.filter === 'endpoint' &&
-                  (!when || !when.endpoint)
-                ) {
-                  return [];
+            ...Object.entries(automations)
+              .filter(([slug, { when: { endpoint = null } = {} }]) => {
+                switch (uiOptions.filter) {
+                  case 'endpoint':
+                    return endpoint;
+                  default:
+                    return true;
                 }
-                return {
-                  label: (
-                    <div className="flex flex-col">
-                      <div>{localize(name) || slug}</div>
-                      <div className="text-neutral-500 text-xs">
-                        {localize(description)}
-                      </div>
-                    </div>
-                  ),
-                  value: slug,
-                };
-              }
-            ),
+              })
+              .map(([slug, { name, description }]) => ({
+                label: (
+                  <Tooltip title={localize(description)}>
+                    <div className="flex flex-1">{localize(name) || slug}</div>
+                  </Tooltip>
+                ),
+                value: slug,
+              })),
           ];
         case 'pages':
           if (!pages) return null;
@@ -115,7 +111,6 @@ export const useSchema = (store: Record<string, any> = {}) => {
   const extractAutocompleteOptions = useCallback(
     (schema: Schema) => {
       const { ['ui:options']: uiOptions = {} } = schema;
-
       function extract(type: 'listen' | 'emit') {
         return [
           ...Object.entries({ automations, pages }).flatMap(([key, list]) => {

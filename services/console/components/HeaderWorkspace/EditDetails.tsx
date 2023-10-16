@@ -107,14 +107,14 @@ export const EditDetails = ({
             value: {
               type: 'object',
               title: t('workspace.details.config.value.label'),
-              properties: values.config.schema,
+              properties: values.config?.schema,
               additionalProperties: true,
             },
           },
         },
       },
     }),
-    [t, values.config.schema]
+    [t, values.config?.schema]
   );
 
   const initialOpenState = useRef(false);

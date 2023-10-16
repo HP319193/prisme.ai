@@ -7,28 +7,16 @@ Array [
   </div>,
   <div>
     <div
-      className="flex flex-col"
+      className="flex flex-1"
     >
-      <div>
-        Foo
-      </div>
-      <div
-        className="text-neutral-500 text-xs"
-      />
+      Foo
     </div>
   </div>,
   <div>
     <div
-      className="flex flex-col"
+      className="flex flex-1"
     >
-      <div>
-        Bar
-      </div>
-      <div
-        className="text-neutral-500 text-xs"
-      >
-        Bar automation
-      </div>
+      Bar
     </div>
   </div>,
 ]
@@ -41,16 +29,9 @@ Array [
   </div>,
   <div>
     <div
-      className="flex flex-col"
+      className="flex flex-1"
     >
-      <div>
-        Bar
-      </div>
-      <div
-        className="text-neutral-500 text-xs"
-      >
-        Bar automation
-      </div>
+      Bar
     </div>
   </div>,
 ]

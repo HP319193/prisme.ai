@@ -66,6 +66,10 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
             type: 'string',
             title: 'pages.blocks.settings.onInit.label',
             description: 'pages.blocks.settings.onInit.description',
+            'ui:widget': 'autocomplete',
+            'ui:options': {
+              autocomplete: 'events:listen',
+            },
           },
           automation: {
             type: 'string',
@@ -81,6 +85,10 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
             type: 'string',
             title: 'pages.blocks.settings.updateOn.label',
             description: 'pages.blocks.settings.updateOn.description',
+            'ui:widget': 'autocomplete',
+            'ui:options': {
+              autocomplete: 'events:emit',
+            },
           },
         },
       }),
