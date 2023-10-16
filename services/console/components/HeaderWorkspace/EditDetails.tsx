@@ -97,15 +97,24 @@ export const EditDetails = ({
       properties: {
         config: {
           type: 'object',
+          title: t('workspace.details.config.label'),
           properties: {
             schema: {
+              title: t('workspace.details.config.schema.label'),
+              description: t('workspace.details.config.schema.description'),
               'ui:widget': ArgumentsEditor,
+            },
+            value: {
+              type: 'object',
+              title: t('workspace.details.config.value.label'),
+              properties: values.config.schema,
+              additionalProperties: true,
             },
           },
         },
       },
     }),
-    []
+    [t, values.config.schema]
   );
 
   const initialOpenState = useRef(false);
@@ -149,7 +158,7 @@ export const EditDetails = ({
     () => [
       <div key="1" className="flex flex-1 justify-end !mt-2 mx-4">
         <Button variant="primary" type="submit" disabled={disabled}>
-          {t('details.save', { context: 'page' })}
+          {t('save', { ns: 'common' })}
         </Button>
       </div>,
     ],
@@ -161,7 +170,7 @@ export const EditDetails = ({
       titleClassName="flex m-0 pb-0 pt-4 pl-4 pr-4"
       title={({ setOpen }) => (
         <div className="flex flex-1 justify-between">
-          {t('details.title', { context })}
+          {t('workspace.details.title')}
           <button
             onClick={() => {
               trackEvent({
@@ -241,7 +250,7 @@ export const EditDetails = ({
             },
             {
               key: 'schema',
-              label: t('workspace.details.schema.label'),
+              label: t('workspace.details.config.label'),
               children: (
                 <SchemaForm
                   schema={schemaSchema}
