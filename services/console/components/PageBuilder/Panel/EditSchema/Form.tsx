@@ -92,6 +92,10 @@ const schema: Schema = {
       title: 'pages.blocks.form.disabledSubmit.label',
       description: 'pages.blocks.form.disabledSubmit.description',
     },
+    values: {
+      title: 'pages.blocks.form.values.label',
+      description: 'pages.blocks.form.values.description',
+    },
   },
 };
 

@@ -1217,6 +1217,10 @@
         "disabledSubmit": {
           "label": "Désactiver le bouton de validation",
           "description": "Permet de désactiver le bouton de validation du formulaire. Ce paramètre est utile d'être envoyé par une Automatisation pendant le fonctionnement de le page, par exemple immédiatement après avoir reçu l'évènement correspondant au onSubmit, pour montrer à l'utilisateur que sa requête est prise en compte."
+        },
+        "values": {
+          "label": "Valeurs initiales",
+          "description": "Valeurs initiales du formulaire. Nécessaire en cas d'édition d'une ressource existante."
         }
       },
       "richtext": {
