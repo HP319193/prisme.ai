@@ -157,10 +157,7 @@ export const PageRenderer = ({
               </span>
             </HorizontalSeparatedNav.Separator>
             <HorizontalSeparatedNav.Separator>
-              <Tooltip
-                title={t('details.title', { context: 'pages' })}
-                placement="bottom"
-              >
+              <Tooltip title={t('pages.details.title')} placement="bottom">
                 <EditDetails
                   value={{
                     ...value,

@@ -220,10 +220,7 @@ export const AppInstance = () => {
               </span>
             </HorizontalSeparatedNav.Separator>
             <HorizontalSeparatedNav.Separator>
-              <Tooltip
-                title={t('details.title', { context: 'apps' })}
-                placement="bottom"
-              >
+              <Tooltip title={t('apps.details.title')} placement="bottom">
                 <EditDetails
                   schema={detailsFormSchema}
                   value={value}

@@ -148,7 +148,7 @@ export const EditDetails = ({
     () => [
       <div key="1" className="flex flex-1 justify-end !mt-2 mx-4">
         <Button variant="primary" type="submit" disabled={disabled}>
-          {t('details.save', { context: 'block' })}
+          {t('save', { ns: 'common' })}
         </Button>
       </div>,
     ],
@@ -160,7 +160,7 @@ export const EditDetails = ({
       titleClassName="flex m-0 pb-0 pt-4 pl-4 pr-4"
       title={({ setOpen }) => (
         <div className="flex flex-1 justify-between">
-          {t('details.title', { context })}
+          {t('blocks.details.title')}
           <button
             onClick={() => {
               trackEvent({

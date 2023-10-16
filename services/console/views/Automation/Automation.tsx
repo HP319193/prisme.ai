@@ -366,7 +366,7 @@ export const Automation = () => {
             </HorizontalSeparatedNav.Separator>
             <HorizontalSeparatedNav.Separator>
               <Tooltip
-                title={t('details.title', { context: 'automations' })}
+                title={t('automations.details.title')}
                 placement="bottom"
               >
                 <EditDetails

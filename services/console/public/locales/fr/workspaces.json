@@ -62,14 +62,22 @@
     "expandSidebar": "Agrandir",
     "collapseSidebar": "Réduire",
     "details": {
+      "title": "Éditer les détails du Workspace",
       "setup": {
-        "label": "Configuration"
+        "label": "Présentation"
       },
       "actions": {
         "label": "Actions"
       },
-      "schema": {
-        "label": "Avancé"
+      "config": {
+        "label": "Configuration",
+        "schema": {
+          "label": "Formulaire de configuration",
+          "description": "Ce formulaire sera présenté aux utilisateur de votre Workspace une fois publié en tant qu'App."
+        },
+        "value": {
+          "label": "Valeurs par défaut"
+        }
       },
       "name": {
         "label": "Nom du Workspace"
@@ -528,6 +536,7 @@
       }
     },
     "details": {
+      "title": "Éditer les détails de l'Automatisation",
       "setup": "Configuration",
       "slug": {
         "label": "Nom technique"
@@ -699,7 +708,7 @@
       "notme": "Vous êtes déjà le propriétaire de cette Page."
     },
     "details": {
-      "title": "Éditer les détails",
+      "title": "Éditer les détails de la Page",
       "name": {
         "label": "Titre de la page"
       },
@@ -1432,7 +1441,7 @@
       "help": "Affiche la structure de la page au format brut"
     },
     "details": {
-      "title": "Éditer les détails",
+      "title": "Éditer les détails du Block",
       "name": {
         "label": "Titre du Block"
       },

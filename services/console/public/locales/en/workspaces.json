@@ -62,14 +62,22 @@
     "expandSidebar": "Expand",
     "collapseSidebar": "Collapse",
     "details": {
+      "title": "Edit Workspace details",
       "setup": {
-        "label": "Setup"
+        "label": "Display"
       },
       "actions": {
         "label": "Actions"
       },
-      "schema": {
-        "label": "Advanced"
+      "config": {
+        "label": "Configuration",
+        "schema": {
+          "label": "Configuration form",
+          "description": "This form will be presented to users of your Workspace once published as an App."
+        },
+        "value": {
+          "label": "Defaut values"
+        }
       },
       "name": {
         "label": "Workspace name"
@@ -528,6 +536,7 @@
       }
     },
     "details": {
+      "title": "Edit Automation details",
       "setup": "Setup",
       "slug": {
         "label": "Slug"
@@ -699,7 +708,7 @@
       "notme": "You are already the owner of this Page."
     },
     "details": {
-      "title": "Edit details",
+      "title": "Edit Page details",
       "name": {
         "label": "Page title"
       },
@@ -1432,7 +1441,7 @@
       "help": "Displays the structure of the automation in raw format"
     },
     "details": {
-      "title": "Edit details",
+      "title": "Edit Block details",
       "name": {
         "label": "Block title"
       },

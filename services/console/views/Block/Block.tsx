@@ -253,10 +253,7 @@ const Block = () => {
               </span>
             </HorizontalSeparatedNav.Separator>
             <HorizontalSeparatedNav.Separator>
-              <Tooltip
-                title={t('details.title', { context: 'blocks' })}
-                placement="bottom"
-              >
+              <Tooltip title={t('blocks.details.title')} placement="bottom">
                 <EditDetails
                   value={value}
                   onSave={async (v) => {
