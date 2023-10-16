@@ -36,7 +36,7 @@ function trackEvent({
   category: string;
   action: string;
   name: string;
-  value?: string;
+  value?: string | object;
   dimensions?: Record<string, string>;
 }) {
   if (TRACKING_WEBHOOK) {
@@ -46,15 +46,27 @@ function trackEvent({
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        event: name,
+        event: {
+          category,
+          action,
+          name,
+          value,
+          dimensions,
+        },
       }),
     });
   }
-  if (!window._paq) {
-    console.log('trackEvent', category, action, name, value, dimensions);
-    return;
-  }
-  window._paq.push(['trackEvent', category, action, name, value, dimensions]);
+  const push = window._paq
+    ? (...args: any) => window._paq.push(...args)
+    : console.log;
+  push([
+    'trackEvent',
+    category,
+    action,
+    name,
+    typeof value === 'object' ? null : value,
+    dimensions,
+  ]);
 }
 
 interface TrackingContext {

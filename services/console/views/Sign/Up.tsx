@@ -13,6 +13,7 @@ export const SignIn = () => {
             category: 'Sign up',
             action: 'New Account Created',
             name: 'new account',
+            value: user,
           });
           next();
         }}
