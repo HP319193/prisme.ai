@@ -225,7 +225,7 @@ export const EditDetails = ({
                 name: localize(value.name),
               })}
             >
-              <DeleteOutlined />
+              <DeleteOutlined className="translate-y-[-2px]" />
               <span className="flex">{t('automations.delete.label')}</span>
             </ConfirmButton>
           }

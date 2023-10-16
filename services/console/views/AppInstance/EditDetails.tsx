@@ -1,24 +1,22 @@
 import {
   CloseCircleOutlined,
-  CodepenOutlined,
   DeleteOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import {
   Button,
-  FieldProps,
   Popover,
   Schema,
   SchemaForm,
   Tabs,
 } from '@prisme.ai/design-system';
 import { PopoverProps } from '@prisme.ai/design-system/lib/Components/Popover';
-import { Trans, useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTracking } from '../../components/Tracking';
 import useLocalizedText from '../../utils/useLocalizedText';
-import CSSEditor from '../Page/CSSEditor';
 import ConfirmButton from '../../components/ConfirmButton';
+import { SLUG_VALIDATION_REGEXP } from '../../utils/regex';
 
 interface EditDetailsprops extends Omit<PopoverProps, 'content'> {
   value: any;
@@ -47,74 +45,22 @@ export const EditDetails = ({
     () => ({
       type: 'object',
       properties: {
-        name: {
-          type: 'localized:string',
-          title: t('blocks.details.name.label'),
-        },
         slug: {
           type: 'string',
-          title: t('blocks.details.slug.label'),
+          title: t('apps.details.slug.label'),
+          pattern: SLUG_VALIDATION_REGEXP.source,
+          errors: {
+            pattern: t('automations.save.error_InvalidSlugError'),
+          },
         },
-        description: {
-          type: 'localized:string',
-          title: t('blocks.details.description.label'),
-          'ui:widget': 'textarea',
-          'ui:options': { textarea: { rows: 10 } },
+        disabled: {
+          type: 'boolean',
+          title: t('apps.details.disabled.label'),
+          description: t('apps.details.disabled.description'),
         },
       },
     }),
     [t]
-  );
-  const advancedSchema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        photo: {
-          type: 'string',
-          title: t('blocks.details.photo.label'),
-          description: t('blocks.details.photo.description'),
-          'ui:widget': 'upload',
-          'ui:options': {
-            upload: { accept: 'image/jpg,image/gif,image/png,image/svg' },
-          },
-        },
-        url: {
-          type: 'string',
-          title: t('blocks.details.url.label'),
-          description: (
-            <Trans
-              t={t}
-              i18nKey="blocks.details.url.description"
-              components={{
-                a: <a target="_blank" />,
-              }}
-            />
-          ),
-          'ui:widget': 'upload',
-          'ui:options': {
-            upload: {
-              accept: '.js',
-              defaultPreview: (
-                <CodepenOutlined className="text-4xl !text-gray-200 flex items-center" />
-              ),
-            },
-          },
-        },
-      },
-    }),
-    [t]
-  );
-  const stylesSchema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        css: {
-          type: 'string',
-          'ui:widget': (props: FieldProps) => <CSSEditor {...props} opened />,
-        },
-      },
-    }),
-    []
   );
 
   const initialOpenState = useRef(false);
@@ -160,7 +106,7 @@ export const EditDetails = ({
       titleClassName="flex m-0 pb-0 pt-4 pl-4 pr-4"
       title={({ setOpen }) => (
         <div className="flex flex-1 justify-between">
-          {t('blocks.details.title')}
+          {t('apps.details.title')}
           <button
             onClick={() => {
               trackEvent({
@@ -193,42 +139,16 @@ export const EditDetails = ({
               ),
               active: true,
             },
-            {
-              key: 'advanced',
-              label: t('blocks.builder.advanced.label'),
-              children: (
-                <SchemaForm
-                  schema={advancedSchema}
-                  initialValues={values}
-                  onChange={onChange(advancedSchema)}
-                  onSubmit={submit}
-                  buttons={buttons}
-                />
-              ),
-            },
-            {
-              key: 'styles',
-              label: t('blocks.builder.style.label'),
-              children: (
-                <SchemaForm
-                  schema={stylesSchema}
-                  initialValues={values}
-                  onChange={onChange(stylesSchema)}
-                  onSubmit={submit}
-                  buttons={buttons}
-                />
-              ),
-            },
           ]}
           tabBarExtraContent={
             <ConfirmButton
               onConfirm={onDelete}
-              confirmLabel={t('blocks.builder.delete.confirm', {
+              confirmLabel={t('apps.delete.confirm', {
                 name: localize(value.name),
               })}
             >
               <DeleteOutlined className="translate-y-[-2px]" />
-              <span className="flex">{t('blocks.builder.delete.label')}</span>
+              <span className="flex">{t('apps.delete.label')}</span>
             </ConfirmButton>
           }
         />

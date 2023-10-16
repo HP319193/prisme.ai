@@ -602,6 +602,10 @@
       "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
       "reason_InvalidSlugError": "Slug contains invalid characters."
     },
+    "delete": {
+      "label": "Uninstall",
+      "confirm": "Are you sure you want to uninstall this App?"
+    },
     "saveSuccess": "App config saved successfully",
     "notFound": "App not found.",
     "source": {
@@ -610,7 +614,7 @@
       "help": "Displays the App structure in raw format"
     },
     "details": {
-      "title": "App details",
+      "title": "Edit App details",
       "appName": {
         "label": "App Name"
       },

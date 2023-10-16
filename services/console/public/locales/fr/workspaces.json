@@ -602,6 +602,10 @@
       "reason_AlreadyUsedError": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
       "reason_InvalidSlugError": "Le nom technique contient des caractères invalides"
     },
+    "delete": {
+      "label": "Désinstaller",
+      "confirm": "Êtes vous sur de vouloir désinstaller cette App ?"
+    },
     "saveSuccess": "Configuration d'App sauvegardée avec succès",
     "notFound": "L'App n'existe pas.",
     "source": {
@@ -610,7 +614,7 @@
       "help": "Affiche la structure de l'App au format brut"
     },
     "details": {
-      "title": "Détails de l'App",
+      "title": "Éditer les détails de l'App",
       "appName": {
         "label": "Nom de l'app"
       },

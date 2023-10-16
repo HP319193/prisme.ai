@@ -6,24 +6,24 @@ import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import AppEditor from '../components/AppEditor';
-import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
-import IFrameLoader from '../components/IFrameLoader';
+import AppEditor from '../../components/AppEditor';
+import HorizontalSeparatedNav from '../../components/HorizontalSeparatedNav';
+import IFrameLoader from '../../components/IFrameLoader';
 import SourceEdit, {
   ValidationError,
-} from '../components/SourceEdit/SourceEdit';
-import { TrackingCategory, useTracking } from '../components/Tracking';
-import EditDetails from '../layouts/EditDetails';
-import getLayout from '../layouts/WorkspaceLayout';
+} from '../../components/SourceEdit/SourceEdit';
+import { TrackingCategory, useTracking } from '../../components/Tracking';
+import getLayout from '../../layouts/WorkspaceLayout';
 import AppInstanceProvider, {
   useAppInstance,
-} from '../providers/AppInstanceProvider';
-import { useWorkspace } from '../providers/Workspace';
-import { ApiError } from '../utils/api';
-import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
-import { generatePageUrl, replaceSilently } from '../utils/urls';
-import useDirtyWarning from '../utils/useDirtyWarning';
-import useLocalizedText from '../utils/useLocalizedText';
+} from '../../providers/AppInstanceProvider';
+import { useWorkspace } from '../../providers/Workspace';
+import { ApiError } from '../../utils/api';
+import { SLUG_VALIDATION_REGEXP } from '../../utils/regex';
+import { generatePageUrl, replaceSilently } from '../../utils/urls';
+import useDirtyWarning from '../../utils/useDirtyWarning';
+import useLocalizedText from '../../utils/useLocalizedText';
+import EditDetails from './EditDetails';
 
 export const AppInstance = () => {
   const { appInstance, documentation, saveAppInstance, saving, uninstallApp } =
@@ -131,35 +131,13 @@ export const AppInstance = () => {
         throw e;
       }
     },
-    [save, t, value]
+    [save, t, trackEvent, value]
   );
 
   const onDelete = useCallback(() => {
     replace(`/workspaces/${workspace.id}`);
     uninstallApp();
   }, [replace, uninstallApp, workspace.id]);
-
-  const detailsFormSchema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        slug: {
-          type: 'string',
-          title: t('apps.details.slug.label'),
-          pattern: SLUG_VALIDATION_REGEXP.source,
-          errors: {
-            pattern: t('automations.save.error_InvalidSlugError'),
-          },
-        },
-        disabled: {
-          type: 'boolean',
-          title: t('apps.details.disabled.label'),
-          description: t('apps.details.disabled.description'),
-        },
-      },
-    }),
-    [t]
-  );
 
   const showSource = useCallback(() => {
     trackEvent({
@@ -222,7 +200,6 @@ export const AppInstance = () => {
             <HorizontalSeparatedNav.Separator>
               <Tooltip title={t('apps.details.title')} placement="bottom">
                 <EditDetails
-                  schema={detailsFormSchema}
                   value={value}
                   onSave={saveDetails}
                   onDelete={onDelete}
