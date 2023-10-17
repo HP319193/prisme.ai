@@ -138,3 +138,14 @@ export function getInputMode(schema: Schema) {
   }
   return schema.type === 'number' ? 'numeric' : 'text';
 }
+
+export function getProperties(schema: Schema, values: any): string[] {
+  return Object.entries(schema.properties || {}).flatMap(([k, v]) => {
+    let dynamicProperties: string[] = [];
+    if (v.oneOf) {
+      const oneOf = v.oneOf.find(({ value }) => value === values[k]) as Schema;
+      dynamicProperties = oneOf ? getProperties(oneOf, values) : [];
+    }
+    return [k, ...dynamicProperties];
+  });
+}
