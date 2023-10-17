@@ -225,6 +225,7 @@ const Block = () => {
         </title>
       </Head>
       <PageHeader
+        key={blockKey}
         className="h-[4rem] flex items-center"
         title={
           <HorizontalSeparatedNav>

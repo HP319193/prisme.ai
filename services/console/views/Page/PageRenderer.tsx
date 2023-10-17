@@ -6,7 +6,7 @@ import {
   ReloadOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
-import { Button, FieldProps, Popover, Schema } from '@prisme.ai/design-system';
+import { Button, Popover } from '@prisme.ai/design-system';
 import { PageHeader, Segmented, Space, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import EditableTitle from '../../components/EditableTitle';
@@ -19,7 +19,6 @@ import useLocalizedText from '../../utils/useLocalizedText';
 import PagePreview, { usePagePreview } from '../../components/PagePreview';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PageBuilder from '../../components/PageBuilder';
-import CSSEditor from './CSSEditor';
 import { validatePage } from '@prisme.ai/validation';
 import SourceEdit, {
   ValidationError,
@@ -131,6 +130,7 @@ export const PageRenderer = ({
         </title>
       </Head>
       <PageHeader
+        key={pageKey}
         className="h-[4rem] flex items-center"
         title={
           <HorizontalSeparatedNav>
@@ -159,6 +159,7 @@ export const PageRenderer = ({
             <HorizontalSeparatedNav.Separator>
               <Tooltip title={t('pages.details.title')} placement="bottom">
                 <EditDetails
+                  key={pageKey}
                   value={{
                     ...value,
                     styles:
