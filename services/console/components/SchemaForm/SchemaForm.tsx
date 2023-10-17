@@ -9,6 +9,7 @@ import { useWorkspaceBlocks } from '../../providers/WorkspaceBlocksProvider';
 import useLocalizedText from '../../utils/useLocalizedText';
 import componentsWithBlocksList from '../BlocksListEditor/componentsWithBlocksList';
 import { extendsSchema } from '../BlocksListEditor/extendsSchema';
+import useSchema from './useSchema';
 
 interface SchemaFormProviderProps extends SchemaFormProps {
   schema: Schema;
@@ -21,7 +22,8 @@ export const SchemaForm = ({
   const { localizeSchemaForm } = useLocalizedText();
   const [schema, setSchema] = useState(originalSchema);
   const { getSchema } = useWorkspaceBlocks();
-  const { utils, locales } = useSchemaForm();
+  const { locales } = useSchemaForm();
+  const utils = useSchema();
 
   useEffect(() => {
     async function init() {
