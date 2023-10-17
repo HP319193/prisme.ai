@@ -1217,6 +1217,10 @@
         "disabledSubmit": {
           "label": "Disable the validation button",
           "description": "Allows you to disable the form validation button. This parameter is useful to be sent by an Automation during the operation of the page, for example immediately after receiving the event corresponding to onSubmit, to show the user that his request is taken into account."
+        },
+        "values": {
+          "label": "Initial values",
+          "description": "Initial form values. Necessary when editing an existing resource."
         }
       },
       "richtext": {

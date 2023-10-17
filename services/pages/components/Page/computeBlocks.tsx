@@ -109,7 +109,7 @@ export function interpolateExpression(expression: string, values: any) {
           interpolation
         );
     }
-    if (typeof interpolation === 'object' || uniqueMatch) {
+    if ((interpolation && typeof interpolation === 'object') || uniqueMatch) {
       newValue = interpolation;
       return;
     }

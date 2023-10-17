@@ -27,6 +27,7 @@ import SourceEdit, {
 import { defaultStyles } from './defaultStyles';
 import useSectionsIds from '../../providers/Page/useSectionsIds';
 import { useTracking } from '../../components/Tracking';
+import { getBackTemplateDots } from '../../utils/templatesInBlocks';
 
 interface PageRendererProps {
   value: Prismeai.Page;
@@ -132,7 +133,7 @@ export const PageRenderer = ({
   const source = useMemo(() => {
     const { id, workspaceSlug, workspaceId, apiKey, ...page } =
       value as Prismeai.Page & { apiKey: string };
-    return page;
+    return getBackTemplateDots(page);
   }, [value]);
   const setSource = useCallback(
     (source: any) => {
