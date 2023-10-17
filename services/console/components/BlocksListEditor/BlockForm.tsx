@@ -7,7 +7,7 @@ import {
 } from '@prisme.ai/design-system';
 import { TabsProps } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useField } from 'react-final-form';
 import useLocalizedText from '../../utils/useLocalizedText';
 import CSSEditor from '../../views/Page/CSSEditor';
@@ -144,24 +144,30 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
       }),
     [localizeSchemaForm]
   );
+  const throttled = useRef<NodeJS.Timeout>();
   const onChange = useCallback(
     (schema: Schema) => (value: any) => {
-      let values: any = {};
-      if (schema.properties) {
-        values = Object.entries(schema.properties).reduce((prev, [k, v]) => {
-          return {
-            ...prev,
-            [k]: value[k],
-          };
-        }, {});
-      } else {
-        values = value;
+      if (throttled.current) {
+        clearTimeout(throttled.current);
       }
-      field.input.onChange({
-        ...field.input.value,
-        ...values,
-        slug: field.input.value.slug,
-      });
+      throttled.current = setTimeout(() => {
+        let values: any = {};
+        if (schema.properties) {
+          values = Object.entries(schema.properties).reduce((prev, [k, v]) => {
+            return {
+              ...prev,
+              [k]: value[k],
+            };
+          }, {});
+        } else {
+          values = value;
+        }
+        field.input.onChange({
+          ...field.input.value,
+          ...values,
+          slug: field.input.value.slug,
+        });
+      }, 200);
     },
     [field.input]
   );
