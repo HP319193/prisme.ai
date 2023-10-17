@@ -1,5 +1,5 @@
 import { Schema } from './types';
-import { getFieldOptions, getInputMode } from './utils';
+import { getFieldOptions, getInputMode, getProperties } from './utils';
 
 it('should validate required', () => {
   const { validate } = getFieldOptions({
@@ -154,4 +154,40 @@ it('should get input mode', () => {
       type: 'boolean',
     })
   ).toBe('text');
+});
+
+it('should get properties with dynamics oneOf', () => {
+  const schema: Schema = {
+    type: 'object',
+    properties: {
+      foo: {
+        type: 'string',
+        oneOf: [
+          {
+            value: 'one',
+            properties: {
+              one: {
+                type: 'string',
+              },
+            },
+          },
+          {
+            value: 'two',
+            properties: {
+              two: {
+                type: 'string',
+              },
+            },
+          },
+        ],
+      },
+    },
+  };
+  expect(getProperties(schema, {})).toEqual(['foo']);
+
+  expect(
+    getProperties(schema, {
+      foo: 'one',
+    })
+  ).toEqual(['foo', 'one']);
 });

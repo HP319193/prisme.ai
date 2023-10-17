@@ -3,6 +3,7 @@ import {
   FieldProps,
   Loading,
   Schema,
+  schemaFormUtils,
   Tabs,
 } from '@prisme.ai/design-system';
 import { TabsProps } from 'antd';
@@ -153,12 +154,22 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
       throttled.current = setTimeout(() => {
         let values: any = {};
         if (schema.properties) {
-          values = Object.entries(schema.properties).reduce((prev, [k, v]) => {
+          const properties = schemaFormUtils.getProperties(schema, value);
+          values = properties.reduce((prev, k) => {
             return {
               ...prev,
               [k]: value[k],
             };
           }, {});
+
+          if (schema.additionalProperties) {
+            const additionnalProperties = Object.keys(value).filter(
+              (k) => !properties.includes(k)
+            );
+            additionnalProperties.forEach((k) => {
+              values[k] = value[k];
+            });
+          }
         } else {
           values = value;
         }

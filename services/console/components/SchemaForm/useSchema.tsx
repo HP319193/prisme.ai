@@ -2,6 +2,7 @@ import { Schema } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 import { useWorkspace } from '../../providers/Workspace';
+import api from '../../utils/api';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
 
@@ -10,6 +11,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
   const { t } = useTranslation('workspaces');
   const {
     workspace: {
+      id,
       name: workspaceName,
       config: { value: config } = {},
       automations = {},
@@ -169,7 +171,16 @@ export const useSchema = (store: Record<string, any> = {}) => {
     [automations, imports, pages, t, workspaceName]
   );
 
-  return { extractSelectOptions, extractAutocompleteOptions };
+  const uploadFile = useCallback(
+    async (file: string) => {
+      const [{ url, name }] = await api.uploadFiles(file, id);
+
+      return url;
+    },
+    [id]
+  );
+
+  return { extractSelectOptions, extractAutocompleteOptions, uploadFile };
 };
 
 export default useSchema;
