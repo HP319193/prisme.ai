@@ -161,6 +161,15 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
               [k]: value[k],
             };
           }, {});
+
+          if (schema.additionalProperties) {
+            const additionnalProperties = Object.keys(value).filter(
+              (k) => !properties.includes(k)
+            );
+            additionnalProperties.forEach((k) => {
+              values[k] = value[k];
+            });
+          }
         } else {
           values = value;
         }
