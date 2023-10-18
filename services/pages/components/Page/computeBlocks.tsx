@@ -43,6 +43,9 @@ interface TemplatedBlock {
   [k: string]: any;
 }
 
+export const original = Symbol('original');
+export const $index = Symbol('$index');
+
 interface Config {
   blocks?: TemplatedBlock[] | string;
   [k: string]: any;
@@ -85,7 +88,6 @@ export function applyFilter(filter: string, value: string, values: any) {
 
 export function interpolateExpression(expression: string, values: any) {
   let newValue = expression;
-
   // Unique value, can be casted
   const uniqueMatch = expression.match(/^{{[^}]+}}$/);
 
@@ -144,106 +146,72 @@ export function testCondition(condition: string = '', values: any) {
   return invert ? !result : result;
 }
 
-export function interpolate(blockConfig: any, values: any): any {
-  if (typeof blockConfig === 'string') {
-    return interpolateExpression(blockConfig, values);
-  }
-  if (Array.isArray(blockConfig)) {
-    return blockConfig.map((item) => interpolate(item, values));
-  }
-  if (typeof blockConfig === 'object') {
-    return Object.entries(blockConfig || {}).reduce((prev, [k, v]) => {
-      const { [k]: ignored, ...filteredBlockConfig } = blockConfig;
-      const allValues = { ...values, ...filteredBlockConfig };
-
-      if (k === 'blocks')
-        return {
-          ...prev,
-          blocks: v,
-        };
-
-      // Interpolate
-      if (!v) {
-        return {
-          ...prev,
-          [k]: v,
-        };
-      }
-      if (typeof v === 'string') {
-        return {
-          ...prev,
-          [k]: interpolateExpression(v, allValues),
-        };
-      }
-      if (typeof v === 'object') {
-        if (Array.isArray(v)) {
-          const newV = v.map((item) => interpolate(item, allValues));
-          return {
-            ...prev,
-            [k]: equal(newV, v) ? v : newV,
-          };
-        }
-        const newV = interpolate(v, allValues);
-        return {
-          ...prev,
-          [k]: equal(newV, v) ? v : newV,
-        };
-      }
-
-      return {
-        ...prev,
-        [k]: v,
-      };
-    }, {});
-  }
-  return blockConfig;
-}
-
-export function repeatBlocks(
-  block: any,
-  repeat: Repeat | undefined,
-  values: any
-) {
-  if (!repeat) return [block];
-  const { on: _on = '', as = 'item' } = repeat;
+export function repeatBlock(block: Config, values: any) {
+  const { [TEMPLATE_REPEAT]: repeat, ...originalBlock } = block;
+  const { on: _on = '', as = 'item' } = repeat || {};
   const [, on = ''] = `${_on}`.match(/^{{(.+)}}$/) || [];
+
   if (!on) return [];
   const items = jsonpath.value(values, on);
 
   if (!Array.isArray(items)) return [];
 
-  return items.map((item, $index) => {
-    const itemValues = { [as]: item, $index };
+  return items.map((item, index) => {
     return {
-      ...interpolate(block, { ...values, ...itemValues }),
-      ...itemValues,
+      ...originalBlock,
+      [as]: item,
+      [$index]: index,
     };
   });
 }
 
-export function computeBlocks({ blocks, ...config }: Config = {}, values: any) {
-  const blocksValue =
-    typeof blocks === 'string' ? interpolate(blocks, values) : blocks;
-  return {
-    ...interpolate(config, values),
-    blocks:
-      blocksValue && Array.isArray(blocksValue)
-        ? blocksValue
-            .filter((block) => {
-              const { [TEMPLATE_IF]: _if } = block || {};
-              return testCondition(_if, { ...values, ...config });
-            })
-            .flatMap((b) => {
-              const {
-                [TEMPLATE_IF]: _if,
-                [TEMPLATE_REPEAT]: repeat,
-                ...block
-              } = b || {};
-              return repeatBlocks(block, repeat, {
-                ...values,
-                ...config,
-              });
-            })
-        : undefined,
+export function interpolateValue(value: any, values: any): any {
+  if (!value) return value;
+
+  if (Array.isArray(value)) {
+    const output = value.flatMap((v) => {
+      if (v[TEMPLATE_IF] && !testCondition(v[TEMPLATE_IF], values)) return [];
+      const blocks = v[TEMPLATE_REPEAT] ? repeatBlock(v, values) : [v];
+      return blocks.map((v) => (v.slug ? v : interpolateValue(v, values)));
+    });
+    if (equal(value, output)) return value;
+    return output;
+  }
+  if (typeof value === 'object') {
+    if (value[TEMPLATE_IF] && !testCondition(value[TEMPLATE_IF], values))
+      return null;
+    const output = value.slug ? value : computeBlock(value, values);
+    if (equal(value, output)) return value;
+    return output;
+  }
+  if (typeof value === 'string') {
+    return interpolateExpression(value, values);
+  }
+  return value;
+}
+
+export function computeBlock(
+  block: TemplatedBlock,
+  values: any
+): Record<string, any> & { [original]: any } {
+  const originalConfig =
+    Object.getOwnPropertyDescriptor(block, original)?.value || block;
+  const { [TEMPLATE_IF]: _if, ...blockConfig } = originalConfig;
+  const computed = {
+    [original]: originalConfig,
   };
+  if (!testCondition(_if, values)) {
+    return computed;
+  }
+  return Object.entries(blockConfig).reduce((prev, [k, v]) => {
+    const { [k]: ignored, ...filteredValues } = blockConfig;
+    const allValues = {
+      ...filteredValues,
+      ...values,
+    };
+    return {
+      ...prev,
+      [k]: interpolateValue(v, allValues),
+    };
+  }, computed);
 }

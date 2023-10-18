@@ -365,3 +365,25 @@ it('should localize with select options', () => {
     },
   });
 });
+
+it('should keepo empty values', () => {
+  let localizeSchemaForm = (schema: any): any => {};
+  const Test = () => {
+    localizeSchemaForm = useLocalizedText(t, 'en').localizeSchemaForm;
+    return null;
+  };
+
+  const root = renderer.create(<Test />);
+  act(() => {});
+  expect(
+    localizeSchemaForm({
+      null: null,
+      false: false,
+      undefined: undefined,
+    })
+  ).toEqual({
+    null: null,
+    false: false,
+    undefined: undefined,
+  });
+});

@@ -1,9 +1,10 @@
 import {
-  computeBlocks,
-  interpolate,
   interpolateExpression,
-  repeatBlocks,
   testCondition,
+  computeBlock,
+  original,
+  $index,
+  interpolateValue,
 } from './computeBlocks';
 
 it('should display conditionally', () => {
@@ -56,37 +57,232 @@ it('should interpolate expression', () => {
   expect(interpolateExpression('{{foo}} {{bar}}', {})).toBe(' ');
 });
 
-it('should interpolate object', () => {
-  expect(
-    interpolate(
+it('should compute block', () => {
+  const block = {
+    text: 'foo',
+  };
+  expect(computeBlock(block, {})).toEqual({
+    text: 'foo',
+    [original]: block,
+  });
+});
+
+it('should compute block with string interpolation', () => {
+  const block = {
+    text: '{{foo}}',
+  };
+  expect(computeBlock(block, { foo: 'bar' })).toEqual({
+    text: 'bar',
+    [original]: block,
+  });
+});
+
+it('should compute block with array interpolations', () => {
+  const block = {
+    text: ['{{foo}}', '{{bar}}'],
+  };
+  expect(computeBlock(block, { foo: 'bar', bar: 'babar' })).toEqual({
+    text: ['bar', 'babar'],
+    [original]: block,
+  });
+});
+
+it('should not compute blocks list', () => {
+  const block = {
+    content: [
       {
-        blocks: [
-          {
-            slug: 'RichText',
-            content: '{{Untouched}}',
-          },
-        ],
-        stringValue: '{{string}}',
-        objectValue: {
-          foo: '{{object.foo}}',
-          bar: '{{object.bar}}',
+        slug: 'RichText',
+        text: '{{foo}}',
+      },
+    ],
+  };
+  expect(computeBlock(block, { foo: 'bar' })).toEqual({
+    content: [
+      {
+        slug: 'RichText',
+        text: '{{foo}}',
+      },
+    ],
+    [original]: block,
+  });
+});
+
+it('should compute block with object interpolations', () => {
+  const block = {
+    text: { foo: '{{foo}}', bar: '{{bar}}' },
+  };
+  expect(computeBlock(block, { foo: 'bar', bar: 'babar' })).toEqual({
+    text: {
+      foo: 'bar',
+      bar: 'babar',
+      [original]: block.text,
+    },
+    [original]: block,
+  });
+});
+
+it('should not compute objects of blocks', () => {
+  const block = {
+    content: {
+      block1: {
+        slug: 'RichText',
+        text: '{{foo}}',
+      },
+    },
+  };
+  expect(computeBlock(block, { foo: 'bar' })).toEqual({
+    content: {
+      block1: {
+        slug: 'RichText',
+        text: '{{foo}}',
+      },
+    },
+    [original]: block,
+  });
+});
+
+it('should compute block with falsy value', () => {
+  const block = {
+    text: null,
+    foo: '',
+    bar: false,
+  };
+  expect(computeBlock(block, { foo: 'bar', bar: 'babar' })).toEqual({
+    text: null,
+    foo: '',
+    bar: false,
+    [original]: block,
+  });
+});
+
+it('should filter with template.if', () => {
+  const block = {
+    slug: 'RichText',
+    'template.if': '{{foo}}',
+  };
+  expect(computeBlock(block, { foo: true })).toEqual({
+    slug: 'RichText',
+    [original]: block,
+  });
+  expect(computeBlock(block, { foo: false })).toEqual({
+    [original]: block,
+  });
+});
+
+it('should filter with template.if in Block values', () => {
+  const block = {
+    slug: 'RichText',
+    object: {
+      'template.if': '{{foo}}',
+      bar: 'bar',
+    },
+    array: [
+      {
+        'template.if': '{{foo}}',
+        bar: 'bar',
+      },
+    ],
+  };
+  expect(computeBlock(block, { foo: true })).toEqual({
+    slug: 'RichText',
+    object: {
+      bar: 'bar',
+      [original]: block.object,
+    },
+    array: [
+      {
+        bar: 'bar',
+        [original]: block.array[0],
+      },
+    ],
+    [original]: block,
+  });
+  expect(computeBlock(block, { foo: false })).toEqual({
+    slug: 'RichText',
+    array: [],
+    object: null,
+    [original]: block,
+  });
+});
+
+it('should repeat blocks', () => {
+  const block = {
+    slug: 'BlocksList',
+    blocks: [
+      {
+        slug: 'RichText',
+        'template.repeat': {
+          on: '{{items}}',
+          as: 'item',
         },
-        arrayValue: [
-          '{{array}}',
-          {
-            label: '{{array}}',
-          },
-        ],
+        text: '{{item.text}}',
+      },
+    ],
+  };
+  expect(
+    computeBlock(block, {
+      items: [
+        {
+          text: 'foo',
+        },
+        {
+          text: 'bar',
+        },
+      ],
+    })
+  ).toEqual({
+    slug: 'BlocksList',
+    blocks: [
+      {
+        slug: 'RichText',
+        text: '{{item.text}}',
+        item: {
+          text: 'foo',
+        },
+        [$index]: 0,
       },
       {
-        string: 'StringValue',
-        object: {
-          foo: 'Foo',
-          bar: 'Bar',
+        slug: 'RichText',
+        text: '{{item.text}}',
+        item: {
+          text: 'bar',
         },
-        array: 'array',
-      }
-    )
+        [$index]: 1,
+      },
+    ],
+    [original]: block,
+  });
+});
+
+it('should interpolate object', () => {
+  const block = {
+    blocks: [
+      {
+        slug: 'RichText',
+        content: '{{Untouched}}',
+      },
+    ],
+    stringValue: '{{string}}',
+    objectValue: {
+      foo: '{{object.foo}}',
+      bar: '{{object.bar}}',
+    },
+    arrayValue: [
+      '{{array}}',
+      {
+        label: '{{array}}',
+      },
+    ],
+  };
+  expect(
+    interpolateValue(block, {
+      string: 'StringValue',
+      object: {
+        foo: 'Foo',
+        bar: 'Bar',
+      },
+      array: 'array',
+    })
   ).toEqual({
     blocks: [
       {
@@ -98,99 +294,16 @@ it('should interpolate object', () => {
     objectValue: {
       foo: 'Foo',
       bar: 'Bar',
+      [original]: block.objectValue,
     },
     arrayValue: [
       'array',
       {
         label: 'array',
+        [original]: block.arrayValue[1],
       },
     ],
-  });
-});
-
-it('should repeat blocks', () => {
-  expect(
-    repeatBlocks(
-      {
-        content: '{{item}}',
-      },
-      {
-        on: '{{items}}',
-      },
-      {
-        items: ['foo', 'bar'],
-      }
-    )
-  ).toEqual([
-    {
-      content: 'foo',
-      item: 'foo',
-      $index: 0,
-    },
-    {
-      content: 'bar',
-      item: 'bar',
-      $index: 1,
-    },
-  ]);
-
-  expect(
-    repeatBlocks(
-      {
-        content: '{{truc.label}}',
-      },
-      {
-        on: '{{items}}',
-        as: 'truc',
-      },
-      {
-        items: [{ label: 'foo' }, { label: 'bar' }],
-      }
-    )
-  ).toEqual([
-    {
-      content: 'foo',
-      truc: { label: 'foo' },
-      $index: 0,
-    },
-    {
-      content: 'bar',
-      truc: { label: 'bar' },
-      $index: 1,
-    },
-  ]);
-});
-
-it('should compute blocks', () => {
-  expect(
-    computeBlocks(
-      {
-        blocks: [
-          {
-            slug: 'RichText',
-            content: 'Visible',
-            'template.if': '{{world}}',
-          },
-          {
-            slug: 'RichText',
-            content: 'Hidden',
-            'template.if': '!{{world}}',
-          },
-        ],
-        content: 'Hello {{world}}',
-      },
-      {
-        world: 'World',
-      }
-    )
-  ).toEqual({
-    blocks: [
-      {
-        slug: 'RichText',
-        content: 'Visible',
-      },
-    ],
-    content: 'Hello World',
+    [original]: block,
   });
 });
 
@@ -243,72 +356,65 @@ it('should interpolate expression with filters', () => {
 });
 
 it('should not read self value', () => {
+  const block = {
+    slug: 'RichText',
+    content: '{{content}}',
+  };
   expect(
-    computeBlocks(
-      {
-        slug: 'RichText',
-        content: '{{content}}',
-      },
-      {
-        content: 'Foo',
-      }
-    )
+    computeBlock(block, {
+      content: 'Foo',
+    })
   ).toEqual({
-    blocks: undefined,
     slug: 'RichText',
     content: 'Foo',
+    [original]: block,
   });
 });
 
 it('should read self value', () => {
-  expect(
-    computeBlocks(
-      {
-        slug: 'RichText',
-        content: '{{foo}}',
-        foo: 'Foo',
-      },
-      {}
-    )
-  ).toEqual({
-    blocks: undefined,
+  const block = {
+    slug: 'RichText',
+    content: '{{foo}}',
+    foo: 'Foo',
+  };
+  expect(computeBlock(block, {})).toEqual({
     slug: 'RichText',
     content: 'Foo',
     foo: 'Foo',
+    [original]: block,
   });
 });
 
 it('should interpolate an array', () => {
+  const block = {
+    slug: 'Carousel',
+    images: '{{images}}',
+  };
   expect(
-    computeBlocks(
-      {
-        slug: 'Carousel',
-        images: '{{images}}',
-      },
-      {
-        images: ['Foo'],
-      }
-    )
+    computeBlock(block, {
+      images: ['Foo'],
+    })
   ).toEqual({
-    blocks: undefined,
     slug: 'Carousel',
     images: ['Foo'],
+    [original]: block,
   });
 });
 
 it('should not create a new array', () => {
-  const from = {
+  const block = {
     foo: [],
   };
-  const to = computeBlocks(from, {});
-  expect(from.foo).toBe(to.foo);
+  const to = computeBlock(block, {});
+  console.log(to);
+  expect(block.foo).toBe(to.foo);
 });
 
 it('should not create a new object', () => {
   const from = {
     foo: {},
   };
-  const to = computeBlocks(from, {});
+  const to = computeBlock(from, {});
   expect(from.foo).toBe(to.foo);
 });
 
@@ -316,7 +422,7 @@ it('should interpolate arrays', () => {
   const from = {
     array: [['val1', '{{replace}}']],
   };
-  const to = computeBlocks(from, {
+  const to = computeBlock(from, {
     replace: 'val2',
   });
   expect(to.array).toEqual([['val1', 'val2']]);
@@ -326,7 +432,7 @@ it('should not create new array', () => {
   const from = {
     array: [['val1', 'val2']],
   };
-  const to = computeBlocks(from, {});
+  const to = computeBlock(from, {});
   expect(from.array).toBe(to.array);
   expect(from.array).toEqual([['val1', 'val2']]);
 });
@@ -335,21 +441,22 @@ it('should interpolate booleans', () => {
   const from = {
     boolean: '{{bool}}',
   };
-  const to = computeBlocks(from, { bool: true });
+  const to = computeBlock(from, { bool: true });
 
-  expect(computeBlocks(from, { bool: true }).boolean).toBe(true);
-  expect(computeBlocks(from, { bool: false }).boolean).toBe(false);
+  expect(computeBlock(from, { bool: true }).boolean).toBe(true);
+  expect(computeBlock(from, { bool: false }).boolean).toBe(false);
 });
 
 it('should interpolate a blocks expression', () => {
-  const from = {
+  const block = {
     blocks: '{{blocks}}',
   };
-  const to = computeBlocks(from, {
+  const to = computeBlock(block, {
     blocks: [{ slug: 'RichText', content: 'Yeah man' }],
   });
   expect(to).toEqual({
     blocks: [{ slug: 'RichText', content: 'Yeah man' }],
+    [original]: block,
   });
 });
 
@@ -396,7 +503,7 @@ it('should keep css', () => {
     parentClassName: 'pr-block-blocks-list__block--0',
     className: 'pr-block-blocks-list__block pr-block-blocks-list__block--0 ',
   };
-  const to = computeBlocks(from, {
+  const to = computeBlock(from, {
     automation: 'Admin init page',
     updateOn: 'Admin update page',
     favicon:
@@ -430,6 +537,38 @@ it('should keep css', () => {
     className:
       'pr-block-blocks-list__block pr-block-blocks-list__block--1  block-BlocksList',
   });
-  console.log(to.blocks[1]);
   expect(to.blocks[1].css).not.toBeNull();
+});
+
+it('should keep original data', () => {
+  const block = {
+    text: 'foo {{bar}}',
+    object: {
+      text: 'foo {{bar}}',
+    },
+    array: [
+      'foo {{bar}}',
+      {
+        text: 'foo {{bar}}',
+      },
+    ],
+  };
+  const render1 = computeBlock(block, { bar: 'bar' });
+  const render2 = computeBlock(render1, { bar: 'foo' });
+
+  expect(render2).toEqual({
+    text: 'foo foo',
+    object: {
+      text: 'foo foo',
+      [original]: block.object,
+    },
+    array: [
+      'foo foo',
+      {
+        text: 'foo foo',
+        [original]: block.array[1],
+      },
+    ],
+    [original]: block,
+  });
 });

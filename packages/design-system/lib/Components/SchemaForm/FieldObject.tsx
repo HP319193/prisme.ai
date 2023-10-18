@@ -16,6 +16,27 @@ function isUiOptionsGrid(
   return !!uiOptions && !!(uiOptions as UiOptionsGrid).grid;
 }
 
+function removeEmptyKeys(schema: Schema) {
+  if (!schema.properties) return schema;
+  if (!Object.values(schema.properties).some((v) => !v)) {
+    return schema;
+  }
+  const properties = Object.entries(schema.properties)
+    .filter(([k, v]) => v)
+    .reduce(
+      (prev, [k, v]) => ({
+        ...prev,
+        [k]: v,
+      }),
+      {}
+    );
+
+  return {
+    ...schema,
+    properties,
+  };
+}
+
 export const FieldObject =
   (initialVisibility: boolean = true) =>
   (props: FieldProps) => {
@@ -29,8 +50,8 @@ export const FieldObject =
       const { properties } = props.schema;
       if (!properties) return props.schema;
       const keys = Object.keys(properties);
-      if (!keys.some((key) => properties[key].oneOf && !properties[key].type))
-        return props.schema;
+      if (!keys.some((key) => properties[key]?.oneOf && !properties[key].type))
+        return removeEmptyKeys(props.schema);
 
       const newProperties = keys.reduce((prev, key) => {
         const allOneOfs: Schema[] =
@@ -54,10 +75,10 @@ export const FieldObject =
           [key]: properties[key],
         };
       }, {});
-      return {
+      return removeEmptyKeys({
         ...props.schema,
         properties: newProperties,
-      };
+      });
     }, [props.schema, field.input.value]);
 
     useEffect(() => {
@@ -81,6 +102,7 @@ export const FieldObject =
 
     const label =
       props.label || props.schema.title || getLabel(field.input.name);
+
     return (
       <FieldContainer {...props} className="pr-form-object">
         {label && (
