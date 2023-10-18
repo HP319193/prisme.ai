@@ -1316,3 +1316,18 @@ export const WithDefault = () => (
     }}
   />
 );
+
+export const WithElmpty = () => (
+  <Template
+    schema={{
+      type: 'object',
+      properties: {
+        // @ts-ignore
+        foo: null,
+        bar: {
+          type: 'string',
+        },
+      },
+    }}
+  />
+);

@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api from '../../../console/utils/api';
-import { computeBlocks } from './computeBlocks';
+import { computeBlock } from './computeBlocks';
 import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
 import fastDeepEqual from 'fast-deep-equal';
@@ -80,8 +80,7 @@ export const BlockLoader: TBlockLoader = ({
       blockName: name,
       url: '',
       computedConfig:
-        prevConfig.current &&
-        computeBlocks(prevConfig.current, recursiveConfig),
+        prevConfig.current && computeBlock(prevConfig.current, recursiveConfig),
     };
 
     if (!name) return output;
@@ -96,30 +95,28 @@ export const BlockLoader: TBlockLoader = ({
 
     const { blocks: workspaceBlocks } =
       (page?.appInstances || []).find(({ slug }) => slug === '') || {};
-
     if (workspaceBlocks && workspaceBlocks[name]) {
       const block = workspaceBlocks[name];
-      const {
-        url = getBlockName('BlocksList'),
-        blocks = undefined,
-        ...props
-      } = typeof block === 'string' ? { url: block } : block;
 
-      if (blocks) {
+      if (typeof block === 'string') {
         return {
           ...output,
-          blockName: 'BlocksList',
-          computedConfig: computeBlocks(
-            {
-              ...output.computedConfig,
-              blocks,
-              ...props,
-            },
-            recursiveConfig
-          ),
+          url: block,
         };
       }
-      return output;
+
+      return {
+        ...output,
+        ...block,
+        computedConfig: computeBlock(
+          {
+            ...prevConfig.current,
+            ...block,
+          },
+          recursiveConfig
+        ),
+        blockName: 'BlocksList',
+      };
     }
     if (parts.length === 1) {
       return output;
@@ -149,7 +146,7 @@ export const BlockLoader: TBlockLoader = ({
       return {
         ...output,
         blockName: 'BlocksList',
-        computedConfig: computeBlocks(
+        computedConfig: computeBlock(
           {
             ...output.computedConfig,
             blocks,
@@ -207,12 +204,21 @@ export const BlockLoader: TBlockLoader = ({
     // Set listeners
     let off: Function[] = [];
     if (updateOn) {
+      // @ts-ignore
+      window._wesh = () => {
+        events.emit(updateOn, {
+          item: { id: '42', text: 'YEAH MAN' },
+        });
+      };
       off.push(
         events.on(updateOn, ({ payload: config }) => {
           setConfig((prev = {}) => {
             const newConfig = { ...prev, ...config };
             if (fastDeepEqual(newConfig, prev)) return prev;
-            return newConfig;
+            const {
+              blocks: [newBlock],
+            } = computeBlock({ blocks: [newConfig] }, recursiveConfig);
+            return newBlock;
           });
           if (config.userTopics) {
             events.listenTopics({ event: updateOn, topics: config.userTopics });
@@ -240,6 +246,7 @@ export const BlockLoader: TBlockLoader = ({
     automation,
     initWithAutomation,
     user,
+    recursiveConfig,
   ]);
 
   const alreadySentInit = useRef(false);
