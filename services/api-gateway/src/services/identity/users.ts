@@ -366,6 +366,10 @@ export const externalLoginOrSignup = (
             ...usersByEmail[0].authData,
             [provider]: authData,
           },
+          status:
+            usersByEmail[0].status === UserStatus.Pending
+              ? UserStatus.Validated
+              : usersByEmail[0].status, // We do not force to Validated as an user could haven been Deactivated
         });
         user.id = usersByEmail[0].id;
       } else {

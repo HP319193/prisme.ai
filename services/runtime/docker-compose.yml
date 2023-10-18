@@ -27,3 +27,5 @@ services:
       WORKSPACES_STORAGE_TYPE: FILESYSTEM
       WORKSPACES_STORAGE_FILESYSTEM_DIRPATH: /www/models
       PERMISSIONS_STORAGE_HOST: mongodb://mongo/permissions
+      APP_CONFIG_CustomCode_apiUrl: 'http://localhost:4000'
+      APP_CONFIG_Crawler_apiUrl: 'http://localhost:7001'
