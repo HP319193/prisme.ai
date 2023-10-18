@@ -81,7 +81,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
     const appInstances = Object.entries(workspace.imports || {}).reduce<
       { slug: string; blocks: {} }[]
     >(
-      (prev, [slug, { blocks }]) => [
+      (prev, [slug, { blocks = [] }]) => [
         ...prev,
         {
           slug,

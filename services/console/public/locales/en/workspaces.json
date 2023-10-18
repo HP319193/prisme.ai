@@ -47,12 +47,7 @@
     "dirtyOk": "Quit",
     "delete": {
       "label": "Delete Workspace",
-      "confirm": {
-        "title": "Do you want to delete the \"{{name}}\" workspace?",
-        "content": "Warning, the data will be lost.",
-        "ok": "Yes, delete",
-        "cancel": "No, please no"
-      },
+      "confirm": "Are you sure you want to remove this Workspace?",
       "toast": "Workspace has been deleted"
     },
     "duplicate": {
@@ -67,6 +62,23 @@
     "expandSidebar": "Expand",
     "collapseSidebar": "Collapse",
     "details": {
+      "title": "Edit Workspace details",
+      "setup": {
+        "label": "Display"
+      },
+      "actions": {
+        "label": "Actions"
+      },
+      "config": {
+        "label": "Configuration",
+        "schema": {
+          "label": "Configuration form",
+          "description": "This form will be presented to users of your Workspace once published as an App."
+        },
+        "value": {
+          "label": "Defaut values"
+        }
+      },
       "name": {
         "label": "Workspace name"
       },
@@ -198,6 +210,10 @@
       "value": {
         "event": "an event"
       }
+    },
+    "delete": {
+      "label": "Delete",
+      "confirm": "Are you sure you want to remove this Automation?"
     },
     "empty": "An automation describes what to do and when to do it",
     "back": "Back",
@@ -520,6 +536,8 @@
       }
     },
     "details": {
+      "title": "Edit Automation details",
+      "setup": "Setup",
       "slug": {
         "label": "Slug"
       },
@@ -529,6 +547,7 @@
       "description": {
         "label": "Description"
       },
+      "advanced": "Advanced",
       "private": {
         "label": "Internal use",
         "description": "If you enable this setting, Automation will be visible as an instruction only in this same Workspace. When you publish your app, its users will not see it."
@@ -583,6 +602,10 @@
       "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
       "reason_InvalidSlugError": "Slug contains invalid characters."
     },
+    "delete": {
+      "label": "Uninstall",
+      "confirm": "Are you sure you want to uninstall this App?"
+    },
     "saveSuccess": "App config saved successfully",
     "notFound": "App not found.",
     "source": {
@@ -591,7 +614,7 @@
       "help": "Displays the App structure in raw format"
     },
     "details": {
-      "title": "App details",
+      "title": "Edit App details",
       "appName": {
         "label": "App Name"
       },
@@ -669,12 +692,7 @@
     },
     "delete": {
       "label": "Delete the page",
-      "confirm": {
-        "title": "Do you want to delete the page \"{{name}}\"?",
-        "content": "Warning, the data will be lost.",
-        "ok": "Yes, delete",
-        "cancel": "No, please no"
-      },
+      "confirm": "Are you sure you want to remove this Page?",
       "toast": "Page has been deleted"
     },
     "save": {
@@ -694,7 +712,7 @@
       "notme": "You are already the owner of this Page."
     },
     "details": {
-      "title": "Edit details",
+      "title": "Edit Page details",
       "name": {
         "label": "Page title"
       },
@@ -1427,7 +1445,7 @@
       "help": "Displays the structure of the automation in raw format"
     },
     "details": {
-      "title": "Edit details",
+      "title": "Edit Block details",
       "name": {
         "label": "Block title"
       },
@@ -1491,6 +1509,9 @@
       "logical": {
         "label": "Logical"
       },
+      "advanced": {
+        "label": "Advanced"
+      },
       "picker": {
         "builtIn": "Built-in",
         "workspace": "{{from}} (this Workspace)",
@@ -1550,35 +1571,6 @@
     "set": {
       "tooltip": "Add a translation",
       "title": "Added languages"
-    }
-  },
-  "details": {
-    "title": "",
-    "title_workspaces": "Workspace settings",
-    "title_automations": "Automation settings",
-    "title_pages": "Page settings",
-    "title_apps": "App settings",
-    "title_blocks": "Block settings",
-    "save": "Save",
-    "delete": {
-      "label": "Delete",
-      "label_workspaces": "Delete Workspace",
-      "label_automations": "Delete automation",
-      "label_pages": "Delete page",
-      "confirm": {
-        "title": "Do you want to delete \"{{name}}\" ?",
-        "title_workspaces": "Do you want to delete the \"{{name}}\" Workspace?",
-        "title_automation": "Do you want to delete the \"{{name}}\" automation?",
-        "title_pages": "Do you want to delete the \"{{name}}\" page?",
-        "title_apps": "Uninstall",
-        "content": "Warning, the data will be lost.",
-        "content_apps": "Are you sure you want to remove \"{{name}}\" from your workspace ?",
-        "ok": "Yes, delete",
-        "ok_apps": "Uninstall {{name}}",
-        "cancel": "No, please no"
-      },
-      "toast_automations": "Automation has been deleted",
-      "toast_pages": "Page has been deleted"
     }
   },
   "schema": {
