@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, useEffect, useRef, useState } from 'react';
+import { cloneElement, ReactElement, useEffect, useState } from 'react';
 import { useBlock } from '../Provider';
 import generateId from '../utils/generateId';
 import getBlockStyles from '../utils/getBlockStyles';
@@ -20,26 +20,22 @@ export const BaseBlock = ({ children, defaultStyles }: BaseBlock) => {
     config: { className, parentClassName = '', css = defaultStyles, cssId },
   } = useBlock();
   const [containerClassName] = useState(`__block-${cssId || generateId()}`);
-  const blockStyle = useRef('');
 
   useEffect(() => {
     if (!blocksStyles) return;
-    blockStyle.current = getBlockStyles({
+    const blockStyle = getBlockStyles({
       css,
       defaultStyles,
       containerClassName,
       parentClassName,
     });
-    styles.add(blockStyle.current);
+    styles.add(blockStyle);
     blocksStyles.textContent = Array.from(styles).join('\n');
-  }, [css, defaultStyles, containerClassName, parentClassName]);
 
-  useEffect(() => {
-    () => {
-      if (!blockStyle.current) return;
-      styles.delete(blockStyle.current);
+    return () => {
+      styles.delete(blockStyle);
     };
-  }, []);
+  }, [css, defaultStyles, containerClassName, parentClassName]);
 
   return cloneElement(children, {
     className: [className, containerClassName].join(' '),
