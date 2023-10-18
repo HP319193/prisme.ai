@@ -6,6 +6,7 @@ import BlockLoader from './BlockLoader';
 import { usePage } from './PageProvider';
 import PoweredBy from '../../../console/components/PoweredBy';
 import dynamic from 'next/dynamic';
+import { useUser } from '../../../console/components/UserProvider';
 
 const Debug = dynamic(() => import('../Debug'), { ssr: false });
 
@@ -18,6 +19,8 @@ export const Page = ({ page }: PageProps) => {
   const { localize } = useLocalizedText();
   const { events } = usePage();
   const containerEl = useRef<HTMLDivElement>(null);
+  const { user } = useUser();
+  const isSignedIn = user?.authData && !user?.authData?.anonymous;
 
   useEffect(() => {
     window.Prisme = window.Prisme || {};
@@ -52,8 +55,11 @@ export const Page = ({ page }: PageProps) => {
     return {
       ...pageConfig,
       blocks,
+      SYSTEM: {
+        userIsSignedIn: isSignedIn,
+      },
     };
-  }, [page]);
+  }, [isSignedIn, page]);
 
   return (
     <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full">
