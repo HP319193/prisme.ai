@@ -25,11 +25,12 @@ export const BlocksList = ({
       console.error('blocks must be an array');
       return [];
     }
+
     return blocks
       .filter(Boolean)
       .map(({ slug, className = '', ...config }, key) => (
         <BlockLoader
-          key={`${key}-${slug}`}
+          key={`${key}-${slug}-${Math.random()}`}
           name={slug}
           config={{
             ...config,
