@@ -6,41 +6,33 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import AutomationBuilder from '../components/AutomationBuilder';
-import getLayout from '../layouts/WorkspaceLayout';
-import useKeyboardShortcut from '../components/useKeyboardShortcut';
+import AutomationBuilder from '../../components/AutomationBuilder';
+import getLayout from '../../layouts/WorkspaceLayout';
+import useKeyboardShortcut from '../../components/useKeyboardShortcut';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
-import {
-  Button,
-  Loading,
-  notification,
-  Schema,
-  Space,
-} from '@prisme.ai/design-system';
-import useLocalizedText from '../utils/useLocalizedText';
-import { SLUG_VALIDATION_REGEXP } from '../utils/regex';
-import EditDetails from '../layouts/EditDetails';
-import ArgumentsEditor from '../components/SchemaFormBuilder/ArgumentsEditor';
-import EditableTitle from '../components/EditableTitle';
+import { Button, Loading, notification, Space } from '@prisme.ai/design-system';
+import useLocalizedText from '../../utils/useLocalizedText';
+import EditableTitle from '../../components/EditableTitle';
 import { PageHeader, Tooltip } from 'antd';
-import HorizontalSeparatedNav from '../components/HorizontalSeparatedNav';
+import HorizontalSeparatedNav from '../../components/HorizontalSeparatedNav';
 import { CodeOutlined } from '@ant-design/icons';
-import CopyIcon from '../icons/copy.svgr';
-import iconWorkspace from '../icons/icon-workspace.svg';
+import CopyIcon from '../../icons/copy.svgr';
+import iconWorkspace from '../../icons/icon-workspace.svg';
 
-import { useWorkspace } from '../providers/Workspace';
-import { AutomationProvider, useAutomation } from '../providers/Automation';
-import { ApiError } from '../utils/api';
+import { useWorkspace } from '../../providers/Workspace';
+import { AutomationProvider, useAutomation } from '../../providers/Automation';
+import { ApiError } from '../../utils/api';
 import SourceEdit, {
   ValidationError,
-} from '../components/SourceEdit/SourceEdit';
+} from '../../components/SourceEdit/SourceEdit';
 import { validateAutomation } from '@prisme.ai/validation';
-import { incrementName } from '../utils/incrementName';
-import useDirtyWarning from '../utils/useDirtyWarning';
-import { replaceSilently } from '../utils/urls';
-import { TrackingCategory, useTracking } from '../components/Tracking';
-import PlayPanel from '../components/AutomationBuilder/PlayPanel';
+import { incrementName } from '../../utils/incrementName';
+import useDirtyWarning from '../../utils/useDirtyWarning';
+import { replaceSilently } from '../../utils/urls';
+import { TrackingCategory, useTracking } from '../../components/Tracking';
+import PlayPanel from '../../components/AutomationBuilder/PlayPanel';
+import EditDetails from './EditDetails';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -109,54 +101,6 @@ export const Automation = () => {
     push,
     replace,
   } = useRouter();
-
-  const detailsFormSchema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        name: {
-          type: 'localized:string',
-          title: t('automations.details.name.label'),
-        },
-        slug: {
-          type: 'string',
-          title: t('automations.details.slug.label'),
-          pattern: SLUG_VALIDATION_REGEXP.source,
-          errors: {
-            pattern: t('automations.save.error_InvalidSlugError'),
-          },
-        },
-        description: {
-          type: 'localized:string',
-          title: t('automations.details.description.label'),
-          'ui:widget': 'textarea',
-          'ui:options': { textarea: { rows: 6 } },
-        },
-        arguments: {
-          'ui:widget': ArgumentsEditor,
-        },
-        private: {
-          type: 'boolean',
-          title: t('automations.details.private.label'),
-          description: t('automations.details.private.description'),
-        },
-        disabled: {
-          type: 'boolean',
-          title: t('automations.details.disabled.label'),
-          description: t('automations.details.private.description'),
-        },
-      },
-      'ui:options': {
-        grid: [
-          [['name', 'slug'], ['description']],
-          [['arguments']],
-          [['private']],
-          [['disabled']],
-        ],
-      },
-    }),
-    [t]
-  );
 
   const save = useCallback(
     async (newValue = value) => {
@@ -422,11 +366,10 @@ export const Automation = () => {
             </HorizontalSeparatedNav.Separator>
             <HorizontalSeparatedNav.Separator>
               <Tooltip
-                title={t('details.title', { context: 'automations' })}
+                title={t('automations.details.title')}
                 placement="bottom"
               >
                 <EditDetails
-                  schema={detailsFormSchema}
                   value={value}
                   onSave={saveDetails}
                   onDelete={confirmDeleteAutomation}

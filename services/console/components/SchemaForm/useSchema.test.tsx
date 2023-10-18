@@ -168,7 +168,6 @@ it('should build a select from automations', () => {
       bar: {
         name: 'Bar',
         description: 'Bar automation',
-        slug: 'do-bar',
       },
     },
   };
@@ -192,7 +191,7 @@ it('should build a select from automations', () => {
     },
     {
       label: expect.any(Object),
-      value: 'do-bar',
+      value: 'bar',
     },
   ]);
   const labels = renderer.create(
@@ -218,7 +217,6 @@ it('should build a select from endpoint automations ', () => {
       bar: {
         name: 'Bar',
         description: 'Bar automation',
-        slug: 'do-bar',
         when: {
           endpoint: true,
         },
@@ -243,7 +241,7 @@ it('should build a select from endpoint automations ', () => {
     { label: '', value: '' },
     {
       label: expect.any(Object),
-      value: 'do-bar',
+      value: 'bar',
     },
   ]);
   const labels = renderer.create(

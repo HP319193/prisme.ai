@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-export { default } from '../../../../../views/AppInstance';
+export { default } from '../../../../../views/AppInstance/AppInstance';
 
 export const getServerSideProps: GetServerSideProps = async ({
   locale = '',

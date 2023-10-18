@@ -47,12 +47,7 @@
     "dirtyOk": "Quitter",
     "delete": {
       "label": "Supprimer le workspace",
-      "confirm": {
-        "title": "Voulez vous supprimer le workspace \"{{name}}\" ?",
-        "content": "Attention, les données seront perdues.",
-        "ok": "Oui, supprimer",
-        "cancel": "Non, je regrette"
-      },
+      "confirm": "Êtes vous sur de vouloir supprimer ce Workspace ?",
       "toast": "le workspace a bien été supprimé"
     },
     "duplicate": {
@@ -67,6 +62,23 @@
     "expandSidebar": "Agrandir",
     "collapseSidebar": "Réduire",
     "details": {
+      "title": "Éditer les détails du Workspace",
+      "setup": {
+        "label": "Présentation"
+      },
+      "actions": {
+        "label": "Actions"
+      },
+      "config": {
+        "label": "Configuration",
+        "schema": {
+          "label": "Formulaire de configuration",
+          "description": "Ce formulaire sera présenté aux utilisateur de votre Workspace une fois publié en tant qu'App."
+        },
+        "value": {
+          "label": "Valeurs par défaut"
+        }
+      },
       "name": {
         "label": "Nom du Workspace"
       },
@@ -198,6 +210,10 @@
       "value": {
         "event": "un événement"
       }
+    },
+    "delete": {
+      "label": "Supprimer",
+      "confirm": "Êtes vous sur de vouloir supprimer cette Automatisation ?"
     },
     "empty": "Une automatisation décrit ce qu'il faut faire et quand il faut le faire",
     "back": "Retour",
@@ -520,6 +536,8 @@
       }
     },
     "details": {
+      "title": "Éditer les détails de l'Automatisation",
+      "setup": "Configuration",
       "slug": {
         "label": "Nom technique"
       },
@@ -529,6 +547,7 @@
       "description": {
         "label": "Description"
       },
+      "advanced": "Avancé",
       "private": {
         "label": "Usage interne",
         "description": "Si vous activez ce paramètre, l'Automatisation ne sera visible en tant qu'instruction que dans ce même Workspace. Quand vous publierez votre App, ses utilisateurs ne la verront pas."
@@ -583,6 +602,10 @@
       "reason_AlreadyUsedError": "Le nom technique est déjà utilisé, veuillez en choisir un autre",
       "reason_InvalidSlugError": "Le nom technique contient des caractères invalides"
     },
+    "delete": {
+      "label": "Désinstaller",
+      "confirm": "Êtes vous sur de vouloir désinstaller cette App ?"
+    },
     "saveSuccess": "Configuration d'App sauvegardée avec succès",
     "notFound": "L'App n'existe pas.",
     "source": {
@@ -591,7 +614,7 @@
       "help": "Affiche la structure de l'App au format brut"
     },
     "details": {
-      "title": "Détails de l'App",
+      "title": "Éditer les détails de l'App",
       "appName": {
         "label": "Nom de l'app"
       },
@@ -668,13 +691,8 @@
       }
     },
     "delete": {
-      "label": "Supprimer la page",
-      "confirm": {
-        "title": "Voulez vous supprimer la page \"{{name}}\" ?",
-        "content": "Attention, les données seront perdues.",
-        "ok": "Oui, supprimer",
-        "cancel": "Non, je regrette"
-      },
+      "label": "Supprimer",
+      "confirm": "Êtes vous sur de vouloir supprimer cette Page ?",
       "toast": "La page a bien été supprimée"
     },
     "save": {
@@ -694,7 +712,7 @@
       "notme": "Vous êtes déjà le propriétaire de cette Page."
     },
     "details": {
-      "title": "Éditer les détails",
+      "title": "Éditer les détails de la Page",
       "name": {
         "label": "Titre de la page"
       },
@@ -1427,7 +1445,7 @@
       "help": "Affiche la structure de la page au format brut"
     },
     "details": {
-      "title": "Éditer les détails",
+      "title": "Éditer les détails du Block",
       "name": {
         "label": "Titre du Block"
       },
@@ -1491,6 +1509,9 @@
       "logical": {
         "label": "Logique"
       },
+      "advanced": {
+        "label": "Avancé"
+      },
       "picker": {
         "builtIn": "Communs",
         "workspace": "{{from}} (ce Workspace)",
@@ -1550,35 +1571,6 @@
     "set": {
       "tooltip": "Ajouter une traduction",
       "title": "Langues ajoutées"
-    }
-  },
-  "details": {
-    "title": "",
-    "title_workspaces": "Réglages du Workspace",
-    "title_automations": "Réglages de l'Automatisation",
-    "title_pages": "Réglages de la Page",
-    "title_apps": "Détails de l'App",
-    "title_blocks": "Réglages du Block",
-    "save": "Enregistrer",
-    "delete": {
-      "label": "Supprimer",
-      "label_workspaces": "Supprimer le Workspace",
-      "label_automations": "Supprimer l'automatisation",
-      "label_pages": "Supprimer la page",
-      "confirm": {
-        "title": "Voulez vous supprimer \"{{name}}\" ?",
-        "title_workspaces": "Voulez vous supprimer le Workspace \"{{name}}\" ?",
-        "title_automation": "Voulez vous supprimer l'automatisation \"{{name}}\" ?",
-        "title_pages": "Voulez vous supprimer la page \"{{name}}\" ?",
-        "title_apps": "Désinstaller",
-        "content": "Attention, les données seront perdues.",
-        "content_apps": "Êtes vous sûr de vouloir supprimer \"{{name}}\" de votre workspace ?",
-        "ok": "Oui, supprimer",
-        "ok_apps": "Désinstaller {{name}}",
-        "cancel": "Non, je regrette"
-      },
-      "toast_automations": "L'automatisation a bien été supprimée",
-      "toast_pages": "La page a bien été supprimée"
     }
   },
   "schema": {

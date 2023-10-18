@@ -1,7 +1,7 @@
 import renderer from 'react-test-renderer';
 import { appInstanceContext } from '../providers/AppInstanceProvider';
 import { workspaceContext } from '../providers/Workspace';
-import { AppInstance } from './AppInstance';
+import { AppInstance } from './AppInstance/AppInstance';
 import workspaceContextValue from '../providers/Workspace/workspaceContextValue.mock';
 import appInstanceContextValue from '../providers/AppInstanceProvider/appInstancesContextValue.mock';
 import { workspaceLayoutContext } from '../layouts/WorkspaceLayout/context';

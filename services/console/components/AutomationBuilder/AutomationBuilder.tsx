@@ -493,7 +493,7 @@ export const AutomationBuilder: FC<AutomationBuilderProps> = ({
       setPanelTitle(t('automations.output.panel'));
       return;
     }
-    setPanelTitle(t('details.title_automations'));
+    setPanelTitle(t('automations.details.title'));
   }, [conditionEditing, instructionEditing, outputEditing, t, triggerEditing]);
 
   return (

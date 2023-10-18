@@ -9,8 +9,8 @@ import React, {
 import useKeyboardShortcut from '../../components/useKeyboardShortcut';
 import getLayout from '../../layouts/WorkspaceLayout';
 import { useWorkspace } from '../../providers/Workspace';
-import { Button, Schema } from '@prisme.ai/design-system';
-import { Trans, useTranslation } from 'next-i18next';
+import { Button } from '@prisme.ai/design-system';
+import { useTranslation } from 'next-i18next';
 import useDirtyWarning from '../../utils/useDirtyWarning';
 import { TrackingCategory, useTracking } from '../../components/Tracking';
 import { BlockProvider, useBlock } from '../../providers/Block';
@@ -19,11 +19,9 @@ import useLocalizedText from '../../utils/useLocalizedText';
 import { notification, PageHeader, Segmented, Tooltip } from 'antd';
 import HorizontalSeparatedNav from '../../components/HorizontalSeparatedNav';
 import EditableTitle from '../../components/EditableTitle';
-import EditDetails from '../../layouts/EditDetails';
 import CopyIcon from '../../icons/copy.svgr';
 import {
   CodeOutlined,
-  CodepenOutlined,
   EditOutlined,
   EyeOutlined,
   LoadingOutlined,
@@ -44,6 +42,7 @@ import {
   getBackTemplateDots,
   removeTemplateDots,
 } from '../../utils/templatesInBlocks';
+import EditDetails from './EditDetails';
 
 const Block = () => {
   const { t } = useTranslation('workspaces');
@@ -178,60 +177,6 @@ const Block = () => {
     saveAfterChange.current = save;
   }, [save]);
 
-  const detailsFormSchema: Schema = useMemo(
-    () => ({
-      type: 'object',
-      properties: {
-        name: {
-          type: 'localized:string',
-          title: t('blocks.details.name.label'),
-        },
-        slug: {
-          type: 'string',
-          title: t('blocks.details.slug.label'),
-        },
-        description: {
-          type: 'localized:string',
-          title: t('blocks.details.description.label'),
-          'ui:widget': 'textarea',
-          'ui:options': { textarea: { rows: 10 } },
-        },
-        photo: {
-          type: 'string',
-          title: t('blocks.details.photo.label'),
-          description: t('blocks.details.photo.description'),
-          'ui:widget': 'upload',
-          'ui:options': {
-            upload: { accept: 'image/jpg,image/gif,image/png,image/svg' },
-          },
-        },
-        url: {
-          type: 'string',
-          title: t('blocks.details.url.label'),
-          description: (
-            <Trans
-              t={t}
-              i18nKey="blocks.details.url.description"
-              components={{
-                a: <a target="_blank" />,
-              }}
-            />
-          ),
-          'ui:widget': 'upload',
-          'ui:options': {
-            upload: {
-              accept: '.js',
-              defaultPreview: (
-                <CodepenOutlined className="text-4xl !text-gray-200 flex items-center" />
-              ),
-            },
-          },
-        },
-      },
-    }),
-    [t]
-  );
-
   const [displaySource, setDisplaySource] = useState(false);
   const showSource = useCallback(() => {
     trackEvent({
@@ -280,6 +225,7 @@ const Block = () => {
         </title>
       </Head>
       <PageHeader
+        key={blockKey}
         className="h-[4rem] flex items-center"
         title={
           <HorizontalSeparatedNav>
@@ -308,12 +254,8 @@ const Block = () => {
               </span>
             </HorizontalSeparatedNav.Separator>
             <HorizontalSeparatedNav.Separator>
-              <Tooltip
-                title={t('details.title', { context: 'blocks' })}
-                placement="bottom"
-              >
+              <Tooltip title={t('blocks.details.title')} placement="bottom">
                 <EditDetails
-                  schema={detailsFormSchema}
                   value={value}
                   onSave={async (v) => {
                     trackEvent({

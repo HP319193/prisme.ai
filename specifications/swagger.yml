@@ -464,7 +464,7 @@ components:
             type: string
         registerWorkspace:
           type: boolean
-          description: "If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}"
+          description: 'If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}'
 
     RuntimeModel:
       allOf:
@@ -1927,7 +1927,7 @@ components:
               $ref: '#/components/schemas/App'
             rebuildModel:
               type: boolean
-              description: "Whether we should rebuild this app model, true when this follows a bulk import"
+              description: 'Whether we should rebuild this app model, true when this follows a bulk import'
 
     DeletedApp:
       type: object
@@ -3781,8 +3781,8 @@ paths:
           schema:
             type: string
             enum:
-                  - month
-                  - day
+              - month
+              - day
         - name: 'details'
           in: 'query'
           description: 'Includes individual appInstances details'
