@@ -146,3 +146,14 @@ Examples:
 `round(10.26,1) == 10.3`  
 
 Functions like rand() can also be combined with mathematical operators : `rand(10, 11) * {{var}} + 2`
+
+
+## String
+
+### JSON parsing or stringify
+`json('{"foo": "bar"}') == {"foo": "bar"}`  
+`json({"foo": "bar"}) == '{"foo": "bar"}'`  
+
+## String splitting / joining
+`split('one,two,thre', ',') == ['one', 'two', 'three']`  
+`join(['one', 'two', 'three'], ',') == 'one,two,thre'`  

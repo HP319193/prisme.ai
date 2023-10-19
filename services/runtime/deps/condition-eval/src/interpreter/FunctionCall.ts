@@ -55,9 +55,50 @@ class FunctionCall extends Evaluatable {
         const decimalCoef = Math.pow(10, decimals);
         return Math.round(number * decimalCoef) / decimalCoef;
 
+      case 'split':
+        const [stringToSplit, separator] = functionArgs;
+        if (
+          typeof separator !== 'string' ||
+          typeof stringToSplit !== 'string'
+        ) {
+          throw new InvalidExpressionSyntax(
+            `Bad split() arguments. Ex usage : split({{textVar}}, ",")`
+          );
+        }
+        return stringToSplit.split(separator);
+
+      case 'join':
+        const [listToJoin, joiner] = functionArgs;
+        if (typeof joiner !== 'string' || !Array.isArray(listToJoin)) {
+          throw new InvalidExpressionSyntax(
+            `Bad join() arguments. Ex usage : join({{someList}}, ",")`
+          );
+        }
+        return listToJoin.join(joiner);
+
+      case 'json':
+        const [jsonOrObject] = functionArgs;
+        if (typeof jsonOrObject === 'string') {
+          try {
+            return JSON.parse(jsonOrObject);
+          } catch {
+            throw new InvalidExpressionSyntax('Invalid JSON syntax', {
+              json: jsonOrObject,
+            });
+          }
+        } else {
+          try {
+            return JSON.stringify(jsonOrObject);
+          } catch (err) {
+            throw new InvalidExpressionSyntax('Cant stringify this object', {
+              err,
+            });
+          }
+        }
+
       default:
         throw new InvalidExpressionSyntax(
-          `Unknown function '${this.functionName} in an expression or condition'`
+          `Unknown function '${this.functionName}' in an expression or condition'`
         );
     }
   }

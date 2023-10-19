@@ -573,3 +573,78 @@ describe('Should handle basic math features', () => {
     );
   });
 });
+
+describe('Should handle basic string features', () => {
+  it('Splitting', () => {
+    // Missing separator
+    expect(() =>
+      evaluate('split({{var}})', { var: 'un,deux,trois' }, false)
+    ).toThrow();
+
+    // Basic
+    expect(
+      evaluate('split({{var}}, ",")', { var: 'un,deux,trois' }, false)
+    ).toMatchObject(['un', 'deux', 'trois']);
+
+    // Separator as a variable
+    expect(
+      evaluate(
+        'split({{var}}, {{separator}})',
+        { var: 'un,deux,trois', separator: ',' },
+        false
+      )
+    ).toMatchObject(['un', 'deux', 'trois']);
+
+    // No separator found
+    expect(
+      evaluate(
+        'split({{var}}, {{separator}})',
+        { var: 'un,deux,trois', separator: '/' },
+        false
+      )
+    ).toMatchObject(['un,deux,trois']);
+  });
+
+  it('Joining', () => {
+    // Arg not a list
+    expect(() =>
+      evaluate('join({{var}}, "|")', { var: 'un,deux,trois' }, false)
+    ).toThrow();
+
+    // Basic
+    expect(
+      evaluate('join({{var}}, ",")', { var: ['un', 'deux', 'trois'] }, false)
+    ).toEqual('un,deux,trois');
+
+    // Joiner as a variable
+    expect(
+      evaluate(
+        'join({{var}}, {{joiner}})',
+        { var: ['un', 'deux', 'trois'], joiner: ',' },
+        false
+      )
+    ).toEqual('un,deux,trois');
+  });
+
+  it('JSON parsing / stringify', () => {
+    // Can't parse an invalid json
+    expect(() =>
+      evaluate('json("{var")', { var: JSON.stringify({ foo: 'bar' }) }, false)
+    ).toThrow();
+
+    // Cant stringify an invalid object (i.e nested auto ref)
+    let loopRef: any = { foo: 'bar' };
+    loopRef.loop = loopRef;
+    expect(() => evaluate('json({{var}})', { var: loopRef }, false)).toThrow();
+
+    // Valid json parsing
+    expect(
+      evaluate('json({{var}})', { var: JSON.stringify({ foo: 'bar' }) }, false)
+    ).toMatchObject({ foo: 'bar' });
+
+    // Valid json stringify
+    expect(evaluate('json({{var}})', { var: { foo: 'bar' } }, false)).toEqual(
+      '{"foo":"bar"}'
+    );
+  });
+});
