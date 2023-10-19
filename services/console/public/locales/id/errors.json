@@ -1,9 +1,9 @@
 {
-  "404": "This page does not exist. Return to the home page.",
-  "unknown": "An error occured: \"{{errorName}}\"",
-  "share": "An error occured",
-  "share_CollaboratorNotFound": "This email does not correspond to any existing user.",
+  "404": "Halaman ini tidak ada lagi. Kembali ke halaman utama.",
+  "unknown": "Kesalahan: \"{{errorName}}\"",
+  "share": "Kesalahan",
+  "share_CollaboratorNotFound": "Email ini tidak sesuai dengan pengguna mana pun yang ada.",
   "openapi": "{{path}} {{context}}",
-  "openapi_should NOT have additional properties": "{{path}} is invalid",
-  "openapi_should be object": "{{path}} should be an object"
+  "openapi_should NOT have additional properties": "{{path}} invalid",
+  "openapi_should be object": "{{path}} harus ada objek"
 }

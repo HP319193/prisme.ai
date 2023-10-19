@@ -1,18 +1,18 @@
 {
   "main": {
     "title": "Prisme.ai",
-    "description": "All-in-one, low-code, automation platform."
+    "description": "Semuanya salam situ produce, kode rendah, platform otomatisasi."
   },
   "home": {
-    "signin": "Signin"
+    "signin": "Masuk"
   },
-  "save": "Save",
-  "add": "Add",
-  "cancel": "Cancel",
-  "soon": "coming soon",
-  "search": "Search",
-  "powered": "Powered by Prisme.ai",
-  "yes": "Yes",
-  "no": "No",
-  "duplicate": "Duplicate"
+  "save": "Simpan",
+  "add": "Tambahkan",
+  "cancel": "Batalkan",
+  "soon": "Segera hair",
+  "search": "Cari",
+  "powered": "Didukung oleh Prisme.ai",
+  "yes": "Ya",
+  "no": "Tidak",
+  "duplicate": "Duplikasi"
 }
