@@ -1,4 +1,3 @@
-import { replace } from 'lodash';
 import { InvalidExpressionSyntax } from '../../../../src/errors';
 import Evaluatable from '../Evaluatable';
 import DateExpression from './DateExpression';
