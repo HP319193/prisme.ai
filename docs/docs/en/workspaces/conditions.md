@@ -157,3 +157,6 @@ Functions like rand() can also be combined with mathematical operators : `rand(1
 ## String splitting / joining
 `split('one,two,thre', ',') == ['one', 'two', 'three']`  
 `join(['one', 'two', 'three'], ',') == 'one,two,thre'`  
+
+## String replacement
+`replace('hello world', 'world', 'there') == 'hello there'`   
