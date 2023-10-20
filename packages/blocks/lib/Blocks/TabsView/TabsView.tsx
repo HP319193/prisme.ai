@@ -109,16 +109,22 @@ export const TabsView = ({
       </div>
       <div className="pr-block-tabs-view__content">
         {tabs.map((tab, index) => (
-          <BlockLoader
-            key={index}
-            name="BlocksList"
-            config={{
-              ...tabs[index].content,
-              className: `${tab.content?.className || ''}${
-                index === currentTab ? '' : 'hidden'
-              }`,
-            }}
-          />
+          <div
+            className={
+              index === currentTab ? '' : 'pr-block-tabs-view__content--hidden'
+            }
+          >
+            <BlockLoader
+              key={index}
+              name="BlocksList"
+              config={{
+                ...tabs[index].content,
+                className: `${tab.content?.className || ''}${
+                  index === currentTab ? '' : 'hidden'
+                }`,
+              }}
+            />
+          </div>
         ))}
       </div>
     </div>
@@ -147,6 +153,9 @@ const defaultStyles = `:block {
 .pr-block-tabs-view__tab--active {
   background: var(--accent-color);
   color: var(--accent-contrast-color);
+}
+.pr-block-tabs-view__content--hidden {
+  display: none;
 }`;
 
 export const TabsViewInContext = () => {
