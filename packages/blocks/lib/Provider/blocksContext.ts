@@ -1,7 +1,7 @@
 import { SchemaForm } from '@prisme.ai/design-system';
 import { SchemaFormContext } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
 import { createContext, FC, useContext } from 'react';
-import { TBlockLoader } from './types';
+import { Block, TBlockLoader } from './types';
 
 export interface BlocksDependenciesContext {
   externals: any;
@@ -18,6 +18,7 @@ export interface BlocksDependenciesContext {
       getSigninUrl: (options?: { redirect?: string }) => Promise<string>;
       getSignupUrl: (options?: { redirect?: string }) => Promise<string>;
     };
+    changeBlockConfig: (block: any, newConfig: Record<string, any>) => Block;
   };
 }
 
@@ -39,6 +40,7 @@ export const blocksContext = createContext<BlocksDependenciesContext>({
       getSigninUrl: async () => '',
       getSignupUrl: async () => '',
     },
+    changeBlockConfig: (block) => block,
   },
 });
 export const useBlocks = () => useContext(blocksContext);

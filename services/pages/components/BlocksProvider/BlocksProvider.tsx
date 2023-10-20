@@ -11,6 +11,7 @@ import BlockLoader from '../Page/BlockLoader';
 import SchemaForm from './SchemaForm';
 import { useTranslation } from 'next-i18next';
 import { useUser } from '../../../console/components/UserProvider';
+import { original } from '../Page/computeBlocks';
 
 export const BlocksProvider: FC = ({ children }) => {
   const { id } = useWorkspace();
@@ -41,11 +42,18 @@ export const BlocksProvider: FC = ({ children }) => {
       },
     };
   }, [initAuthentication]);
+  const changeBlockConfig = useCallback((_block, newConfig) => {
+    const { [original]: block = _block } = _block;
+    return {
+      ...block,
+      ...newConfig,
+    };
+  }, []);
   return (
     <Provider
       externals={externals}
       components={{ Link, Loading, DownIcon, SchemaForm }}
-      utils={{ uploadFile, BlockLoader, auth }}
+      utils={{ uploadFile, BlockLoader, auth, changeBlockConfig }}
       language={language}
     >
       {children}

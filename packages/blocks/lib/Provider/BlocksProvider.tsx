@@ -13,6 +13,7 @@ const dftUtils = {
   getWorkspaceHost() {
     return `${window.location.protocol}//${window.location.host}`;
   },
+  changeBlockConfig: (block: any) => block,
 };
 
 const uploadFile = async (file: string) => file;

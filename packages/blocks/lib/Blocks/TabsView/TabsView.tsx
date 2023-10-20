@@ -44,7 +44,7 @@ export const TabsView = ({
   const isHorizontal = direction !== 'vertical';
   const {
     components: { Link },
-    utils: { BlockLoader },
+    utils: { BlockLoader, changeBlockConfig },
   } = useBlocks();
   return (
     <div
@@ -109,22 +109,15 @@ export const TabsView = ({
       </div>
       <div className="pr-block-tabs-view__content">
         {tabs.map((tab, index) => (
-          <div
-            className={
-              index === currentTab ? '' : 'pr-block-tabs-view__content--hidden'
-            }
-          >
-            <BlockLoader
-              key={index}
-              name="BlocksList"
-              config={{
-                ...tabs[index].content,
-                className: `${tab.content?.className || ''}${
-                  index === currentTab ? '' : 'hidden'
-                }`,
-              }}
-            />
-          </div>
+          <BlockLoader
+            key={index}
+            name="BlocksList"
+            config={changeBlockConfig(tabs[index].content, {
+              className: `${tab.content?.className || ''}${
+                index === currentTab ? '' : 'hidden'
+              }`,
+            })}
+          />
         ))}
       </div>
     </div>
