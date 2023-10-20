@@ -1,3 +1,4 @@
+import { replace } from 'lodash';
 import { InvalidExpressionSyntax } from '../../../../src/errors';
 import Evaluatable from '../Evaluatable';
 import DateExpression from './DateExpression';
@@ -95,6 +96,19 @@ class FunctionCall extends Evaluatable {
             });
           }
         }
+
+      case 'replace':
+        const [input, pattern, replaceWith] = functionArgs;
+        if (
+          typeof input !== 'string' ||
+          typeof pattern !== 'string' ||
+          typeof replaceWith !== 'string'
+        ) {
+          throw new InvalidExpressionSyntax(
+            `Bad replace() arguments. Ex usage : replace("hello world", "world", "you")`
+          );
+        }
+        return input.replace(pattern, replaceWith);
 
       default:
         throw new InvalidExpressionSyntax(

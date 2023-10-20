@@ -647,4 +647,15 @@ describe('Should handle basic string features', () => {
       '{"foo":"bar"}'
     );
   });
+
+  it('String replacement', () => {
+    // Get same string if pattern doesn't match
+    expect(evaluate('replace("hello world", "foo", "bar")', {}, false)).toEqual(
+      'hello world'
+    );
+
+    expect(
+      evaluate('replace("hello world", "world", "you")', {}, false)
+    ).toEqual('hello you');
+  });
 });
