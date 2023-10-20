@@ -72,11 +72,11 @@
       "config": {
         "label": "Configuration",
         "schema": {
-          "label": "Configuration form",
+          "label": "Form configuration (advanced)",
           "description": "This form will be presented to users of your Workspace once published as an App."
         },
         "value": {
-          "label": "Defaut values"
+          "label": "Workspace configuration"
         }
       },
       "name": {

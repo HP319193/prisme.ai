@@ -8,7 +8,13 @@ import {
   SettingOutlined,
   TagOutlined,
 } from '@ant-design/icons';
-import { Button, Popover, Schema, Tabs } from '@prisme.ai/design-system';
+import {
+  Button,
+  Collapse,
+  Popover,
+  Schema,
+  Tabs,
+} from '@prisme.ai/design-system';
 import { PopoverProps } from '@prisme.ai/design-system/lib/Components/Popover';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -91,30 +97,22 @@ export const EditDetails = ({
     [t]
   );
 
-  const schemaSchema: Schema = useMemo(
+  const schemaConfig: Schema = useMemo(
     () => ({
       type: 'object',
-      properties: {
-        config: {
-          type: 'object',
-          title: t('workspace.details.config.label'),
-          properties: {
-            schema: {
-              title: t('workspace.details.config.schema.label'),
-              description: t('workspace.details.config.schema.description'),
-              'ui:widget': ArgumentsEditor,
-            },
-            value: {
-              type: 'object',
-              title: t('workspace.details.config.value.label'),
-              properties: values.config?.schema,
-              additionalProperties: true,
-            },
-          },
-        },
-      },
+      title: t('workspace.details.config.value.label'),
+      properties: values.config?.schema,
+      additionalProperties: !values.config?.schema,
     }),
     [t, values.config?.schema]
+  );
+  const schemaSchema: Schema = useMemo(
+    () => ({
+      title: t('workspace.details.config.schema.label'),
+      description: t('workspace.details.config.schema.description'),
+      'ui:widget': ArgumentsEditor,
+    }),
+    [t]
   );
 
   const initialOpenState = useRef(false);
@@ -146,6 +144,67 @@ export const EditDetails = ({
         newValues[k as keyof typeof newValues] = changedValues[k];
       });
       setValues(newValues);
+    },
+    [values]
+  );
+
+  const onConfigChanged = useCallback(
+    (changed) => {
+      const {
+        automations,
+        pages,
+        blocks,
+        imports,
+        id,
+        createdAt,
+        updatedAt,
+        registerWorkspace,
+        ...newValues
+      } = { ...values } as Workspace;
+      if (
+        !newValues.config?.schema ||
+        newValues.config?.schema.additionalProperties
+      ) {
+        setValues({
+          ...newValues,
+          config: {
+            ...newValues.config,
+            value: changed,
+          },
+        });
+        return;
+      }
+      Object.keys(newValues.config.schema || {}).forEach((k) => {
+        newValues.config = newValues.config || {};
+        newValues.config.value = newValues.config.value || {};
+        newValues.config.value[k as keyof typeof newValues] = changed[k];
+      });
+      setValues(newValues);
+    },
+    [values]
+  );
+
+  const onSchemaChanged = useCallback(
+    (changed) => {
+      const {
+        automations,
+        pages,
+        blocks,
+        imports,
+        id,
+        createdAt,
+        updatedAt,
+        registerWorkspace,
+        ...newValues
+      } = { ...values } as Workspace;
+
+      setValues({
+        ...newValues,
+        config: {
+          ...newValues.config,
+          schema: changed,
+        },
+      });
     },
     [values]
   );
@@ -252,13 +311,31 @@ export const EditDetails = ({
               key: 'schema',
               label: t('workspace.details.config.label'),
               children: (
-                <SchemaForm
-                  schema={schemaSchema}
-                  initialValues={values}
-                  onChange={onChange(schemaSchema)}
-                  onSubmit={submit}
-                  buttons={buttons}
-                />
+                <>
+                  <SchemaForm
+                    schema={schemaConfig}
+                    initialValues={values.config.value}
+                    onChange={onConfigChanged}
+                    onSubmit={submit}
+                    buttons={buttons}
+                  />
+                  <Collapse
+                    items={[
+                      {
+                        label: t('workspace.details.config.schema.label'),
+                        content: (
+                          <SchemaForm
+                            schema={schemaSchema}
+                            initialValues={values.config.schema}
+                            onChange={onSchemaChanged}
+                            onSubmit={submit}
+                            buttons={buttons}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                </>
               ),
             },
           ]}

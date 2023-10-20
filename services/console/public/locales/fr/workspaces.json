@@ -72,11 +72,11 @@
       "config": {
         "label": "Configuration",
         "schema": {
-          "label": "Formulaire de configuration",
+          "label": "Configuration du Formulaire (avancé)",
           "description": "Ce formulaire sera présenté aux utilisateur de votre Workspace une fois publié en tant qu'App."
         },
         "value": {
-          "label": "Valeurs par défaut"
+          "label": "Configuration du Workspace"
         }
       },
       "name": {
