@@ -1,3 +1,10 @@
+import {
+  AudioOutlined,
+  FilePdfOutlined,
+  FileTextOutlined,
+  FileUnknownOutlined,
+  FileWordOutlined,
+} from '@ant-design/icons';
 import { Schema, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
@@ -5,6 +12,32 @@ import { useWorkspace } from '../../providers/Workspace';
 import api from '../../utils/api';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { readAppConfig } from '../AutomationBuilder/Panel/readAppConfig';
+
+export const getPreview = (mimetype: string, url: string) => {
+  const [type] = mimetype.split(/\//);
+  if (type === 'image') {
+    return url;
+  }
+
+  if (mimetype === 'application/pdf') {
+    return (
+      <FilePdfOutlined className="text-4xl !text-accent flex items-center" />
+    );
+  }
+  if (mimetype.includes('officedocument')) {
+    return (
+      <FileWordOutlined className="text-4xl !text-accent flex items-center" />
+    );
+  }
+  if (type === 'audio') {
+    return (
+      <AudioOutlined className="text-4xl !text-accent flex items-center" />
+    );
+  }
+  return (
+    <FileTextOutlined className="text-4xl !text-accent flex items-center" />
+  );
+};
 
 export const useSchema = (store: Record<string, any> = {}) => {
   const { localize } = useLocalizedText();
@@ -168,9 +201,13 @@ export const useSchema = (store: Record<string, any> = {}) => {
 
   const uploadFile = useCallback(
     async (file: string) => {
-      const [{ url, name }] = await api.uploadFiles(file, id);
+      const [{ url, mimetype, name }] = await api.uploadFiles(file, id);
 
-      return url;
+      return {
+        value: url,
+        preview: getPreview(mimetype, url),
+        label: name,
+      };
     },
     [id]
   );
