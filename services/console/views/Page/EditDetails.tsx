@@ -13,7 +13,6 @@ import {
 import { PopoverProps } from '@prisme.ai/design-system/lib/Components/Popover';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import useSectionsIds from '../../providers/Page/useSectionsIds';
 import { useTracking } from '../../components/Tracking';
 import useLocalizedText from '../../utils/useLocalizedText';
 import CSSEditor from './CSSEditor';
@@ -41,7 +40,6 @@ export const EditDetails = ({
   const { localize } = useLocalizedText();
   const { trackEvent } = useTracking();
   const [open, setOpen] = useState(false);
-  const sectionsIds = useSectionsIds();
   const [values, setValues] = useState(value);
 
   const configSchema: Schema = useMemo(
@@ -108,13 +106,11 @@ export const EditDetails = ({
       properties: {
         styles: {
           type: 'string',
-          'ui:widget': (props: FieldProps) => (
-            <CSSEditor {...props} sectionIds={sectionsIds} opened />
-          ),
+          'ui:widget': (props: FieldProps) => <CSSEditor {...props} opened />,
         },
       },
     }),
-    [sectionsIds]
+    []
   );
 
   const initialOpenState = useRef(false);
