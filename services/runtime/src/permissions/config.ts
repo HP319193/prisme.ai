@@ -48,7 +48,7 @@ export const config: PermissionsConfig<
       name: Role.SuperAdmin,
       rules: [
         {
-          action: ActionType.Manage,
+          action: [ActionType.Execute, ActionType.Test],
           subject: SubjectType.Automation,
           priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
         },

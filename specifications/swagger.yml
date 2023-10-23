@@ -381,6 +381,7 @@ components:
         - get_usage
         - aggregate_search
         - execute
+        - test
 
     PermissionRule:
       type: object

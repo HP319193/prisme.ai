@@ -12,6 +12,7 @@ export const ActionType = {
   GetUsage: 'get_usage',
   AggregateSearch: 'aggregate_search',
   Execute: 'execute',
+  Test: 'test',
 };
 
 export enum SubjectType {

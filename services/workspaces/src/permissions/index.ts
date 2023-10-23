@@ -52,6 +52,7 @@ export function initAccessManager(
     {
       appName: `${process.env.HOSTNAME || APP_NAME}-permissions`,
       storage,
+
       rbac: {
         cacheCustomRoles: true,
         enabledSubjectTypes: [SubjectType.Workspace],
