@@ -1,6 +1,6 @@
 import { Ability, ForbiddenError, subject as an } from '@casl/ability';
 import { permittedFieldsOf } from '@casl/ability/extra';
-import { Rules, SubjectCollaborator, SubjectOptions } from '..';
+import { Rules, SubjectCollaborator } from '..';
 import { injectRules, nativeRules, sortRules } from './rulesBuilder';
 import {
   ForbiddenError as PrismeaiForbiddenError,
@@ -40,7 +40,6 @@ interface Subject<Role extends string> {
 
 type Role = string;
 export class Permissions<SubjectType extends string> {
-  private subjects: Record<SubjectType, SubjectOptions<Role>>;
   private user: User;
   private roleTemplates: RoleTemplates<SubjectType, Role>;
   private abac: Rules;
@@ -52,10 +51,9 @@ export class Permissions<SubjectType extends string> {
 
   constructor(user: User, config: PermissionsConfig<SubjectType, Role>) {
     this.user = user;
-    const { rbac, abac, subjects } = config;
+    const { rbac, abac } = config;
     this.roleTemplates = rbac;
     this.abac = abac;
-    this.subjects = subjects;
 
     this.loadedRoleIds = new Set();
     this.loadedSubjectRoles = {};
