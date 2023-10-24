@@ -15,6 +15,7 @@ export class BrokerError extends Error implements BrokerError {
   constructor(message: string, details: any) {
     super(message);
     this.error = 'BrokerError';
+    this.message = message;
     this.details = details;
   }
 

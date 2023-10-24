@@ -20,6 +20,7 @@ import { Subscriber, Subscriptions } from '../../services/events/Subscriptions';
 import { cleanSearchQuery } from './events';
 import { Cache } from '../../cache';
 import { fetchMe } from '@prisme.ai/permissions';
+import { PrismeError } from '../../errors';
 
 const WORKSPACE_PATH = /^\/v2\/workspaces\/([\w-_]+)\/events$/;
 
@@ -238,7 +239,7 @@ export function initWebsockets(
             sessionId,
             err,
           });
-          socket.emit('error', err);
+          socket.emit('error', PrismeError.prototype.toJSON.apply(err));
         }
       }
     );
