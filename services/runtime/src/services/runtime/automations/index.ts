@@ -48,6 +48,7 @@ export async function executeAutomation(
   }
 
   const output = evaluateOutput(automation, ctx);
+  delete ctx?.payload?.headers?.['authorization'];
   broker.send<Prismeai.ExecutedAutomation['payload']>(
     EventType.ExecutedAutomation,
     {

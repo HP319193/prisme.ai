@@ -102,6 +102,7 @@ export async function fetch(
       [CORRELATION_ID_HEADER]: ctx.run.correlationId,
       ...headers,
       'User-Agent': FETCH_USER_AGENT_HEADER,
+      'x-prismeai-workspace-id': ctx.workspaceId,
     },
     method: method,
   };
