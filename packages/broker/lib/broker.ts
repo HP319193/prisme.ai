@@ -7,6 +7,7 @@ import {
 } from './events';
 import { driver, Driver, DriverOptions, SubscriptionOptions } from './drivers';
 import { ValidatorOptions } from './events/validator';
+import { EventValidationError } from './errors';
 
 export type EventSender = (
   eventType: string,
@@ -173,6 +174,9 @@ export class Broker<CallbackContext = any> {
     additionalFields?: any,
     throwErrors?: boolean
   ): Promise<PrismeEvent | false> {
+    if (!eventType) {
+      throw new EventValidationError('Empty event type', { payload });
+    }
     const overrideSource =
       payload instanceof Error ? (<any>payload).source : partialSource;
     let event: Omit<PrismeEvent, 'id'>;
