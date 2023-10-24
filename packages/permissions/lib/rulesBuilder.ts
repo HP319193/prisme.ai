@@ -173,32 +173,7 @@ export function nativeRules(
     }
   );
 
-  const subjectsWithAuthorManagePolicy = Object.entries(subjects)
-    .filter(([_, subjectOpts]) => !subjectOpts?.author?.disableManagePolicy)
-    .map(([subjectType]) => subjectType);
-  const subjectAuthorsHaveManageAccess: Rules = [
-    {
-      // Everyone can manage its own subject
-      action: ActionType.Manage,
-      subject: subjectsWithAuthorManagePolicy,
-      conditions: { createdBy: '${user.id}' },
-    },
-    {
-      inverted: true,
-      action: ActionType.Update,
-      subject: 'all',
-      fields: ['permissions'],
-      conditions: {
-        [`permissions.\${user.id}.policies.manage_permissions`]: {
-          $ne: true,
-        },
-        createdBy: { $ne: '${user.id}' },
-      },
-    },
-  ];
-
   const rules = [
-    ...subjectAuthorsHaveManageAccess,
     ...anySubjectPermissionsGrantEquivalentActions,
     ...anySubjectRoleGrantReadAccess,
   ];
