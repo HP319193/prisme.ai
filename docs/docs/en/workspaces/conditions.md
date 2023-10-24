@@ -40,6 +40,9 @@ Expression syntax is not restricted to conditions but can also be evaluated anyw
 **... matches ...** :  
 `"hello" matches "hel"`  
 
+This also works with array of values, in which case it returns true if at least one element matches :  
+`"hello" matches {{someArray}}`
+
 **Is this variable defined ?** :  
 `{{testedVariable}}`  
 

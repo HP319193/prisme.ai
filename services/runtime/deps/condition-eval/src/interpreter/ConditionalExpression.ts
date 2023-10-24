@@ -2,16 +2,20 @@ import RegexParser from 'regex-parser';
 import Evaluatable from '../Evaluatable';
 import { evaluateNode } from '../utils';
 
-const handleMatches = (left: any, right: any) => {
+const handleMatches = (left: any, right: any): boolean => {
   if (Array.isArray(right)) {
-    // That means we matched a regexp() expression. As it returns an array of strings instead of a string.
-    const stringRegex = right.join('');
-    if (!stringRegex) {
-      return [];
+    if (right.length > 1) {
+      return right.some((cur) => handleMatches(left, cur));
+    } else {
+      // That means we matched a regexp() expression. As it returns an array of strings instead of a string.
+      const stringRegex = right.join('');
+      if (!stringRegex) {
+        return false;
+      }
+      return !!`${left}`.match(new RegExp(RegexParser(stringRegex)));
     }
-    return `${left}`.match(new RegExp(RegexParser(stringRegex)));
   }
-  return `${left}`.match(right);
+  return !!`${left}`.match(right);
 };
 class ConditionalExpression extends Evaluatable {
   leftNode;
@@ -34,9 +38,8 @@ class ConditionalExpression extends Evaluatable {
     let result: boolean;
     switch (negation ? operator.substr(4) : operator) {
       case 'matches':
-        result = !!handleMatches(left, right);
+        result = handleMatches(left, right);
         break;
-
       case 'in':
         try {
           const parsedRight =

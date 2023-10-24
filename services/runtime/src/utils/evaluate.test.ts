@@ -89,6 +89,11 @@ describe('Should handle basic conditions features', () => {
     // TODO These still fail if not wrapped by double quotes
     expect(evaluate('bonjour matches "matches"')).toEqual(false);
     expect(evaluate('"matches" matches "matches"')).toEqual(true);
+    expect(
+      evaluate('"matches" matches {{someArray}}', {
+        someArray: ['test', 'matches'],
+      })
+    ).toEqual(true);
   });
 
   it('Variable type testing', () => {
