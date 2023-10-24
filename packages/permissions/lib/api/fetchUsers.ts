@@ -24,3 +24,14 @@ export async function fetchUsers(
   const result = await ret.json();
   return result?.contacts || [];
 }
+
+export async function fetchMe(
+  headers: any
+): Promise<Prismeai.User & { id: string; sessionId: string }> {
+  const ret = await fetch(`${GATEWAY_API_HOST}/me`, {
+    method: 'GET',
+    headers: headers,
+  });
+  const result = await ret.json();
+  return result;
+}

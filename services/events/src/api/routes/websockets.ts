@@ -19,6 +19,7 @@ import { SearchOptions } from '../../services/events/store';
 import { Subscriber, Subscriptions } from '../../services/events/Subscriptions';
 import { cleanSearchQuery } from './events';
 import { Cache } from '../../cache';
+import { fetchMe } from '@prisme.ai/permissions';
 
 const WORKSPACE_PATH = /^\/v2\/workspaces\/([\w-_]+)\/events$/;
 
@@ -78,12 +79,26 @@ export function initWebsockets(
             },
       {}
     ) as PrismeaiAPI.EventsLongpolling.QueryParameters;
-    const userId = socket.handshake.headers[USER_ID_HEADER];
+    let userId = socket.handshake.headers[USER_ID_HEADER];
     if (!userId) {
-      logger.error(
-        'Cannot handle a websocket subscription to events without authenticated user id'
-      );
-      return;
+      // api-gateway HTTP authentication middlewares are never called when websocket are directly opened without a first http req, so we have to fetch /me with received token in order to authenticate user
+      const user = socket.handshake.headers?.authorization
+        ? await fetchMe({
+            authorization: socket.handshake.headers.authorization,
+          })
+        : undefined;
+      if (user?.id!) {
+        userId = user?.id;
+        socket.handshake.headers[AUTH_DATA_HEADER] = JSON.stringify(
+          user.authData || {}
+        );
+        socket.handshake.headers[SESSION_ID_HEADER] = user.sessionId;
+      } else {
+        logger.error(
+          'Cannot handle a websocket subscription to events without an authenticated user'
+        );
+        return;
+      }
     }
     const sessionId = socket.handshake.headers[SESSION_ID_HEADER];
     const apiKey = socket.handshake.headers[API_KEY_HEADER];
