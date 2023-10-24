@@ -20,10 +20,13 @@ export default function init(runtime: Runtime) {
       broker,
     } = req;
     const DO_NOT_SEND_HEADERS = ['cookie', 'host'];
+    const WHITELIST_HEADERS = ['x-prismeai-workspace-id'];
     const filteredHeaders = Object.entries(headers)
       .filter(
         ([k, v]) =>
-          !k.toLowerCase().startsWith('x-') && !DO_NOT_SEND_HEADERS.includes(k)
+          WHITELIST_HEADERS.includes(k) ||
+          (!k.toLowerCase().startsWith('x-') &&
+            !DO_NOT_SEND_HEADERS.includes(k))
       )
       .reduce(
         (obj, [k, v]) => ({

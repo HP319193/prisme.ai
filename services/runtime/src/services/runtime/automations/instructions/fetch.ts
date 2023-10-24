@@ -97,6 +97,7 @@ export async function fetch(
     );
   }
 
+  console.log('SENDIIING ', ctx.workspaceId);
   const params: RequestInit = {
     headers: {
       [CORRELATION_ID_HEADER]: ctx.run.correlationId,
