@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api from '../../../console/utils/api';
-import { computeBlock } from './computeBlocks';
+import { computeBlock, original } from './computeBlocks';
 import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
 import fastDeepEqual from 'fast-deep-equal';
@@ -193,7 +193,10 @@ export const BlockLoader: TBlockLoader = ({
         query
       );
       redirect(newConfig);
-      setConfig((prev = {}) => ({ ...prev, ...newConfig }));
+      setConfig(({ [original]: ignore = null, ...prev } = {}) => ({
+        ...prev,
+        ...newConfig,
+      }));
     } catch {}
     automationLoadingState.current = 1;
   }, [automation, loaded, page, redirect, user]);
