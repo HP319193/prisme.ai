@@ -314,7 +314,7 @@ export const EditDetails = ({
                 <>
                   <SchemaForm
                     schema={schemaConfig}
-                    initialValues={values.config.value}
+                    initialValues={values.config?.value}
                     onChange={onConfigChanged}
                     onSubmit={submit}
                     buttons={buttons}
@@ -326,7 +326,7 @@ export const EditDetails = ({
                         content: (
                           <SchemaForm
                             schema={schemaSchema}
-                            initialValues={values.config.schema}
+                            initialValues={values.config?.schema}
                             onChange={onSchemaChanged}
                             onSubmit={submit}
                             buttons={buttons}
