@@ -35,7 +35,7 @@ export const FieldDate = (props: FieldProps) => {
               timezoneOffset
             )}`.padStart(2, '0');
             field.input.onChange(
-              date.utcOffset(`${hours}:00`, true).toString()
+              date.utcOffset(`${hours}:00`, true).toISOString()
             );
           }}
           {...dateOptions}
