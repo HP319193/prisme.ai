@@ -43,7 +43,7 @@ export const FieldTags = (props: FieldProps & { options?: TagsOption }) => {
         };
 
         // The color is not sent as props to the tagRender, so we need to find the matching element manually
-        const currentOption = uiOptions.tags.options.find(
+        const currentOption = (uiOptions.tags?.options || []).find(
           (option) => option.value === value && option.label === option.label
         );
 
