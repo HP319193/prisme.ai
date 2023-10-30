@@ -192,14 +192,18 @@ export function interpolateValue(value: any, values: any): any {
 
 export function computeBlock(
   block: TemplatedBlock,
-  values: any
+  values: any,
+  overrideOriginal: boolean = false
 ): Record<string, any> & { [original]: any } {
-  const originalConfig =
-    Object.getOwnPropertyDescriptor(block, original)?.value || block;
+  const originalConfig = overrideOriginal
+    ? block
+    : Object.getOwnPropertyDescriptor(block, original)?.value || block;
   const { [TEMPLATE_IF]: _if, ...blockConfig } = originalConfig;
+  const { [original]: ignore, ...cleanedOriginalConfig } = originalConfig;
   const computed = {
-    [original]: originalConfig,
+    [original]: cleanedOriginalConfig,
   };
+
   if (!testCondition(_if, values)) {
     return computed;
   }

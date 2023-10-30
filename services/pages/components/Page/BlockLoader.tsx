@@ -215,9 +215,11 @@ export const BlockLoader: TBlockLoader = ({
           setConfig((prev = {}) => {
             const newConfig = { ...prev, ...config };
             if (fastDeepEqual(newConfig, prev)) return prev;
-            const {
-              blocks: [newBlock],
-            } = computeBlock({ blocks: [newConfig] }, recursiveConfig);
+            const newBlock = computeBlock(
+              newConfig,
+              { ...recursiveConfig },
+              true
+            );
             return newBlock;
           });
           if (config.userTopics) {

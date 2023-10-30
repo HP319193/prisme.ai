@@ -572,3 +572,39 @@ it('should keep original data', () => {
     [original]: block,
   });
 });
+it('should override original', () => {
+  expect(
+    computeBlock(
+      {
+        foo: 'bar',
+        [original]: {
+          foo: 'foo',
+        },
+      },
+      {}
+    )
+  ).toEqual({
+    foo: 'foo',
+    [original]: {
+      foo: 'foo',
+    },
+  });
+
+  expect(
+    computeBlock(
+      {
+        foo: 'bar',
+        [original]: {
+          foo: 'foo',
+        },
+      },
+      {},
+      true
+    )
+  ).toEqual({
+    foo: 'bar',
+    [original]: {
+      foo: 'bar',
+    },
+  });
+});
