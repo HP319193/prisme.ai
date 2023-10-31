@@ -314,7 +314,7 @@ export const EditDetails = ({
                 <>
                   <SchemaForm
                     schema={configSchema}
-                    initialValues={values.config.value}
+                    initialValues={values.config?.value}
                     onChange={onConfigChanged}
                     onSubmit={submit}
                     buttons={buttons}
