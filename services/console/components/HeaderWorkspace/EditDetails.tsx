@@ -60,12 +60,12 @@ export const EditDetails = ({
   ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
-  const { localize } = useLocalizedText();
+  const { localize, localizeSchemaForm } = useLocalizedText();
   const { trackEvent } = useTracking();
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState(value);
 
-  const configSchema: Schema = useMemo(
+  const displaySchema: Schema = useMemo(
     () => ({
       type: 'object',
       properties: {
@@ -97,14 +97,14 @@ export const EditDetails = ({
     [t]
   );
 
-  const schemaConfig: Schema = useMemo(
+  const configSchema: Schema = useMemo(
     () => ({
       type: 'object',
       title: t('workspace.details.config.value.label'),
-      properties: values.config?.schema,
+      properties: localizeSchemaForm(values.config?.schema),
       additionalProperties: !values.config?.schema,
     }),
-    [t, values.config?.schema]
+    [localizeSchemaForm, t, values.config?.schema]
   );
   const schemaSchema: Schema = useMemo(
     () => ({
@@ -249,13 +249,13 @@ export const EditDetails = ({
           className="flex flex-1"
           items={[
             {
-              key: 'config',
+              key: 'display',
               label: t('workspace.details.setup.label'),
               children: (
                 <SchemaForm
-                  schema={configSchema}
+                  schema={displaySchema}
                   initialValues={values}
-                  onChange={onChange(configSchema)}
+                  onChange={onChange(displaySchema)}
                   onSubmit={submit}
                   buttons={buttons}
                 />
@@ -308,12 +308,12 @@ export const EditDetails = ({
               ),
             },
             {
-              key: 'schema',
+              key: 'config',
               label: t('workspace.details.config.label'),
               children: (
                 <>
                   <SchemaForm
-                    schema={schemaConfig}
+                    schema={configSchema}
                     initialValues={values.config?.value}
                     onChange={onConfigChanged}
                     onSubmit={submit}

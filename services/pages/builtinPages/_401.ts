@@ -8,6 +8,7 @@ const _401 = {
   blocks: [
     {
       slug: 'RichText',
+      'template.if': '!{{SYSTEM.userIsSignedIn}}',
       content: {
         fr: 'Cette page nécessite une authentification',
         en: 'This page requires authentication',
@@ -15,10 +16,29 @@ const _401 = {
       css: ':block {\n  font-size: 1.8rem;\n  font-weight: 600;\n}',
     },
     {
+      slug: 'RichText',
+      'template.if': '{{SYSTEM.userIsSignedIn}}',
+      content: {
+        fr: "Vous n'avez pas l'autorisation d'accéder à cette page.",
+        en: 'You are not authorized to access this page.',
+      },
+      css: ':block {\n  font-size: 1.8rem;\n  font-weight: 600;\n}',
+    },
+    {
       slug: 'Signin',
+      'template.if': '!{{SYSTEM.userIsSignedIn}}',
       label: {
         fr: 'Me connecter',
         en: 'Signin',
+      },
+      css: '@import default;\n:block {\n  font-weight: 600;\n  font-size: 1.4rem;\n}',
+    },
+    {
+      slug: 'Signin',
+      'template.if': '{{SYSTEM.userIsSignedIn}}',
+      label: {
+        fr: 'Me connecter avec un autre compte',
+        en: 'Signin with another account',
       },
       css: '@import default;\n:block {\n  font-weight: 600;\n  font-size: 1.4rem;\n}',
     },

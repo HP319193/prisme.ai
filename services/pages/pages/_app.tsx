@@ -59,7 +59,7 @@ function MyApp({
       authCode &&
       currentURL.searchParams.get('iss');
     if (i18n.language === 'default' && !isAuthorizationCallback) {
-      const availableLanguages: string[] = (i18n.options as any).locales;
+      const availableLanguages: string[] = (i18n.options as any).locales || [];
       const navLang = window.navigator.language.substring(0, 2);
       const currentLang = availableLanguages.includes(navLang) ? navLang : 'en';
       location.pathname = `${currentLang}/${location.pathname}`;
