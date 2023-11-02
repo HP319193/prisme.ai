@@ -664,3 +664,25 @@ describe('Should handle basic string features', () => {
     ).toEqual('hello you');
   });
 });
+
+describe('Should handle basic array features', () => {
+  it('Slicing', () => {
+    const ctx = {
+      someArray: ['un', 'deux', 'trois', 'quatre'],
+    };
+
+    expect(evaluate('slice({{someArray}}, 0, 2)', ctx, false)).toEqual([
+      'un',
+      'deux',
+    ]);
+    expect(evaluate('slice({{someArray}}, 2)', ctx, false)).toEqual([
+      'trois',
+      'quatre',
+    ]);
+    expect(evaluate('slice({{someArray}}, 2, 10)', ctx, false)).toEqual([
+      'trois',
+      'quatre',
+    ]);
+    expect(evaluate('slice({{someArray}}, 10)', ctx, false)).toEqual([]);
+  });
+});
