@@ -12,6 +12,7 @@ import BlockForm from './BlockForm';
 import BlockPicker from './BlockPicker';
 import { useBlocksListEditor } from './BlocksListEditorProvider';
 import { useFieldArray } from 'react-final-form-arrays';
+import { MenuOutlined } from '@ant-design/icons';
 
 const BlocksList: FieldComponent = ({ name }) => {
   const { t } = useTranslation('workspaces');
@@ -48,6 +49,7 @@ const BlocksList: FieldComponent = ({ name }) => {
   );
   const sort = useCallback(
     async (from: number, to: number) => {
+      if (from === to) return;
       setMounted(false);
       await fields.move(from, to);
       setMounted(true);
@@ -78,18 +80,30 @@ const BlocksList: FieldComponent = ({ name }) => {
             <Field name={name} key={name}>
               {({ input: { value, name: itemName } }) => (
                 <SortableListItem id={`${k}`} item={value} key={itemName}>
-                  <div className="my-4 p-2 border rounded">
-                    <BlockForm
-                      key={itemName}
-                      name={itemName}
-                      onRemove={removeBlock(value)}
-                    />
-                  </div>
-                  <div className="flex justify-center">
-                    <AddBlock onClick={() => add(k + 1)}>
-                      {t('blocks.builder.add.label')}
-                    </AddBlock>
-                  </div>
+                  {(provided) => (
+                    <>
+                      <div
+                        className="my-4 p-2 border rounded flex flex-row items-start"
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                      >
+                        <div {...provided.dragHandleProps}>
+                          <MenuOutlined className="mt-[1.15rem] ml-2" />
+                        </div>
+                        <BlockForm
+                          key={itemName}
+                          name={itemName}
+                          onRemove={removeBlock(value)}
+                          className="flex-1"
+                        />
+                      </div>
+                      <div className="flex justify-center">
+                        <AddBlock onClick={() => add(k + 1)}>
+                          {t('blocks.builder.add.label')}
+                        </AddBlock>
+                      </div>
+                    </>
+                  )}
                 </SortableListItem>
               )}
             </Field>
