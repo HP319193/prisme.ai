@@ -1520,6 +1520,15 @@
       "delete": {
         "label": "Supprimer",
         "confirm": "Êtes vous sur de vouloir supprimer ce Block ?"
+      },
+      "copy": {
+        "label": "Copier le Block"
+      },
+      "cut": {
+        "label": "Couper le Block"
+      },
+      "paste": {
+        "label": "Coller le Block"
       }
     }
   },
