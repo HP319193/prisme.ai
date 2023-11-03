@@ -1,10 +1,10 @@
 const { i18n } = require('./next-i18next.config');
 
-function getTracking() {
+function jsonParse(env, dft = {}) {
   try {
-    return JSON.parse(process.env.TRACKING) || {};
+    return JSON.parse(env) || {};
   } catch {
-    return {};
+    return dft;
   }
 }
 
@@ -21,7 +21,7 @@ module.exports = {
     SUGGESTIONS_ENDPOINT: process.env.SUGGESTIONS_ENDPOINT || '',
     BILLING_HOME: process.env.BILLING_HOME || '',
     BILLING_USAGE: process.env.BILLING_USAGE || '',
-    TRACKING: getTracking(),
+    TRACKING: jsonParse(process.env.TRACKING),
     TRACKING_WEBHOOK: process.env.TRACKING_WEBHOOK || '',
     OIDC_PROVIDER_URL:
       process.env.OIDC_PROVIDER_URL ||
@@ -31,8 +31,11 @@ module.exports = {
       process.env.OIDC_STUDIO_CLIENT_ID || 'local-client-id',
     OIDC_CLIENT_ID_HEADER:
       process.env.OIDC_CLIENT_ID_HEADER || 'x-prismeai-client-id',
-    ENABLED_AUTH_PROVIDERS: (process.env.ENABLED_AUTH_PROVIDERS || '').split(
-      ','
+    ENABLED_AUTH_PROVIDERS: jsonParse(
+      process.env.ENABLED_AUTH_PROVIDERS,
+      (process.env.ENABLED_AUTH_PROVIDERS || 'local')
+        .split(',')
+        .map((name) => ({ name }))
     ),
   },
   webpack(config) {
