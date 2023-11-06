@@ -1,12 +1,16 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'next-i18next';
 import plus from '../../icons/plus.svg';
+import { Dropdown, Menu } from 'antd';
+import { paste } from '../../utils/Copy';
+import { Block } from '../../providers/Block';
+import { useTranslation } from 'next-i18next';
 
 interface AddBlockProps {
-  onClick: () => void;
+  onClick: (block?: Block) => void;
   children: ReactNode;
 }
 const AddBlock = ({ onClick, children }: AddBlockProps) => {
+  const { t } = useTranslation('workspaces');
   const labelRef = useRef<HTMLButtonElement>(null);
   const [maxWidth, setMaxWidth] = useState(0);
   const [width, setWidth] = useState('auto');
@@ -30,18 +34,44 @@ const AddBlock = ({ onClick, children }: AddBlockProps) => {
       />
       <button
         ref={labelRef}
-        className="relative flex flex-row !bg-accent p-1 rounded transition-all whitespace-nowrap overflow-hidden"
+        className="relative flex flex-row !bg-accent p-1 rounded transition-all whitespace-nowrap overflow-hidden items-center"
         style={{
           width,
           boxShadow: '0 0 0px 10px inherit',
         }}
         onMouseEnter={() => setWidth(`${maxWidth}px`)}
         onMouseLeave={() => setWidth(`${26}px`)}
-        onClick={onClick}
+        onClick={() => onClick()}
         type="button"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={plus.src} alt="" className="w-[13px] h-[13px] m-1" />
+        <Dropdown
+          overlay={
+            <Menu
+              onClick={(e) => e.domEvent.stopPropagation()}
+              items={[
+                {
+                  key: '1',
+                  label: t('blocks.builder.add.label'),
+                  onClick: () => onClick(),
+                },
+                {
+                  key: '2',
+                  label: t('blocks.builder.paste.label'),
+                  onClick: async (e) => {
+                    try {
+                      const block = JSON.parse(await paste());
+                      if (!block.slug) return;
+                      onClick(block);
+                    } catch {}
+                  },
+                },
+              ]}
+            />
+          }
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={plus.src} alt="" className="w-[13px] h-[13px] m-1" />
+        </Dropdown>
         <span className="text-white mx-2">{children}</span>
       </button>
     </div>
