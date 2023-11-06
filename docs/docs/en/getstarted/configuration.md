@@ -637,3 +637,7 @@ In order to finish SSO configuration in **api-gateway**, its following **environ
 Finally, add the following environment variable to **console** and **pages** microsevice :  
 
 * **ENABLED_AUTH_PROVIDERS** : azure
+
+or 
+
+* **ENABLED_AUTH_PROVIDERS** :`[{"name":"custom","extends":"azure","label":{"fr":"Connexion avec custom","en":"Connect with custom"},"icon":"http://logo.png"}]`
