@@ -70,14 +70,14 @@ const BlocksList: FieldComponent = ({ name }) => {
         key: 'copy',
         label: t('blocks.builder.copy.label'),
         onClick: () => {
-          copy(value);
+          copy(JSON.stringify(value));
         },
       },
       {
         key: 'cut',
         label: t('blocks.builder.cut.label'),
         onClick: () => {
-          copy(value);
+          copy(JSON.stringify(value));
           removeBlock(value)();
         },
       },
