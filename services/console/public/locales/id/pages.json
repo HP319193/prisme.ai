@@ -1,9 +1,9 @@
 {
   "signin": {
-    "title": "Access to this page is restricted."
+    "Judul": "Akses ke halaman ini dibatasi."
   },
-  "preview": "Preview",
+  "preview": "Tampilan",
   "form": {
-    "invalidJSON": "Invalid JSON"
+    "invalidJSON": "JSON tidak valid"
   }
 }

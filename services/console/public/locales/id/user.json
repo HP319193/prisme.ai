@@ -1,34 +1,34 @@
 {
   "sign": {
-    "out": "Sign out"
+    "out": "Keluar"
   },
-  "account": "Account",
-  "account_my": "My account",
-  "workspaces": "Workspaces",
+  "account": "Akun",
+  "account_my": "Akun saya",
+  "workspaces": "Ruang kerja",
   "billing": {
-    "title": "Billing plan",
-    "free": "Free plan",
-    "change": "Change billing plan",
-    "limit_ok": "All of your bases are within the interactions limits for your current plan (free).",
-    "cta_premium": "Learn more about premium plans",
-    "payment": "Payment",
-    "payment_add": "Add payment details",
-    "invoice": "Invoice",
-    "invoice_details": "Invoice details",
-    "history": "Long history"
+    "title": "Paket penagihan",
+    "free": "Paket gratis",
+    "change": "Ubah paket penagihan",
+    "limit_ok": "Semua basis Anda berada dalam batas interaksi untuk paket Anda saat ini (gratis).",
+    "cta_premium": "Pelajari lebih janjut tentang paket premium",
+    "payment": "Pembayaran",
+    "payment_add": "Tambahkan detail pembayaran",
+    "invoice": "Kwitansi",
+    "invoice_details": "Detail kwitansi",
+    "history": "Historis panjang"
   },
   "usage": {
     "apps": {
-      "title": "Apps monthly usage"
+      "title": "Penggunaan aplikasi bulanan"
     },
-    "title": "Monthly usage",
-    "interaction": "interactions",
-    "access": "Accesses",
-    "old": "This workspace was made during a previous Prisme.ai version and has no access to Usages"
+    "title": "Penggunaan bulanan",
+    "interaction": "Interaksi",
+    "access": "Mengakses",
+    "old": "Ruang kerja ini debuat ada verso Prisme.ai sebelumnya dan tidak memiliki akses ke Penggunaan"
   },
-  "coming_soon": "Not yet available, stay tuned !",
+  "coming_soon": "Belum tersedia, pantau terus !",
   "title": {
-    "myAccount": "My account · Prisme.ai",
-    "workspaceManagement": "{{workspaceName}} · Management · Prisme.ai"
+    "myAccount": "Akun saya · Prisme.ai",
+    "workspaceManagement": "{{workspaceName}} · Manajemen · Prisme.ai"
   }
 }
