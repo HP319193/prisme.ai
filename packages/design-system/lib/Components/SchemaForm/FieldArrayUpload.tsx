@@ -15,22 +15,27 @@ import { SchemaFormContext, useSchemaForm } from './context';
 import { Label } from './Label';
 import InfoBubble from './InfoBubble';
 import FieldContainer from './FieldContainer';
+import { defaultAccept } from './FieldTextUpload';
 
-export const defaultAccept = 'image/gif,image/jpeg,image/png,image/svg+xml,';
-
-interface FieldTextUploadProps extends FieldProps {
-  options: UiOptionsUpload;
+interface FieldArrayUploadProps extends FieldProps {
+  options?: UiOptionsUpload;
 }
 
-const Preview = ({ src }: { src: string }) => {
-  return <img src={src} className="max-h-24 min-w-[3rem]" />;
+const Preview = ({ src }: { src: string[] }) => {
+  return (
+    <>
+      {src.map((src) => (
+        <img src={src} className="max-h-24 min-w-[3rem]" />
+      ))}
+    </>
+  );
 };
 
-export const FieldTextUpload = ({
+export const FieldArrayUpload = ({
   locales,
   uploadFile,
   ...props
-}: FieldTextUploadProps & {
+}: FieldArrayUploadProps & {
   locales: SchemaFormContext['locales'];
   uploadFile: SchemaFormContext['utils']['uploadFile'];
 }) => {
@@ -52,45 +57,59 @@ export const FieldTextUpload = ({
     (e: ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files || e.target.files.length === 0) return;
       setError(false);
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = async ({ target }) => {
-        if (!target || typeof target.result !== 'string') return;
+      const uploadedFiles: string[] = [];
+      const uploadedLabels: string[] = [];
+      field.input.onChange([]);
 
-        try {
-          const value = await uploadFile(
-            target.result.replace(
-              /base64/,
-              `filename:${file.name.replace(/[;\s]/g, '-')}; base64`
-            )
-          );
-          setPreviewLabel('');
-          if (typeof value === 'string') {
-            field.input.onChange(value);
-            setPreview(<Preview src={value} />);
-          } else {
-            const { value: v, preview, label } = value;
-            if (v) {
-              field.input.onChange(v);
-              if (preview) {
-                setPreview(
-                  typeof preview === 'string' ? (
-                    <Preview src={preview} />
-                  ) : (
-                    preview
-                  )
-                );
-              }
-              if (label) {
-                setPreviewLabel(label);
+      for (const file of Array.from(e.target.files)) {
+        const reader = new FileReader();
+        reader.onload = async ({ target }) => {
+          if (!target || typeof target.result !== 'string') return;
+
+          try {
+            const value = await uploadFile(
+              target.result.replace(
+                /base64/,
+                `filename:${file.name.replace(/[;\s]/g, '-')}; base64`
+              )
+            );
+            setPreviewLabel('');
+            if (typeof value === 'string') {
+              uploadedFiles.push(value);
+              field.input.onChange([...uploadedFiles]);
+              setPreview(<Preview src={[...uploadedFiles]} />);
+              setPreviewLabel(`${uploadedFiles.length} files`);
+            } else {
+              const { value: v, preview, label } = value;
+              if (v) {
+                uploadedFiles.push(v);
+                field.input.onChange([...uploadedFiles]);
+                if (preview) {
+                  setPreview(
+                    typeof preview === 'string' ? (
+                      <Preview src={[...uploadedFiles]} />
+                    ) : (
+                      preview
+                    )
+                  );
+                }
+                if (label) {
+                  uploadedLabels.push(label);
+                  const labelsSlice = uploadedLabels.join(', ').slice(0, 20);
+                  const displayLabels =
+                    labelsSlice.length == 20
+                      ? `${labelsSlice}...`
+                      : labelsSlice;
+                  setPreviewLabel(`${displayLabels} (${uploadedFiles.length})`);
+                }
               }
             }
+          } catch (error) {
+            setError(true);
           }
-        } catch (error) {
-          setError(true);
-        }
-      };
-      reader.readAsDataURL(file);
+        };
+        reader.readAsDataURL(file);
+      }
     },
     [setPreviewLabel, setPreview, preview, uploadFile]
   );
@@ -100,7 +119,7 @@ export const FieldTextUpload = ({
       <PictureOutlined className="text-4xl !text-gray-200 flex items-center" />
     );
     if (typeof defaultPreview === 'string') {
-      return <Preview src={defaultPreview} />;
+      return <Preview src={[defaultPreview]} />;
     }
 
     return defaultPreview;
@@ -121,10 +140,10 @@ export const FieldTextUpload = ({
         }`}
       >
         <div className="pr-form-upload__placeholder">
-          <div className="pr-form-upload__preview">
+          <div className="pr-form-upload__preview pr-form-upload__multi-preview">
             {field.input.value ? preview : defaultPreview}
           </div>
-          {previewLabel || locales.uploadLabel || 'Choose file'}
+          {previewLabel || locales.uploadLabel || 'Choose files'}
         </div>
 
         <input
@@ -132,16 +151,16 @@ export const FieldTextUpload = ({
           onChange={readFile}
           accept={
             (props.options &&
-              props.options.upload &&
-              props.options.upload.accept) ||
+              props.options?.upload &&
+              props.options?.upload?.accept) ||
             defaultAccept
           }
-          multiple={false}
+          multiple={true}
         />
         {field.input.value && (
           <div className="pr-form-upload__delete">
             <Tooltip
-              title={locales.uploadRemove || 'Remove file'}
+              title={locales.uploadRemove || 'Remove files'}
               placement="left"
             >
               <Button
@@ -166,13 +185,13 @@ export const FieldTextUpload = ({
   );
 };
 
-const LinkedFieldTextUpload = (props: FieldTextUploadProps) => {
+const LinkedFieldArrayUpload = (props: FieldArrayUploadProps) => {
   const {
     locales = {},
     utils: { uploadFile },
   } = useSchemaForm();
   return (
-    <FieldTextUpload {...props} locales={locales} uploadFile={uploadFile} />
+    <FieldArrayUpload {...props} locales={locales} uploadFile={uploadFile} />
   );
 };
-export default LinkedFieldTextUpload;
+export default LinkedFieldArrayUpload;

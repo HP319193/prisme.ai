@@ -470,6 +470,12 @@ UIWidgets.args = {
           },
         },
       },
+      multiUpload: {
+        type: 'array',
+        title: 'multiUpload',
+        description: 'Display a multi file upload.',
+        'ui:widget': 'upload',
+      },
       select: {
         type: 'string',
         title: 'select',

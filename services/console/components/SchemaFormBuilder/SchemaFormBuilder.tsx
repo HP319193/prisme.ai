@@ -294,24 +294,28 @@ export const SchemaFormBuilder = ({
         />
         {t('schema.property.required')}
       </label>*/}
-      {value.type === 'array' && (
-        <div>
-          <div className="flex flex-1 flex-row justify-between items-baseline">
-            <div className="mb-4">
-              <label className="font-bold">{t('schema.items.label')}</label>
-              <Tooltip title={t('schema.items.description')} placement="right">
-                <button type="button" className="ml-2">
-                  <InfoCircleOutlined />
-                </button>
-              </Tooltip>
+      {value.type === 'array' &&
+        !['upload'].includes((value?.['ui:widget'] as string) || '') && (
+          <div>
+            <div className="flex flex-1 flex-row justify-between items-baseline">
+              <div className="mb-4">
+                <label className="font-bold">{t('schema.items.label')}</label>
+                <Tooltip
+                  title={t('schema.items.description')}
+                  placement="right"
+                >
+                  <button type="button" className="ml-2">
+                    <InfoCircleOutlined />
+                  </button>
+                </Tooltip>
+              </div>
             </div>
+            <SchemaFormBuilder
+              value={value.items || {}}
+              onChange={update('items')}
+            />
           </div>
-          <SchemaFormBuilder
-            value={value.items || {}}
-            onChange={update('items')}
-          />
-        </div>
-      )}
+        )}
       {value.type === 'object' && (
         <div className="flex flex-1 flex-col">
           <div className="flex flex-1 flex-row justify-between items-baseline">
