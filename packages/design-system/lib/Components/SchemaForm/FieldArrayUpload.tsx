@@ -15,8 +15,7 @@ import { SchemaFormContext, useSchemaForm } from './context';
 import { Label } from './Label';
 import InfoBubble from './InfoBubble';
 import FieldContainer from './FieldContainer';
-
-const defaultAccept = 'image/gif,image/jpeg,image/png,image/svg+xml,';
+import { defaultAccept } from './FieldTextUpload';
 
 interface FieldArrayUploadProps extends FieldProps {
   options?: UiOptionsUpload;

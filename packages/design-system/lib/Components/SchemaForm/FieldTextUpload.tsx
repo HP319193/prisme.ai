@@ -16,7 +16,7 @@ import { Label } from './Label';
 import InfoBubble from './InfoBubble';
 import FieldContainer from './FieldContainer';
 
-const defaultAccept = 'image/gif,image/jpeg,image/png,image/svg+xml,';
+export const defaultAccept = 'image/gif,image/jpeg,image/png,image/svg+xml,';
 
 interface FieldTextUploadProps extends FieldProps {
   options: UiOptionsUpload;
