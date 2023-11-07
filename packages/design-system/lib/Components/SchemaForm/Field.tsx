@@ -66,6 +66,9 @@ export const Field = ({ components, ...props }: FieldComponentProps) => {
         if (UiWidget === 'tags') {
           return components.FieldTags;
         }
+        if (UiWidget === 'upload') {
+          return components.FieldArrayUpload;
+        }
         return components.FieldArray;
       default:
         return components.FieldAny;
