@@ -1,5 +1,8 @@
-import { SchemaForm, UiOptionsUpload } from '@prisme.ai/design-system';
-import { defaultAccept } from '@prisme.ai/design-system/lib/Components/SchemaForm/FieldTextUpload';
+import {
+  SchemaForm,
+  UiOptionsUpload,
+  defaultUploadAccept,
+} from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
 
 interface UploadOptionsProps {
@@ -23,7 +26,7 @@ export const UploadOptions = ({ value, onChange }: UploadOptionsProps) => {
                 type: 'string',
                 title: t('schema.uiOptions.upload.accept.title'),
                 description: t('schema.uiOptions.upload.accept.description'),
-                default: defaultAccept,
+                default: defaultUploadAccept,
               },
             },
           },

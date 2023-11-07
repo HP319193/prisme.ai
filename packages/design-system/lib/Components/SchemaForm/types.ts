@@ -15,6 +15,9 @@ export const schemaTypes = [
 ] as const;
 export type SchemaTypes = typeof schemaTypes[number];
 
+export const defaultUploadAccept =
+  'image/gif,image/jpeg,image/png,image/svg+xml,' as const;
+
 export const UIWidgetsForString = [
   'upload',
   'textarea',

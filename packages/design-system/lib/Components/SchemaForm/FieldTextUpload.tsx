@@ -1,4 +1,4 @@
-import { FieldProps, UiOptionsUpload } from './types';
+import { FieldProps, UiOptionsUpload, defaultUploadAccept } from './types';
 import { useField } from 'react-final-form';
 import {
   ChangeEvent,
@@ -15,8 +15,6 @@ import { SchemaFormContext, useSchemaForm } from './context';
 import { Label } from './Label';
 import InfoBubble from './InfoBubble';
 import FieldContainer from './FieldContainer';
-
-export const defaultAccept = 'image/gif,image/jpeg,image/png,image/svg+xml,';
 
 interface FieldTextUploadProps extends FieldProps {
   options: UiOptionsUpload;
@@ -134,7 +132,7 @@ export const FieldTextUpload = ({
             (props.options &&
               props.options.upload &&
               props.options.upload.accept) ||
-            defaultAccept
+            defaultUploadAccept
           }
           multiple={false}
         />
