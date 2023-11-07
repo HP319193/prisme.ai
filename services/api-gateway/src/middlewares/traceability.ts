@@ -4,6 +4,7 @@ import { logger } from '../logger';
 import { v4 as uuid } from 'uuid';
 import { broker } from '../eda';
 import { Role } from '../types/permissions';
+import { cleanIncomingRequest } from './authentication';
 
 export interface HTTPContext {
   hostname: string;
@@ -30,6 +31,8 @@ export function requestDecorator(
   res: Response,
   next: NextFunction
 ) {
+  cleanIncomingRequest(req);
+
   const workspaceIdPattern = /^\/v2\/workspaces\/([\w-]+)/;
   const workspaceId = req.path.match(workspaceIdPattern)?.[1];
 

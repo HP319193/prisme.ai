@@ -11,6 +11,7 @@ import { closeStorage } from './storage';
 import { broker } from './eda';
 import { initOidcProvider } from './services/oidc/provider';
 import startWorkspacesClientSync from './services/oidc/client';
+import { cleanIncomingRequest } from './middlewares';
 
 const app = express();
 app.set('trust proxy', true);
@@ -42,8 +43,14 @@ let gtwcfg, oidc;
     initMetrics(app);
     initRoutes(app, gtwcfg, broker, oidc);
 
-    app.listen(syscfg.PORT, () => {
+    const server = app.listen(syscfg.PORT, () => {
       logger.info(`Running on port ${syscfg.PORT}`);
+    });
+
+    // Clean any internal header on WS upgrade as these requests are not intercepted by our express authentication HTTP middlewares
+    // Instead, let prismeai-events authenticate reqs himself
+    server.on('upgrade', function (req) {
+      cleanIncomingRequest(req as any);
     });
   } catch (e) {
     console.error({ ...(<object>e) });

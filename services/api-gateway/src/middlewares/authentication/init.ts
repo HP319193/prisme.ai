@@ -165,3 +165,11 @@ async function initPassportStrategies(
     )
   );
 }
+
+export async function cleanIncomingRequest(req: Request) {
+  for (let header in req.headers) {
+    if (header.startsWith('x-prismeai-')) {
+      delete req.headers[header];
+    }
+  }
+}
