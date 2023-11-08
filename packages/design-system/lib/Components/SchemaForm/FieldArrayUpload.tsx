@@ -16,10 +16,6 @@ import { Label } from './Label';
 import InfoBubble from './InfoBubble';
 import FieldContainer from './FieldContainer';
 
-interface FieldArrayUploadProps extends FieldProps {
-  options?: UiOptionsUpload;
-}
-
 const Preview = ({ src }: { src: string[] }) => {
   return (
     <>
@@ -34,11 +30,14 @@ export const FieldArrayUpload = ({
   locales,
   uploadFile,
   ...props
-}: FieldArrayUploadProps & {
+}: FieldProps & {
   locales: SchemaFormContext['locales'];
   uploadFile: SchemaFormContext['utils']['uploadFile'];
 }) => {
   const field = useField(props.name);
+  const { 'ui:options': uiOptions = { upload: {} } } = props.schema as {
+    'ui:options': UiOptionsUpload;
+  };
 
   const [preview, setPreview] = useState<ReactElement | null>(
     field.input.value ? <Preview src={field.input.value} /> : null
@@ -114,7 +113,7 @@ export const FieldArrayUpload = ({
   );
 
   const defaultPreview = useMemo(() => {
-    const defaultPreview = props.options?.upload?.defaultPreview || (
+    const defaultPreview = uiOptions?.upload?.defaultPreview || (
       <PictureOutlined className="text-4xl !text-gray-200 flex items-center" />
     );
     if (typeof defaultPreview === 'string') {
@@ -149,9 +148,7 @@ export const FieldArrayUpload = ({
           type="file"
           onChange={readFile}
           accept={
-            (props.options &&
-              props.options?.upload &&
-              props.options?.upload?.accept) ||
+            (uiOptions && uiOptions?.upload && uiOptions?.upload?.accept) ||
             defaultUploadAccept
           }
           multiple={true}
@@ -184,7 +181,7 @@ export const FieldArrayUpload = ({
   );
 };
 
-const LinkedFieldArrayUpload = (props: FieldArrayUploadProps) => {
+const LinkedFieldArrayUpload = (props: FieldProps) => {
   const {
     locales = {},
     utils: { uploadFile },
