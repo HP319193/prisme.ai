@@ -84,7 +84,7 @@
       },
       "slug": {
         "label": "Sous domaine",
-        "error": "Doit être composé uniquement des caractères alphanumériques non accentués, espaces et \"-\", \"_\"",
+        "error": "Doit être composé uniquement des caractères alphanumériques non accentués et en minuscule et \"-\"",
         "unique": "Ce sous domaine n'est plus disponible. Veuillez en choisir un autre."
       },
       "description": {

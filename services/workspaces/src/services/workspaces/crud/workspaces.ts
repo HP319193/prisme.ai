@@ -40,6 +40,7 @@ import {
   IMPORT_BATCH_SIZE,
   INIT_WORKSPACE_SECURITY,
   SLUG_VALIDATION_REGEXP,
+  WORKSPACE_SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { fetchUsers, NativeSubjectType } from '@prisme.ai/permissions';
 import { getArchiveEntries } from '../../../utils/processArchive';
@@ -111,7 +112,7 @@ class Workspaces {
           if (!workspace?.id || !workspaceSlug) {
             return;
           }
-          if (!SLUG_VALIDATION_REGEXP.test(workspaceSlug!)) {
+          if (!WORKSPACE_SLUG_VALIDATION_REGEXP.test(workspaceSlug!)) {
             throw new InvalidSlugError(workspaceSlug);
           }
           await this.pages.updateWorkspacePagesMeta(

@@ -84,7 +84,7 @@
       },
       "slug": {
         "label": "Subdomain",
-        "error": "Must be composed only of unaccented alphanumeric characters, spaces and \"-\", \"_\"",
+        "error": "Must be composed only of lowercase unaccented alphanumeric characters and \"-\"",
         "unique": "This subdomain is no longer available. Please choose another one."
       },
       "description": {

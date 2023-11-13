@@ -22,7 +22,10 @@ import { useTracking } from '../../components/Tracking';
 import useLocalizedText from '../../utils/useLocalizedText';
 import ConfirmButton from '../../components/ConfirmButton';
 import SchemaForm from '../../components/SchemaForm/SchemaForm';
-import { SLUG_VALIDATION_REGEXP } from '../../utils/regex';
+import {
+  SLUG_VALIDATION_REGEXP,
+  WORKSPACE_SLUG_VALIDATION_REGEXP,
+} from '../../utils/regex';
 import ArgumentsEditor from '../SchemaFormBuilder/ArgumentsEditor';
 import { Workspace } from '../../providers/Workspace';
 
@@ -76,7 +79,7 @@ export const EditDetails = ({
         slug: {
           type: 'string',
           title: t('workspace.details.slug.label'),
-          pattern: SLUG_VALIDATION_REGEXP.source,
+          pattern: WORKSPACE_SLUG_VALIDATION_REGEXP.source,
           errors: {
             pattern: t('workspace.details.slug.error'),
           },
