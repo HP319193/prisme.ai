@@ -168,7 +168,7 @@ export const RichText = ({
           // This fixes crashes when html is invalid and tags contains invalid
           // characters
           if (!domNode.name.match(/^[a-z\-]+$/)) {
-            domNode.name = domNode.name.replace(/[^a-z\-]/, '');
+            domNode.name = domNode.name.replace(/[^a-zA-Z0-9\-]/, '');
           }
           return domNode;
       }

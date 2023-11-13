@@ -4,18 +4,18 @@ exports[`should render 1`] = `
 <div
   className="pr-block-rich-text  __block-unique-id"
 >
-  <h
+  <h1
     id="title"
   >
     Title
-  </h>
+  </h1>
   
 
-  <h
+  <h2
     id="subtitle"
   >
     Subtitle
-  </h>
+  </h2>
   
 
   <p>
