@@ -15,8 +15,14 @@ import * as builtinBlocks from './Blocks';
 import { Schema } from '@prisme.ai/design-system';
 import useExternalModule from './utils/useExternalModule';
 import i18n from './i18n';
+import { Events } from '@prisme.ai/sdk';
 
-class BlockErrorBoundary extends Component<{ children: ReactElement }> {
+class BlockErrorBoundary extends Component<{
+  children: ReactElement;
+  events?: Events;
+  config?: any;
+  appConfig?: Prismeai.AppInstance['config'];
+}> {
   state = {
     hasError: false,
   };
@@ -26,6 +32,13 @@ class BlockErrorBoundary extends Component<{ children: ReactElement }> {
   }
 
   componentDidCatch(error: any, errorInfo: any) {
+    this.props.events &&
+      this.props.events.emit('error', {
+        error: 'DisplayBlockError',
+        msg: 'There was an error displaying a block',
+        config: this.props.config,
+        appConfig: this.props.appConfig,
+      });
     console.error(error, errorInfo);
   }
 
@@ -186,7 +199,11 @@ export const BlockLoader = ({
   }, [language]);
 
   return (
-    <BlockErrorBoundary>
+    <BlockErrorBoundary
+      events={props.events}
+      config={config}
+      appConfig={props.appConfig}
+    >
       <I18nextProvider i18n={i18n}>
         <BlockProvider
           config={config}
