@@ -470,6 +470,17 @@ UIWidgets.args = {
           },
         },
       },
+      multiUpload: {
+        type: 'array',
+        title: 'multiUpload',
+        description: 'Display a multi file upload.',
+        'ui:widget': 'upload',
+        'ui:options': {
+          upload: {
+            accept: '.pdf',
+          },
+        },
+      },
       select: {
         type: 'string',
         title: 'select',

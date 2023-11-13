@@ -1520,6 +1520,15 @@
       "delete": {
         "label": "Supprimer",
         "confirm": "Êtes vous sur de vouloir supprimer ce Block ?"
+      },
+      "copy": {
+        "label": "Copier le Block"
+      },
+      "cut": {
+        "label": "Couper le Block"
+      },
+      "paste": {
+        "label": "Coller le Block"
       }
     }
   },
@@ -1672,6 +1681,13 @@
         "allowNew": {
           "title": "Entrée libre",
           "description": "Permet de spécifier d'autres valeurs que celles listées"
+        }
+      },
+      "upload": {
+        "title": "Envoi de fichier",
+        "accept": {
+          "title": "Types de fichier autorisé",
+          "description": "Définit les types de fichiers autorisés. Chaque type est séparé à l'aide d'une virgule. Un type peut être désigné par un type MIME ou une extension de fichier (.pdf par exemple)."
         }
       },
       "slider": {

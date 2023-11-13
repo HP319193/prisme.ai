@@ -25,6 +25,7 @@ import FieldTags from './FieldTags';
 import FieldSelect from './FieldSelect';
 import FieldRadio from './FieldRadio';
 import FieldText from './FieldText';
+import FieldArrayUpload from './FieldArrayUpload';
 import { OnChange } from 'react-final-form-listeners';
 import { FormApi } from 'final-form';
 
@@ -80,6 +81,7 @@ export const SchemaForm = ({
       FieldLocalizedText,
       FieldObject: FieldObject(initialFieldObjectVisibility),
       FieldTags,
+      FieldArrayUpload,
       FieldSelect,
       FieldRadio,
       FieldText,

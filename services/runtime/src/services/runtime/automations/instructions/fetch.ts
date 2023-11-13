@@ -114,7 +114,9 @@ export async function fetch(
       params.body = new FormData();
       for (const { fieldname, value, ...opts } of multipart) {
         let convertedValue: any = value;
-        const isBase64 = base64Regex.test(value as any);
+        // Only test the beginning as Regexp.test is under the good a recursive function which crashes (exceeded call stack) on big file base64
+        const isBase64 =
+          typeof value === 'string' && base64Regex.test(value.slice(0, 1024)); // Must slice a multiplicator of 4 to fit with b64 regex !
         if (isBase64) {
           convertedValue = Buffer.from(value as any, 'base64');
         } else if (Array.isArray(value)) {

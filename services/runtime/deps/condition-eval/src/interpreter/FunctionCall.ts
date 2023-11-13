@@ -109,6 +109,19 @@ class FunctionCall extends Evaluatable {
         }
         return input.replace(pattern, replaceWith);
 
+      case 'slice':
+        const [inputArr, start, end] = functionArgs;
+        if (
+          !Array.isArray(inputArr) ||
+          typeof start !== 'number' ||
+          (typeof end !== 'undefined' && typeof end !== 'number')
+        ) {
+          throw new InvalidExpressionSyntax(
+            `Bad slice() arguments. Ex usage : slice({{someArray}}, 0, 5) or slice({{someArray}}, 5)`
+          );
+        }
+        return inputArr.slice(start, end);
+
       default:
         throw new InvalidExpressionSyntax(
           `Unknown function '${this.functionName}' in an expression or condition'`

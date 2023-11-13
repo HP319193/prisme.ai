@@ -1,5 +1,11 @@
 import { ReactNode } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import {
+  DragDropContext,
+  Draggable,
+  DraggableProvided,
+  DraggableStateSnapshot,
+  Droppable,
+} from 'react-beautiful-dnd';
 
 interface SortableListProps {
   children: ReactNode;
@@ -28,8 +34,14 @@ export const SortableList = ({
     </DragDropContext>
   );
 };
+
 interface SortableListItemProps {
-  children: ReactNode;
+  children:
+    | ReactNode
+    | ((
+        provided: DraggableProvided,
+        snapshot: DraggableStateSnapshot
+      ) => ReactNode);
   id: string;
   item: any;
 }
@@ -37,15 +49,19 @@ interface SortableListItemProps {
 export const SortableListItem = ({ children, id }: SortableListItemProps) => {
   return (
     <Draggable key={id} draggableId={id} index={+id}>
-      {(provided, snapshot) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-        >
-          {children}
-        </div>
-      )}
+      {(provided, snapshot) =>
+        typeof children === 'function' ? (
+          children(provided, snapshot)
+        ) : (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            {children}
+          </div>
+        )
+      }
     </Draggable>
   );
 };

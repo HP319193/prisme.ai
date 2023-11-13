@@ -532,7 +532,11 @@ export class ContextsManager {
       };
 
       if (type == 'delete') {
-        delete parent[lastKey];
+        if (Array.isArray(parent) && typeof lastKey === 'number') {
+          parent.splice(lastKey, 1);
+        } else {
+          delete parent[lastKey];
+        }
       } else if (
         type === 'push' ||
         (opts?.type == 'merge' && Array.isArray(prevValue))

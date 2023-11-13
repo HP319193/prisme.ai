@@ -138,6 +138,33 @@
   margin-right: var(--pr-form-margin-size);
 }
 
+.pr-form-upload__multi-preview {
+  margin: 10px;
+  position: relative;
+  max-width: 100%;
+}
+
+.pr-form-upload__multi-preview img {
+  max-width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all 0.3s;
+}
+
+.pr-form-upload__multi-preview img:last-child {
+  position: relative;
+}
+
+.pr-form-upload__multi-preview img:last-child {
+  transform: translate(-10px, 10px);
+}
+
+.pr-form-upload__multi-preview img:first-child {
+  transform: translate(10px, -10px);
+}
+
+
 .pr-form-text-color {
   flex-direction: row;
   align-items: flex-start;

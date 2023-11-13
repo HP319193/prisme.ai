@@ -15,6 +15,9 @@ export const schemaTypes = [
 ] as const;
 export type SchemaTypes = typeof schemaTypes[number];
 
+export const defaultUploadAccept =
+  'image/gif,image/jpeg,image/png,image/svg+xml,' as const;
+
 export const UIWidgetsForString = [
   'upload',
   'textarea',
@@ -29,7 +32,7 @@ export const UIWidgetsForString = [
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'] as const;
 export const UIWidgetsForNumber = ['slider'] as const;
-export const UIWidgetsForArray = ['tags'] as const;
+export const UIWidgetsForArray = ['tags', 'upload'] as const;
 export const UIWidgetsByType = {
   [schemaTypes[0]]: UIWidgetsForString,
   [schemaTypes[1]]: UIWidgetsForLocalizedString,

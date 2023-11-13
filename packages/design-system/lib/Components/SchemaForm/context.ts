@@ -8,6 +8,7 @@ import {
   UiOptionsAutocomplete,
   UiOptionsCode,
   UiOptionsHTML,
+  UiOptionsUpload,
 } from './types';
 
 export type FieldComponent<T = {}> = (
@@ -43,6 +44,7 @@ export interface SchemaFormContext {
     FieldLocalizedBoolean?: FieldComponent;
     FieldObject?: FieldComponent;
     FieldArray?: FieldComponent;
+    FieldArrayUpload?: FieldComponent<{ options?: UiOptionsUpload }>;
     FieldAny?: FieldComponent;
     FieldFreeAdditionalProperties?: FieldComponent;
     FieldTags?: FieldComponent<{ options?: TagsOption }>;

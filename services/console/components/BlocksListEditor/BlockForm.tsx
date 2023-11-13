@@ -6,6 +6,7 @@ import {
   schemaFormUtils,
   Tabs,
 } from '@prisme.ai/design-system';
+import { CollapseProps } from '@prisme.ai/design-system/lib/Components/Collapse';
 import { TabsProps } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,7 +17,7 @@ import ConfirmButton from '../ConfirmButton';
 import SchemaForm from '../SchemaForm/SchemaForm';
 import { useBlocksListEditor } from './BlocksListEditorProvider';
 
-interface SchemaFormProps {
+interface SchemaFormProps extends Partial<CollapseProps> {
   name: string;
   onRemove: () => void;
 }
@@ -41,7 +42,7 @@ const defaultStyles = `:block {
   
 }`;
 
-export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
+export const BlockForm = ({ name, onRemove, ...props }: SchemaFormProps) => {
   const { t } = useTranslation('workspaces');
   const { localizeSchemaForm } = useLocalizedText();
   const { getSchema } = useBlocksListEditor();
@@ -192,6 +193,7 @@ export const BlockForm = ({ name, onRemove }: SchemaFormProps) => {
   );
   return (
     <Collapse
+      {...props}
       items={[
         {
           label: (

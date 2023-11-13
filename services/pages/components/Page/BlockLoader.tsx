@@ -207,12 +207,6 @@ export const BlockLoader: TBlockLoader = ({
     // Set listeners
     let off: Function[] = [];
     if (updateOn) {
-      // @ts-ignore
-      window._wesh = () => {
-        events.emit(updateOn, {
-          item: { id: '42', text: 'YEAH MAN' },
-        });
-      };
       off.push(
         events.on(updateOn, ({ payload: config }) => {
           setConfig((prev = {}) => {

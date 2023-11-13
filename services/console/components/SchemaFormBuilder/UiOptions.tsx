@@ -1,16 +1,16 @@
 import { Collapse, Schema } from '@prisme.ai/design-system';
-import el from 'date-fns/esm/locale/el/index.js';
 import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import SliderOptions from './SliderOptions';
 import TagsOptions from './TagsOptions';
+import UploadOptions from './UploadOptions';
 
 interface UiOptionsProps {
   value: Schema;
   onChange: (schema: Schema) => void;
 }
 
-const WidgetsWithOptions = ['slider', 'tags'];
+const WidgetsWithOptions = ['slider', 'tags', 'upload'];
 
 const getOptionsForm = (widget: typeof WidgetsWithOptions[number]) => {
   switch (widget) {
@@ -18,6 +18,8 @@ const getOptionsForm = (widget: typeof WidgetsWithOptions[number]) => {
       return SliderOptions;
     case 'tags':
       return TagsOptions;
+    case 'upload':
+      return UploadOptions;
   }
 };
 

@@ -1,5 +1,5 @@
 import { FieldComponent } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
-import { Modal } from 'antd';
+import { Modal, Dropdown, Menu } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useState } from 'react';
 import { Field } from 'react-final-form';
@@ -12,6 +12,8 @@ import BlockForm from './BlockForm';
 import BlockPicker from './BlockPicker';
 import { useBlocksListEditor } from './BlocksListEditorProvider';
 import { useFieldArray } from 'react-final-form-arrays';
+import { MenuOutlined, MoreOutlined } from '@ant-design/icons';
+import copy from '../../utils/Copy';
 
 const BlocksList: FieldComponent = ({ name }) => {
   const { t } = useTranslation('workspaces');
@@ -22,21 +24,27 @@ const BlocksList: FieldComponent = ({ name }) => {
   const [displayBlocksSelection, setDisplayBlocksSelection] = useState(false);
 
   const [adding, setAdding] = useState<number | null>(null);
-  const add = useCallback((index: number) => {
-    setAdding(index);
-    setDisplayBlocksSelection(true);
-  }, []);
   const reallyAdd = useCallback(
-    async (block: Block) => {
-      if (adding === null) return;
+    async (index: number, block: Block) => {
       setMounted(false);
-      await fields.insert(adding, { slug: block.slug });
+      await fields.insert(index, block);
       setMounted(true);
       setAdding(null);
       setDisplayBlocksSelection(false);
     },
-    [adding, fields]
+    [fields]
   );
+  const add = useCallback(
+    (index: number, block?: Block) => {
+      if (block) {
+        return setTimeout(() => reallyAdd(index, block));
+      }
+      setAdding(index);
+      setDisplayBlocksSelection(true);
+    },
+    [reallyAdd]
+  );
+
   const removeBlock = useCallback(
     (block: Block) => async () => {
       setMounted(false);
@@ -48,11 +56,33 @@ const BlocksList: FieldComponent = ({ name }) => {
   );
   const sort = useCallback(
     async (from: number, to: number) => {
+      if (from === to) return;
       setMounted(false);
       await fields.move(from, to);
       setMounted(true);
     },
     [fields]
+  );
+
+  const getMenuItems = useCallback(
+    (value: any) => [
+      {
+        key: 'copy',
+        label: t('blocks.builder.copy.label'),
+        onClick: () => {
+          copy(JSON.stringify(value));
+        },
+      },
+      {
+        key: 'cut',
+        label: t('blocks.builder.cut.label'),
+        onClick: () => {
+          copy(JSON.stringify(value));
+          removeBlock(value)();
+        },
+      },
+    ],
+    [removeBlock, t]
   );
 
   return (
@@ -65,10 +95,13 @@ const BlocksList: FieldComponent = ({ name }) => {
         title={t('blocks.builder.picker.title')}
         width="100%"
       >
-        <BlockPicker blocks={blocks} onAdd={reallyAdd} />
+        <BlockPicker
+          blocks={blocks}
+          onAdd={(block) => reallyAdd(adding as number, { slug: block.slug })}
+        />
       </Modal>
       <div className="flex justify-center">
-        <AddBlock onClick={() => add(0)}>
+        <AddBlock onClick={(block) => add(0, block)}>
           {t('blocks.builder.add.label')}
         </AddBlock>
       </div>
@@ -78,18 +111,46 @@ const BlocksList: FieldComponent = ({ name }) => {
             <Field name={name} key={name}>
               {({ input: { value, name: itemName } }) => (
                 <SortableListItem id={`${k}`} item={value} key={itemName}>
-                  <div className="my-4 p-2 border rounded">
-                    <BlockForm
-                      key={itemName}
-                      name={itemName}
-                      onRemove={removeBlock(value)}
-                    />
-                  </div>
-                  <div className="flex justify-center">
-                    <AddBlock onClick={() => add(k + 1)}>
-                      {t('blocks.builder.add.label')}
-                    </AddBlock>
-                  </div>
+                  {(provided) => (
+                    <>
+                      <div
+                        className="my-4 p-2 border rounded flex flex-row items-start relative"
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                      >
+                        <div {...provided.dragHandleProps}>
+                          <MenuOutlined className="mt-[1.15rem] ml-2" />
+                        </div>
+
+                        <BlockForm
+                          key={itemName}
+                          name={itemName}
+                          onRemove={removeBlock(value)}
+                          className="flex-1"
+                        />
+                        <Dropdown
+                          trigger={['click']}
+                          overlay={
+                            <Menu
+                              onClick={(e) => e.domEvent.stopPropagation()}
+                              items={getMenuItems(value)}
+                            />
+                          }
+                        >
+                          <MoreOutlined className="absolute right-1 mt-[1.25rem] ml-2" />
+                        </Dropdown>
+                      </div>
+                      <div className="flex justify-center">
+                        <AddBlock
+                          onClick={(block) => {
+                            add(k + 1, block);
+                          }}
+                        >
+                          {t('blocks.builder.add.label')}
+                        </AddBlock>
+                      </div>
+                    </>
+                  )}
                 </SortableListItem>
               )}
             </Field>

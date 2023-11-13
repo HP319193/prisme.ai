@@ -1,980 +1,948 @@
 {
   "page_title": "{{elementName}} · Prisme.ai",
   "workspaces": {
-    "title": "Workspaces — $t(common:main.title)",
-    "description": "Create new Workspaces and new Apps, edit them, and run them",
+    "title": "Area kerja — $t(common:main.title)",
+    "description": "Buat area kerja baru dan aplikasi baru, edit area kerja dan aplikasi, dan gunakan area kerja dan aplikasi tersebut",
     "welcome": {
-      "title": "Welcome {{name}},",
-      "title_noname": "Welcome,",
-      "content": "Here is your gallery, find our suggestions to help you start a workspace or search among your already created workspaces.",
-      "help": "<a href=\"https://docs.eda.prisme.ai/fr\">Need help?</a>"
+      "title": "Selamat datang {{name}},",
+      "title_noname": "Selamat datang,",
+      "content": "Berikut galeri Anda, temukan saran kami untuk membantu Anda mulai menggunakan area kerja, atau menemukannya di antara area kerja yang sudah Anda buat.",
+      "help": "<a href=\"https://docs.eda.prisme.ai/fr\">Butuh bantuan?</a>"
     },
     "suggestions": {
-      "title": "Suggestions",
-      "error": "An error has occurred. Contact support if the problem persists"
+      "title": "Saran",
+      "error": "Terjadi kesalahan. Silahkan hubungi servis layanan kami jika maalah terus berlanjut"
     },
-    "sectionTitle": "Your workspaces gallery",
-    "defaultDescription": "Created by you",
-    "search": "Search a workspace",
+    "sectionTitle": "Galeri area kerja Anda",
+    "defaultDescription": "yang Anda buat",
+    "search": "Cari sebuah area kerja",
     "install": {
-      "ok": "Your workspace has been deployed!",
-      "error": "The workspace could not be installed. Its identifier is invalid."
+      "ok": "Area kerja Anda sudah siap digunakan!",
+      "error": "Area kerja tidak dapat dibuat. Pengenalnya tidak valid."
     }
   },
   "workspace": {
-    "title": "\"{{name}}\" Workspace — $t(common:main.title)",
-    "description": "Editing Workspace \"{{name}}\"",
-    "share": "Share this workspace",
+    "title": "\"{{name}}\" Area kerja — $t(common:main.title)",
+    "description": "Edit area kerja \"{{name}}\"",
+    "share": "Bagikan area kerja",
     "empty": {
-      "title": "<0>Your Workspace has not yet generated any activity…</0><1>Start creating, add Pages, Automations, Apps!</1>",
-      "subtitle": "Not sure where to start?",
+      "title": "<0>Area kerja Anda belum menghasilkan aktivitas apa pun…</0><1>Mulai membuat, menambah halaman, Automatisasi, Applikasi!</1>",
+      "subtitle": "Tidak yakin harus mulai dari mana?",
       "suggestions": {
         "page": {
-          "title": "Page",
-          "text": "Create a page according to the need and the role"
+          "title": "Halaman",
+          "text": "Buatlah halaman sesuai kebutuhan dan fungsi"
         },
         "automation": {
-          "title": "Automation",
-          "text": "Create an automation to execute instructions"
+          "title": "Automatisasi",
+          "text": "Buat otomatisasi untuk menjalankan instruksi"
         },
         "app": {
-          "title": "App",
-          "text": "Install an App to add integrations"
+          "title": "Aplikasi",
+          "text": "Instal aplikasi untuk menambahkan integrasi"
         }
       }
     },
-    "dirtyWarning": "Your current work haven't been saved. Quit anyway ?",
-    "dirtyOk": "Quit",
+    "dirtyWarning": "Pekerjaan Anda saat ini belum disimpan. Tetap akan keluar ?",
+    "dirtyOk": "Keluar",
     "delete": {
-      "label": "Delete Workspace",
-      "confirm": "Are you sure you want to remove this Workspace?",
-      "toast": "Workspace has been deleted"
+      "label": "Hapus Area kerja",
+      "confirm": {
+        "title": "Anda ingin menghapus \"{{name}}\" area keja?",
+        "content": "Awas, data akan hilang.",
+        "ok": "Ya, hapus",
+        "cancel": "Tidak, jangan dihapus"
+      },
+      "toast": "Area kerja telah dihapus"
     },
     "duplicate": {
-      "label": "Duplicate"
+      "label": "Duplikat"
     },
     "create": {
-      "label": "Create a new empty Workspace"
+      "label": "Buat area kerja kosong baru"
     },
     "import": {
-      "label": "Import a Workspace from an archive"
+      "label": "Impor area kerja dari arsip"
     },
-    "expandSidebar": "Expand",
-    "collapseSidebar": "Collapse",
+    "expandSidebar": "Tingkatkan",
+    "collapseSidebar": "Kolaps",
     "details": {
-      "title": "Edit Workspace details",
-      "setup": {
-        "label": "Display"
-      },
-      "actions": {
-        "label": "Actions"
-      },
-      "config": {
-        "label": "Configuration",
-        "schema": {
-          "label": "Configuration form",
-          "description": "This form will be presented to users of your Workspace once published as an App."
-        },
-        "value": {
-          "label": "Defaut values"
-        }
-      },
       "name": {
-        "label": "Workspace name"
+        "label": "Nama area kerja"
       },
       "slug": {
         "label": "Subdomain",
-        "error": "Must be composed only of unaccented alphanumeric characters, spaces and \"-\", \"_\"",
-        "unique": "This subdomain is no longer available. Please choose another one."
+        "error": "Harus terdiri dari karakter alfanumerik tanga aksen, spasi, dan \"-\", \"_\"",
+        "unique": "Subdomain ini tidak lagi tersedia. Silahkan pilih yang lain."
       },
       "description": {
-        "label": "Description"
+        "label": "Deskripsi"
       },
       "photo": {
-        "label": "Photo"
+        "label": "Foto"
       }
     },
     "sections": {
-      "activity": "Activity",
-      "automations": "Automations",
-      "pages": "Pages",
-      "apps": "Apps",
-      "blocks": "Blocks"
+      "activity": "Activitas",
+      "automations": "Otomatisasi",
+      "pages": "Halaman",
+      "apps": "Aplikasi",
+      "blocks": "Blok"
     },
     "add": {
-      "automation": "Add an Automation",
-      "page": "Add a Page",
-      "app": "Install an App",
-      "block": "Create a Block"
+      "automation": "Tambahkan sebuah Otomatisasi",
+      "page": "Tambahkan sebuah halaman",
+      "app": "Instal sebuah Aplikasi",
+      "block": "Buat sebuah Blok"
     },
-    "search": "Search",
-    "sidebar_extend": "Extend navigation",
-    "sidebar_minimize": "Minimize navigation",
-    "notFound": "Workspace not found.",
+    "search": "Cari",
+    "sidebar_extend": "Perluas navigasi",
+    "sidebar_minimize": "Minimalkan navigasi",
+    "notFound": "Area kerja tidak ditemukan.",
     "versions": {
       "create": {
-        "label": "Create a version",
-        "description": "Create a new version to which you can return at any time even after saving changes to your Workspace.",
-        "name": "Describe your version if you wish",
-        "success": "New version created. You will be able to find it in the Activity of your Workspace."
+        "label": "Buat sebuah versi",
+        "description": "Buat versi baru yang dapat Anda lihat ulang kapan pun, bahkan setelah Anda melakukan perubahan pada area kerja Anda.",
+        "name": "Jika perlu, Anda dapat menjelaskan versi baru Anda",
+        "success": "Versi baru telah dibuat. Anda dapat menemukannya di Aktivitas Area kerja Anda."
       },
       "rollback": {
-        "label": "Rollback to this version",
-        "description": "Rollback to this version. Please note that the current state of your Workspace will not be kept.",
-        "confirm": "Please note that the current state of your Workspace will be lost if you have not saved a version.",
-        "confirm_ok": "Rollback to this version",
-        "success": "Back to the previous version with success."
+        "label": "Kembalikan ke versi ini ",
+        "description": "Kembalikan ke versi ini. Harap diingat bahwa kondisi Area kerja Anda saat ini tidak akan disimpan.",
+        "confirm": "Harap perhatikan bahwa status Area kerja Anda saat ini akan hilang jika Anda tidak menyimpan sebuah versinya.",
+        "confirm_ok": "Kembalikan ke versi ini",
+        "success": "Kembali ke versi sebelumnya degna sukses."
       },
       "export": {
-        "label": "Export"
+        "label": "Expor"
       }
     },
     "tabs": {
-      "closeAll": "Close all tabs"
+      "closeAll": "Tutup semua tab"
     }
   },
   "create": {
-    "description_first": "Create your first workspace to start automating your work",
-    "description": "New workspace",
-    "label": "Create a workspace",
-    "defaultName": "Workspace"
+    "description_first": "Buat area kerja pertama Anda untuk mulai mengotomatiskan pekerjaan Anda",
+    "description": "Area kerja baru",
+    "label": "Buat area kerja",
+    "defaultName": "Area kerja"
   },
   "edit": {
     "label": "Edit"
   },
   "events": {
-    "title": "Activity",
+    "title": "Activitas",
     "search": {
-      "placeholder": "Search by keywords"
+      "placeholder": "Cari berdasarkan kata kunci"
     },
     "running": {
-      "label": "Events are displayed in real time",
-      "label_off": "The event update is paused",
-      "description": "Start the update in real time. Please note that the performance of your browser may be degraded.",
-      "description_off": "Stop the real time update"
+      "label": "Kegiatan ditampilkan secara waktu nyata",
+      "label_off": "Pembaruan kegiatan dihentikan",
+      "description": "Mulai pembaruan secara waktu nyata. Harap dicatat bahwa kinerja browser Anda mungkin menurun.",
+      "description_off": "Hentikan pembaruan dalam waktu nyata"
     },
     "reload": {
-      "description": "Load the latest events.",
-      "description_off": "Disable real time update to reload events manually."
+      "description": "Muat kegiatan terbaru.",
+      "description_off": "Nonaktifkan pembaruan dalam waktu nyata untuk memuat ulang kegiatan secara manual."
     },
     "filters": {
-      "title": "Filters",
-      "correlationId": "Correlation ID",
-      "submit": "Apply filters",
-      "text": "Keyword search",
-      "afterDate": "From",
-      "beforeDate": "Until",
+      "title": "Filter",
+      "correlationId": "Korelasi ID",
+      "submit": "Terapkan filter",
+      "text": "Pencarian kata kunci",
+      "afterDate": "Dari",
+      "beforeDate": "Hingga",
       "specific": {
-        "add": "Add a specific field",
-        "remove": "Delete this value",
-        "label": "Fields"
+        "add": "Tambahkan bidang tertentu",
+        "remove": "Hapus value ini",
+        "label": "Bidang"
       },
       "query": {
-        "label": "Filter specific fields",
-        "description": "An object specifying the expected value for each field, eg: {\n  \"source.workspaceId\": \"Wl4RRUN\",\n}",
-        "field": "Field",
+        "label": "Filter bidang khusus",
+        "description": "Sebuah objek yang menentukan value yang diharapkan untuk setiap bidang, misalnya: {\n  \"source.workspaceId\": \"Wl4RRUN\",\n}",
+        "field": "Bidang",
         "value": "Value"
       },
-      "empty": "No results were found using your filters. Try another search ?",
+      "empty": "Tidak ada hasil yang ditemukan betdasarkan filter yang Anda buat. Coba penelusuran lain ?",
       "suggestions": {
-        "title": "Filter suggestions",
-        "help": "Selection of pre-set filters to help you find your most useful events.",
-        "label_versions": "Workspace versions",
-        "label_updates": "Workspace updates",
-        "label_webhooks": "Webhooks calls",
-        "label_errors": "Errors",
-        "label_shares": "Workspace shares",
-        "label_application": "Applications events",
-        "label_inputEvents": "User events",
-        "label_mySession": "My session"
+        "title": "Filter yang disarankan",
+        "help": "Seleksi pre-set filter untuk membantu Anda menemukan kegiatan yang paling berguna.",
+        "label_versions": "Version area kerja",
+        "label_updates": "Pembaruan Area kerja",
+        "label_webhooks": "Panggilan Webhooks",
+        "label_errors": "Kesalahan",
+        "label_shares": "Berbagi area kerja",
+        "label_application": "Applikasi kegiatan",
+        "label_inputEvents": "Pengguna kegiatan",
+        "label_mySession": "Sesi saya"
       },
-      "reset": "Reset filters"
+      "reset": "Reset filter"
     },
-    "empty": "Nothing has happened here yet…",
+    "empty": "Belum ada ada apa pun di sini…",
     "details": {
-      "name": "Field",
+      "name": "Bidang",
       "value": "Value"
     },
-    "more": "Load older events",
+    "more": "Muat kegiatan lama",
     "autocomplete": {
-      "label": "{{workspace}}",
-      "label_pages": "Pages",
-      "label_imports": "{{app}}"
+      "label": "{{area kerja}}",
+      "label_pages": "Halaman",
+      "label_imports": "{{apps}}"
     }
   },
   "automations": {
-    "link": "Automations",
+    "link": "Otomatisasi",
     "create": {
-      "label": "Add an Automation",
-      "defaultName": "Automation",
+      "label": "Tambahkan sebuah Outomatisasi",
+      "defaultName": "Otomatisasi",
       "value": {
-        "event": "an event"
+        "event": "sebuah kegiatan"
       }
     },
-    "delete": {
-      "label": "Delete",
-      "confirm": "Are you sure you want to remove this Automation?"
-    },
-    "empty": "An automation describes what to do and when to do it",
-    "back": "Back",
+    "empty": "Sebuah otomatisasi menjelaskan apa yang harus dilakukan dan kapan pelaksanaannya",
+    "back": "Kembali",
     "design": {
-      "title": "Design"
+      "title": "Desain"
     },
     "manifest": {
-      "title": "Manifest"
+      "title": "Manifes"
     },
     "save": {
-      "label": "Save",
-      "toast": "Automation has been saved",
-      "error": "Saving failed",
-      "reason": "{{context}}",
-      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
-      "reason_InvalidSlugError": "Slug contains invalid characters."
+      "label": "Simpan",
+      "toast": "Otomatisasi telah disimpan",
+      "error": "Penyimpanan gagal",
+      "reason": "{{konteks}}",
+      "reason_AlreadyUsedError": "Slug sudah digunakan, silahkan pilih yang lain.",
+      "reason_InvalidSlugError": "Slug berisi karakter yang tidak valid."
     },
     "duplicate": {
-      "help": "Duplicate Automation",
-      "success": "Automation has been duplicated"
+      "help": "Duplikat Otomatisasi",
+      "success": "Otomatisasi telah diduplikasi"
     },
     "source": {
-      "label": "See code",
-      "close": "Hide code",
-      "help": "Displays the structure of the automation in raw format"
+      "label": "Lihat kode",
+      "close": "Sembunyikan kode",
+      "help": "Menampilkan struktur otomatisasi dalam format mentah"
     },
     "endpoint": {
-      "copied": "Endpoint has been copied"
+      "copied": "Poin akhir telah disalin"
     },
-    "notFound": "Automation not found.",
+    "notFound": "Otomatisasi tidak ditemukan.",
     "trigger": {
-      "panel": "Edit trigger",
+      "panel": "Edit Trigger",
       "events": {
-        "title": "Events",
-        "item": "Event",
-        "add": "Add an event",
-        "display_one": "The event {{events}} occurs",
-        "display_other": "One of the events {{events}} occurs",
-        "help": "Automation will be run everytime one of this event will be fired."
+        "title": "Kegiatan",
+        "item": "Events",
+        "add": "Menambahkan sebuah kegiatan",
+        "display_one": "Kegiatan {{events}} terjadi",
+        "display_other": "Salah satu kegiatan {{events}} terjadi",
+        "help": "Otomatisasi akan dijalankan begitu salah satu kegiatan ini diaktifkan."
       },
       "endpoint": {
         "title": "URL",
-        "display": "<a>The URL <icon /></a> is hit",
-        "copied": "URL has been copied in your clipboard",
-        "help": "Automation will be run everytime the URL will be hit.",
-        "custom": "Accessible by URL",
-        "url": "Custom URL"
+        "display": "<a>URL <icon /></a> dikenali",
+        "copied": "URL telah disalin di clipboard Anda",
+        "help": "Otomatisasi akan dijalankan setiap kali URL dikenali.",
+        "custom": "Dapat diakses melalui URL",
+        "url": "URL khusus"
       },
       "schedules": {
-        "title": "Schedules",
-        "help": "You can schedule your Automation to run at certain recurring times. You can add several schedules in crontab format. Warning, the minimum time between two executions is 15mn.",
-        "display": "{{count}} schedule",
-        "display_other": "{{count}} schedules"
+        "title": "Jadwal",
+        "help": "Anda dapat menjadwalkan agar Otomatisasi Anda dijalankan secara berulang. Anda dapat menambahkan beberapa jadwal dalam format crontab. Peringatan, waktu minimum antara dua eksekusi adalah 15 menit.",
+        "display": "{{count}} jadwal",
+        "display_other": "{{count}} jadwal"
       },
-      "save": "Save"
+      "save": "Simpan"
     },
     "instruction": {
-      "panel": "Edit instruction",
-      "title_builtin": "Logical",
-      "label": "{{context}}",
-      "label_emit": "Emit event",
-      "label_repeat": "Repeat on",
-      "label_repeat_until": "Repeat {{count}} time",
-      "label_repeat_until_other": "Repeat {{count}} times",
-      "label_all": "All instructions",
-      "label_wait": "Wait",
+      "panel": "Edit instruksi",
+      "title_builtin": "Logis",
+      "label": "{{konteks}}",
+      "label_emit": "Publikasikan kegiatan",
+      "label_repeat": "Ulangi",
+      "label_repeat_until": "Ulang {{counth}} kali",
+      "label_repeat_until_other": "Ulang {{count}} kali",
+      "label_all": "Semua instruksi",
+      "label_wait": "Tunggu",
       "label_set": "Set var",
-      "label_delete": "Delete var",
-      "label_conditions": "Conditions",
-      "label_conditions_default": "Else",
-      "label_conditions_add": "Add condition",
-      "label_fetch": "HTTP Request",
-      "label_break": "Break",
-      "label_comment": "Comment",
+      "label_delete": "Hapus var",
+      "label_conditions": "Kondisi",
+      "label_conditions_default": "Lain",
+      "label_conditions_add": "Tambahkan kondisi",
+      "label_fetch": "Permintaan HTTP",
+      "label_break": "Putus",
+      "label_comment": "Komentar",
       "description": "{{default}}",
-      "description_emit": "Issue an event of your choice to which you can associate a data object. If you choose to make this event private, it will not be heard by other workspaces and Apps.",
-      "description_repeat": "Repeats a list of instructions on each element of a data array passed in parameter (`on`) or up to a certain number of iterations (`until`).",
-      "description_all": "Executes all the instructions of the group in parallel. The following instructions will be executed only after all the instructions of this group are finished.",
-      "description_wait": "Blocks the processing of the instruction list until the event passed in parameter is triggered.",
-      "description_set": "Sets a value in a variable.",
-      "description_delete": "Delete a variable.",
-      "description_conditions": "Test conditions in order to execute this or that group of instructions.",
-      "description_fetch": "Send an HTTP request.",
-      "description_break": "Stop current automation execution.",
-      "description_comment": "Do nothing more than display a comment in the list of instructions.",
-      "search": "Search",
-      "anyFieldError": "Invalid JSON",
-      "anyFieldErrorTooltip": "This is just a warning, the instruction will still save",
+      "description_emit": "Pilih kegiatan pilihan Anda yang dapat dikaitkan dengan objek data. Jika Anda memilih untuk menjadikan kegiatan ini pribadi, maka kegiatan tersebut tidak akan terhubung Arena kerja dan Aplikasi lain.",
+      "description_repeat": "Mengulangi daftar instruksi pada setiap elemen array data yang diteruskan dalam parameter ('buka') atau hingga jumlah itérasi tertentu.",
+      "description_all": "Jalankan semua instruksi grup secara paralel. Instruksi berikut akan dijalankan hanya setelah semua instruksi grup ini selesai.",
+      "description_wait": "Blokir pemrosesan daftar instruksi hingga kegiatan yang diteruskan dalam parameter dipicu.",
+      "description_set": "Tetapkan nilai dalam variabel.",
+      "description_delete": "Hapus variabel.",
+      "description_conditions": "Kondisi pengujian untuk mengeksekusi kelompok instruksi yang ini atau yang itu.",
+      "description_fetch": "Kirim permintaan HTTP.",
+      "description_break": "Hentikan eksekusi otomatisasi yang sedang berlangsung.",
+      "description_comment": "Jangan lakukan apa pun kecuali menampilkan komentar di daftar instruksi.",
+      "search": "Mencari",
+      "anyFieldError": "JSON tidak valid",
+      "anyFieldErrorTooltip": "Ini hanya peringatan, instruksi akan tetap disimpan",
       "additionnalProperties": {
-        "label": "Additional properties",
-        "description": "Define additional properties in the form of a JSON"
+        "label": "Properti tambahan",
+        "description": "Tentukan properti tambahan dalam bentuk JSON"
       },
-      "link": "Edit Automation",
+      "link": "Edit Otomatisasi",
       "item": {
-        "add": "Add an item",
-        "remove": "Delete item"
+        "add": "Tambahkan item",
+        "remove": "Hapus item"
       },
       "output": {
-        "label": "Assign the output to the variable",
-        "description": "The output of this Automation can be stored in a variable to be used in a next instruction."
+        "label": "Tetapkan output ke variabel",
+        "description": "Output dari Otomatisasi ini dapat disimpan dalam variabel untuk digunakan pada instruksi selanjutnya."
       },
-      "delete": "Delete instruction?",
-      "delete_condition": "Delete condition?",
+      "delete": "Hapus instruksi?",
+      "delete_condition": "Hapus kondisi?",
       "form": {
-        "addItem": "Add an item",
-        "removeItem": "Remove item",
-        "addProperty": "Add a property",
-        "removeProperty": "Remove property",
-        "propertyKey": "Property",
+        "addItem": "Tambahkan item",
+        "removeItem": "Hapus item",
+        "addProperty": "Tambahkan sebuah properti",
+        "removeProperty": "Hapus properti",
+        "propertyKey": "Properti",
         "propertyValue": "Value",
-        "uploadLabel": "Choose a file",
-        "uploadRemove": "Remove file",
+        "uploadLabel": "Pilih file",
+        "uploadRemove": "Hapus file",
         "emit": {
           "event": {
-            "label": "Event name",
-            "description": "Enter the name of the event you want to trigger."
+            "label": "Nama Event",
+            "description": "Masukkan nama event yang ingin Anda picu."
           },
           "payload": {
-            "label": "Payload (optional, JSON format)",
-            "description": "You can attach any type of data to your event."
+            "label": "Muatan (opsional, format JSON)",
+            "description": "Anda dapat melampirkan semua jenis data ke event Anda."
           },
           "target": {
             "label": "Target",
-            "description": "By default, the event is sent to everyone. You can target a specific recipient with these settings.",
+            "description": "Secara default, event dikirim ke semua orang. Anda dapat menargetkan penerima tertentu dengan pengaturan ini.",
             "userTopic": {
-              "label": "Topic",
-              "description": "Specify a topic to categorize the message."
+              "label": "Topik",
+              "description": "Tentukan topik untuk mengkategorikan pesan."
             },
             "userId": {
-              "label": "User ID",
-              "description": "Target a particular user by his ID."
+              "label": "Pengguna ID",
+              "description": "Targetkan pengguna tertentu berdasarkan ID-nya."
             },
             "sessionId": {
-              "label": "Session ID",
-              "description": "Target a particular user session by its ID."
+              "label": "Sesi ID",
+              "description": "Targetkan sesi pengguna tertentu berdasarkan ID-nya."
             }
           },
           "private": {
-            "label": "Private",
-            "description": "The event will not be autocomplete for users of your workspace once it is transformed into an App."
+            "label": "Pribadi",
+            "description": "Event ini tidak akan dilengkapi secara otomatis untuk pengguna Area kerja Anda setelah diubah menjadi Aplikasi."
           },
           "autocomplete": {
-            "label": "Autocompletion",
-            "description": "Specifies how your event will be offered to autocomplete for users of your workspace once transformed into an App."
+            "label": "Pelengkapan otomatis",
+            "description": "Menentukan bagaimana event Anda akan ditawarkan untuk dilengkapi secara otomatis bagi pengguna Area kerja Anda setelah diubah menjadi Aplikasi."
           },
           "options": {
             "persist": {
-              "label": "Persist",
-              "description": "Whether to persist this event or not. Defaults to true"
+              "label": "Bertahan",
+              "description": "Apakah event ini akan dilanjutkan atau tidak. Defaultnya adalah benar"
             }
           }
         },
         "wait": {
           "oneOf": {
-            "label": "One of these events:",
-            "description": "The automation can wait until a particular event is triggered.",
+            "label": "Salah satu event tersebut:",
+            "description": Otomatisasi dapat menunggu hingga event tertentu terpicu.",
             "items": {
               "label": "Event",
-              "add": "Add an event",
-              "remove": "Remove event",
+              "add": "Tambahkan sebuah event",
+              "remove": "Hapus event",
               "event": {
-                "label": "Event name",
-                "description": "Indicate the name of the event that will restart your automation."
+                "label": "Nama Event",
+                "description": "Tunjukkan nama event yang akan memulai kembali otomatisasi."
               },
               "filters": {
-                "label": "Filters",
-                "description": "Filter the event according to the values of the properties that accompany it."
+                "label": "Filter",
+                "description": "Filter event menurut nilai properti yang menyertainya."
               },
               "cancelTriggers": {
-                "label": "Cancel trigger",
-                "description": "By checking this option, the event will be cancelled and will not trigger any other automation."
+                "label": "Batalkan pemicu",
+                "description": "Dengan mencentang opsi ini, event akan dibatalkan dan tidak akan memicu otomatisasi lainnya."
               }
             }
           },
           "timeout": {
-            "label": "Timeout in seconds",
-            "description": "Time in seconds to wait before resuming the execution of the automation."
+            "label": "Batas waktu dalam hitungan detik",
+            "description": "Waktu dalam hitungan detik untuk menunggu sebelum melanjutkan pelaksanaan otomatisasi."
           },
           "output": {
-            "label": "Output variable name",
-            "description": "Indicate the name of a variable in which the data accompanying the event that unlocked this step will be stored."
+            "label": "Nama variabel output",
+            "description": "Tunjukkan nama variabel di mana data yang menyertai event yang membuka kunci langkah ini akan disimpan."
           }
         },
         "set": {
           "interface": {
-            "label": "Value structure",
-            "description": "You can choose the data structure of one of the blocks available in your Workspace to facilitate its filling."
+            "label": "Struktur Value",
+            "description": "Anda dapat memilih struktur data salah satu blok yang tersedia di Area Kerja Anda untuk memudahkan pengisiannya."
           },
           "name": {
-            "label": "Variable name",
-            "description": "Indicate the name of the variable in which your data will be stored. You can then access it using the interpolation syntax. For example, a variable named `foo` will be accessible elsewhere using `{{foo}}`."
+            "label": "Nama variabel",
+            "description": "Tunjukkan nama variabel di mana data Anda akan disimpan. Anda kemudian dapat mengaksesnya menggunakan sintaks interpolasi. Misalnya, variabel bernama `foo` akan dapat diakses di tempat lain dengan menggunakan `{{foo}}`."
           },
           "value": {
             "label": "Value",
-            "description": "Put any value of any type here. You can also use interpolation to store data from another variable."
+            "description": "Masukkan value apa pun jenis apa pun di sini. Anda juga dapat menggunakan interpolasi untuk menyimpan data dari variabel lain."
           },
           "type": {
-            "label": "Merge type",
-            "description": "Choose merge to merge the target variable with the value. The value has priority."
+            "label": "Tipe gabungan",
+            "description": "Pilih gabung untuk menggabungkan variabel target dengan nilainya. Nilainya mendapat prioritas."
           }
         },
         "delete": {
           "name": {
-            "label": "Variable name",
-            "description": "Enter the name of the variable you want to delete. Its value will no longer be accessible."
+            "label": "Nama variabel",
+            "description": "Masukkan nama variabel yang ingin Anda hapus. Nilainya tidak lagi dapat diakses."
           }
         },
         "break": {
           "scope": {
-            "label": "Scope",
-            "description": "Scope of the stop. By default, only this automation will be stopped. If you choose \"$t(automations.instruction.form.break.scope.enum.all)\", the parent automations that called this one will also be stopped.",
+            "label": "Cakupan",
+            "description": "Lingkup pemberhentian. Secara default, hanya otomatisasi ini yang akan dihentikan. Jika Anda memilih \"$t(automations.instruction.form.break.scope.enum.all)\", otomatisasi induk yang disebut ini juga akan dihentikan.",
             "enum": {
-              "all": "All",
-              "automation": "This automation"
+              "all": "Semua",
+              "automation": "Otomatisasi ini"
             }
           }
         },
         "fetch": {
           "url": {
-            "label": "HTTP address",
-            "description": "URL of a publicly accessible web service."
+            "label": "Alamat HTTP",
+            "description": "URL layanan web yang dapat diakses publik."
           },
           "method": {
-            "label": "HTTP method",
+            "label": "metode HTTP",
             "enum": {
-              "get": "GET",
-              "post": "POST",
-              "put": "PUT",
-              "patch": "PATCH",
-              "delete": "DELETE"
+              "get": "DAPATKAN",
+              "post": "TERBITKAN",
+              "put": "LETAKKAN",
+              "patch": "TAMBALKAN",
+              "delete": "HAPUS"
             },
-            "description": "HTTP method to use for the request."
+            "description": "Metode HTTP yang digunakan untuk permintaan tersebut."
           },
           "headers": {
-            "label": "Headers",
-            "description": "List of key values constituting the headers of the query."
+            "label": "Header",
+            "description": "Daftar value kunci yang membentuk header kueri."
           },
           "query": {
-            "label": "Query string",
-            "description": "Query string parameters"
+            "label": "String kueri",
+            "description": "Parameter string kueri"
           },
           "body": {
-            "label": "Body",
-            "description": "The body accompanying the request. Can be of any type."
+            "label": "Badan",
+            "description": "Badan yang menyertai permintaan tersebut. Bisa jenis apa saja."
           },
           "emitErrors": {
-            "label": "Emit event when errors occur",
-            "description": "If the status code of the HTTP response is 4xx or 5xx, emits a runtime.fetch.failed event by default."
+            "label": "Tampakkan event ketika terjadi kesalahan",
+            "description": "Jika kode status respons HTTP adalah 4xx atau 5xx, secara default akan muncul peristiwa runtime.fetch.failed."
           },
           "multipart": {
-            "label": "multipart/form-data",
-            "description": "Data to be sent as multipart/form-data.",
+            "label": "multipart/formulir-data",
+            "description": "Data yang akan dikirim sebagai multipart/form-data.",
             "items": {
-              "label": "Fields",
-              "add": "Add a field",
-              "remove": "Delete field",
+              "label": "Bidang",
+              "add": "Tambahkan sebuah bidang",
+              "remove": "Hapus bidang",
               "fieldname": {
-                "label": "Field name"
+                "label": "Nama bidang"
               },
               "value": {
                 "label": "Value",
-                "description": "Must be a string. Raw files must be given in base64."
+                "description": "Harus berupa string. File mentah harus diberikan dalam base64."
               },
               "filename": {
-                "label": "File name",
-                "description": "The file name is required when the value is a base64 encoded file."
+                "label": "Nama file",
+                "description": "Nama file diperlukan jika nilainya adalah file yang dikodekan base64."
               },
               "contentType": {
-                "label": "Content type",
-                "description": "Optional MIME content type"
+                "label": "Jenis konten",
+                "description": "Jenis konten MIME opsional"
               }
             }
           },
           "output": {
-            "label": "Output variable name",
-            "description": "Save the answer of the query in a variable accessible in the rest of your automation thanks to the interpolation."
+            "label": "Nama variabel output",
+            "description": "Simpan jawaban kueri dalam variabel yang dapat diakses di seluruh otomatisasi Anda berkat interpolasi."
           }
         },
         "repeat": {
           "on": {
-            "label": "On an array's items",
-            "description": "Name of the array variable to loop on."
+            "label": "Pada item array",
+            "description": "Nama variabel array yang akan diulang."
           },
           "until": {
-            "label": "Until",
-            "description": "Loop a specific number of times"
+            "label": "Sampai",
+            "description": "Pengulangan jumlah kali tertentu"
           }
         }
       }
     },
     "output": {
-      "panel": "Edit output",
+      "panel": "Sunting output",
       "label": "<pre><code>{{output}}</code></pre>",
       "edit": {
-        "title": "Return value:",
-        "description": "Value returned by the automation. Can be a static value in the form of a string or a JSON object or even a variable generated during the execution of your automation surrounded by braces (ex: {{maVar}})",
-        "label": "Value",
-        "save": "Add"
+        "title": "Nilai balik:",
+        "description": "Nilai yang dikembalikan oleh otomatisasi. Dapat berupa nilai statis dalam bentuk string atau objek JSON atau bahkan variabel yang dihasilkan selama eksekusi otomatisasi Anda yang dikelilingi oleh tanda kurung kurawal (ex: {{maVar}})",
+        "label": "Nilai",
+        "save": "Tambahkan"
       },
-      "description": "Indicate the name of a variable in which to store the output of this instruction in order to exploit it in the continuation of the automation"
+      "description": "Tunjukkan nama variabel untuk menyimpan output dari instruksi ini untuk mengeksploitasinya dalam kelanjutan otomatisasi"
     },
     "node": {
       "title": "",
-      "title_trigger": "Triggered when",
+      "title_trigger": "Dipicu ketika",
       "title_output": "Output",
       "label": "{{instruction}} {{value}}"
     },
     "edit": {
-      "select": "Select instruction",
-      "builtin": "Logical",
-      "save": "Add"
+      "select": "Pilih instruksi",
+      "builtin": "Berlogika",
+      "save": "Tambahkan"
     },
     "condition": {
-      "panel": "Edit condition",
+      "panel": "Sunting kondisi",
       "edit": {
-        "title": "Condition",
-        "description": "Condition to choose this path",
-        "save": "Add",
-        "submit_new": "Add"
+        "title": "Kondisi",
+        "description": "Syarat untuk memilih jalur ini",
+        "save": "Tambahkan",
+        "submit_new": "Tambahkan"
       }
     },
     "details": {
-      "title": "Edit Automation details",
-      "setup": "Setup",
       "slug": {
         "label": "Slug"
       },
       "name": {
-        "label": "Automation title"
+        "label": "Judul otomasi"
       },
       "description": {
-        "label": "Description"
+        "label": "Deskripsi"
       },
-      "advanced": "Advanced",
       "private": {
-        "label": "Internal use",
-        "description": "If you enable this setting, Automation will be visible as an instruction only in this same Workspace. When you publish your app, its users will not see it."
+        "label": "Penggunaan internal",
+        "description": "Otomatisasi hanya akan terlihat sebagai instruksi di Area kerja yang sama. Saat Anda memublikasikan aplikasi, penggunanya tidak akan melihatnya."
       },
       "disabled": {
-        "label": "Disabled",
-        "description": "If you enable this setting, Automation will not be executed anymore and simply ignored"
+        "label": "Dinonaktifkan",
+        "description": "Jika Anda mengaktifkan pengaturan ini, Otomatisasi tidak akan dijalankan lagi dan diabaikan begitu saja"
       }
     },
     "arguments": {
-      "title": "Arguments",
-      "description": "Specification of the parameters that can be passed to your automation when it is used as a statement of another automation. A form will be generated according to the structure you specify here.",
-      "add": "Add an argument"
+      "title": "Argumen",
+      "description": "Spesifikasi parameter yang dapat diteruskan ke otomatisasi Anda saat digunakan sebagai pernyataan otomatisasi lain. Formulir akan dibuat sesuai dengan struktur yang Anda tentukan di sini.",
+      "add": "Tambahkan sebuah argumen"
     },
     "play": {
-      "help": "Run Automation",
-      "title": "Run the Automation",
-      "parameters": "Parameters",
-      "results": "Result",
-      "label": "Run",
-      "empty": "Run your Automation here <1>Start</1>",
-      "activity": "see activity…",
+      "help": "Jalankan Otomatisasi",
+      "title": "Jalankan Otomatisasi tersebut",
+      "parameters": "Parameter",
+      "results": "Hasil",
+      "label": "Jalankan",
+      "empty": "Jalankan Otomatisasi Anda di sini <1>Start</1>",
+      "activity": "lihat aktivitas…",
       "body": {
-        "label": "Request body",
-        "description": "Parameters passed in the request body if automation is called as Endpoint."
+        "label": "Isi permintaan",
+        "description": "Parameter yang diteruskan dalam isi permintaan jika otomatisasi disebut sebagai Titik Akhir."
       },
       "query": {
-        "label": "URL query string",
-        "description": "Parameters passed in the request URL if automation is called as Endpoint."
+        "label": "String kueri URL",
+        "description": "Parameter yang diteruskan dalam URL permintaan jika otomatisasi disebut sebagai Titik Akhir."
       },
       "payload": {
-        "label": "Event payload",
-        "description": "Parameters passed in the event payload if automation is called via event."
+        "label": "Muatan acara",
+        "description": "Parameter yang diteruskan dalam muatan acara peristiwa jika otomatisasi dipanggil melalui event."
       },
       "curl": {
-        "copy": "Copy to cURL format"
+        "copy": "Salin ke format cURL"
       }
     }
   },
   "apps": {
-    "link": "Apps",
-    "empty": "All is App",
-    "install": "Add an App",
-    "configTooltip": "Configuration",
-    "search": "Search for an app...",
-    "title": "App Store",
+    "link": "Aplikasi",
+    "empty": "Semuanya adalah Aplikasi",
+    "install": "Tambahkan sebuah Aplikasi",
+    "configTooltip": "Konfigurasi",
+    "search": "Cari sebuah aplikasi...",
+    "title": "Toko aplikasi",
     "save": {
-      "label": "Save",
-      "toast": "App has been saved",
-      "error": "Save failed",
+      "label": "Simpan",
+      "toast": "Aplikasi telah disimpan",
+      "error": "Gagal menyimpan",
       "reason": "{{context}}",
-      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
-      "reason_InvalidSlugError": "Slug contains invalid characters."
+      "reason_AlreadyUsedError": "Slug sudah digunakan, silakan pilih yang lain.",
+      "reason_InvalidSlugError": "Slug mempunyai karakter yang tidak valid."
     },
-    "saveSuccess": "App config saved successfully",
-    "notFound": "App not found.",
+    "saveSuccess": "Konfigurasi aplikasi berhasil disimpan",
+    "notFound": "Aplikasi tidak ditemukan.",
     "source": {
-      "label": "See code",
-      "close": "Hide code",
-      "help": "Displays the App structure in raw format"
+      "label": "Lihat kode",
+      "close": "Sembunyikan kode",
+      "help": "Tampilkan struktur Aplikasi dalam format mentah"
     },
     "details": {
-      "title": "App details",
+      "title": "Detail aplikasi",
       "appName": {
-        "label": "App Name"
+        "label": "Nama aplikasi"
       },
       "slug": {
-        "label": "Technical name"
+        "label": "Nama teknis"
       },
       "disabled": {
-        "label": "Disabled",
-        "description": "A disabled app will never be executed but simply ignored"
+        "label": "Dinonaktifkan",
+        "description": "Aplikasi yang dinonaktifkan tidak akan pernah dijalankan tetapi diabaikan begitu saja"
       }
     },
     "publish": {
-      "menuLabel": "Publish as an app",
+      "menuLabel": "Publikasikan sebagai aplikasi",
       "confirm": {
-        "alreadyPublished": "The workspace is already published as an app with this name, which can't be changed",
-        "slugInput": "App name",
-        "slugInvalid": "Only allowed characters are letters, numbers, whitespaces, . _ and -",
-        "title": "Publish the workspace as an app",
-        "ok": "Publish",
-        "toast": "App Published",
-        "content": "Automations, Pages, Blocks as well as Workspace configuration will be accessible to anyone installing your App.\nFirst, remove any private API key you want to keep private."
+        "alreadyPublished": "Area kerja sudah dipublikasikan sebagai aplikasi dengan nama ini, yang tidak dapat diubah",
+        "slugInput": "Nama aplikasi",
+        "slugInvalid": "Karakter yang diperbolehkan hanyalah huruf, angka, spasi, . _ dan -",
+        "title": "Terbitkan Area kerja sebagai aplikasi",
+        "ok": "Terbitkan",
+        "toast": "Aplikasi Diterbitkan",
+        "content": "Otomatisasi, Halaman, Blok, serta konfigurasi Area kerja akan dapat diakses oleh siapa pun yang menginstal Aplikasi Anda.\nFirst, hapus kunci API pribadi apa pun yang ingin Anda jaga kerahasiaannya."
       }
     },
-    "doc": "Documentation",
-    "config": "Configuration"
+    "doc": "Dokumentasi",
+    "config": "Konfigurasi"
   },
   "pages": {
-    "private": "Private",
-    "public": "Public",
-    "link": "Pages",
-    "preview": "Preview",
-    "edit": "Éditer",
+    "private": "Pribadi",
+    "public": "Umum",
+    "link": "Halaman",
+    "preview": "Tampilan",
+    "edit": "Sunting",
     "create": {
-      "label": "Add a Page",
-      "defaultName": "Page",
+      "label": "Tambahkan sebuah Halaman",
+      "defaultName": "Halaman",
       "template": {
-        "title": "Pages templates",
-        "index": "Homepage",
-        "_401": "Restricted access (401)",
-        "_404": "Page not found (404)",
-        "_doc": "App documentation"
+        "title": "Templates halaman",
+        "index": "Beranda",
+        "_401": "Akses terbatas (401)",
+        "_404": "Halaman tidak ditemukan (404)",
+        "_doc": "Dokumentasi aplikasi"
       }
     },
     "duplicate": {
-      "help": "Create a copy of this Page",
-      "success": "Page has been duplicated"
+      "help": "Buat salinan Halaman ini",
+      "success": "Halaman telah diduplikasi"
     },
     "source": {
-      "label": "See code",
-      "close": "Hide code",
-      "help": "Displays the Page structure in raw format"
+      "label": "Lihat kode",
+      "close": "Sembunyikan kode",
+      "help": "Tampilkan struktur Halaman dalam format mentah"
     },
-    "notFound": "Page not found.",
+    "notFound": "Halaman tidak ditemukan.",
     "empty": {
-      "title": "<0>This page is empty…</0><1>Start creating, add your first block!</1>",
-      "subtitle": "Not sure where to start?",
+      "title": "<0>Halaman ini kosong…</0><1>Mulai buat, tambahkan blok pertama Anda!</1>",
+      "subtitle": "Tidak yakin harus mulai dari mana?",
       "suggestions": {
         "header": {
-          "title": "Header",
-          "text": "Present your brand with your logo and navigation"
+          "title": "Judul",
+          "text": "Presentasikan merek Anda dengan logo dan navigasi Anda"
         },
         "cards": {
-          "title": "Cards group",
-          "text": "Display cards"
+          "title": "Kelompok kartu",
+          "text": "Kartu tampilan"
         },
         "richtext": {
-          "title": "Rich text",
-          "text": "Write down everything you want"
+          "title": "Format Teks yang diperkaya",
+          "text": "Tuliskan semua yang Anda inginkan"
         },
         "form": {
-          "title": "Form",
-          "text": "Need to get leads? Add a form"
+          "title": "Formulir",
+          "text": "Perlu petunjuk? Tambahkan sebuah formulir"
         }
       }
     },
     "delete": {
-      "label": "Delete the page",
-      "confirm": "Are you sure you want to remove this Page?",
-      "toast": "Page has been deleted"
+      "label": "Hapus halaman tersebut",
+      "confirm": {
+        "title": "Apakah Anda ingin menghapus halaman tersebut \"{{name}}\"?",
+        "content": "Was, data akan hilang.",
+        "ok": "Ya, hapus",
+        "cancel": "Tidak, jangan hapus"
+      },
+      "toast": "Halaman telah dihapus"
     },
     "save": {
-      "label": "Save",
-      "toast": "Page has been saved",
-      "error": "Save failed",
+      "label": "Simpan",
+      "toast": "Halaman telah disimpan",
+      "error": "Gagal menyimpan",
       "reason": "{{context}}",
-      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
-      "reason_InvalidSlugError": "Slug contains invalid characters."
+      "reason_AlreadyUsedError": "Slug sudah digunakan, silakan pilih yang lain.",
+      "reason_InvalidSlugError": "Slug berisi karakter yang tidak valid."
     },
     "share": {
-      "label": "Share this page",
-      "access": "Access",
-      "access_private": "Users",
-      "copy": "Copy the public address of the page",
-      "copied": "The address is copied into your clipboard",
-      "notme": "You are already the owner of this Page."
+      "label": "Bagikan halaman ini",
+      "access": "Akses",
+      "access_private": "Pengguna",
+      "copy": "Salin alamat publik halaman tersebut",
+      "copied": "Alamat tersebut disalin ke clipboard Anda",
+      "notme": "Anda sudah menjadi pemilik Halaman ini."
     },
     "details": {
-      "title": "Edit Page details",
+      "title": "Sunting detailnya",
       "name": {
-        "label": "Page title"
+        "label": "Judul halaman"
       },
       "description": {
-        "label": "Description"
+        "label": "Deskripsi"
       },
       "slug": {
         "label": "Slug"
       },
       "styles": {
-        "label": "CSS styles of the page",
-        "description": "You can edit the style sheet of your web page to customize it. Don't hesitate to add identifiers to your blocks to be able to target them with the # prefix in your CSS.",
+        "label": "Desain CSS halaman",
+        "description": "Anda dapat mengedit style sheet halaman web Anda untuk menyesuaikannya. Jangan ragu untuk menambahkan pengidentifikasi ke blok Anda agar dapat menargetkannya dengan awalan # di CSS Anda.",
         "reset": {
-          "label": "Reset",
-          "description": "Revert to the default theme. ⚠️ You will lose your changes."
+          "label": "Setel ulang",
+          "description": "Kembali ke tema default. ⚠️ Anda akan kehilangan apa yang sudah Anda ubah."
         }
       }
     },
     "blocks": {
-      "add": "Add a block",
-      "edit": "Edit",
-      "remove": "Remove the block",
-      "search": "Search a block",
+      "add": "Tambahkan satu blok",
+      "edit": "Sunting",
+      "remove": "Hapus blok tersebut",
+      "search": "Cari satu blok",
       "settings": {
         "blockTitle": {
-          "label": "Title",
-          "description": "Title shown above the block"
+          "label": "Judul",
+          "description": "Judul ditampilkan di atas blok"
         },
-        "generic": "Advanced",
-        "schema": "Configuration",
-        "title": "Block settings",
-        "toggle_on": "Display settings",
-        "toggle_off": "Hide settings",
+        "generic": "Lanjutan",
+        "schema": "Konfigurasi",
+        "title": "Pengaturan blok",
+        "toggle_on": "Pengaturan tampilan",
+        "toggle_off": "Sembunyikan pengaturan",
         "onInit": {
-          "label": "Initial event",
-          "description": "This event will be triggered during the initialization of the block each time the page is viewed."
+          "label": "Event awal",
+          "description": "Event ini akan dipicu selama inisialisasi blok setiap kali halaman dilihat."
         },
         "updateOn": {
-          "label": "Update event",
-          "description": "When one of your automations emits this event, the content of the block will be updated with the content of the payload."
+          "label": "Perbarui event",
+          "description": "Ketika salah satu otomatisasi Anda mengeluarkan event ini, konten blok akan diperbarui dengan konten payload."
         },
         "automation": {
-          "label": "Automation",
-          "description": "Run an automation at page load to retrieve the block configuration."
+          "label": "Otomatisasi",
+          "description": "Jalankan otomatisasi saat memuat halaman untuk mengambil konfigurasi blok."
         },
         "sectionId": {
-          "label": "HTML identifier of the section",
-          "description": "Allows you to identify the section to apply particular CSS styles or point a link to it like an automatic scroll. Optional."
-        },
-        "logical": {
-          "if": {
-            "label": "Block display condition (if)",
-            "description": "The Block will be displayed only if the value passed is true (truthy)."
-          },
-          "repeat": {
-            "label": "Repeat Block",
-            "description": "The Block will be repeated for each element of the array passed in parameter.",
-            "on": {
-              "label": "On array",
-              "description": "The array containing the elements to be applied to each of the repeated Blocks."
-            },
-            "as": {
-              "label": "Name of the variable representing each item.",
-              "description": "In the loop, each element will be accessed by a variable, the default `{{item}}`, or the one you specify here."
-            }
-          }
+          "label": "Pengidentifikasi HTML seksi tersebut",
+          "description": "Memungkinkan Anda mengidentifikasi seksi untuk menerapkan gaya CSS tertentu atau mengarahkan tautan ke sana seperti gulir otomatis. Opsional."
         },
         "action": {
-          "title": "Action",
-          "description": "Action triggered by a click on the card",
+          "title": "Tindakan",
+          "description": "Tindakan dipicu oleh klik pada kartu",
           "event": "Event",
-          "url": "Link",
+          "url": "Sambungan",
           "valueEvent": {
-            "label": "Event to trigger",
-            "description": "The name of the event that will be sent to the click."
+            "label": "Event yang akan dipicu",
+            "description": "Nama event yang akan dikirim ke klik."
           },
           "valueLink": {
             "label": "Url",
-            "description": "Web address in https."
+            "description": "Alamat web di https."
           },
           "popup": {
-            "label": "Open in new tab",
-            "description": "Opens the link in a new tab instead of replacing the current page."
+            "label": "Buka di tab baru",
+            "description": "Membuka sambungan di tab baru, bukannya mengganti halaman ini."
           },
           "payload": {
-            "label": "Payload",
-            "description": "Data object that accompanies the event."
+            "label": "Muatan",
+            "description": "Objek data yang menyertai event tersebut."
           }
         },
         "className": {
-          "label": "Element class name",
-          "description": "Specify a custom class for the element containing the Block to facilitate the layout in CSS."
+          "label": "Nama kelas elemen",
+          "description": "Tentukan kelas khusus untuk elemen yang berisi Blok untuk memfasilitasi tata letak di CSS."
         },
         "css": {
-          "label": "CSS styles applied to the Block",
-          "description": "You can use the keyword \":block\" to target the element containing the Block.",
-          "reset": "Reset styles"
+          "label": "Gaya CSS diterapkan ke Blok",
+          "description": "Anda dapat menggunakan kata kunci \":block\" untuk menargetkan elemen yang mengandung Blok.",
+          "reset": "Setel ulang gaya"
         }
       },
-      "builtin": "Built-in Blocks",
+      "builtin": "Blok yang terintegrasi",
       "name": "{{context}}",
-      "name_Header": "Header",
-      "name_Hero": "Hero",
-      "name_Cards": "Cards group",
-      "name_DataTable": "Data table",
-      "name_Form": "Form",
-      "name_RichText": "Rich text",
-      "name_StackedNavigation": "Stacked Navigation",
-      "name_Buttons": "Buttons group",
-      "name_BlocksList": "Blocks list",
-      "name_BlocksGrid": "Blocks grid",
-      "name_BlocksSplit": "Split blocks view",
-      "name_Footer": "Footer",
-      "name_Breadcrumbs": "Breadcrumbs",
-      "name_Action": "Action",
-      "name_TabsView": "Tabs view",
-      "name_Carousel": "Carousel",
-      "name_Image": "Image",
-      "name_Signin": "Signin button",
+      "name_Header": "Judul",
+      "name_Hero": "Pahlawan",
+      "name_Cards": "Kelompok kartu",
+      "name_DataTable": "Tabel data",
+      "name_Form": "Formulir",
+      "name_RichText": "Teks yang diperkaya",
+      "name_StackedNavigation": "Navigasi Bertumpuk",
+      "name_Buttons": "Grup tombol",
+      "name_BlocksList": "Daftar blok",
+      "name_BlocksGrid": "Blok jaringan",
+      "name_BlocksSplit": "Tampilan blok terpisah",
+      "name_Footer": "Catatan kaki",
+      "name_Breadcrumbs": "Panduan",
+      "name_Action": "Tindakan",
+      "name_TabsView": "Tampilan tab",
+      "name_Carousel": "Karusel",
+      "name_Image": "Gambar",
+      "name_Signin": "Tombol masuk",
       "description": "",
-      "description_Header": "Display page header",
-      "description_Hero": "Display a Hero of page",
-      "description_Cards": "Display a cards group",
-      "description_DataTable": "Display a data table",
-      "description_Form": "Display form",
-      "description_RichText": "Display text formatted with Markdown or HTML",
-      "description_StackedNavigation": "Display navigable block pages. Must be used through automations.",
-      "description_Buttons": "Display a buttons group",
-      "description_BlocksList": "Display a Blocks list",
-      "description_BlocksGrid": "Display a Blocks grid",
-      "description_BlocksSplit": "Display two blocks with expansible border",
-      "description_Footer": "Display a Footer",
-      "description_Breadcrumbs": "Display Breadcrumbs",
-      "description_Action": "Display an action button capable of navigating to a link, a page, a section of the page or triggering an event.",
-      "description_TabsView": "Display tabs",
-      "description_Carousel": "Displaying Blocks in a horizontal Carousel",
-      "description_Image": "Display a picture",
-      "panelTitle_adding": "Add a Block",
-      "description_Signin": "Display a login or registration button",
-      "panelTitle_editing": "Edit Block {{blockName}}",
+      "description_Header": "Tampilkan judul halaman",
+      "description_Hero": "Tampilkan halaman pahlawan",
+      "description_Cards": "Tampilkan grup kartu",
+      "description_DataTable": "Tampilkan tabel data",
+      "description_Form": "Bentuk tampilan",
+      "description_RichText": "Tampilkan teks yang diformat dengan Markdown atau HTML",
+      "description_StackedNavigation": "Tampilkan halaman blok yang dapat dinavigasi. Harus digunakan melalui otomatisasi.",
+      "description_Buttons": "Tampilkan grup tombol",
+      "description_BlocksList": "Tampilkan daftar Blokir",
+      "description_BlocksGrid": "Tampilkan kisi Blok",
+      "description_BlocksSplit": "Tampilkan dua blok dengan batas yang dapat diperluas",
+      "description_Footer": "Tampilkan sebuah Footer",
+      "description_Breadcrumbs": "Tampilkan panduan",
+      "description_Action": "Tampilkan tombol tindakan yang mampu menavigasi ke sambungan, halaman, bagian halaman, atau memicu suatu event.",
+      "description_TabsView": "Tampilkan tab",
+      "description_Carousel": "Tampilkan Blok di Carousel horizontal",
+      "description_Image": "Tampilkan gambar",
+      "panelTitle_adding": "Tambahkan sebuah Blok",
+      "description_Signin": "Tampilkan tombol login atau registrasi",
+      "panelTitle_editing": "Edit Blok {{blockName}}",
       "header": {
         "settings": {
           "title": {
-            "label": "Title",
-            "description": "Title of your page."
+            "label": "Judul",
+            "description": "Judul halaman Anda."
           },
           "level": {
-            "label": "Title level",
-            "description": "Defines the level of the tag applied to the title."
+            "label": "Tingkat judul",
+            "description": "Tentukan tingkat tag yang diterapkan pada judul."
           },
           "logo": {
             "label": "Logo",
-            "description": "Image displayed next to the title. Optional.",
+            "description": "Gambar ditampilkan di sebelah judul. Opsional.",
             "src": {
-              "label": "Image",
-              "description": "Choose an image"
+              "label": "Gambar",
+              "description": "Pilih gambar"
             },
             "alt": {
-              "label": "Alternative text",
-              "description": "Text displayed in place of the image for non-graphical browsers."
+              "label": "Teks alternatif",
+              "description": "Teks ditampilkan sebagai pengganti gambar untuk browser non-grafis."
             },
             "action": {
-              "label": "Action",
-              "description": "Action on logo click.",
+              "label": "Tindakan",
+              "description": "Tindakan pada klik logo.",
               "type": {
-                "label": "Action type"
+                "label": "Tipe tindakan"
               },
               "none": {
-                "label": "None"
+                "label": "Tidak ada"
               }
             }
           },
           "nav": {
-            "label": "Navigation",
-            "description": "You can add links to web addresses or buttons sending events.",
+            "label": "Navigasi",
+            "description": "Anda dapat menambahkan link ke alamat web atau tombol pengiriman event.",
             "items": {
-              "label": "Button",
-              "description": "Button configuration",
-              "add": "Add a button",
-              "remove": "Remove button",
+              "label": "Tombol",
+              "description": "Konfigurasi tombol",
+              "add": "Tambahkan sebuah tombol",
+              "remove": "Hapus tombol",
               "type": {
-                "label": "Action type"
+                "label": "Tipe tindakan"
               },
               "external": {
-                "label": "External page",
-                "description": "HTTP address to any web page",
+                "label": "Halaman eksternal",
+                "description": "Alamat HTTP ke halaman web mana pun",
                 "value": {
-                  "label": "Web address",
-                  "description": "Indicate the web address of the page (https://...)."
+                  "label": "Alamat web",
+                  "description": "Tunjukkan alamat web halaman tersebut (https://...)."
                 },
                 "popup": {
-                  "label": "Open in new tab",
-                  "description": "Enable to have the page open in a new tab instead of replacing the current page."
+                  "label": "Buka di tab baru",
+                  "description": "Aktifkan agar halaman dibuka di tab baru, bukannya mengganti halaman ini."
                 }
               },
               "internal": {
-                "label": "Workspace's page",
-                "description": "Link to a Workspace Page",
+                "label": "halaman Area kerja",
+                "description": "Sambungan ke Halaman Area Kerja",
                 "value": {
-                  "label": "Page",
-                  "description": "Choose a page in your Workspace."
+                  "label": "Halaman",
+                  "description": "Pilih sebuah halaman di Area Kerja Anda."
                 }
               },
               "inside": {
-                "label": "Scroll to a section",
-                "description": "Anchor in this same page. You can define an anchor name in the \"Advanced\" section of any Block's settings.",
+                "label": "Geser ke suatu bagian",
+                "description": "Jangkar di halaman yang sama ini. Anda dapat menentukan nama jangkar di \"Advanced\" seksi dari pengaturan Blok mana pun.",
                 "value": {
-                  "label": "Block ID",
-                  "description": "Choose one of the blocks on your page to scroll to."
+                  "label": "Blok ID",
+                  "description": "Pilih salah satu blok di halaman Anda untuk digeser."
                 }
               },
               "event": {
-                "label": "Trigger an event",
-                "description": "The defined event will be triggered on this action. You can then proceed to an Automation.",
+                "label": "Memicu sebuah event",
+                "description": "Event yang ditentukan akan dipicu pada tindakan ini. Anda kemudian dapat melanjutkan ke Otomatisasi.",
                 "value": {
                   "label": "Event",
-                  "description": "Specify the name of the event to be triggered."
+                  "description": "Tentukan nama event yang akan dipicu."
                 },
                 "payload": {
-                  "label": "Payload",
-                  "description": "Payload sent with event."
+                  "label": "Muatan",
+                  "description": "Muatan dikirim dengan event."
                 }
               },
               "text": {
-                "label": "Button text",
-                "description": "Text displayed in the navigation button."
+                "label": "Teks tombol",
+                "description": "Teks ditampilkan di tombol navigasi."
               }
             }
           },
           "fixed": {
-            "label": "Fixed header",
-            "description": "If enabled, the header will remain hanging at the top of the screen during the scroll."
+            "label": "Judul baku",
+            "description": "Jika diaktifkan, judul akan tetap menggantung di bagian atas layar selama pergeseran."
           }
         }
       },
       "buttons": {
         "settings": {
-          "label": "Buttons",
-          "description": "You can add as many buttons as you want.",
+          "label": "Tombol",
+          "description": "Anda dapat menambahkan tombol sebanyak mungkin.",
           "items": {
-            "label": "Button",
-            "description": "Button configuration",
-            "add": "Add a Button",
-            "remove": "Remove Button",
+            "label": "Tombol",
+            "description": "Konfigurasi tombol",
+            "add": "Tambahkan sebuah Tombol",
+            "remove": "Hapus Tombol",
             "text": {
-              "label": "Text",
-              "description": "Button text"
+              "label": "Teks",
+              "description": "Tombol teks"
             },
             "variant": {
-              "label": "Display",
-              "description": "Button display mode",
-              "label_default": "Simple",
-              "label_primary": "Primary",
-              "label_grey": "Monochrome",
-              "label_link": "Link"
+              "label": "Tampilkan",
+              "description": "Mode tampilan tombol",
+              "label_default": "Sederhana",
+              "label_primary": "Utama",
+              "label_grey": "Satu warna",
+              "label_link": "Sambungan"
             },
             "tag": {
-              "label": "Tag",
-              "description": "Text to be displayed in a label on the right of the button"
+              "label": "Tanda",
+              "description": "Teks yang akan ditampilkan dalam label di sebelah kanan tombol"
             },
             "disabled": {
-              "label": "Disabled"
+              "label": "Dinonaktifkan"
             },
             "unselected": {
-              "label": "Unselected",
-              "description": "Displays the button in a secondary, grayed out state. Used for example to indicate an inactive tab"
+              "label": "Tidak dipilih",
+              "description": "Tampilkan tombol dalam keadaan sekunder berwarna abu-abu. Digunakan misalnya untuk menunjukkan tab yang tidak aktif"
             }
           }
         }
@@ -982,122 +950,122 @@
       "carousel": {
         "settings": {
           "autoscroll": {
-            "label": "Auto scroll",
-            "description": "You can activate and configure the automatic scrolling of the content.",
+            "label": "Geser otomatis",
+            "description": "Anda dapat mengaktifkan dan mengonfigurasi pergeseran konten secara otomatis.",
             "active": {
-              "label": "Activate",
-              "description": "Activate automatic scrolling. Scrolling will still be possible manually with the buttons and the keyboard."
+              "label": "Mengaktifkan",
+              "description": "Aktifkan pergeseran otomatis. Pergeseran masih dapat dilakukan secara manual dengan tombol dan keyboard."
             },
             "speed": {
-              "label": "Scroll speed",
-              "description": "Setting the page change speed in seconds."
+              "label": "Kecepatan geser",
+              "description": "Atur kecepatan perubahan halaman dalam hitungan detik."
             }
           },
           "displayIndicators": {
-            "label": "Page indicators",
-            "description": "Displays as many buttons as pages available."
+            "label": "Indikator halaman",
+            "description": "Tampilkan tombol sebanyak halaman yang tersedia."
           }
         }
       },
       "cards": {
         "settings": {
-          "title": "Title",
-          "description": "Description",
-          "cover": "Cover image",
+          "title": "Judul",
+          "description": "Deskripsi",
+          "cover": "Gambar sampul",
           "variant": {
-            "label": "Cards style"
+            "label": "Gaya kartu"
           },
           "classic": {
-            "label": "Classic",
+            "label": "Klasik",
             "content": {
-              "label": "Content",
-              "item": "Line",
-              "add": "Add a line",
-              "remove": "Remove line",
-              "type": "Type",
-              "type_text": "Text",
-              "type_button": "Button",
-              "type_accordion": "Accordion",
+              "label": "Konten",
+              "item": "Garis",
+              "add": "Tambahkan sebuah garis",
+              "remove": "Hapus garis",
+              "type": "Jenis",
+              "type_text": "Teks",
+              "type_button": "Tombol",
+              "type_accordion": "Akordeon",
               "text": {
-                "value": "Text",
-                "value_description": "You can use HTML or Markdown."
+                "value": "Teks",
+                "value_description": "Anda dapat menggunakan HTML atau Markdown."
               },
               "button": {
                 "value": "Label",
-                "value_description": "Button label.",
-                "url": "Web address",
-                "url_description": "The button can be a link to a web page.",
-                "popup": "Open the link in a new tab",
-                "popup_description": "The link will open in a new tab.",
+                "value_description": "Label tombol.",
+                "url": "Alamat web",
+                "url_description": "Tombol tersebut bisa berupa link ke halaman web.",
+                "popup": "Buka link di tab baru",
+                "popup_description": "Link akan terbuka di tab baru.",
                 "event": "Event",
-                "event_description": "The button can trigger an event.",
-                "payload": "Payload",
-                "payload_description": "Data accompanying the event.",
-                "icon": "Icon"
+                "event_description": "Tombol tersebut dapat memicu sebuah event.",
+                "payload": "Muatan",
+                "payload_description": "Data yang menyertai event tersebut.",
+                "icon": "Ikon"
               },
               "accordion": {
-                "title": "Title",
-                "title_description": "Always displayed text.",
-                "content": "Content",
-                "content_description": "Hidden content. Can be HTML or markdown.",
-                "icon": "Icon"
+                "title": "Judul",
+                "title_description": "Selalu menampilkan teks.",
+                "content": "Konten",
+                "content_description": "Konten tersembunyi. Bisa berupa HTML atau markdown.",
+                "icon": "Ikon"
               }
             }
           },
           "short": {
-            "label": "Short",
-            "subtitle": "Subtitle",
-            "backgroundColor": "Background color",
-            "backgroundColor_black": "Black",
-            "backgroundColor_white": "White",
-            "backgroundColor_transparent-white": "Transparent white",
-            "backgroundColor_transparent-black": "Transparent black"
+            "label": "Pendek",
+            "subtitle": "Subjudul",
+            "backgroundColor": "Warna latar belakang",
+            "backgroundColor_black": "Hitam",
+            "backgroundColor_white": "Putih",
+            "backgroundColor_transparent-white": "Putih transparan",
+            "backgroundColor_transparent-black": "Hitam transparan"
           },
           "article": {
-            "label": "Article",
-            "subtitle": "Subtitle",
-            "tag": "Tag"
+            "label": "Artikel",
+            "subtitle": "Subjudul",
+            "tag": "Tanda"
           },
           "square": {
-            "label": "Square"
+            "label": "Persegi"
           },
           "blocks": {
-            "label": "Blocks",
+            "label": "Blok",
             "content": {
-              "label": "Contenu de la carte",
-              "description": "Composez votre carte à l'aide de Blocks"
+              "label": "Konten kartu",
+              "description": "Buat kartu Anda dengan bantuan Blok"
             }
           },
           "actions": {
-            "label": "Actions",
+            "label": "Tindakan",
             "content": {
-              "label": "Buttons",
-              "add": "Add a button",
-              "remove": "Remove button",
-              "item": "Button",
-              "type": "Type",
+              "label": "Tombol",
+              "add": "Tambahkan sebuah tombol",
+              "remove": "Hapus tombol",
+              "item": "Tombol",
+              "type": "Jenis",
               "type_event": "Event",
-              "text": "Text",
-              "value_event": "Event name",
-              "payload": "Payload",
-              "type_url": "Web address",
-              "value_url": "Web address"
+              "text": "Teks",
+              "value_event": "Nama event",
+              "payload": "Muatan",
+              "type_url": "alamat web",
+              "value_url": "alamat web"
             }
           },
-          "cards": "Cards",
-          "cards_add": "Add a card",
-          "cards_remove": "Remove card",
+          "cards": "Kartu",
+          "cards_add": "Tambahkan sebuah kartu",
+          "cards_remove": "Hapus kartu",
           "card": "Card",
           "layout": {
-            "title": "Layout",
-            "description": "You can change the display mode. By default, cards will be displayed using a carousel.",
-            "style": "Style",
+            "title": "Tata Letak",
+            "description": "Anda dapat mengubah mode tampilan. Secara default, kartu akan ditampilkan menggunakan carousel.",
+            "style": "Gaya",
             "carousel": "Carousel",
-            "grid": "Grid",
-            "column": "Column",
+            "grid": "Jaringan",
+            "column": "Kolom",
             "autoScroll": {
-              "title": "Auto scroll",
-              "description": "Activate this option to have the carousel scroll automatically every 5 seconds"
+              "title": "Geser otomatis",
+              "description": "Aktifkan opsi ini agar carousel bergulir secara otomatis setiap 5 detik"
             }
           }
         }
@@ -1105,201 +1073,201 @@
       "datatable": {
         "settings": {
           "data": {
-            "label": "Table of data to be displayed",
-            "description": "This block waits for an array of objects whose structure is at your convenience but identical for each element of the array.",
+            "label": "Tabel data yang akan ditampilkan",
+            "description": "Blok ini menunggu array objek yang strukturnya sesuai keinginan Anda tetapi identik untuk setiap elemen array.",
             "items": {
-              "label": "Line",
-              "description": "The keys of the object will be the columns of the table.",
-              "add": "Add a line of data",
-              "remove": "Delete the data line",
+              "label": "Garis",
+              "description": "Kunci objek akan menjadi kolom tabel.",
+              "add": "Tambahkan satu baris data",
+              "remove": "Hapus garis data",
               "properties": {
-                "add": "Add a cell",
-                "remove": "Delete the cell"
+                "add": "Tambahkan sebuah sel",
+                "remove": "Hapus sel"
               }
             }
           },
           "columns": {
-            "label": "Columns",
-            "description": "Specifying the columns. If you don't change anything, all your data will be displayed as raw.",
+            "label": "Kolom",
+            "description": "Menentukan kolom. Jika Anda tidak mengubah apa pun, semua data Anda akan ditampilkan secara mentah.",
             "items": {
-              "label": "Column",
-              "description": "Specification of the column",
-              "add": "Add a column",
-              "remove": "Delete the column",
+              "label": "Kolom",
+              "description": "Spesifikasi kolom",
+              "add": "Tambahkan sebuah kolom",
+              "remove": "Hapus kolom",
               "_label": {
-                "label": "Title",
-                "description": "Column title"
+                "label": "Judul",
+                "description": "Judul kolom"
               },
               "key": {
-                "label": "Key",
-                "description": "The key corresponding to the data to be displayed"
+                "label": "Kunci",
+                "description": "Kunci yang sesuai dengan data yang akan ditampilkan"
               },
               "type": {
-                "label": "Type",
-                "description": "The type of data format. By default, the data is displayed as text",
-                "string": "Text",
-                "number": "Number",
+                "label": "Jenis",
+                "description": "Jenis format data. Secara default, data ditampilkan sebagai teks",
+                "string": "Teks",
+                "number": "Angka",
                 "boolean": "Boolean",
-                "date": "Date",
+                "date": "Tanggal",
                 "tags": "Tags"
               },
               "format": {
                 "label": "Format",
-                "description": "Format to apply to the data in case of number or date type."
+                "description": "Format yang akan diterapkan pada data dalam hal jenis nomor atau tanggal."
               },
               "actions": {
-                "label": "Action buttons",
-                "description": "You can display action buttons if you have not chosen a key",
+                "label": "Tombol aktivitas",
+                "description": "Anda dapat menampilkan tombol aktivitas jika Anda belum memilih tombol",
                 "items": {
-                  "label": "Action button",
-                  "description": "What does the action button do?",
-                  "add": "Add an action",
-                  "remove": "Delete action",
+                  "label": "Tombol activitas",
+                  "description": "Apa fungsi tombol activitas?",
+                  "add": "Tambahkan sebuah aktivitas",
+                  "remove": "Hapus aktivitas",
                   "_label": {
                     "label": "Label",
-                    "description": "Button text"
+                    "description": "Teks tombol"
                   },
                   "event": {
                     "label": "Event",
-                    "description": "A click on the button will send an event"
+                    "description": "Sebuah klik pada tombol akan mengirimkan sebuah event"
                   },
                   "payload": {
                     "label": "Payload",
-                    "description": "The event can be sent with data"
+                    "description": "Event dapat dikirim dengan data"
                   },
                   "url": {
                     "label": "URL",
-                    "description": "A click on the button will open a new page. The URL can contain parameters in the form {{key}}. For example, if data contains a \"_id\" property, the URL can be \"http://host/user/{{_id}}\" and will be filled with the value of the concerned line"
+                    "description": "Sebuah klik pada tombol akan membuka halaman baru. URL dapat berisi parameter dalam bentuk {{key}}. Misalnya, jika data berisi sebuah \"_id\" properti, URL dapat berupa \"http://host/user/{{_id}}\" dan akan diisi dengan value jalur yang bersangkutan"
                   }
                 }
               },
 
               "onEdit": {
-                "label": "Event on edition",
-                "description": "Makes the cell editable. The event passed in value will be sent each time it is modified"
+                "label": "Event pada edisi",
+                "description": "Membuat sel dapat diedit. Nilai event yang diteruskan akan dikirim setiap kali diubah"
               }
             }
           },
           "pagination": {
-            "label": "Manual pagination",
-            "description": "By default, paging is done automatically on all the data sent. If you want to paginate on the server side, use this configuration structure.",
+            "label": "Penomoran halaman manual",
+            "description": "Secara default, paging dilakukan secara otomatis pada semua data yang dikirim. Jika Anda ingin membuat halaman di sisi server, gunakan struktur konfigurasi ini.",
             "event": {
               "label": "Event",
-              "description": "Name of the event sent when a page is changed. The number of the requested page will be send in payload."
+              "description": "Nama event yang dikirim ketika halaman diubah. Nomor halaman yang diminta akan dikirimkan dalam payload."
             },
             "page": {
-              "label": "Current page number",
-              "description": "Will display the number of the page displayed."
+              "label": "Nomor halaman saat ini",
+              "description": "Akan menampilkan nomor halaman yang ditampilkan."
             },
             "itemCount": {
-              "label": "Item count",
-              "description": "Total number of items."
+              "label": "Jumlah barang",
+              "description": "Jumlah total item."
             },
             "pageSize": {
-              "label": "Pages size",
-              "description": "Number of item per page."
+              "label": "Ukuran halaman",
+              "description": "Jumlah item per halaman."
             }
           },
           "customProps": {
-            "label": "Additional properties",
-            "description": "Additional properties to send to the Table, as supported by ant design : https://ant.design/components/table"
+            "label": "Properti tambahan",
+            "description": "Properti tambahan untuk dikirim ke label, sebagaimana didukung oleh desain semut : https://ant.design/components/table"
           }
         }
       },
       "form": {
         "submitLabel": {
-          "label": "Submit button text",
-          "description": "Modify the text of the form validation button"
+          "label": "Kirim teks tombol",
+          "description": "Ubah teks tombol validasi formulir"
         },
         "hideSubmit": {
-          "label": "Hide submit button",
-          "description": "You can hide the form validation button, for example if you prefer to validate the form as you type."
+          "label": "Sembunyikan tombol kirim",
+          "description": "Anda bisa menyembunyikan tombol validasi formulir, misalnya jika Anda lebih memilih untuk memvalidasi formulir saat Anda mengetik."
         },
         "onSubmit": {
-          "label": "On submit event",
-          "description": "When the form is validated, the event will be sent with all its values."
+          "label": "Saat pengiriman event",
+          "description": "Ketika formulir divalidasi, event akan dikirim dengan semua valuenya."
         },
         "onChange": {
-          "label": "On change event",
-          "description": "Each time the form is modified, the event will be sent with all its values."
+          "label": "Pada perubahan event",
+          "description": "Setiap kali formulir diubah, kegiatan akan dikirim dengan semua valuenya."
         },
         "schema": {
-          "label": "Form specification",
-          "description": "Use the form builder interface to add the fields of your choice.",
-          "add": "Add a control"
+          "label": "Spesifikasi formulir",
+          "description": "Gunakan interface pembuat formulir untuk menambahkan bidang pilihan Anda.",
+          "add": "Tambahkan sebuah kontrol"
         },
         "disabledSubmit": {
-          "label": "Disable the validation button",
-          "description": "Allows you to disable the form validation button. This parameter is useful to be sent by an Automation during the operation of the page, for example immediately after receiving the event corresponding to onSubmit, to show the user that his request is taken into account."
+          "label": "Nonaktifkan tombol validasi",
+          "description": "Memungkinkan Anda menonaktifkan tombol validasi formulir. Parameter ini berguna untuk dikirim oleh Otomatisasi selama pengoperasian halaman, misalnya segera setelah menerima peristiwa yang terkait dengan onSubmit, untuk menunjukkan kepada pengguna bahwa permintaannya diperhitungkan."
         }
       },
       "richtext": {
         "settings": {
           "content": {
-            "label": "Content in HTML or Markdown format",
-            "description": "Here you can display any rich content using HTML or Markdown. You can even mix the two."
+            "label": "Konten dalam format HTML atau Markdown",
+            "description": "Di sini Anda dapat menampilkan konten kaya apa pun menggunakan HTML atau Markdown. Anda bahkan bisa mencampurkan keduanya."
           },
           "allowScripts": {
-            "label": "Allow scripts",
-            "description": "Allow execution of javascript code included in <script> tags"
+            "label": "Izinkan skrip",
+            "description": "Izinkan eksekusi kode javascript yang disertakan dalam tag <script>"
           },
           "values": {
-            "label": "Interpolated values",
-            "description": "You can insert values using the {{variableName}} notation into your HTML content.",
-            "add": "Add a value",
-            "remove": "Delete the value"
+            "label": "Value sisipan",
+            "description": "Anda dapat memasukkan nilai menggunakan notasi {{variableName}} ke dalam konten HTML Anda.",
+            "add": "Tambahkan sebuah value",
+            "remove": "Hapus value"
           },
           "markdown": {
-            "label": "Interpreting content as Markdown",
-            "description": "Your content can contain both HTML and Markdown for easy formatting. However, if you prefer to keep it unaltered by the Markdown rendering engine, enable this option."
+            "label": "Menafsirkan konten sebagai Markdown",
+            "description": "Konten Anda dapat berisi HTML dan Markdown untuk memudahkan pemformatan. Namun, jika Anda memilih untuk tidak mengubahnya oleh mesin rendering Markdown, aktifkan opsi ini."
           },
           "tag": {
-            "label": "HTML tag containing",
-            "description": "Your rich text will be contained in a <div> tag by default. You can choose another one by indicating it here."
+            "label": "Tag HTML berisi",
+            "description": "Teks Anda yang kaya akan dimuat dalam tag <div> secara default. Anda dapat memilih yang lain dengan menunjukkannya di sini."
           }
         }
       },
       "hero": {
         "settings": {
           "title": {
-            "label": "Title",
-            "description": "Hero title."
+            "label": "Gelar",
+            "description": "Gelar pahlawan."
           },
           "lead": {
-            "label": "Lead",
-            "description": "Hero lead."
+            "label": "Jejak",
+            "description": "Jejak pahlawan."
           },
           "content": {
-            "label": "Content",
-            "description": "You can customize this section with a list of any available Blocks."
+            "label": "Konten",
+            "description": "Anda dapat menyesuaikan bagian ini dengan daftar Blok yang tersedia."
           },
           "img": {
             "label": "Image",
-            "description": "Une image idéealement au format carré et de bonne taille."
+            "description": "Sebuah gambar yang ideal dalam format yang benar dan indah."
           },
           "backgroundColor": {
-            "label": "Couleur de fond",
-            "description": "La couleur de fond du Hero."
+            "label": "Warna latar belakang",
+            "description": "Warna kesukaan sang pahlawan."
           },
           "level": {
-            "label": "Title level",
-            "description": "Defines the level of the tag applied to the title."
+            "label": "Tingkat judul",
+            "description": "Menentukan tingkat tag yang diterapkan pada judul."
           }
         }
       },
       "blockslist": {
         "settings": {
           "blocks": {
-            "label": "Blocks",
-            "description": "You can complete your content with a list of Blocks.",
-            "add": "Add a Block",
-            "remove": "Delete Block",
+            "label": "Blok",
+            "description": "Anda dapat melengkapi konten Anda dengan daftar Blok.",
+            "add": "Tambahkan sebuah Blok",
+            "remove": "Hapus Blok",
             "items": {
-              "label": "Block",
-              "description": "Block specification.",
+              "label": "Blok",
+              "description": "Spesifikasi blok.",
               "name": {
-                "label": "Block name",
-                "description": "Name of Block to display"
+                "label": "Nama Blok",
+                "description": "Nama Blok yang akan ditampilkan"
               }
             }
           }
@@ -1309,13 +1277,13 @@
         "settings": {
           "blocks": {
             "firstBlock": {
-              "label": "First block"
+              "label": "Blok pertama"
             },
             "secondBlock": {
-              "label": "Second block"
+              "label": "Blok kedua"
             },
             "genericBlocks": {
-              "description": "Block specification."
+              "description": "Spesifikasi blok."
             }
           }
         }
@@ -1323,16 +1291,16 @@
       "blocksGrid": {
         "settings": {
           "blocks": {
-            "label": "Blocks",
-            "description": "You can complete your content with a list of Blocks.",
-            "add": "Add a Block",
-            "remove": "Delete Block",
+            "label": "Blok",
+            "description": "Anda dapat melengkapi konten Anda dengan daftar Blok.",
+            "add": "Tambahkan sebuah Blok",
+            "remove": "Hapus Blok",
             "items": {
-              "label": "Block",
-              "description": "Block specification.",
+              "label": "Blok",
+              "description": "Spesifikasi blok.",
               "name": {
-                "label": "Block name",
-                "description": "Name of Block to display"
+                "label": "Nama Blok",
+                "description": "Nama Blok yang akan ditampilkan"
               }
             }
           }
@@ -1341,44 +1309,44 @@
       "footer": {
         "settings": {
           "content": {
-            "label": "Footer content",
-            "description": "You can configure your footer using a list of Blocks."
+            "label": "Konten catatan kaki",
+            "description": "Anda dapat mengonfigurasi footer Anda dengan penggunaan daftar Blok."
           }
         }
       },
       "image": {
         "settings": {
           "src": {
-            "label": "Image",
-            "description": "Choose an image on your storage space."
+            "label": "Gambar",
+            "description": "Pilih gambar di ruang penyimpanan Anda."
           },
           "caption": {
             "label": "Caption",
-            "description": "Enter a text to accompany your image."
+            "description": "Masukkan teks untuk menjelaskan gambar Anda."
           },
           "alt": {
-            "label": "Textual alternative",
-            "description": "Text describing the image to help with accessibility."
+            "label": "Alternatif tekstual",
+            "description": "Teks yang menjelaskan gambar untuk membantu aksesibilitas."
           }
         }
       },
       "breadcrumbs": {
         "settings": {
           "links": {
-            "label": "Links",
-            "description": "Breadcrumb links in order of display.",
+            "label": "Link",
+            "description": "Link breadcrumb dalam urutan tampilan.",
             "items": {
               "label": "Link",
-              "description": "Link settings",
-              "add": "Add a link",
-              "remove": "Delete link",
+              "description": "Setelan link",
+              "add": "Menambah sebuah link",
+              "remove": "Menghapus link",
               "href": {
-                "label": "Link to one of your Pages",
-                "description": "Web address to one of your Workspace's Page."
+                "label": "Terhubung ke salah satu halaman Anda",
+                "description": "Alamat web ke salah satu Halaman Arena kerja Anda."
               },
               "_label": {
-                "label": "Link label",
-                "description": "Displayed label."
+                "label": "Tanda koneksi",
+                "description": "Tampilan label."
               }
             }
           }
@@ -1388,20 +1356,20 @@
         "settings": {
           "direction": {
             "horizontal": "Horizontal",
-            "vertical": "Vertical",
-            "label": "Direction"
+            "vertical": "Vertikal",
+            "label": "Arah"
           },
           "tabs": {
-            "label": "Tabs",
-            "description": "Define your tabs and their associated content",
+            "label": "Tab",
+            "description": "Tentukan tab Anda dan konten terkaitnya",
             "items": {
               "label": "Tab",
-              "description": "Define a tab",
-              "add": "Add a tab",
-              "remove": "Remove tab",
+              "description": "Tentukan sebuah tab",
+              "add": "Tambahkan sebuah tab",
+              "remove": "Hapus tab",
               "content": {
-                "label": "Content",
-                "description": "The content displayed when the onget is selected."
+                "label": "Konten",
+                "description": "Konten yang ditampilkan ketika awal ini yang dipilih."
               }
             }
           }
@@ -1410,247 +1378,265 @@
       "signin": {
         "settings": {
           "label": {
-            "label": "Button label (default \"connection\")",
-            "description": "Change the button label"
+            "label": "Label tombo (default \"connection\")",
+            "description": "Ubah label tombol"
           },
           "up": {
-            "label": "Signup ?",
-            "description": "Check to display a button to create an account"
-          },
-          "redirect": {
-            "label": "Redirect to",
-            "description": "By default, the home page will be displayed after subscription. You can choose another page."
+            "label": "Mendaftar ?",
+            "description": "Centang untuk menampilkan tombol pembuat akun"
           }
         }
       }
     },
-    "reload": "Reload page"
+    "reload": "Muat ulang halaman"
   },
   "blocks": {
-    "notFound": "Block not found.",
     "create": {
-      "defaultName": "Block"
+      "defaultName": "Blok"
     },
     "source": {
-      "label": "See code",
-      "close": "Hide code",
-      "help": "Displays the structure of the automation in raw format"
+      "label": "Tampilkan kode",
+      "close": "Sembunyikan kode",
+      "help": "Tampilan struktur otomatisasi dalam format mentah"
     },
     "details": {
-      "title": "Edit Block details",
+      "title": "Edit detailnya",
       "name": {
-        "label": "Block title"
+        "label": "Judul Blok"
       },
       "description": {
-        "label": "Description"
+        "label": "Deskripsi"
       },
       "slug": {
         "label": "Slug"
       },
       "photo": {
-        "label": "Preview image"
+        "label": "Tampilan gambar"
       },
       "url": {
-        "label": "Javascript module URL (advanced)",
-        "description": "You can create your Block as a React component using <a href=\"https://gitlab.com/prisme.ai/block-starter\">this template</a>."
+        "label": "URL modul Javascript (lanjutan)",
+        "description": "Anda dapat membuat Blok dan menjadikannya sebagai sebuah komponen React yang menggunakan <a href=\"https://gitlab.com/prisme.ai/block-starter\">this template</a>."
       }
     },
     "save": {
-      "label": "Save",
-      "toast": "Block has been saved",
-      "error": "Saving failed",
+      "label": "Simpan",
+      "toast": "Blok teal disimpan",
+      "error": "Gagal menyimpan",
       "reason": "{{context}}",
-      "reason_AlreadyUsedError": "Slug is already in use, please choose another one.",
-      "reason_InvalidSlugError": "Slug contains invalid characters."
+      "reason_AlreadyUsedError": "Slug sudah digunakan, silahkan pilih yang lain.",
+      "reason_InvalidSlugError": "Slug memiliki karakter yang tidak valid."
     },
     "duplicate": {
-      "help": "Duplicate Block",
-      "success": "Block has been duplicated",
-      "error": "An error occurs while trying to duplicate Block."
+      "help": "Duplikasi Blok",
+      "success": "Blok telah diduplikasi",
+      "error": "Terjadi sebuah kesalahan saat melakukan duplikasi Blok."
     },
     "preview": {
-      "label": "Preview",
+      "label": "Tampilan",
       "config": {
-        "label": "Block setup",
-        "reset": "Reset to default values"
+        "label": "Blok konfigurasi",
+        "reset": "Reset ke value defaultnya"
       },
       "toggleWidth": {
-        "desktop": "Display full width",
-        "tablet": "Display in tablet width",
-        "mobile": "Display in mobile width"
+        "desktop": "Tampilkan dalam format layar penuh",
+        "tablet": "Tampilkan dalam format tablet",
+        "mobile": "Tampilkan dalam format ponsel"
       }
     },
     "edit": "Edit",
     "builder": {
       "add": {
-        "label": "Add a Block"
+        "label": "Tambahkan sebuah Blok"
       },
       "className": {
-        "help": "Identify the Block with a CSS class.",
-        "placeholder": "unknown-block"
+        "help": "Identifikasi Blok dengan kelas CSS.",
+        "placeholder": "Blok tidak dikenal"
       },
       "setup": {
-        "label": "Settings"
+        "label": "Penyetelan"
       },
       "lifecycle": {
-        "label": "Lifecycle"
+        "label": "Gaya hidup"
       },
       "style": {
-        "label": "Style"
-      },
-      "logical": {
-        "label": "Logical"
-      },
-      "advanced": {
-        "label": "Advanced"
+        "label": "Gaya"
       },
       "picker": {
-        "builtIn": "Built-in",
-        "workspace": "{{from}} (this Workspace)",
-        "title": "Choose a Block. You can access new Blocks by installing their Apps."
+        "builtIn": "Pembuat",
+        "workspace": "{{from}} (Area kerja ini)",
+        "title": "Pilih sebuah Blok. Anda dapat mengakses Blok baru dengan menginstal Aplikasinya."
       },
       "delete": {
-        "label": "Delete",
-        "confirm": "Are you sure you want to remove this Block?"
+        "label": "Hapus",
+        "confirm": "Apakah Anda yakin ingin menghapus Blok ini?"
       }
     }
   },
   "expert": {
-    "show": "Edit the source code",
-    "security": "Manage roles",
-    "hide": "Hide the source code",
+    "show": "Edit kode sumber",
+    "security": "Kelola peran",
+    "hide": "Sembunyikan kode sumber",
     "exit": {
-      "confirm_title": "Changes in progress",
-      "confirm_message": "You are about to leave without saving. Are you sure?",
-      "cancel": "Wait",
-      "confirm": "Leave !"
+      "confirm_title": "Perubahan sedang berlangsung",
+      "confirm_message": "Apakah Anda yakin tidak perlu menyimpan sebelum menutup ini?",
+      "cancel": "Tunggu",
+      "confirm": "Tinggalkan !"
     },
     "save": {
-      "help": "Save",
-      "confirm": "Your workspace is saved",
-      "fail": "Your workspace is invalid and could not be saved."
+      "help": "Simpan",
+      "confirm": "Area kerja Anda disimpan",
+      "fail": "Area kerja Anda tidak valid dan tidak dapat disimpan."
     }
   },
-  "404": "This workspace does not exist. Return to your home page.",
-  "whatsNew": "What's new",
-  "help": "Help?",
+  "404": "Area kerja ini tidak ada. Kembali ke halaman beranda Anda.",
+  "whatsNew": "Apa yang baru",
+  "help": "Bantuan?",
   "share": {
-    "label": "Share",
+    "label": "Membagikan",
     "email": "Email",
-    "emailOrRole": "Email or Role",
-    "displayName": "User",
-    "role": "Role",
-    "access": "Access",
-    "actions": "Actions",
-    "delete": "Remove access",
+    "emailOrRole": "Email atau Peran",
+    "displayName": "Pengguna",
+    "role": "Peran",
+    "access": "Akses",
+    "actions": "Tindakan",
+    "delete": "Hapus akses",
     "roles": {
-      "owner": "Owner",
+      "owner": "Pemilik",
       "editor": "Editor"
     },
-    "leave": "You no longer have access to the {{name}} Workspace.",
-    "notme": "You are already the owner of this Workspace."
+    "leave": "Anda tidak lagi memiliki akses ke Area kerja {{name}}.",
+    "notme": "Anda sudah menjadi pemilik Area kerja ini."
   },
   "languages": {
     "add": {
-      "tooltip": "Add {{lang}}"
+      "tooltip": "Tambahkan {{lang}}"
     },
     "available": {
-      "title": "Available languages"
+      "title": "Bahasa yang tersedia"
     },
     "delete": {
-      "tooltip": "Delete this language"
+      "tooltip": "Hapus bahasa ini"
     },
     "set": {
-      "tooltip": "Add a translation",
-      "title": "Added languages"
+      "tooltip": "Tambahkan terjemahan",
+      "title": "Bahasa yang ditambahkan"
+    }
+  },
+  "details": {
+    "title": "",
+    "title_workspaces": "Pengaturan Area kerja",
+    "title_automations": "Pengaturan otomatisasi",
+    "title_pages": "Pengaturan halaman",
+    "title_apps": "Pengaturan aplikasi",
+    "title_blocks": "Pengaturan blok",
+    "save": "Simpan",
+    "delete": {
+      "label": "Hapus",
+      "label_workspaces": "Hapus Area kerja",
+      "label_automations": "Hapus otomatisasi",
+      "label_pages": "Hapus halaman",
+      "confirm": {
+        "title": "Apakah Anda ingin menghapusApakah Anda ingin menghapus \"{{name}}\" ?",
+        "title_workspaces": "Apakah Anda ingin menghapus Area kerja \"{{name}}\" ?",
+        "title_automation": "Apakah Anda ingin menghapus \"{{name}}\" automatisasi?",
+        "title_pages": "Apakah Anda ingin menghapus halaman \"{{name}}\"?",
+        "title_apps": "Hapus",
+        "content": "Awas, data akan hilang.",
+        "content_apps": "Apakah Anda yakin ingin menghapus \"{{name}}\" dari area kerja Anda ?",
+        "ok": "Ya, silahkan dihapus",
+        "ok_apps": "Dihapus {{name}}",
+        "cancel": "Tidak, tolong jangan dihapus"
+      },
+      "toast_automations": "Otomatisasi telah dihapus",
+      "toast_pages": "Halaman telah dihapus"
     }
   },
   "schema": {
     "property": {
       "edit": "Edit",
-      "add": "Add a property",
-      "delete": "Delete the property",
-      "name": "Property name:",
-      "details": "Details",
-      "items": "Array items",
-      "required": "Required",
-      "title": "Field label",
+      "add": "Tambahkan sebuah properti",
+      "delete": "Hapus properti",
+      "name": "Nama properti:",
+      "details": "Detail",
+      "items": "Item susunan",
+      "required": "Diperlukan",
+      "title": "Label bidang",
       "description": {
-        "label": "Field description",
-        "description": "This text will be displayed in a bubble exactly like this one."
+        "label": "Description bidang",
+        "description": "Teks ini akan ditampilkan dalam sebuah gelembung persis seperti ini."
       },
       "placeholder": {
-        "label": "Placeholder",
-        "description": "This text will be shown inside the input."
+        "label": "Penampung",
+        "description": "Teks ini akan ditampilkan di dalam input."
       },
       "type": {
-        "label": "Type of value",
-        "description": "The value will be of the type you specify"
+        "label": "Jenis value",
+        "description": "Value nya akan sesuai dengan tipe yang Anda tentukan"
       },
       "widget": {
-        "label": "Display mode",
-        "description": "Each type offers a particular display, but some offer alternatives. For example, you can force the choice of a date with the Date display."
+        "label": "Model tampilan",
+        "description": "Masing-masing jenis menawarkan tampilan tertentu, namun ada juga yang menawarkan alternatif. Misalnya, Anda dapat memaksakan pilihan tanggal dengan tampilan Tanggal."
       },
       "enum": {
-        "label": "List of specific values",
-        "description": "You can impose a value from a specific selection. A drop-down menu will then be displayed to the user.",
-        "add": "Add a value",
-        "remove": "Delete this value",
+        "label": "Daftar value khusus",
+        "description": "Anda dapat menerapkan sebuah value dari pilihan tertentu. Sebuah menu drop-down kemudian akan ditampilkan keypads pengguna.",
+        "add": "Tambahkan sebuah value",
+        "remove": "Hapus value ini",
         "key": "Label",
         "value": "Value"
       }
     },
     "types": {
-      "string": "Text",
-      "localized_string": "Localized text",
+      "string": "Teks",
+      "localized_string": "Teks yang terlokalisasi",
       "boolean": "Boolean",
-      "localized_boolean": "Localized boolean",
+      "localized_boolean": "Boolean yang terlokalisasi",
       "number": "Number",
-      "localized_number": "Localized number",
-      "object": "Object",
-      "array": "Array",
-      "any": "Any type"
+      "localized_number": "Nomor yang terlokalisasi",
+      "object": "Objek",
+      "array": "Himpunan",
+      "any": "Jenis apa pun"
     },
     "widget": {
-      "default": "By default",
-      "default_description": "A basic field related to the value type.",
+      "default": "Secara standar",
+      "default_description": "Sebuah bidang dasar yang terkait dengan tipe nilai.",
       "name": "{{context}}",
-      "name_upload": "Sending a file",
-      "description_upload": "An upload area will be displayed. The file will be uploaded to our cloud and the url will be stored as a value in your data object.",
-      "name_textarea": "Text area",
-      "description_textarea": "A more comfortable writing area than a simple field.",
-      "name_date": "Date",
-      "description_date": "A calendar will be displayed. The value will be formatted as a date.",
-      "name_enum": "Drop-down list",
-      "description_enum": "You choose the list of possible values. Only one of these values will be allowed.",
+      "name_upload": "Mengirim sebuah file",
+      "description_upload": "Area unggahan akan ditampilkan. File akan diunggah ke cloud kami dan URLnya akan disimpan sebagai sebuah nilai di objek data Anda.",
+      "name_textarea": "Area teks",
+      "description_textarea": "Sebuah area menulis yang lebih nyaman dibandingkan sebuah bidang sederhana.",
+      "name_date": "Tanggal",
+      "description_date": "Sebuah kalender akan ditampilkan. Nilainya akan déformat sebagai tanggal.",
+      "name_enum": "Daftar tarik-turun",
+      "description_enum": "Anda memilih daftar nilai yang mungkin. Hanya satu dari nilai ini yang diperbolehkan.",
       "name_radio": "Radio",
-      "description_radio": "List of values in the form of radio buttons",
-      "name_autocomplete": "Autocompletion",
-      "description_autocomplete": "Provides autocompletion during typing",
-      "name_color": "Color",
-      "description_color": "Color selector",
+      "description_radio": "Daftar nilai dalam bentuk tombol radio",
+      "name_autocomplete": "Pelengkapan otomatis",
+      "description_autocomplete": "Menyediakan pelengkapan otomatis saat mengetik",
+      "name_color": "Warnar",
+      "description_color": "Pemilihan warna",
       "name_html": "HTML",
-      "description_html": "Rich content (HTML)",
-      "name_slider": "Slider",
-      "description_slider": "Select a numeric value on a slider",
-      "name_tags": "Multiple select",
-      "description_tags": "Select multiple values"
+      "description_html": "Konten yang kaya (HTML)",
+      "name_slider": "Penggeser",
+      "description_slider": "Pilih nilai numerik di sebuah penggeser",
+      "name_tags": "Pilihan ganda",
+      "description_tags": "Pilih beberapa value"
     },
     "properties": {
-      "label": "Object properties",
-      "description": "Definition of the object's properties",
-      "add": "Add a property"
+      "label": "Properti objek",
+      "description": "Definisi properti objek",
+      "add": "Tambahkan sebuah properti"
     },
     "items": {
-      "label": "Items",
-      "description": "Definition of each element of the table"
+      "label": "Barang",
+      "description": "Definisi setiap elemen tabel"
     },
     "uiOptions": {
-      "label": "Field options",
+      "label": "Opsi bidang",
       "tags": {
-        "title": "Tags",
+        "title": "Tanda",
         "options": {
-          "title": "Option"
+          "title": "Opsi"
         },
         "value": {
           "title": "Value"
@@ -1659,18 +1645,18 @@
           "title": "Label"
         },
         "color": {
-          "title": "Color"
+          "title": "Warna"
         },
         "allowNew": {
-          "title": "Allow new entris",
-          "description": "Allow additional properties, other than the listed ones"
+          "title": "Izinkan entri baru",
+          "description": "Izinkan properti tambahan, selain yang tercantum"
         }
       },
       "slider": {
         "steps": {
-          "add": "Add a step",
-          "remove": "Delete step",
-          "label": "Steps",
+          "add": "Tambahkan sebuah langkah",
+          "remove": "Hapus langkah",
+          "label": "Langkah",
           "value": {
             "label": "Value"
           },
@@ -1678,86 +1664,86 @@
             "label": "Label"
           },
           "description": {
-            "label": "Description"
+            "label": "Deskripsi"
           }
         }
       }
     }
   },
   "feed": {
-    "filter": "Filters",
-    "type": "The <event>{{context}}</event> event has been fired",
-    "type_workspaces.created": "The Workspace was created",
-    "type_workspaces.updated": "The Workspace has been updated",
-    "type_workspaces.deleted": "The Workspace has been removed",
-    "type_workspaces.configured": "The Workspace configuration has been updated",
-    "type_workspaces.apps.installed": "The {{appSlug}} app has been installed as <app>{{appName}}</app>",
-    "type_workspaces.apps.uninstalled": "The app {{appName}} has been uninstalled",
-    "type_workspaces.apps.configured": "The app <app>{{appName}}</app> has been configured",
-    "type_workspaces.automations.created": "The automation <automation>{{automation}}</automation> has been created",
-    "type_workspaces.automations.updated": "The automation <automation>{{automation}}</automation> has been updated",
-    "type_workspaces.automations.deleted": "The automation <automation>{{automation}}</automation> has been removed",
-    "type_workspaces.pages.updated": "The <page>{{page}}</page> has been updated",
-    "type_workspaces.versions.published": "The <tooltip title=\"{{event.payload.version.description}}\">{{event.payload.version.name}}</tooltip> version has been created. <rollback>Rollback to this version</rollback>",
-    "type_workspaces.versions.rollback": "Version {{event.payload.version.name}} has been rollbacked",
-    "type_workspaces.permissions.shared": "The Workspace has been shared with {{share}}",
-    "type_workspaces.permissions.deleted": "The Workspace is no longer shared with {{share}}",
-    "type_apps.published": "The app {{appName}} has been published",
-    "type_runtime.automations.executed": "The automation <automation>{{automation}}</automation> has been executed",
-    "type_runtime.interactions.triggered": "Interaction triggered from a {{event.payload.trigger.type}} {{event.payload.trigger.value}} on automation <automation>{{event.payload.automation}}</automation>",
-    "type_runtime.automations.scheduled": "The automation <automation>{{automation}}</automation> has been scheduled",
-    "type_runtime.webhooks.triggered": "The automation <automation>{{automation}}</automation> was triggered by URL",
-    "type_runtime.schedules.triggered": "The automation <automation>{{automation}}</automation> was triggered according to its schedule",
-    "type_runtime.waits.pending": "Automation <automation>{{automation}}</automation> is pending {{waits}}",
-    "type_runtime.waits.pending_oneOf_one": "of the event <event>{{events}}</event>",
-    "type_runtime.waits.pending_oneOf_other": "of events <event>{{events}}</event>",
-    "type_runtime.waits.pending_timeout": "for {{timeout}}s",
-    "type_runtime.waits.fulfilled": "The automation <automation>{{automation}}</automation> allowed another to resume following the event <event>{{event}}</event>",
-    "type_runtime.fetch.failed": "HTTP request failed",
-    "type_runtime.contexts.updated": "Updated context",
-    "type_apikeys.updated": "An API key has been updated",
-    "type_apikeys.created": "An API key has been created",
-    "type_apikeys.deleted": "An API key has been deleted",
-    "type_error": "<error>An error has occurred</error>",
-    "replay": "Emit this event again with same payload."
+    "filter": "Filter",
+    "type": "Kegiatan <event>{{context}}</event> sudah dibatalkan",
+    "type_workspaces.created": "Area kerja telah dibuat",
+    "type_workspaces.updated": "Area kerja telah diperbarui",
+    "type_workspaces.deleted": "Area kerja telah dihapus",
+    "type_workspaces.configured": "Konfigurasi Area kerja telah diperbarui",
+    "type_workspaces.apps.installed": "Aplikasi {{appSlug}} telah diinstal sebagai <app>{{appName}}</app>",
+    "type_workspaces.apps.uninstalled": "Aplikasi {{appName}} telah dihapus",
+    "type_workspaces.apps.configured": "Aplikasi <app>{{appName}}</app> telah dikonfigurasi",
+    "type_workspaces.automations.created": "Otomatisasi <automation>{{automation}}</automation> telah dibuat",
+    "type_workspaces.automations.updated": "Otomatisasi <automation>{{automation}}</automation> telah diperbarui",
+    "type_workspaces.automations.deleted": "Otomatisasi <automation>{{automation}}</automation> telah dihapus",
+    "type_workspaces.pages.updated": "Halaman <page>{{page}}</page> telah diperbarui",
+    "type_workspaces.versions.published": "Versi <tooltip title=\"{{event.payload.version.description}}\">{{event.payload.version.name}}</tooltip> yang dimaksud telah dibuat. <rollback>Rollback to this version</rollback>",
+    "type_workspaces.versions.rollback": "Versi {{event.payload.version.name}} telah dibatalkan",
+    "type_workspaces.permissions.shared": "Area kerja telah dibagikan dengan {{share}}",
+    "type_workspaces.permissions.deleted": "Area kerja tidak magi digunakan bersama {{share}}",
+    "type_apps.published": "Aplikasi {{appName}} telah diterbitkan",
+    "type_runtime.automations.executed": "Otomation <automation>{{automation}}</automation> telah dieksekusi",
+    "type_runtime.interactions.triggered": "Interaksi dipicu dari sebuah {{event.payload.trigger.type}} {{event.payload.trigger.value}} pada otomatisasi <automation>{{event.payload.automation}}</automation>",
+    "type_runtime.automations.scheduled": "Otomatisasi <automation>{{automation}}</automation> telah dijadwalkan",
+    "type_runtime.webhooks.triggered": "Otomatisasi <automation>{{automation}}</automation> dipicu oleh URL",
+    "type_runtime.schedules.triggered": "Otomatisasi <automation>{{automation}}</automation> depicu sesuai dengan jadwalnya",
+    "type_runtime.waits.pending": "Automatisasi <automation>{{automation}}</automation> tertunda {{waits}}",
+    "type_runtime.waits.pending_oneOf_one": "dari kegiatan tersebut <event>{{events}}</event>",
+    "type_runtime.waits.pending_oneOf_other": "dari kegiatan <event>{{events}}</event>",
+    "type_runtime.waits.pending_timeout": "untuk {{timeout}}s",
+    "type_runtime.waits.fulfilled": "Otomatisasi <automation>{{automation}}</automation> memungkinkan orang lain melanjutkan kegiatan tersebut <event>{{event}}</event>",
+    "type_runtime.fetch.failed": "Permintaan HTTP gaggle",
+    "type_runtime.contexts.updated": "Konteks yang diperbarui",
+    "type_apikeys.updated": "Sebuah kunci API telah diperbarui",
+    "type_apikeys.created": "Sebuah kunci API telah dibuat",
+    "type_apikeys.deleted": "Sebuah kunci API telah dihapus",
+    "type_error": "<error>Terjadi sebum kesalahan</error>",
+    "replay": "Keluarkan kegiatan ini dengan muatan yang sama."
   },
   "panel": {
-    "close": "Close",
-    "enlarge": "Enlarge",
-    "enlarge_off": "Reduce"
+    "close": "Tutup",
+    "enlarge": "Perbesar",
+    "enlarge_off": "Perkecil"
   },
   "form": {
-    "raw": "Insert a raw value (allows you to enter text, and therefore interpolated variables)",
-    "raw_hide": "Respect the type of data required",
+    "raw": "Masukkan value baku (yang memungkinkan Anda memasukkan teks, dan yang memunculkan variasi sisipan)",
+    "raw_hide": "Perhatikan benar jenis data yang diperlukan",
     "html": "Edit in HTML format",
-    "html_hide": "Be careful, by returning to the simple editing mode, you risk losing tags or HTML attributes not managed by it.",
+    "html_hide": "Hati-hati, dengan kembali ke mode pengeditan sederhana, Anda dapat kehilangan tag atau atribut HTML yang tidak dikelolanya.",
     "blockSelector": {
       "name": {
-        "label": "Choice of Block",
-        "description": "Choose a Block among those proposed by Prisme.ai and those from the Apps you have installed on your Workspace."
+        "label": "Pilihan Blok",
+        "description": "Pilih sebuah Blok yang diusulkan Prisme.ai dan Blok dari Aplikasi yang telah Anda instal di Area kerja Anda."
       }
     }
   },
   "onboarding": {
     "step1": {
-      "title": "Ready to use the next level of IA low-code platform ?",
-      "text": "Firstable you can find help in the Prisme.ai chat just here, please go to the next step or skip this to begin your project"
+      "title": "Siap menggunakan platform kode rendah IA tingkat berikutnya ?",
+      "text": "Pertama, Anda dapat menemukan bantuan di chat Prisme.ai di sini, silahkan lanjutkan ke langkah berikutnya atau lewati ini untuk memulai proyek Anda"
     },
     "step2": {
-      "title": "You can choose a template or dedicated workspace",
-      "text": "Feel free to use some of our workspace to accelerate the creation of your project"
+      "title": "Anda dapat memilih template atau Area kerja khusus",
+      "text": "Jangan ragu untuk menggunakan beberapa area kerja kami untuk mempercepat pembuatan proyek Anda"
     },
     "step3": {
-      "title": "You can choose a template or dedicated workspace",
-      "text": "Or you can create from scratch your workspace and follow the documentation"
+      "title": "Anda dapat memilih template atau area kerja khusus",
+      "text": "Atau Anda dapat membuat area kerja Anda dari awal dan mengikuti dokumentasinya"
     },
     "step4": {
-      "title": "Welcome in your first workspace",
-      "text": "On the left you can find the sidebar with the different content"
+      "title": "Selamat datang di area kerja pertama Anda",
+      "text": "Di sebelah kiri, Anda dapat menemukan bar sisi dengan konten berbeda"
     },
     "step5": {
-      "title": "Welcome in your first workspace",
-      "text": "On the center you can find in the first tab the activity, you can find more information if you <a href=\"{{link}}\">click here</a>."
+      "title": "Selamat datang di Area kerja pertama Anda",
+      "text": "Di bagian tengah, Anda dapat menemukan aktivitas di tab pertama, Anda dapat menemukan informasi lebih lanjut jika Anda <a href=\"{{link}}\">mengklik di sini</a>."
     }
   }
 }

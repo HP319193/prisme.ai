@@ -1520,6 +1520,15 @@
       "delete": {
         "label": "Delete",
         "confirm": "Are you sure you want to remove this Block?"
+      },
+      "copy": {
+        "label": "Copy Block"
+      },
+      "cut": {
+        "label": "Cut Block"
+      },
+      "paste": {
+        "label": "Paste Block"
       }
     }
   },
@@ -1670,8 +1679,15 @@
           "title": "Color"
         },
         "allowNew": {
-          "title": "Allow new entris",
+          "title": "Allow new entries",
           "description": "Allow additional properties, other than the listed ones"
+        }
+      },
+      "upload": {
+        "title": "Upload",
+        "accept": {
+          "title": "Authorized type of files",
+          "description": "Defines the authorized types of files for this input. You can separate each type by a comma. A type can be defined by its MIME type as well as its extension (.pdf)."
         }
       },
       "slider": {

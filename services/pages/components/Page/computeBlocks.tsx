@@ -89,7 +89,7 @@ export function applyFilter(filter: string, value: string, values: any) {
 export function interpolateExpression(expression: string, values: any) {
   let newValue = expression;
   // Unique value, can be casted
-  const uniqueMatch = expression.match(/^{{[^}]+}}$/);
+  const uniqueMatch = `${expression}`.match(/^{{[^}]+}}$/);
 
   const matches = expression.match(/{{[^}]+}}/g);
 
