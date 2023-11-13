@@ -33,3 +33,11 @@ export interface EventsStore {
   ): Promise<Prismeai.WorkspaceUsage>;
   closeWorkspace(workspaceId: string): Promise<any>;
 }
+
+export interface EventIndexStats {
+  count: number;
+  lastIndex: string;
+  indices: { name: string; size: number }[];
+}
+
+export type EventsIndicesStats = Record<string, EventIndexStats>;
