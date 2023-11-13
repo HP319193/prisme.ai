@@ -11,13 +11,14 @@ const ENVS = [
 ];
 
 //services/pages/.next/server/pages/default/404.html
-function rewriteConfig() {
-  const errorFile = fs.readFileSync(
-    '/www/services/pages/.next/server/pages/default/404.html'
-  );
+//const path = '/www/services/pages/.next/server/pages/';
+const path = `${__dirname}/../.next/server/pages/`;
+
+function rewriteConfig(lang) {
+  const errorFile = fs.readFileSync(`${path}/${lang}/404.html`);
 
   fs.writeFileSync(
-    '/www/services/pages/.next/server/pages/default/404.html',
+    `${path}/${lang}/404.html`,
     ENVS.reduce(
       (prev, env) =>
         prev.replace(
@@ -28,4 +29,10 @@ function rewriteConfig() {
     )
   );
 }
-rewriteConfig();
+
+const langs = fs
+  .readdirSync(path)
+  .filter(
+    (file) => file.match(/^[a-z]/) && fs.statSync(path + file).isDirectory()
+  );
+langs.forEach(rewriteConfig);
