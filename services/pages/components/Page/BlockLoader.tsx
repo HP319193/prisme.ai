@@ -113,7 +113,9 @@ export const BlockLoader: TBlockLoader = ({
             ...prevConfig.current,
             ...block,
           },
-          recursiveConfig
+          recursiveConfig,
+          true // merged from a templated Block and a config, so there should
+          // not exist any original here
         ),
         blockName: 'BlocksList',
       };
