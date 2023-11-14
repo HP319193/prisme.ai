@@ -39,7 +39,6 @@ import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
 import {
   IMPORT_BATCH_SIZE,
   INIT_WORKSPACE_SECURITY,
-  SLUG_VALIDATION_REGEXP,
   WORKSPACE_SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { fetchUsers, NativeSubjectType } from '@prisme.ai/permissions';

@@ -127,7 +127,7 @@ describe('Basic ops should call accessManager, DSULStorage, broker', () => {
     const workspace: Prismeai.Workspace = {
       id: DEFAULT_ID,
       name: 'someUpdatedName',
-      slug: 'someUpdatedSlug',
+      slug: 'someupdatedslug',
       blocks: {
         myBlock: {
           name: 'blockName',
