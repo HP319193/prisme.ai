@@ -1070,6 +1070,19 @@ declare namespace Prismeai {
             scope?: "all" | "automation";
         };
     }
+    export interface CleanedEvents {
+        /**
+         * example:
+         * events.cleaned
+         */
+        type: "events.cleaned";
+        payload: {
+            indicesWithoutDatastream?: any;
+            inactiveDatastreams?: any;
+            emptyIndices?: any;
+            expiredEvents?: any;
+        };
+    }
     export interface Comment {
         /**
          * Do nothing but display a comment in instructions list

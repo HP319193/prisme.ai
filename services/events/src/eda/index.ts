@@ -30,6 +30,8 @@ export enum EventType {
 
   TriggeredInteraction = 'runtime.interactions.triggered',
   ExecutedAutomation = 'runtime.automations.executed',
+
+  CleanedEvents = 'events.cleaned',
 }
 
 export class CallbackContext {

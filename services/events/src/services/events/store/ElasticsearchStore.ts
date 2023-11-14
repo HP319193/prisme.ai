@@ -64,7 +64,6 @@ export class ElasticsearchStore implements EventsStore {
       this.namespace ? '-' + this.namespace : ''
     }`;
 
-    const ROLLOVER_AT_DAYS = 30;
     await this.client.ilm.putLifecycle({
       policy: policyName,
       body: {
@@ -73,16 +72,9 @@ export class ElasticsearchStore implements EventsStore {
             hot: {
               actions: {
                 rollover: {
-                  max_age: `${ROLLOVER_AT_DAYS}d`,
                   max_size: '40GB',
                   max_primary_shard_size: '40GB',
                 },
-              },
-            },
-            delete: {
-              min_age: `${EVENTS_RETENTION_DAYS - ROLLOVER_AT_DAYS}d`,
-              actions: {
-                delete: {},
               },
             },
           },
@@ -189,6 +181,9 @@ export class ElasticsearchStore implements EventsStore {
   }
 
   private getWorkspaceEventsIndexName(workspaceId: string) {
+    if (typeof workspaceId === 'undefined') {
+      workspaceId = 'platform';
+    }
     return `events${
       this.namespace ? '-' + this.namespace : ''
     }-${workspaceId}`.toLocaleLowerCase();
@@ -1011,20 +1006,85 @@ export class ElasticsearchStore implements EventsStore {
     };
   }
 
-  async cleanupIndices(opts: { dryRun?: boolean }) {
-    const { dryRun = false } = opts;
+  async deleteExpiredEvents(dryRun: boolean) {
+    let expiredEvents;
+    const query = {
+      bool: {
+        filter: [
+          {
+            range: {
+              createdAt: {
+                lte: `now-${EVENTS_RETENTION_DAYS}d`,
+              },
+            },
+          },
+        ],
+      },
+    };
+    try {
+      let result;
+      if (dryRun) {
+        const shouldBeDeleted = await this.client.search({
+          size: 0,
+          index: this.getWorkspaceEventsIndexName('*'),
+          body: {
+            sort: [
+              {
+                '@timestamp': 'desc',
+              },
+            ],
+            query,
+          },
+        });
+        result = {
+          total: shouldBeDeleted?.body?.hits?.total?.value,
+        };
+      } else {
+        result = await this.client.deleteByQuery({
+          index: this.getWorkspaceEventsIndexName('*'),
+          wait_for_completion: false,
+          conflicts: 'proceed',
+          body: {
+            query,
+          },
+        });
 
+        if (result?.body?.task) {
+          const taskDetails = await this.client.tasks.get({
+            task_id: result.body.task,
+          });
+          result = {
+            total: taskDetails?.body?.task?.status?.total,
+            task: result?.body?.task,
+          };
+        }
+      }
+
+      expiredEvents = result;
+    } catch (err) {
+      expiredEvents = err;
+    }
+    return expiredEvents;
+  }
+
+  async cleanupIndices(dryRun: boolean) {
     let { emptyIndices, indices: indicesStats } =
       await this.fetchWorkspacesStats();
 
     const { indicesWithoutDatastream, deleteDatastreams } =
       await this.findInactiveIndices(indicesStats);
 
-    if (dryRun !== false && <any>dryRun != 'false' && <any>dryRun != '0') {
+    let expiredEvents;
+    if (EVENTS_RETENTION_DAYS != -1) {
+      expiredEvents = await this.deleteExpiredEvents(dryRun);
+    }
+
+    if (dryRun) {
       return {
         indicesWithoutDatastream,
         inactiveDatastreams: { found: deleteDatastreams },
         emptyIndices: { found: emptyIndices },
+        expiredEvents,
         dryRun,
       };
     }
@@ -1063,6 +1123,7 @@ export class ElasticsearchStore implements EventsStore {
         found: emptyIndices,
         result: deleteEmptyIndicesResult,
       },
+      expiredEvents,
     };
   }
 }

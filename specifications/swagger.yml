@@ -1907,6 +1907,27 @@ components:
             email:
               type: string
 
+    ########################## Events API events ##########################
+
+    CleanedEvents:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.cleaned
+          enum:
+            - events.cleaned
+        payload:
+          type: object
+          properties:
+            indicesWithoutDatastream: {}
+            inactiveDatastreams: {}
+            emptyIndices: {}
+            expiredEvents: {}
+
     ########################## Apps events ##########################
     PublishedApp:
       type: object
