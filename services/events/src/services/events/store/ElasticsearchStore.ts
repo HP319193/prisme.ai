@@ -141,6 +141,9 @@ export class ElasticsearchStore implements EventsStore {
                   max_size: '40GB',
                   max_primary_shard_size: '40GB',
                 },
+                forcemerge: {
+                  max_num_segments: 1,
+                },
               },
             },
           },
