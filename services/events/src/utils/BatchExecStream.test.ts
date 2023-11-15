@@ -135,6 +135,7 @@ describe('When flushing is slower than writting', () => {
     const stream = getStream({
       flushEvery: 300,
       highWaterMark: 50,
+      maximumBulkSize: 600,
       flushAt: 20,
       retryInterval: 1, // Disable retry exponential backoff with 1 ms
       bulkExec: async (chunks) => {

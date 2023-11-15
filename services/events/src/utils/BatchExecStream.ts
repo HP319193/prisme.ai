@@ -73,7 +73,7 @@ export default class BatchExecStream<T> extends Stream.Writable {
       this.flush(() => {
         this.emit('close');
         clearTimeout(this.flushEveryTimeout);
-      });
+      }, true);
     });
   }
 
@@ -101,9 +101,12 @@ export default class BatchExecStream<T> extends Stream.Writable {
     }
   }
 
-  private async flush(callback: () => void) {
+  private async flush(callback: () => void, closed?: boolean) {
     const now = Date.now();
-    if (!this.bulkCount || (this.pauseUntil && now < this.pauseUntil)) {
+    if (
+      !this.bulkCount ||
+      (!closed && this.pauseUntil && now < this.pauseUntil)
+    ) {
       callback();
       return;
     }
@@ -118,7 +121,7 @@ export default class BatchExecStream<T> extends Stream.Writable {
       const ret = await this.bulkExec(bulk);
 
       // Exponential backoff in case of 429 RateLimit errors
-      if (ret?.throttle) {
+      if (ret?.throttle && !closed) {
         this.retriesCounter += 1;
         let backoff =
           this.retryInterval *
