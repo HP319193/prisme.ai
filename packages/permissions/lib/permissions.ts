@@ -25,7 +25,6 @@ import {
 } from './utils';
 
 type UserId = string;
-
 interface Subject<Role extends string> {
   id?: string;
   permissions?: Record<
