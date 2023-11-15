@@ -1,5 +1,5 @@
 import { BrokerError, EventValidationError } from '../errors';
-import { isPrivateIP, uniqueId } from '../utils';
+import { isPrivateIP, redact, uniqueId } from '../utils';
 import { init as initValidator, validate, ValidatorOptions } from './validator';
 
 export interface Consumer {
@@ -54,10 +54,17 @@ export interface EventsFactoryOptions {
   validator: ValidatorOptions;
 }
 
-export interface CreateEventOptions {
+export type FormatEventOptions = {
+  exceedingSizeLimit?: {
+    redact?: string[];
+    replaceWith?: any;
+  };
+};
+
+export type CreateEventOptions = FormatEventOptions & {
   validateEvent: boolean;
   additionalFields?: any;
-}
+};
 
 // Must be in sync with SLUG_VALIDATION_REGEXP variable inside workspaces config
 // TODO move to a shared utils package
@@ -80,7 +87,7 @@ export class EventsFactory {
     eventType: string,
     payload: object,
     partialSource: Partial<EventSource>,
-    { additionalFields }: CreateEventOptions
+    { additionalFields, exceedingSizeLimit }: CreateEventOptions
   ): PrismeEvent {
     const data =
       payload instanceof Error
@@ -120,6 +127,21 @@ export class EventsFactory {
       ) {
         delete event.source.ip;
       }
+    }
+
+    if (
+      this.validatorOpts?.eventsMaxLen &&
+      event.size > this.validatorOpts?.eventsMaxLen &&
+      exceedingSizeLimit?.redact?.length
+    ) {
+      redact(
+        event,
+        exceedingSizeLimit?.redact.map((field) => `payload.${field}`),
+        'replaceWith' in exceedingSizeLimit
+          ? exceedingSizeLimit.replaceWith
+          : 'LARGE_CONTENT_STRIPPED'
+      );
+      event.size = JSON.stringify(event).length;
     }
     return event;
   }

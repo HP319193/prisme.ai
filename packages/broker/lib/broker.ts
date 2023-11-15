@@ -1,6 +1,7 @@
 import {
   Consumer,
   EventsFactory,
+  FormatEventOptions,
   EventSource,
   PrismeEvent,
   Topic,
@@ -25,6 +26,10 @@ export type EventCallback<
   broker: Broker<CallbackContext>,
   ctx: CallbackContext
 ) => boolean | Promise<boolean>;
+
+export type SendOptions = FormatEventOptions & {
+  throwErrors?: boolean;
+};
 
 export interface ProcessedEventMetrics {
   pickupDelay: number;
@@ -172,8 +177,13 @@ export class Broker<CallbackContext = any> {
     payload: PayloadType,
     partialSource?: Partial<EventSource>,
     additionalFields?: any,
-    throwErrors?: boolean
+    // Legacy usage : opts was instead a 'throwErrors: boolean'
+    // TODO Remove boolean handling when every calling code have been fixed
+    opts?: boolean | SendOptions
   ): Promise<PrismeEvent | false> {
+    const { throwErrors = false, ...formatOpts } =
+      (typeof opts === 'boolean' ? { throwErrors: opts } : opts) || {};
+
     if (!eventType) {
       throw new EventValidationError('Empty event type', { payload });
     }
@@ -193,6 +203,7 @@ export class Broker<CallbackContext = any> {
       event = this.eventsFactory.create(eventType, payload, source, {
         validateEvent: this.validateEvents,
         additionalFields,
+        ...formatOpts,
       });
     } catch (err) {
       if (throwErrors) {

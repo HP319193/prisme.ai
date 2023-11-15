@@ -1,6 +1,6 @@
 import { logger } from '../../../logger';
 import fs from 'fs';
-import { extractObjectsByPath } from '../../../utils';
+import { redact } from '../../../utils';
 import { PREPROCESSING_RULES_FILEPATH } from '../../../../config/preprocessing';
 
 export interface PreprocessRule {
@@ -42,17 +42,6 @@ export function preprocess(event: Prismeai.PrismeEvent) {
     }
   }
   return event;
-}
-
-async function redact(event: Prismeai.PrismeEvent, fields: string[]) {
-  for (const field of fields) {
-    const parentPath = field.split('.');
-    const lastKey = parentPath.pop();
-    const parentObj = extractObjectsByPath(event, parentPath);
-    if (parentObj && lastKey && lastKey in parentObj) {
-      parentObj[lastKey] = 'REDACTED';
-    }
-  }
 }
 
 function indexPreprocessRules(rules: PreprocessRule[]): IndexedRules {

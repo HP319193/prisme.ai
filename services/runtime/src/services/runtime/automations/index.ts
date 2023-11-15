@@ -63,6 +63,14 @@ export async function executeAutomation(
     {
       userId: ctx?.user?.id,
       serviceTopic: EventType.ExecutedAutomation,
+    },
+    undefined,
+    {
+      exceedingSizeLimit: {
+        // If execution event exceeds size limits, omit automation payload & output
+        redact: ['payload', 'output'],
+        replaceWith: null,
+      },
     }
   );
 
