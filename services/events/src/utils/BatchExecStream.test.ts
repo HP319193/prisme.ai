@@ -67,7 +67,7 @@ describe('When flushing is faster than writting', () => {
     verifyReceivedChunks(received, willSend);
   });
 
-  it('An exception raised during a flush should move processed chunks back to queue', async () => {
+  it('A rate limit error during a flush should move processed chunks back to queue', async () => {
     const willSend: Chunk[] = generateChunks('one', 2).concat(
       generateChunks('two', 4)
     );
@@ -78,19 +78,24 @@ describe('When flushing is faster than writting', () => {
       flushEvery: 200,
       highWaterMark: 4,
       flushAt: 2, // Will trigger 3 flushes
+      retryInterval: 1, // Disable retry exponential backoff with 1 ms
       bulkExec: (chunks) => {
         flushNb++;
         if (flushNb == 2) {
           // 3rd & 4th chunks will be pushed back
-          throw new Error();
+          return {
+            throttle: true,
+            retryItems: chunks,
+          };
         }
         received.push(...chunks);
+        return {};
       },
     });
     await sendChunks(willSend, stream);
+    await sleep(400); // onClosed occasionally returns while last chunks are still flushing :(
     stream.end();
     await stream.onClosed();
-    await sleep(400); // onClosed occasionally returns while last chunks are still flushing :(
 
     verifyReceivedChunks(received, willSend);
   });
@@ -120,7 +125,7 @@ describe('When flushing is slower than writting', () => {
     verifyReceivedChunks(received, willSend);
   });
 
-  it('An exception raised during a flush should move processed chunks back to queue', async () => {
+  it('A rate limit error during a flush should move processed chunks back to queue', async () => {
     const willSend: Chunk[] = generateChunks('one', 200, 300).concat(
       generateChunks('two', 20, 100)
     );
@@ -131,20 +136,24 @@ describe('When flushing is slower than writting', () => {
       flushEvery: 300,
       highWaterMark: 50,
       flushAt: 20,
+      retryInterval: 1, // Disable retry exponential backoff with 1 ms
       bulkExec: async (chunks) => {
         // Stop sending error on stream closing as we cannot try push them back anymore & it would make the test fail
         if (!closed && Math.random() > 0.7) {
-          throw new Error();
+          return {
+            throttle: true,
+            retryItems: chunks,
+          };
         }
         received.push(...chunks);
         await sleep(20, 100);
       },
     });
     await sendChunks(willSend, stream);
+    await sleep(2000); // Let retried bulks being picked up before stopping the stream
     stream.end();
     closed = true;
     await stream.onClosed();
-    // await sleep(400); // onClosed occasionally returns while last chunks are still flushing :(
 
     verifyReceivedChunks(received, willSend);
   });

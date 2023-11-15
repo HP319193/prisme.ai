@@ -1,8 +1,8 @@
 export const EVENTS_BUFFER_FLUSH_AT = parseInt(
-  process.env.EVENTS_BUFFER_FLUSH_AT || '128'
+  process.env.EVENTS_BUFFER_FLUSH_AT || '500'
 );
 export const EVENTS_BUFFER_HIGH_WATERMARK = parseInt(
-  process.env.EVENTS_BUFFER_HIGH_WATERMARK || '256'
+  process.env.EVENTS_BUFFER_HIGH_WATERMARK || '800'
 );
 
 export const EVENTS_BUFFER_FLUSH_EVERY = parseInt(

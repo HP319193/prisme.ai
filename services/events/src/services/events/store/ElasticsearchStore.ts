@@ -11,7 +11,12 @@ import { EventType } from '../../../eda';
 import { ObjectNotFoundError } from '../../../errors';
 import { logger } from '../../../logger';
 import { preprocess } from './preprocess';
-import { EventsStore, SearchOptions, EventsIndicesStats } from './types';
+import {
+  EventsStore,
+  SearchOptions,
+  EventsIndicesStats,
+  BulkInsertResult,
+} from './types';
 import { sizeStringToBytes } from '../../../utils/sizeStringToBytes';
 
 function mergeArrays(firstArray: any[] = [], secondArray: any[] = []) {
@@ -31,6 +36,67 @@ function mergeArrays(firstArray: any[] = [], secondArray: any[] = []) {
 
   return mergedArray;
 }
+
+const EVENTS_MAPPING = {
+  properties: {
+    createdAt: {
+      type: 'date',
+    },
+    id: {
+      type: 'keyword',
+    },
+    type: {
+      type: 'keyword',
+    },
+    'source.correlationId': {
+      type: 'keyword',
+    },
+    'source.userId': {
+      type: 'keyword',
+    },
+    'source.sessionId': {
+      type: 'keyword',
+    },
+    'source.workspaceId': {
+      type: 'keyword',
+    },
+    'source.appSlug': {
+      type: 'keyword',
+    },
+    'source.appInstanceFullSlug': {
+      type: 'keyword',
+    },
+    'source.appInstanceSlug': {
+      type: 'keyword',
+    },
+    'source.automationDepth': {
+      type: 'short',
+    },
+    'source.automationSlug': {
+      type: 'keyword',
+    },
+    'source.topic': {
+      type: 'keyword',
+    },
+    'target.userTopic': {
+      type: 'keyword',
+    },
+    'source.serviceTopic': {
+      type: 'keyword',
+    },
+    payload: {
+      type: 'flattened',
+      ignore_above: 32700,
+    },
+    'error.error': {
+      type: 'keyword',
+    },
+    'error.message': {
+      type: 'text',
+    },
+  },
+};
+
 export class ElasticsearchStore implements EventsStore {
   client: elasticsearch.Client;
   namespace?: string;
@@ -105,65 +171,7 @@ export class ElasticsearchStore implements EventsStore {
           settings: {
             'index.lifecycle.name': policyName,
           },
-          mappings: {
-            properties: {
-              createdAt: {
-                type: 'date',
-              },
-              id: {
-                type: 'keyword',
-              },
-              type: {
-                type: 'keyword',
-              },
-              'source.correlationId': {
-                type: 'keyword',
-              },
-              'source.userId': {
-                type: 'keyword',
-              },
-              'source.sessionId': {
-                type: 'keyword',
-              },
-              'source.workspaceId': {
-                type: 'keyword',
-              },
-              'source.appSlug': {
-                type: 'keyword',
-              },
-              'source.appInstanceFullSlug': {
-                type: 'keyword',
-              },
-              'source.appInstanceSlug': {
-                type: 'keyword',
-              },
-              'source.automationDepth': {
-                type: 'short',
-              },
-              'source.automationSlug': {
-                type: 'keyword',
-              },
-              'source.topic': {
-                type: 'keyword',
-              },
-              'target.userTopic': {
-                type: 'keyword',
-              },
-              'source.serviceTopic': {
-                type: 'keyword',
-              },
-              payload: {
-                type: 'flattened',
-                ignore_above: 32700,
-              },
-              'error.error': {
-                type: 'keyword',
-              },
-              'error.message': {
-                type: 'text',
-              },
-            },
-          },
+          mappings: EVENTS_MAPPING,
         },
       },
     });
@@ -377,18 +385,42 @@ export class ElasticsearchStore implements EventsStore {
       });
   }
 
-  async bulkInsert(events: Prismeai.PrismeEvent[]): Promise<any> {
+  async bulkInsert(events: Prismeai.PrismeEvent[]): Promise<BulkInsertResult> {
     const body = this.prepareBulkInsertBody(events);
     const result = await this.client.bulk({
       refresh: EVENTS_STORAGE_ES_BULK_REFRESH,
       body,
     });
     if (result.body.errors) {
-      logger.error({
-        msg: 'Elasticsearch store raised an exception during bulk insert',
-        errors: result.body.items,
-      });
+      const throttledItems = (result.body.items || []).filter(
+        (cur: any) => cur.create?.status === 429
+      );
+      if (throttledItems.length) {
+        const failedIds = new Set(
+          throttledItems.map((cur: any) => cur?.create?._id)
+        );
+        const failedItems = events.filter((cur) => failedIds.has(cur.id));
+        logger.error({
+          msg: 'Elasticsearch store raised rate limit error while inserting events in bulk',
+          error: 'RateLimitError',
+        });
+        return {
+          error: {
+            error: 'RateLimitError',
+            failedItems,
+            throttle: true,
+          },
+        };
+      } else {
+        logger.error({
+          msg: 'Elasticsearch store raised an exception during bulk insert',
+          error: result.body.errors,
+          items: result.body.items,
+        });
+      }
+      return { error: result.body.errors };
     }
+    return true;
   }
 
   async workspaceUsage(
@@ -838,7 +870,7 @@ export class ElasticsearchStore implements EventsStore {
 
     // 2. Map doc count to workspace ids & list empty indices
     let emptyIndices: string[] = [];
-    const indicesStats: EventsIndicesStats = indices.reduce(
+    const unsortedIndicesStats: EventsIndicesStats = indices.reduce(
       (
         smallWorkspaces: EventsIndicesStats,
         cur: {
@@ -863,30 +895,43 @@ export class ElasticsearchStore implements EventsStore {
         }
         const lastValues = smallWorkspaces?.[workspaceId];
         const size = sizeStringToBytes(cur.store);
+        const indices = !size
+          ? lastValues?.indices || []
+          : (lastValues?.indices || []).concat([
+              {
+                name: cur.index,
+                size: size,
+              },
+            ]);
         return {
           ...smallWorkspaces,
           [workspaceId]: {
             count: (lastValues?.count || 0) + currentIndexDocsCount,
+            size: indices.reduce((total, cur) => total + (cur.size || 0), 0),
             lastIndex:
               lastValues?.lastIndex && lastValues?.lastIndex > cur.index
                 ? lastValues?.lastIndex
                 : cur.index,
-            indices: !size
-              ? lastValues?.indices
-              : (lastValues?.indices || []).concat([
-                  {
-                    name: cur.index,
-                    size: size,
-                  },
-                ]),
+            indices,
           },
         };
       },
       {}
     );
 
+    // Sort workspaces dict from smaller to bigger
+    const indicesStats = Object.entries(unsortedIndicesStats)
+      .sort(([, curA], [, curB]) => curA.size - curB.size)
+      .reduce(
+        (indicesStats, [workspaceId, stats]) => ({
+          ...indicesStats,
+          [workspaceId]: stats,
+        }),
+        {}
+      );
+
     const writingIndices = new Set(
-      Object.values(indicesStats).map((cur) => cur.lastIndex)
+      Object.values(indicesStats).map((cur: any) => cur.lastIndex)
     );
     // Exclude writting index from empty indices as we cannot delete them
     emptyIndices = emptyIndices.filter((cur) => !writingIndices.has(cur));
@@ -1067,7 +1112,7 @@ export class ElasticsearchStore implements EventsStore {
     return expiredEvents;
   }
 
-  async cleanupIndices(dryRun: boolean) {
+  async cleanupIndices(opts: any, dryRun: boolean) {
     let { emptyIndices, indices: indicesStats } =
       await this.fetchWorkspacesStats();
 

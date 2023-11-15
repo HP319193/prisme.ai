@@ -11,26 +11,23 @@ export function initCleanupRoutes(store: EventsStore) {
     res: Response
   ) {
     const es = store as ElasticsearchStore;
-    try {
-      const dryRun =
-        typeof query?.dryRun !== 'undefined' &&
-        <any>query?.dryRun !== false &&
-        <any>query?.dryRun != 'false' &&
-        <any>query.dryRun != '0';
 
-      const result = await es.cleanupIndices(dryRun);
-      if (!dryRun) {
-        broker
-          .send<Prismeai.CleanedEvents['payload']>(
-            EventType.CleanedEvents,
-            result
-          )
-          .catch(logger.error);
-      }
-      return res.status(200).send(result);
-    } catch (err) {
-      return res.status(500).send(err);
+    const dryRun =
+      typeof query?.dryRun !== 'undefined' &&
+      <any>query?.dryRun !== false &&
+      <any>query?.dryRun != 'false' &&
+      <any>query.dryRun != '0';
+
+    const result = await es.cleanupIndices(query, dryRun);
+    if (!dryRun) {
+      broker
+        .send<Prismeai.CleanedEvents['payload']>(
+          EventType.CleanedEvents,
+          result
+        )
+        .catch(logger.error);
     }
+    return res.status(200).send(result);
   }
 
   const app = express.Router();

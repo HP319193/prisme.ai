@@ -21,12 +21,21 @@ export type SearchOptions = Omit<
   types?: string[];
 };
 
+export type BulkInsertResult =
+  | true
+  | {
+      error: {
+        throttle?: boolean;
+        error: 'RateLimitError';
+        failedItems: Prismeai.PrismeEvent[];
+      };
+    };
 export interface EventsStore {
   search(
     workspaceId: string,
     options: SearchOptions
   ): Promise<Prismeai.PrismeEvent[]>;
-  bulkInsert(events: Prismeai.PrismeEvent[]): Promise<any>;
+  bulkInsert(events: Prismeai.PrismeEvent[]): Promise<BulkInsertResult>;
   workspaceUsage(
     workspaceId: string,
     opts: PrismeaiAPI.WorkspaceUsage.QueryParameters
@@ -36,6 +45,7 @@ export interface EventsStore {
 
 export interface EventIndexStats {
   count: number;
+  size: number;
   lastIndex: string;
   indices: { name: string; size: number }[];
 }

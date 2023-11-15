@@ -18,8 +18,17 @@ export async function syncEventStoreWithEDA(
     highWaterMark: EVENTS_BUFFER_HIGH_WATERMARK,
     flushAt: EVENTS_BUFFER_FLUSH_AT,
     flushEvery: EVENTS_BUFFER_FLUSH_EVERY,
+    maximumBulkSize: EVENTS_BUFFER_HIGH_WATERMARK,
+    retryInterval: 1000,
+    maximumRetries: 5,
+    maximumRetryInterval: 30000,
     bulkExec: async (events) => {
-      await store.bulkInsert(events);
+      const ret = await store.bulkInsert(events);
+      const throttle = ret !== true && !ret?.error?.throttle;
+      return {
+        throttle,
+        retryItems: (throttle && ret?.error?.failedItems) || [],
+      };
     },
   });
 
