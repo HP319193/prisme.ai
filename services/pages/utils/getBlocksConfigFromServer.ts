@@ -1,4 +1,4 @@
-import { generateEndpoint } from '../../console/utils/urls';
+import api from '../../console/utils/api';
 
 export async function getBlocksConfigFromServer(
   page: Prismeai.DetailedPage,
@@ -8,31 +8,23 @@ export async function getBlocksConfigFromServer(
   const { workspaceId } = page;
   if (!workspaceId) return [];
 
-  async function callAutomation(automation: string) {
-    if (!workspaceId) return {};
-    const res = await fetch(generateEndpoint(workspaceId, automation), {
-      method: 'post',
-      body: JSON.stringify(query),
-      headers: {
-        'x-prismeai-api-key': page.apiKey || '',
-        'Content-Type': 'application/json',
-        'accept-language': language,
-      },
-    });
-    return await res.json();
-  }
-
   const blocks = page.blocks || [];
   let pageWithConfig = { ...page };
 
   if (page.automation) {
     try {
-      const config = await callAutomation(page.automation);
+      const config = await api.callAutomation(
+        workspaceId,
+        page.automation,
+        query
+      );
       return {
         ...pageWithConfig,
         ...config,
       };
-    } catch {}
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   await Promise.all(
@@ -46,7 +38,11 @@ export async function getBlocksConfigFromServer(
       ) => {
         if (!automation) return;
         try {
-          const config = await callAutomation(automation);
+          const config = await api.callAutomation(
+            workspaceId,
+            automation,
+            query
+          );
           pageWithConfig.blocks = pageWithConfig.blocks || [];
           pageWithConfig.blocks[index] = {
             ...pageWithConfig.blocks[index],

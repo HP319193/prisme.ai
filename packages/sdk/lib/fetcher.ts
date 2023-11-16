@@ -1,3 +1,4 @@
+import FormData from 'form-data';
 import ApiError from './ApiError';
 import HTTPError from './HTTPError';
 
@@ -134,7 +135,7 @@ export class Fetcher {
         !(body instanceof FormData) &&
         !(body instanceof URLSearchParams)
           ? JSON.stringify(body)
-          : body,
+          : (body as BodyInit),
       ...opts,
     });
   }
