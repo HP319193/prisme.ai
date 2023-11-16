@@ -1,5 +1,6 @@
-import { isLocalizedObject } from '@prisme.ai/design-system';
-import { ReactNode } from 'react';
+import { isLocalizedObject, Tooltip } from '@prisme.ai/design-system';
+import { TooltipProps } from 'antd';
+import { ReactNode, useCallback, useRef } from 'react';
 import { BlockContext, useBlock } from '../Provider';
 import {
   BlocksDependenciesContext,
@@ -12,9 +13,15 @@ import { BaseBlockConfig } from './types';
 export interface ActionConfig extends BaseBlockConfig {
   type: 'external' | 'internal' | 'inside' | 'event';
   value: string;
-  text: ReactNode | Prismeai.LocalizedText;
+  text: ReactNode | Prismeai.LocalizedText | Prismeai.Block['blocks'];
   payload?: any;
   popup?: boolean;
+  confirm?: {
+    label?: string;
+    yesLabel?: string;
+    noLabel?: string;
+    placement?: TooltipProps['placement'];
+  };
 }
 
 export interface ActionProps extends ActionConfig {
@@ -34,8 +41,17 @@ export const Action = ({
   onClick,
   popup,
 }: ActionProps) => {
+  const {
+    utils: { BlockLoader },
+  } = useBlocks();
   const { localize } = useLocalizedText();
   const html = isLocalizedObject(text) ? localize(text as {}) : null;
+  const blocks = typeof text === 'object' && Array.isArray(text) ? text : null;
+  const children = html ? undefined : blocks ? (
+    <BlockLoader name="BlocksList" config={{ blocks: text }} />
+  ) : (
+    text
+  );
   switch (type) {
     case 'event':
       return (
@@ -43,13 +59,9 @@ export const Action = ({
           <button
             type="button"
             className="pr-block-action__button"
-            onClick={() => {
-              onClick && onClick();
-              if (!events || !value) return;
-              events.emit(value, payload);
-            }}
+            onClick={onClick}
             dangerouslySetInnerHTML={html ? { __html: html } : undefined}
-            children={html ? undefined : text}
+            children={children}
           />
         </div>
       );
@@ -63,12 +75,10 @@ export const Action = ({
         >
           <button
             type="button"
-            onClick={() => {
-              onClick && onClick();
-            }}
+            onClick={onClick}
             className="pr-block-action__button"
             dangerouslySetInnerHTML={html ? { __html: html } : undefined}
-            children={html ? undefined : text}
+            children={children}
           />
         </Link>
       );
@@ -80,12 +90,10 @@ export const Action = ({
         >
           <button
             type="button"
-            onClick={() => {
-              onClick && onClick();
-            }}
+            onClick={onClick}
             className="pr-block-action__button"
             dangerouslySetInnerHTML={html ? { __html: html } : undefined}
-            children={html ? undefined : text}
+            children={children}
           />
         </a>
       );
@@ -94,11 +102,74 @@ export const Action = ({
         <span
           className={`pr-block-action ${className}`}
           dangerouslySetInnerHTML={html ? { __html: html } : undefined}
-          children={html ? undefined : text}
+          children={children}
         />
       );
   }
 };
+
+export const ConfirmAction = ({
+  confirm: { label, yesLabel, noLabel, placement } = {},
+  events,
+  onClick,
+  ...props
+}: ActionProps) => {
+  const { localize } = useLocalizedText();
+  const tooltipRef = useRef<{ close: () => void }>(null);
+
+  return (
+    <Tooltip
+      ref={tooltipRef}
+      overlayClassName="pr-block-action__confirm"
+      placement={placement}
+      title={
+        <>
+          <div className="pr-block-action__confirm-title">
+            {localize(label)}
+          </div>
+          <div className="pr-block-action__confirm-buttons flex justify-end">
+            <button
+              type="button"
+              className="pr-block-action__confirm-button pr-block-action__confirm-button--yes"
+              onClick={() => {
+                onClick && onClick();
+                tooltipRef.current?.close();
+              }}
+            >
+              {localize(yesLabel)}
+            </button>
+            <button
+              className="pr-block-action__confirm-button pr-block-action__confirm-button--no"
+              type="button"
+              onClick={() => tooltipRef.current?.close()}
+            >
+              {localize(noLabel)}
+            </button>
+          </div>
+        </>
+      }
+      trigger={['click']}
+    >
+      <Action {...props} events={events} />
+    </Tooltip>
+  );
+};
+
+export const BaseAction = (props: ActionProps) => {
+  const onClick = useCallback(() => {
+    if (props.onClick) {
+      props.onClick();
+    }
+    if (props.type !== 'event' || !props.events || !props.value) return;
+    props.events.emit(props.value, props.payload);
+  }, [props.events, props.value, props.payload, props.onClick]);
+
+  if (props.confirm) {
+    return <ConfirmAction {...props} onClick={onClick} />;
+  }
+  return <Action {...props} onClick={onClick} />;
+};
+
 const defaultStyles = `:block {
   padding: 1rem;
 }
@@ -109,6 +180,9 @@ const defaultStyles = `:block {
   background: var(--accent-color);
   color: var(--accent-contrast-color);
   border-radius: 0.5rem;
+}
+:root .pr-block-action__confirm-button {
+  margin-left: 1rem;
 }`;
 export const ActionInContext = () => {
   const { config, events } = useBlock<ActionConfig>();
@@ -118,7 +192,7 @@ export const ActionInContext = () => {
 
   return (
     <BaseBlock defaultStyles={defaultStyles}>
-      <Action {...config} Link={Link} events={events} />
+      <BaseAction {...config} Link={Link} events={events} />
     </BaseBlock>
   );
 };

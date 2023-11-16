@@ -780,35 +780,13 @@
             }
           }
         },
-        "action": {
-          "title": "Action",
-          "description": "Action triggered by a click on the card",
-          "event": "Event",
-          "url": "Link",
-          "valueEvent": {
-            "label": "Event to trigger",
-            "description": "The name of the event that will be sent to the click."
-          },
-          "valueLink": {
-            "label": "Url",
-            "description": "Web address in https."
-          },
-          "popup": {
-            "label": "Open in new tab",
-            "description": "Opens the link in a new tab instead of replacing the current page."
-          },
-          "payload": {
-            "label": "Payload",
-            "description": "Data object that accompanies the event."
-          }
-        },
         "className": {
           "label": "Element class name",
           "description": "Specify a custom class for the element containing the Block to facilitate the layout in CSS."
         },
         "css": {
           "label": "CSS styles applied to the Block",
-          "description": "You can use the keyword \":block\" to target the element containing the Block.",
+          "description": "You can use the keyword \"block\" to target the element containing the block. \":parent\" to target the parent element, and \":root\" for the entire page.",
           "reset": "Reset styles"
         }
       },
@@ -853,6 +831,54 @@
       "panelTitle_adding": "Add a Block",
       "description_Signin": "Display a login or registration button",
       "panelTitle_editing": "Edit Block {{blockName}}",
+      "action": {
+        "settings": {
+          "title": "Action",
+          "description": "Action triggered by a click on the card",
+          "event": "Event",
+          "url": "Link",
+          "valueEvent": {
+            "label": "Event to trigger",
+            "description": "The name of the event that will be sent to the click."
+          },
+          "valueLink": {
+            "label": "Url",
+            "description": "Web address in https."
+          },
+          "popup": {
+            "label": "Open in new tab",
+            "description": "Opens the link in a new tab instead of replacing the current page."
+          },
+          "payload": {
+            "label": "Payload",
+            "description": "Data object that accompanies the event."
+          },
+          "confirm": {
+            "label": "Confirmation",
+            "description": "A dialog box will be displayed to confirm the action.",
+            "_label": {
+              "label": "Confirmation text",
+              "description": "The text to be displayed in the dialog box."
+            },
+            "yesLabel": {
+              "label": "Confirmation button text",
+              "description": "The text to be displayed in the confirmation button."
+            },
+            "noLabel": {
+              "label": "Cancel button text",
+              "description": "The text to be displayed in the cancel button."
+            },
+            "placement": {
+              "label": "Dialog box positioning",
+              "description": "Position of dialog box relative to button.",
+              "top": "Above",
+              "bottom": "Below",
+              "left": "To the left",
+              "right": "To the right"
+            }
+          }
+        }
+      },
       "header": {
         "settings": {
           "title": {

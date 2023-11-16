@@ -1,4 +1,3 @@
-import { builtinBlocks } from '@prisme.ai/blocks';
 import { Schema } from '@prisme.ai/design-system';
 
 export const schema: Schema = {
@@ -101,6 +100,44 @@ export const schema: Schema = {
           },
         },
       ],
+    },
+    confirm: {
+      type: 'object',
+      title: 'pages.blocks.action.settings.confirm.label',
+      description: 'pages.blocks.action.settings.confirm.description',
+      properties: {
+        label: {
+          type: 'string',
+          title: 'pages.blocks.action.settings.confirm._label.label',
+          description:
+            'pages.blocks.action.settings.confirm._label.description',
+        },
+        yesLabel: {
+          type: 'string',
+          title: 'pages.blocks.action.settings.confirm.yesLabel.label',
+          description:
+            'pages.blocks.action.settings.confirm.yesLabel.description',
+        },
+        noLabel: {
+          type: 'string',
+          title: 'pages.blocks.action.settings.confirm.noLabel.label',
+          description:
+            'pages.blocks.action.settings.confirm.noLabel.description',
+        },
+        placement: {
+          type: 'string',
+          enum: ['top', 'bottom', 'left', 'right'],
+          enumNames: [
+            'pages.blocks.action.settings.confirm.placement.top',
+            'pages.blocks.action.settings.confirm.placement.bottom',
+            'pages.blocks.action.settings.confirm.placement.left',
+            'pages.blocks.action.settings.confirm.placement.right',
+          ],
+          title: 'pages.blocks.action.settings.confirm.placement.label',
+          description:
+            'pages.blocks.action.settings.confirm.placement.description',
+        },
+      },
     },
   },
 };

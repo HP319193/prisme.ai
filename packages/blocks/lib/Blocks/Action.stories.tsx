@@ -34,6 +34,9 @@ const Template: Story<any> = (config) => {
         SchemaForm: () => null,
       }}
       externals={{}}
+      utils={{
+        BlockLoader: ({ name, ...config }) => <div>Block {name}</div>,
+      }}
     >
       <BlockProvider config={config} events={events}>
         <Action />
@@ -47,4 +50,38 @@ Default.args = {
   type: 'external',
   value: 'https://prisme.ai',
   text: 'Link',
+};
+
+export const ContentAsBlocks = Template.bind({});
+ContentAsBlocks.args = {
+  text: [
+    {
+      slug: 'RichText',
+      content: 'Rich Text Block',
+    },
+    {
+      slug: 'RichText',
+      content: 'Another',
+    },
+  ],
+  type: 'event',
+  value: 'delete',
+  payload: {
+    id: '1234',
+  },
+};
+
+export const ConfirmAction = Template.bind({});
+ConfirmAction.args = {
+  text: 'Delete this',
+  type: 'event',
+  value: 'delete',
+  payload: {
+    id: '1234',
+  },
+  confirm: {
+    label: 'Are you sure?',
+    yesLabel: 'Yes I am',
+    noLabel: 'No, pleese no !',
+  },
 };
