@@ -125,3 +125,19 @@ it('should replace :parent', () => {
   background: red;
 }`);
 });
+
+it('should not insert :block if starting with :root', () => {
+  expect(
+    prefixCSS(
+      `:root .class {
+  background: red;
+}`,
+      {
+        block: '.prefix',
+        parent: '.parent',
+      }
+    )
+  ).toBe(`:root .class {
+  background: red;
+}`);
+});

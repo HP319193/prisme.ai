@@ -780,35 +780,13 @@
             }
           }
         },
-        "action": {
-          "title": "Action",
-          "description": "Action déclenchée au click sur l'élément",
-          "event": "Evénement",
-          "url": "Lien",
-          "valueEvent": {
-            "label": "Evénement à déclencher",
-            "description": "Le nom de l'évènement qui sera envoyé au click."
-          },
-          "valueLink": {
-            "label": "Url",
-            "description": "Adresse web en https."
-          },
-          "popup": {
-            "label": "Ouvrir dans un nouvel onglet",
-            "description": "Ouvre le lien dans un nouvel onglet au lieu de remplacer la page courante."
-          },
-          "payload": {
-            "label": "Charge de données",
-            "description": "Objet de données qui accompagne l'évènement."
-          }
-        },
         "className": {
           "label": "Classe de l'élément",
           "description": "Spécifiez une classe personnalisée pour l'élément contenant le Block pour faciliter la mise en page en CSS."
         },
         "css": {
           "label": "Styles CSS appliqué au Block",
-          "description": "Vous pouvez utiliser le mot clé \":block\"  pour cibler l'élément contenant le Block.",
+          "description": "Vous pouvez utiliser le mot clé \":block\"  pour cibler l'élément contenant le Block. \":parent\" pour cibler l'élément parent, et \":root\" pour la page entière.",
           "reset": "Revenir au styles de départ"
         }
       },
@@ -853,6 +831,54 @@
       "description_Signin": "Afficher un bouton pour se connecter ou s'inscrire",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
+      "action": {
+        "settings": {
+          "title": "Action",
+          "description": "Action déclenchée au click sur l'élément",
+          "event": "Evénement",
+          "url": "Lien",
+          "valueEvent": {
+            "label": "Evénement à déclencher",
+            "description": "Le nom de l'évènement qui sera envoyé au click."
+          },
+          "valueLink": {
+            "label": "Url",
+            "description": "Adresse web en https."
+          },
+          "popup": {
+            "label": "Ouvrir dans un nouvel onglet",
+            "description": "Ouvre le lien dans un nouvel onglet au lieu de remplacer la page courante."
+          },
+          "payload": {
+            "label": "Charge de données",
+            "description": "Objet de données qui accompagne l'évènement."
+          },
+          "confirm": {
+            "label": "Confirmation",
+            "description": "Une boite de dialogue sera affichée pour confirmer l'action.",
+            "_label": {
+              "label": "Texte de confirmation",
+              "description": "Le texte qui sera affiché dans la boite de dialogue."
+            },
+            "yesLabel": {
+              "label": "Texte du bouton de confirmation",
+              "description": "Le texte qui sera affiché dans le bouton de confirmation."
+            },
+            "noLabel": {
+              "label": "Texte du bouton d'annulation",
+              "description": "Le texte qui sera affiché dans le bouton d'annulation."
+            },
+            "placement": {
+              "label": "Placement de la boite de dialogue",
+              "description": "Position de la boite de dialogue par rapport au bouton.",
+              "top": "Au dessus",
+              "bottom": "Au dessous",
+              "left": "À gauche",
+              "right": "À droite"
+            }
+          }
+        }
+      },
       "header": {
         "settings": {
           "title": {

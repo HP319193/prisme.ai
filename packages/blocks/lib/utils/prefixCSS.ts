@@ -17,7 +17,7 @@ export function prefixCSS(
 ) {
   function replaceSelectors(selectors: any) {
     return (selectors || []).map((sel: string) => {
-      if (sel.match(/:block/) || sel.match(/:parent/)) {
+      if (sel.match(/:block/) || sel.match(/:parent/) || sel.match(/:root/)) {
         return sel.replace(/:block/, block).replace(/:parent/, parent);
       }
       return `${block} ${sel}`;
