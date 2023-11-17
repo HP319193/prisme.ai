@@ -6,6 +6,7 @@ import { selectText } from '../../utils/dom';
 import { Table } from '@prisme.ai/design-system';
 import { workspaceContext } from '../../providers/Workspace';
 import workspaceContextValue from '../../providers/Workspace/workspaceContextValue.mock';
+import QueryStringProvider from '../../providers/QueryStringProvider';
 
 jest.mock('@prisme.ai/design-system', () => {
   const Table: FC = ({ children }) => <div className="Table">{children}</div>;
@@ -42,18 +43,22 @@ const event: Event<Date> = {
 
 it('should render', () => {
   const root = renderer.create(
-    <workspaceContext.Provider value={workspaceContextValue}>
-      <EventDetails {...event} />
-    </workspaceContext.Provider>
+    <QueryStringProvider>
+      <workspaceContext.Provider value={workspaceContextValue}>
+        <EventDetails {...event} />
+      </workspaceContext.Provider>
+    </QueryStringProvider>
   );
   expect(root.toJSON()).toMatchSnapshot();
 });
 
 it('should select on row click', () => {
   const root = renderer.create(
-    <workspaceContext.Provider value={workspaceContextValue}>
-      <EventDetails {...event} />
-    </workspaceContext.Provider>
+    <QueryStringProvider>
+      <workspaceContext.Provider value={workspaceContextValue}>
+        <EventDetails {...event} />
+      </workspaceContext.Provider>
+    </QueryStringProvider>
   );
 
   const tr = document.createElement('tr');
