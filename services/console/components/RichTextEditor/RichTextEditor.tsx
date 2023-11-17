@@ -16,7 +16,9 @@ export const RichTextEditor = ({
   value = '',
   onChange,
 }: RichTextEditorProps) => {
-  const [displayRaw, setDisplayRaw] = useState(value.includes(rawModeMarker));
+  const [displayRaw, setDisplayRaw] = useState(
+    typeof value === 'string' && value.includes(rawModeMarker)
+  );
   const ignoreValueChange = useRef(false);
   const [quillMounted, setQuillMounted] = useState(true);
   const { t } = useTranslation('workspaces');
