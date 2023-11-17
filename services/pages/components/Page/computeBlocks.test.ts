@@ -254,6 +254,49 @@ it('should repeat blocks', () => {
   });
 });
 
+it('should repeat blocks conditionnaly', () => {
+  const block = {
+    slug: 'BlocksList',
+    blocks: [
+      {
+        slug: 'RichText',
+        'template.repeat': {
+          on: '{{items}}',
+          as: 'item',
+        },
+        'template.if': '{{item.text}}',
+        text: '{{item.text}}',
+      },
+    ],
+  };
+  expect(
+    computeBlock(block, {
+      items: [
+        {
+          text: 'foo',
+        },
+        {
+          text: null,
+        },
+      ],
+    })
+  ).toEqual({
+    slug: 'BlocksList',
+    blocks: [
+      {
+        slug: 'RichText',
+        text: '{{item.text}}',
+        'template.if': '{{item.text}}',
+        item: {
+          text: 'foo',
+        },
+        [$index]: 0,
+      },
+    ],
+    [original]: block,
+  });
+});
+
 it('should interpolate object', () => {
   const block = {
     blocks: [

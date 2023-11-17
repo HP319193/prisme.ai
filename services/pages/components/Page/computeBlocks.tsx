@@ -148,20 +148,22 @@ export function testCondition(condition: string = '', values: any) {
 
 export function repeatBlock(block: Config, values: any) {
   const { [TEMPLATE_REPEAT]: repeat, ...originalBlock } = block;
+  const _if = block[TEMPLATE_IF];
   const { on: _on = '', as = 'item' } = repeat || {};
   const [, on = ''] = `${_on}`.match(/^{{(.+)}}$/) || [];
 
   if (!on) return [];
   const items = jsonpath.value(values, on);
-
   if (!Array.isArray(items)) return [];
 
-  return items.map((item, index) => {
-    return {
+  return items.flatMap((item, index) => {
+    const ret = {
       ...originalBlock,
       [as]: item,
       [$index]: index,
     };
+    if (_if && !testCondition(_if, ret)) return [];
+    return [ret];
   });
 }
 
@@ -170,7 +172,12 @@ export function interpolateValue(value: any, values: any): any {
 
   if (Array.isArray(value)) {
     const output = value.flatMap((v) => {
-      if (v[TEMPLATE_IF] && !testCondition(v[TEMPLATE_IF], values)) return [];
+      if (
+        !v[TEMPLATE_REPEAT] &&
+        v[TEMPLATE_IF] &&
+        !testCondition(v[TEMPLATE_IF], values)
+      )
+        return [];
       const blocks = v[TEMPLATE_REPEAT] ? repeatBlock(v, values) : [v];
       return blocks.map((v) => (v.slug ? v : interpolateValue(v, values)));
     });
@@ -207,6 +214,7 @@ export function computeBlock(
   if (!testCondition(_if, values)) {
     return computed;
   }
+
   return Object.entries(blockConfig).reduce((prev, [k, v]) => {
     const { [k]: ignored, ...filteredValues } = blockConfig;
     const allValues = {
