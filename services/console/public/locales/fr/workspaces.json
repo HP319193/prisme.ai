@@ -1497,6 +1497,9 @@
         "help": "Identifiez le Block à l'aide d'une classe CSS.",
         "placeholder": "block-sans-nom"
       },
+      "preview": {
+        "label": "À propos"
+      },
       "setup": {
         "label": "Configuration"
       },

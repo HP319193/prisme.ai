@@ -1497,6 +1497,9 @@
         "help": "Identify the Block with a CSS class.",
         "placeholder": "unknown-block"
       },
+      "preview": {
+        "label": "About"
+      },
       "setup": {
         "label": "Settings"
       },

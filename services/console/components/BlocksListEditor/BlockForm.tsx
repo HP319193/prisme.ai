@@ -1,3 +1,4 @@
+import { BlockComponent } from '@prisme.ai/blocks';
 import {
   Collapse,
   FieldProps,
@@ -43,10 +44,16 @@ const defaultStyles = `:block {
 }`;
 
 export const BlockForm = ({ name, onRemove, ...props }: SchemaFormProps) => {
-  const { t } = useTranslation('workspaces');
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation('workspaces');
   const { localizeSchemaForm } = useLocalizedText();
-  const { getSchema } = useBlocksListEditor();
+  const { getSchema, getModule } = useBlocksListEditor();
   const [schema, setSchema] = useState<Schema | 'loading' | null>(null);
+  const [Preview, setPreview] = useState<BlockComponent['Preview'] | null>(
+    null
+  );
   const field = useField(name);
 
   useEffect(() => {
@@ -57,6 +64,14 @@ export const BlockForm = ({ name, onRemove, ...props }: SchemaFormProps) => {
     };
     loadSchema();
   }, [field.input.value.slug, getSchema]);
+
+  useEffect(() => {
+    async function loadPreview() {
+      const module = await getModule(field.input.value.slug);
+      setPreview(() => module?.Preview || null);
+    }
+    loadPreview();
+  }, [field.input.value.slug, getModule]);
 
   const lifecycleSchema: Schema = useMemo(
     () =>
@@ -191,6 +206,9 @@ export const BlockForm = ({ name, onRemove, ...props }: SchemaFormProps) => {
     },
     [field.input]
   );
+
+  const { slug, ...previewConfig } = field.input.value;
+
   return (
     <Collapse
       {...props}
@@ -211,6 +229,13 @@ export const BlockForm = ({ name, onRemove, ...props }: SchemaFormProps) => {
               <Tabs
                 items={
                   [
+                    Preview && {
+                      key: 'preview',
+                      label: t('blocks.builder.preview.label'),
+                      children: (
+                        <Preview config={previewConfig} language={language} />
+                      ),
+                    },
                     schema && {
                       key: 'config',
                       label: t('blocks.builder.setup.label'),
