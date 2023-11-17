@@ -4,8 +4,13 @@ import { Event } from '@prisme.ai/sdk';
 import { useTranslation } from 'next-i18next';
 import { selectText } from '../../utils/dom';
 import { truncate } from '../../utils/strings';
-import { PlayCircleOutlined } from '@ant-design/icons';
+import {
+  FilterOutlined,
+  PlayCircleOutlined,
+  PlusCircleOutlined,
+} from '@ant-design/icons';
 import { useWorkspace } from '../../providers/Workspace';
+import { useQueryString } from '../../providers/QueryStringProvider';
 
 interface EventsDetailsProps {
   event: Event<Date>;
@@ -33,6 +38,7 @@ export const EventDetails: FC<EventsDetailsProps & { replay: () => void }> = ({
   event,
 }) => {
   const { t } = useTranslation('workspaces');
+  const { setQueryString } = useQueryString();
   const dataSource = useMemo(() => {
     const stringifiedPayload = JSON.stringify(event.payload, null, ' ');
     return [
@@ -144,6 +150,17 @@ export const EventDetails: FC<EventsDetailsProps & { replay: () => void }> = ({
 
   const isEmit = event?.source?.serviceTopic === 'topic:runtime:emit';
 
+  const addFilter = useCallback(
+    (k: string, v: string) => {
+      setQueryString((prev) => {
+        const newQuery = new URLSearchParams(prev);
+        newQuery.set(k, v);
+        return newQuery;
+      });
+    },
+    [setQueryString]
+  );
+
   return (
     <div className="relative">
       <Table
@@ -154,6 +171,23 @@ export const EventDetails: FC<EventsDetailsProps & { replay: () => void }> = ({
             title: t('events.details.value'),
             dataIndex: 'value',
             key: 'value',
+            render: (children, data, index) => {
+              if (typeof children === 'object') return children;
+              return (
+                <>
+                  {children}
+                  <Tooltip title="ajouter aux filtres">
+                    <button
+                      className="relative text-gray ml-2"
+                      onClick={() => addFilter(data.name, data.value)}
+                    >
+                      <FilterOutlined />
+                      <PlusCircleOutlined className="absolute bottom-0 -right-1 text-xs" />
+                    </button>
+                  </Tooltip>
+                </>
+              );
+            },
           },
         ]}
         bordered
