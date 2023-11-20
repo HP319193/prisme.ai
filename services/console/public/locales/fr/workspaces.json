@@ -193,7 +193,8 @@
     "empty": "Il ne s'est encore rien passé ici…",
     "details": {
       "name": "Attribut",
-      "value": "Valeur"
+      "value": "Valeur",
+      "addFilter": "Ajouter aux filtres"
     },
     "more": "Charger les évènements plus anciens",
     "autocomplete": {

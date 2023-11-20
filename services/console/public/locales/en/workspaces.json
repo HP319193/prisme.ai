@@ -193,7 +193,8 @@
     "empty": "Nothing has happened here yet…",
     "details": {
       "name": "Field",
-      "value": "Value"
+      "value": "Value",
+      "addFilter": "Add to filters"
     },
     "more": "Load older events",
     "autocomplete": {

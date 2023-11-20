@@ -171,12 +171,12 @@ export const EventDetails: FC<EventsDetailsProps & { replay: () => void }> = ({
             title: t('events.details.value'),
             dataIndex: 'value',
             key: 'value',
-            render: (children, data, index) => {
+            render: (children, data) => {
               if (typeof children === 'object') return children;
               return (
                 <>
                   {children}
-                  <Tooltip title="ajouter aux filtres">
+                  <Tooltip title={t('events.details.addFilter')}>
                     <button
                       className="relative text-gray ml-2"
                       onClick={() => addFilter(data.name, data.value)}
