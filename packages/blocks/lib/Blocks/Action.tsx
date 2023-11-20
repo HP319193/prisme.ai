@@ -30,14 +30,12 @@ export interface ActionProps extends ActionConfig {
   onClick?: () => void;
 }
 
-export const Action = ({
+export const ActionButton = ({
   type,
   value,
   text,
-  payload,
   className,
   Link,
-  events,
   onClick,
   popup,
 }: ActionProps) => {
@@ -155,19 +153,20 @@ export const ConfirmAction = ({
   );
 };
 
-export const BaseAction = (props: ActionProps) => {
+export const Action = (props: ActionProps) => {
   const onClick = useCallback(() => {
     if (props.onClick) {
       props.onClick();
     }
     if (props.type !== 'event' || !props.events || !props.value) return;
     props.events.emit(props.value, props.payload);
-  }, [props.events, props.value, props.payload, props.onClick]);
+  }, [props.type, props.events, props.value, props.payload, props.onClick]);
 
   if (props.confirm) {
     return <ConfirmAction {...props} onClick={onClick} />;
   }
-  return <Action {...props} onClick={onClick} />;
+
+  return <ActionButton {...props} onClick={onClick} />;
 };
 
 const defaultStyles = `:block {
@@ -192,7 +191,7 @@ export const ActionInContext = () => {
 
   return (
     <BaseBlock defaultStyles={defaultStyles}>
-      <BaseAction {...config} Link={Link} events={events} />
+      <Action {...config} Link={Link} events={events} />
     </BaseBlock>
   );
 };
