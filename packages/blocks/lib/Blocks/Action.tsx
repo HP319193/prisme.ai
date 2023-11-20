@@ -148,7 +148,7 @@ export const ConfirmAction = ({
       }
       trigger={['click']}
     >
-      <Action {...props} events={events} />
+      <ActionButton {...props} events={events} />
     </Tooltip>
   );
 };
