@@ -102,6 +102,9 @@ export function interpolateExpression(expression: string, values: any) {
     try {
       interpolation =
         key === '$index' ? values.$index : jsonpath.value(values, key);
+      if (typeof interpolation === 'string') {
+        interpolation = interpolateExpression(interpolation, values);
+      }
     } catch (e) {}
     if (filters) {
       interpolation = filters

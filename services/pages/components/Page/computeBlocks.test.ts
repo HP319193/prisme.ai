@@ -651,3 +651,25 @@ it('should override original', () => {
     },
   });
 });
+
+it('should interpolated interopolable values', () => {
+  const block = {
+    background: '{{slide.background}}',
+    css: `:block {
+      background-image: {{background}};
+    }`,
+    slide: {
+      background: 'red',
+    },
+  };
+  expect(computeBlock(block, {})).toEqual({
+    background: 'red',
+    css: `:block {
+      background-image: red;
+    }`,
+    slide: {
+      background: 'red',
+    },
+    [original]: block,
+  });
+});
