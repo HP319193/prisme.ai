@@ -16,7 +16,6 @@ import EditDetails from './EditDetails';
 import CopyIcon from '../../icons/copy.svgr';
 import Head from 'next/head';
 import useLocalizedText from '../../utils/useLocalizedText';
-import PagePreview, { usePagePreview } from '../../components/PagePreview';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PageBuilder from '../../components/PageBuilder';
 import { validatePage } from '@prisme.ai/validation';
@@ -26,6 +25,7 @@ import SourceEdit, {
 import { defaultStyles } from './defaultStyles';
 import { useTracking } from '../../components/Tracking';
 import { getBackTemplateDots } from '../../utils/templatesInBlocks';
+import PagePreview, { usePagePreview } from './PagePreview';
 
 interface PageRendererProps {
   value: Prismeai.Page;

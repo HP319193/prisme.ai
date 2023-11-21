@@ -1,4 +1,3 @@
-import { Block } from '../../providers/Block';
 import { useWorkspace } from '../../providers/Workspace';
 import getConfig from 'next/config';
 import {
@@ -6,76 +5,66 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
-import { Tooltip } from '@prisme.ai/design-system';
-import { getDefaults } from './getDefaults';
+import { Loading, Tooltip } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import Storage from '../../utils/Storage';
 import {
   DesktopOutlined,
   MobileOutlined,
   TabletOutlined,
 } from '@ant-design/icons';
 import { useContext } from '../../utils/useContext';
-import useLocalizedText from '../../utils/useLocalizedText';
-import SchemaForm from '../../components/SchemaForm/SchemaForm';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = `${global?.location?.origin}/pages` },
 } = getConfig();
-interface BlockPreviewContext {
+interface PagePreviewContext {
   reload: () => void;
   mounted: boolean;
 }
 
-const blockPreviewContext = createContext<BlockPreviewContext | undefined>(
+const pagePreviewContext = createContext<PagePreviewContext | undefined>(
   undefined
 );
-export const useBlockPreview = () =>
-  useContext<BlockPreviewContext>(blockPreviewContext);
+export const usePagePreview = () =>
+  useContext<PagePreviewContext>(pagePreviewContext);
 
-interface BlockPreviewProviderProps {
+interface PagePreviewProviderProps {
   children: ReactNode;
 }
-export const BlockPreviewProvider = ({
-  children,
-}: BlockPreviewProviderProps) => {
+export const PagePreviewProvider = ({ children }: PagePreviewProviderProps) => {
   const [mounted, setMounted] = useState(true);
   const reload = useCallback(() => {
     setMounted(false);
     setTimeout(() => setMounted(true), 1);
   }, []);
   return (
-    <blockPreviewContext.Provider value={{ mounted, reload }}>
+    <pagePreviewContext.Provider value={{ mounted, reload }}>
       {children}
-    </blockPreviewContext.Provider>
+    </pagePreviewContext.Provider>
   );
 };
 
-interface BlockPreviewProps extends Block {}
+interface PagePreviewProps {
+  page: Prismeai.Page;
+  visible?: boolean;
+}
 
-export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
+export const PagePreview = ({ page, visible }: PagePreviewProps) => {
   const {
-    workspace: { id: wId, slug },
+    workspace,
+    workspace: { slug },
   } = useWorkspace();
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const storageKey = `__block_${wId}_${slug}`;
-  const [values, setValues] = useState(Storage.get(storageKey));
   const { t } = useTranslation('workspaces');
-  const { workspace } = useWorkspace();
   const [width, setWidth] = useState<'full' | 'tablet' | 'mobile'>('full');
-  const { mounted } = useBlockPreview();
-  const { localizeSchemaForm } = useLocalizedText();
-
-  useEffect(() => {
-    Storage.set(storageKey, values);
-  }, [storageKey, values]);
+  const { mounted } = usePagePreview();
+  const [loaded, setLoaded] = useState(false);
 
   const update = useCallback(() => {
-    if (!iframeRef.current) return;
+    if (!iframeRef.current || !visible) return;
 
     const appInstances = Object.entries(workspace.imports || {}).reduce<
       { slug: string; blocks: {} }[]
@@ -95,23 +84,18 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
 
     iframeRef.current?.contentWindow?.postMessage(
       {
-        type: 'previewblock.update',
+        type: 'previewpage.update',
         page: {
+          ...page,
           appInstances: [
             { slug: '', blocks: workspace.blocks },
             ...appInstances,
           ],
         },
-        config: {
-          blocks: blocks,
-          css,
-          ...getDefaults(schema || {}),
-          ...values,
-        },
       },
       '*'
     );
-  }, [blocks, css, schema, values, workspace]);
+  }, [page, visible, workspace.blocks, workspace.imports]);
 
   useEffect(() => {
     update();
@@ -120,7 +104,7 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
   useEffect(() => {
     const listener = (e: MessageEvent) => {
       const { type } = e.data || {};
-      if (type === 'previewblock:init') {
+      if (type === 'previewpage:init') {
         update();
       }
     };
@@ -130,18 +114,11 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
     };
   }, [update]);
 
-  const cleanedSchema = useMemo(() => {
-    if (schema && schema.type === 'object' && !schema.title) {
-      return { ...schema, title: t('blocks.preview.config.label') };
-    }
-    if (!schema) return schema;
-    return localizeSchemaForm(schema);
-  }, [localizeSchemaForm, schema, t]);
-
-  const [formMounted, setFormMounted] = useState(true);
-
   return (
     <div className="flex flex-1 flex-col">
+      {!loaded && (
+        <Loading className="absolute top-0 left-0 right-0 bottom-0" />
+      )}
       <div className="flex flex-1 flex-col items-center">
         {mounted && (
           <iframe
@@ -149,11 +126,12 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
             className={`flex flex-1 ${width === 'full' ? 'w-full' : ''}
             ${width === 'tablet' ? 'w-[800px] shadow-lg' : ''}
             ${width === 'mobile' ? 'w-[420px] shadow-lg' : ''}`}
-            src={`${window.location.protocol}//${slug}${PAGES_HOST}/__preview/block`}
+            src={`${window.location.protocol}//${slug}${PAGES_HOST}/__preview/page`}
+            onLoad={() => setLoaded(true)}
           />
         )}
       </div>
-      <div className="flex pb-6 relative">
+      <div className="flex h-[4rem] relative">
         <div className="absolute right-6 m-2 z-10 justify-center">
           <Tooltip title={t('blocks.preview.toggleWidth.desktop')}>
             <button
@@ -192,31 +170,9 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
             </button>
           </Tooltip>
         </div>
-        <div className="flex flex-1 min-h-[4rem]">
-          {cleanedSchema && cleanedSchema.type && formMounted && (
-            <SchemaForm
-              schema={cleanedSchema}
-              onChange={setValues}
-              buttons={[
-                <button
-                  key="reset"
-                  className="absolute bottom-2 right-4 text-sm"
-                  onClick={async () => {
-                    setFormMounted(false);
-                    await setValues(getDefaults(schema || {}));
-                    setFormMounted(true);
-                  }}
-                >
-                  {t('blocks.preview.config.reset')}
-                </button>,
-              ]}
-              initialValues={values}
-            />
-          )}
-        </div>
       </div>
     </div>
   );
 };
 
-export default BlockPreview;
+export default PagePreview;

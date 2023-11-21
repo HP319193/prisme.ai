@@ -13,13 +13,10 @@ import { replaceSilently } from '../../utils/urls';
 import { ApiError } from '../../utils/api';
 import { TrackingCategory, useTracking } from '../../components/Tracking';
 import {
-  PagePreviewProvider,
-  usePagePreview,
-} from '../../components/PagePreview';
-import {
   getBackTemplateDots,
   removeTemplateDots,
 } from '../../utils/templatesInBlocks';
+import { PagePreviewProvider, usePagePreview } from './PagePreview';
 
 const Page = () => {
   const { t } = useTranslation('workspaces');
@@ -138,24 +135,26 @@ const Page = () => {
   ]);
 
   return (
-    <PageRenderer
-      value={value}
-      onChange={(page) => setValue(getBackTemplateDots(page))}
-      onDelete={onDelete}
-      onSave={save}
-      saving={saving}
-      viewMode={viewMode}
-      setViewMode={(mode) => {
-        trackEvent({
-          name: `Display mode ${mode === 0 ? 'Preview' : 'Edition'}`,
-          action: 'click',
-        });
-        setViewMode(mode);
-      }}
-      duplicate={duplicate}
-      duplicating={duplicating}
-      dirty={dirty}
-    />
+    <PagePreviewProvider>
+      <PageRenderer
+        value={value}
+        onChange={(page) => setValue(getBackTemplateDots(page))}
+        onDelete={onDelete}
+        onSave={save}
+        saving={saving}
+        viewMode={viewMode}
+        setViewMode={(mode) => {
+          trackEvent({
+            name: `Display mode ${mode === 0 ? 'Preview' : 'Edition'}`,
+            action: 'click',
+          });
+          setViewMode(mode);
+        }}
+        duplicate={duplicate}
+        duplicating={duplicating}
+        dirty={dirty}
+      />
+    </PagePreviewProvider>
   );
 };
 
