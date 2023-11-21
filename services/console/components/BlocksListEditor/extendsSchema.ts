@@ -12,7 +12,7 @@ export async function extendsSchema(
   }
   const asArray: any = await Promise.all(
     Object.entries(schema).map(async ([k, v]) => {
-      if (typeof v !== 'object') return [k, v];
+      if (typeof v !== 'object' || !v) return [k, v];
       let cleanedV: Schema = { ...v };
       if (Array.isArray(v)) {
         cleanedV = await Promise.all(
