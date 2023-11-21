@@ -22,6 +22,7 @@ import {
 import { useContext } from '../../utils/useContext';
 import useLocalizedText from '../../utils/useLocalizedText';
 import SchemaForm from '../../components/SchemaForm/SchemaForm';
+import BlocksListEditorProvider from '../../components/BlocksListEditor/BlocksListEditorProvider';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = `${global?.location?.origin}/pages` },
@@ -194,24 +195,26 @@ export const BlockPreview = ({ blocks, schema, css }: BlockPreviewProps) => {
         </div>
         <div className="flex flex-1 min-h-[4rem]">
           {cleanedSchema && cleanedSchema.type && formMounted && (
-            <SchemaForm
-              schema={cleanedSchema}
-              onChange={setValues}
-              buttons={[
-                <button
-                  key="reset"
-                  className="absolute bottom-2 right-4 text-sm"
-                  onClick={async () => {
-                    setFormMounted(false);
-                    await setValues(getDefaults(schema || {}));
-                    setFormMounted(true);
-                  }}
-                >
-                  {t('blocks.preview.config.reset')}
-                </button>,
-              ]}
-              initialValues={values}
-            />
+            <BlocksListEditorProvider>
+              <SchemaForm
+                schema={cleanedSchema}
+                onChange={setValues}
+                buttons={[
+                  <button
+                    key="reset"
+                    className="absolute bottom-2 right-4 text-sm"
+                    onClick={async () => {
+                      setFormMounted(false);
+                      await setValues(getDefaults(schema || {}));
+                      setFormMounted(true);
+                    }}
+                  >
+                    {t('blocks.preview.config.reset')}
+                  </button>,
+                ]}
+                initialValues={values}
+              />
+            </BlocksListEditorProvider>
           )}
         </div>
       </div>
