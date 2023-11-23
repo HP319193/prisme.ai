@@ -3,6 +3,8 @@ import path from 'path';
 const DEBUG = ['dev', 'development'].includes(
   process.env.NODE_ENV || 'production'
 );
+
+const API_KEY_HEADER = process.env.API_KEY_HEADER || 'x-prismeai-api-key';
 export default {
   PORT: process.env.PORT || 3001,
   API_URL: process.env.API_URL || 'http://studio.local.prisme.ai:3001/v2',
@@ -29,13 +31,15 @@ export default {
 
   AUTH_DATA_HEADER: process.env.AUTH_DATA_HEADER || 'x-prismeai-auth-data',
 
-  API_KEY_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-api-key',
+  API_KEY_HEADER,
+
+  ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE: [API_KEY_HEADER],
 
   ROLE_HEADER: process.env.ROLE_HEADER || 'x-prismeai-role',
 
   SUPER_ADMIN_EMAILS: process.env.SUPER_ADMIN_EMAILS || '',
 
-  SESSION_HEADER: process.env.API_KEY_HEADER || 'x-prismeai-token',
+  LEGACY_SESSION_HEADER: 'x-prismeai-token', // Legacy
 
   OIDC_CLIENT_ID_HEADER:
     process.env.OIDC_CLIENT_ID_HEADER || 'x-prismeai-client-id',
