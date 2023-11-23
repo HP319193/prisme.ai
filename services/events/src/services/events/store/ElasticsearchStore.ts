@@ -415,10 +415,14 @@ export class ElasticsearchStore implements EventsStore {
           },
         };
       } else {
+        const failedItems = result.body.items.filter(
+          (cur: any) =>
+            !cur?.create?.result || cur?.create?.result !== 'created'
+        );
         logger.error({
-          msg: 'Elasticsearch store raised an exception during bulk insert',
+          msg: `Elasticsearch store raised an exception during bulk insert, failing to index ${failedItems.length} events out of ${result.body.items.length}`,
           error: result.body.errors,
-          items: result.body.items,
+          items: failedItems,
         });
       }
       return { error: result.body.errors };
