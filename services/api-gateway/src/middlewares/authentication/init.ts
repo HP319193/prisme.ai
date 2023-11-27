@@ -65,7 +65,7 @@ export async function init(app: Application) {
   // First check for access token to generate their session before express-session
   app.use(async function (req, res, next) {
     const bearer = (req.headers['authorization'] ||
-      req.headers[syscfg.SESSION_HEADER] ||
+      req.headers[syscfg.LEGACY_SESSION_HEADER] ||
       '') as string;
     const token = bearer.startsWith('Bearer ') ? bearer.slice(7) : bearer;
     if (typeof token === 'string' && token.startsWith('at:')) {
@@ -168,7 +168,10 @@ async function initPassportStrategies(
 
 export async function cleanIncomingRequest(req: Request) {
   for (let header in req.headers) {
-    if (header.startsWith('x-prismeai-')) {
+    if (
+      header.startsWith('x-prismeai-') &&
+      !syscfg.ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE.includes(header)
+    ) {
       delete req.headers[header];
     }
   }
