@@ -11,7 +11,7 @@ import { BaseBlock } from './BaseBlock';
 import { BaseBlockConfig } from './types';
 
 export interface ActionConfig extends BaseBlockConfig {
-  type: 'external' | 'internal' | 'inside' | 'event';
+  type: 'external' | 'internal' | 'inside' | 'event' | 'script';
   value: string;
   text: ReactNode | Prismeai.LocalizedText | Prismeai.Block['blocks'];
   payload?: any;
@@ -50,10 +50,14 @@ export const ActionButton = ({
   ) : (
     text
   );
+
   switch (type) {
+    case 'script':
     case 'event':
       return (
-        <div className={`pr-block-action pr-block-action--event ${className}`}>
+        <div
+          className={`pr-block-action pr-block-action--${type} ${className}`}
+        >
           <button
             type="button"
             className="pr-block-action__button"
@@ -158,8 +162,18 @@ export const Action = (props: ActionProps) => {
     if (props.onClick) {
       props.onClick();
     }
-    if (props.type !== 'event' || !props.events || !props.value) return;
-    props.events.emit(props.value, props.payload);
+    if (!props.events || !props.value) return;
+    switch (props.type) {
+      case 'event':
+        return props.events.emit(props.value, props.payload);
+      case 'script':
+        try {
+          new Function(props.value)();
+        } catch (e) {
+          console.error(e);
+        }
+        return;
+    }
   }, [props.type, props.events, props.value, props.payload, props.onClick]);
 
   if (props.confirm) {
