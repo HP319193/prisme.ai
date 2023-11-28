@@ -6,6 +6,7 @@ import { computePageStyles } from '../utils/computeBlocksStyles';
 import { getBlocksConfigFromServer } from '../utils/getBlocksConfigFromServer';
 import { PageProps } from '../views/Page';
 import BUILTIN_PAGES from '../builtinPages';
+import { redirect } from '../utils/redirect';
 
 export { default } from '../views/Page';
 
@@ -50,6 +51,10 @@ export const getServerSideProps: GetServerSideProps<
     if (!page) {
       throw new Error('404');
     }
+
+    const redirected = redirect(page);
+    if (redirected) return redirected;
+
     const { page: p, styles: s } = computePageStyles(page);
     page = p;
     styles = s;

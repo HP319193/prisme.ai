@@ -43,7 +43,7 @@ export const BlocksProvider: FC = ({ children }) => {
     };
   }, [initAuthentication]);
   const changeBlockConfig = useCallback((_block, newConfig) => {
-    const { [original]: block = _block } = _block;
+    const { [original]: block = _block } = _block || {};
     return {
       ...block,
       ...newConfig,
