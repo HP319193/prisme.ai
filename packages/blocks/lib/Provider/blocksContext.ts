@@ -1,6 +1,6 @@
 import { SchemaForm } from '@prisme.ai/design-system';
 import { SchemaFormContext } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
-import { createContext, FC, useContext } from 'react';
+import { createContext, FC, ReactElement, ReactNode, useContext } from 'react';
 import { Block, TBlockLoader } from './types';
 
 export interface BlocksDependenciesContext {
@@ -10,6 +10,7 @@ export interface BlocksDependenciesContext {
     Loading: FC;
     DownIcon: FC<{ className?: string }>;
     SchemaForm: typeof SchemaForm;
+    Head?: (props: { children: string }) => ReactElement;
   };
   utils: Partial<SchemaFormContext['utils']> & {
     BlockLoader: TBlockLoader;
