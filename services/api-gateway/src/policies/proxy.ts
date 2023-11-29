@@ -3,8 +3,10 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 //@ts-ignore
 import followRedirects from 'follow-redirects';
 import { GatewayConfig, syscfg } from '../config';
+import errorHandler from '../middlewares/errorHandler';
+import { PayloadTooLarge } from '../types/errors';
 
-followRedirects.maxBodyLength = syscfg.UPLOADS_MAX_SIZE;
+followRedirects.maxBodyLength = 100; //syscfg.UPLOADS_MAX_SIZE;
 export interface Params {
   service: string;
   websockets?: boolean;
@@ -40,6 +42,15 @@ export async function init(params: Params, gtwcfg: GatewayConfig) {
     timeout: timeout,
     proxyTimeout: timeout,
     xfwd: syscfg.X_FORWARDED_HEADERS,
+    onError(err, req, res) {
+      if ((<any>err).code === 'ERR_FR_MAX_BODY_LENGTH_EXCEEDED') {
+        err = new PayloadTooLarge(
+          req.socket.bytesRead,
+          syscfg.UPLOADS_MAX_SIZE
+        );
+      }
+      errorHandler(err, req, res);
+    },
   });
 
   return (req: Request, res: Response, next: NextFunction) => {
