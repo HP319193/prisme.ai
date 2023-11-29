@@ -6,7 +6,7 @@ import { GatewayConfig, syscfg } from '../config';
 import errorHandler from '../middlewares/errorHandler';
 import { PayloadTooLarge } from '../types/errors';
 
-followRedirects.maxBodyLength = 100; //syscfg.UPLOADS_MAX_SIZE;
+followRedirects.maxBodyLength = syscfg.UPLOADS_MAX_SIZE;
 export interface Params {
   service: string;
   websockets?: boolean;
