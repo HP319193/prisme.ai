@@ -5,6 +5,10 @@ import { AccessManagerOptions } from '@prisme.ai/permissions';
 import { StorageOptions } from '../src/storage';
 import { AzureBlobOptions } from '../src/storage/drivers/azureblob';
 
+export const UPLOADS_MAX_SIZE = parseInt(
+  process.env.UPLOADS_MAX_SIZE || '10000000' // 10MB
+);
+
 export const WORKSPACES_STORAGE_TYPE: DriverType =
   (process.env.WORKSPACES_STORAGE_TYPE as DriverType) || DriverType.FILESYSTEM;
 

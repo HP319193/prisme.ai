@@ -26,7 +26,11 @@ function errorHttpStatus(err: Error, serverError: boolean) {
   if ((err as any).error == KnownErrorCodes.ForbiddenError) {
     return 403;
   }
-  if (((<any>err)?.message || '').includes('request entity too large')) {
+  if (
+    ((<any>err)?.message || '').includes('request entity too large') ||
+    ((<any>err)?.message || '').includes('size must not exceed') ||
+    ((<any>err)?.message || '').includes('File too large')
+  ) {
     return 413;
   }
 

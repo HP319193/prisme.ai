@@ -100,6 +100,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Pages base domain starting with a '.', workspace slug will be prefixed as a subdomain. Used for pages builder & pages sign in redirection from api gateway</td>
     <td>.pages.local.prisme.ai:3100</td>  
   </tr>
+  <tr>
+    <td>UPLOADS_MAX_SIZE</td>
+    <td>workspaces,api-gateway,runtime</td>
+    <td>Max upload size in bytes</td>
+    <td>10000000 (10MB)</td>
+  </tr>         
 
 
   <!-- OIDC -->
@@ -243,13 +249,6 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Add X-Forwarded-* headers on proxied requests</td>
     <td>yes</td>
   </tr>            
-
-  <tr>
-    <td>REQUEST_MAX_SIZE</td>
-    <td>api-gateway</td>
-    <td>Maximum request body size (format from bodyParser.json)</td>
-    <td>1mb</td>
-  </tr>           
 
   <!-- Events -->
   <tr>
@@ -585,12 +584,6 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Base download URL for files uploaded to filesystem driver</td>
     <td>Upload/Get request URL</td>
   </tr>           
-  <tr>
-    <td>UPLOADS_MAX_SIZE</td>
-    <td>workspaces,api-gateway</td>
-    <td>Max upload size in bytes</td>
-    <td>10000000 (10MB)</td>
-  </tr>       
   <tr>
     <td>UPLOADS_ALLOWED_MIMETYPES</td>
     <td>workspaces</td>
