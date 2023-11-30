@@ -44,10 +44,18 @@ export default function init(runtime: Runtime) {
           .reduce(
             (body, { fieldname, buffer, ...file }) => ({
               ...body,
-              [fieldname]: {
-                ...file,
-                base64: buffer.toString('base64'),
-              },
+              [fieldname]: !(<any>body)?.[fieldname]
+                ? {
+                    ...file,
+                    base64: buffer.toString('base64'),
+                  }
+                : [
+                    (<any>body)[fieldname],
+                    {
+                      ...file,
+                      base64: buffer.toString('base64'),
+                    },
+                  ],
             }),
             {}
           )
