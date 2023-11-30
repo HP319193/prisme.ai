@@ -95,3 +95,11 @@ export class SuspendedWorkspaceError extends PrismeError {
     super(msg, details);
   }
 }
+
+export class InvalidUploadError extends PrismeError {
+  constructor(limit: number) {
+    super(`Invalid uploaded file : size must not exceed ${limit} bytes`, {
+      limit,
+    });
+  }
+}

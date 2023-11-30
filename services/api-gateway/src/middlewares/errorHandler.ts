@@ -7,7 +7,7 @@ export default function (
   err: Error,
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction
+  next?: express.NextFunction
 ) {
   if (err) {
     if (((<any>err)?.message || '').includes('request entity too large')) {
@@ -30,7 +30,7 @@ export default function (
       });
       logger.error({ ...req.context, err });
     }
-  } else {
+  } else if (next) {
     next();
   }
 }

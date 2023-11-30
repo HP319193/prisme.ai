@@ -17,6 +17,7 @@ import Carousel from './Carousel';
 import BlocksGrid from './BlocksGrid';
 import BlocksSplit from './BlocksSplit';
 import Signin from './Signin';
+import Head from './Head';
 
 const Schemas = {
   Cards,
@@ -36,6 +37,7 @@ const Schemas = {
   Carousel,
   BlocksGrid,
   BlocksSplit,
+  Head,
 };
 
 const getEditSchema = (blockName: string): Schema | null =>

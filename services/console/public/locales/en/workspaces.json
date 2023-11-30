@@ -811,6 +811,7 @@
       "name_Carousel": "Carousel",
       "name_Image": "Image",
       "name_Signin": "Signin button",
+      "name_Head": "HTML Head",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -829,8 +830,9 @@
       "description_TabsView": "Display tabs",
       "description_Carousel": "Displaying Blocks in a horizontal Carousel",
       "description_Image": "Display a picture",
-      "panelTitle_adding": "Add a Block",
       "description_Signin": "Display a login or registration button",
+      "description_Head": "HTML content to be placed in the page's <head> tag",
+      "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "action": {
         "settings": {
@@ -1455,6 +1457,14 @@
           "redirect": {
             "label": "Redirect to",
             "description": "By default, the home page will be displayed after subscription. You can choose another page."
+          }
+        }
+      },
+      "head": {
+        "settings": {
+          "content": {
+            "label": "Content",
+            "description": "HTML page header tags"
           }
         }
       }

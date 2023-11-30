@@ -1,7 +1,9 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
 import Runtime from '../../services/runtime';
 import { asyncRoute } from '../utils/async';
+import { UPLOADS_MAX_SIZE } from '../../../config';
+import { InvalidUploadError } from '../../errors';
 
 export default function init(runtime: Runtime) {
   async function webhookHandler(
@@ -74,13 +76,26 @@ export default function init(runtime: Runtime) {
 
   const upload = multer({
     limits: {
-      fieldSize: 1024, // 1KB
-      fileSize: 500 * 1024, // 500KB
-      files: 1,
+      fieldSize: 1024 * 1024, // 10KB
+      fileSize: UPLOADS_MAX_SIZE,
       parts: 50,
     },
-  });
-  app.use(`/:automationSlug`, upload.any(), asyncRoute(webhookHandler));
+  }).any();
+  const uploadValidation = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    upload(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        if (err.message.includes('File too large')) {
+          return next(new InvalidUploadError(UPLOADS_MAX_SIZE));
+        }
+      }
+      next();
+    });
+  };
+  app.use(`/:automationSlug`, uploadValidation, asyncRoute(webhookHandler));
 
   return app;
 }

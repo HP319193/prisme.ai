@@ -811,6 +811,7 @@
       "name_Carousel": "Carousel",
       "name_Image": "Image",
       "name_Signin": "Bouton de connexion",
+      "name_Head": "Entête HTML",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Hero": "Afficher un Hero de page",
@@ -830,6 +831,7 @@
       "description_Carousel": "Afficher des Blocks dans un Carousel horizontal",
       "description_Image": "Afficher une image",
       "description_Signin": "Afficher un bouton pour se connecter ou s'inscrire",
+      "description_Head": "Contenu HTML à placer dans la balise <head> de la page",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
       "action": {
@@ -1455,6 +1457,14 @@
           "redirect": {
             "label": "Rediriger vers",
             "description": "Par défaut, la page d'accueil sera affichée après la souscription. Vous pouvez choisir une autre page."
+          }
+        }
+      },
+      "head": {
+        "settings": {
+          "content": {
+            "label": "Contenu",
+            "description": "Balises HTML d'entête de page"
           }
         }
       }

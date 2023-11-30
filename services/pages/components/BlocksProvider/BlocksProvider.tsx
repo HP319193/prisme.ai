@@ -12,6 +12,12 @@ import SchemaForm from './SchemaForm';
 import { useTranslation } from 'next-i18next';
 import { useUser } from '../../../console/components/UserProvider';
 import { original } from '../Page/computeBlocks';
+import Head from 'next/head';
+import parser from 'html-react-parser';
+
+const HeadFromString = ({ children }: { children: string }) => {
+  return <Head>{parser(children)}</Head>;
+};
 
 export const BlocksProvider: FC = ({ children }) => {
   const { id } = useWorkspace();
@@ -49,10 +55,11 @@ export const BlocksProvider: FC = ({ children }) => {
       ...newConfig,
     };
   }, []);
+
   return (
     <Provider
       externals={externals}
-      components={{ Link, Loading, DownIcon, SchemaForm }}
+      components={{ Link, Loading, DownIcon, SchemaForm, Head: HeadFromString }}
       utils={{ uploadFile, BlockLoader, auth, changeBlockConfig }}
       language={language}
     >

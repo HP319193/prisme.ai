@@ -375,7 +375,7 @@ export default function init(
 
   const upload = multer({
     limits: {
-      fieldSize: UPLOADS_MAX_SIZE,
+      fileSize: UPLOADS_MAX_SIZE,
     },
     fileFilter: (req, file, callback) => {
       const allowedExts = ['.zip'];

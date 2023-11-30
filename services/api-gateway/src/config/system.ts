@@ -68,7 +68,11 @@ export default {
     process.env.X_FORWARDED_HEADERS || 'yes'
   ),
 
+  // This is only applied to gateway one apis
   REQUEST_MAX_SIZE: process.env.REQUEST_MAX_SIZE || '1mb',
+
+  // This is the limit applied to all forwarded request sizes
+  // Since we can't distinguish regular requests from upload ones yet
   UPLOADS_MAX_SIZE: parseInt(
     process.env.UPLOADS_MAX_SIZE || '10000000' // 10MB
   ),
