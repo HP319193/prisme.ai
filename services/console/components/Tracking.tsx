@@ -26,7 +26,7 @@ function trackPageView() {
   window._paq.push(['MediaAnalytics::scanForMedia']);
   window._paq.push(['enableLinkTracking']);
 }
-function trackEvent({
+async function trackEvent({
   category,
   action,
   name,
@@ -39,23 +39,6 @@ function trackEvent({
   value?: string | object;
   dimensions?: Record<string, string>;
 }) {
-  if (TRACKING_WEBHOOK) {
-    fetch(TRACKING_WEBHOOK, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        event: {
-          category,
-          action,
-          name,
-          value,
-          dimensions,
-        },
-      }),
-    });
-  }
   const push = window._paq
     ? (...args: any) => window._paq.push(...args)
     : console.log;
@@ -67,6 +50,25 @@ function trackEvent({
     typeof value === 'object' ? null : value,
     dimensions,
   ]);
+  if (TRACKING_WEBHOOK) {
+    try {
+      await fetch(TRACKING_WEBHOOK, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          event: {
+            category,
+            action,
+            name,
+            value,
+            dimensions,
+          },
+        }),
+      });
+    } catch {}
+  }
 }
 
 interface TrackingContext {

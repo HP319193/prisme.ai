@@ -86,11 +86,11 @@ export const WorkspacesView = () => {
       action: 'click',
       value: {
         workspaceId: id,
-        userId: user.id,
+        userId: user?.id,
       },
     });
     push(`/workspaces/${id}`);
-  }, [createWorkspace, push, t, trackEvent, user.id, workspaces]);
+  }, [createWorkspace, push, t, trackEvent, user, workspaces]);
 
   const handleDuplicateWorkspace = useCallback(
     (id: Workspace['id'], type?: 'suggestion') => async () => {
