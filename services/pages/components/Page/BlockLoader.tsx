@@ -17,6 +17,7 @@ import { useDebug } from './useDebug';
 import fastDeepEqual from 'fast-deep-equal';
 import isServerSide from '../../utils/isServerSide';
 import { useRedirect } from './useRedirect';
+import { applyCommands } from './commands';
 
 /**
  * This function aims to replace deprecated Block names by the new one
@@ -212,7 +213,8 @@ export const BlockLoader: TBlockLoader = ({
       off.push(
         events.on(updateOn, ({ payload: config }) => {
           setConfig((prev = {}) => {
-            const newConfig = { ...prev, ...config };
+            const newConfig = applyCommands(prev, config);
+
             if (fastDeepEqual(newConfig, prev)) return prev;
             const newBlock = computeBlock(
               newConfig,
