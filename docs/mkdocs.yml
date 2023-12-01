@@ -53,6 +53,7 @@ nav:
           - Pages: workspaces/pages.md
       - Blocks:
           - Form: blocks/form.md
+          - Update commands: blocks/commands.md
       - Schema Form: workspaces/schemaform.md
       - i18n.security: workspaces/security.md
   - API: /api
