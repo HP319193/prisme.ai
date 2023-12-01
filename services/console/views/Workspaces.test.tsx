@@ -40,6 +40,16 @@ jest.mock('next/image', () => {
 
   return Image;
 });
+jest.mock('../components/UserProvider', () => {
+  const user = {
+    id: '123',
+  };
+  return {
+    useUser: () => ({
+      user,
+    }),
+  };
+});
 
 beforeEach(() => {
   useWorkspaces().workspaces = [];
