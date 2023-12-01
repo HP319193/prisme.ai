@@ -3,6 +3,20 @@ import Evaluatable from '../Evaluatable';
 import DateExpression from './DateExpression';
 import get from 'lodash/get';
 
+const mathFloorRoundCeil = (
+  number: number,
+  decimal: number,
+  method: Function
+) => {
+  if (typeof number !== 'number' || typeof decimal !== 'number') {
+    throw new InvalidExpressionSyntax(
+      `Invalid parameters ${number} and ${decimal} given to round/floor/ceil function`
+    );
+  }
+  const decimalCoef = Math.pow(10, decimal);
+  return method(number * decimalCoef) / decimalCoef;
+};
+
 class FunctionCall extends Evaluatable {
   functionName: string;
   functionArgs: any[];
@@ -46,14 +60,23 @@ class FunctionCall extends Evaluatable {
         const rand = Math.random() * (max - min) + min;
         return min === 0 && max === 1 ? rand : Math.floor(rand);
       case 'round':
-        const [number, decimals = 0] = functionArgs;
-        if (typeof number !== 'number' || typeof decimals !== 'number') {
-          throw new InvalidExpressionSyntax(
-            `Invalid parameters ${number} and ${decimals} given to round function`
-          );
-        }
-        const decimalCoef = Math.pow(10, decimals);
-        return Math.round(number * decimalCoef) / decimalCoef;
+        return mathFloorRoundCeil(
+          functionArgs[0],
+          functionArgs[1] || 0,
+          Math.round
+        );
+      case 'floor':
+        return mathFloorRoundCeil(
+          functionArgs[0],
+          functionArgs[1] || 0,
+          Math.floor
+        );
+      case 'ceil':
+        return mathFloorRoundCeil(
+          functionArgs[0],
+          functionArgs[1] || 0,
+          Math.ceil
+        );
 
       case 'split':
         const [stringToSplit, separator] = functionArgs;

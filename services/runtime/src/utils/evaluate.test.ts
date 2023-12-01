@@ -576,6 +576,20 @@ describe('Should handle basic math features', () => {
     expect(evaluate('round({{var}}, 2)', { var: 10.262 }, false)).toEqual(
       10.26
     );
+
+    expect(evaluate('ceil({{var}})', { var: 10 }, false)).toEqual(10);
+    expect(evaluate('ceil({{var}})', { var: 10.2 }, false)).toEqual(11);
+    expect(evaluate('ceil({{var}}, 1)', { var: 10.2 }, false)).toEqual(10.2);
+    expect(evaluate('ceil({{var}}, 1)', { var: 10.26 }, false)).toEqual(10.3);
+    expect(evaluate('ceil({{var}}, 2)', { var: 10.262 }, false)).toEqual(10.27);
+
+    expect(evaluate('floor({{var}})', { var: 10 }, false)).toEqual(10);
+    expect(evaluate('floor({{var}})', { var: 10.2 }, false)).toEqual(10);
+    expect(evaluate('floor({{var}}, 1)', { var: 10.2 }, false)).toEqual(10.2);
+    expect(evaluate('floor({{var}}, 1)', { var: 10.26 }, false)).toEqual(10.2);
+    expect(evaluate('floor({{var}}, 2)', { var: 10.262 }, false)).toEqual(
+      10.26
+    );
   });
 });
 
