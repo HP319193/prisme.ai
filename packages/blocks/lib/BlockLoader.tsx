@@ -160,7 +160,9 @@ const BuiltinBlock = ({
 };
 
 const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
-  if (name) {
+  const isJs = url && url.replace(/\?.*$/, '').match(/\.js$/);
+
+  if (name && !isJs) {
     const Component = getComponentByName(name);
     if (Component) {
       return <BuiltinBlock Component={Component} name={name} {...props} />;
@@ -171,8 +173,6 @@ const BlockRenderMethod = ({ name, url, ...props }: BlockLoaderProps) => {
     // SSR, return nothing
     return null;
   }
-
-  const isJs = url && url.replace(/\?.*$/, '').match(/\.js$/);
 
   if (isJs) {
     return <ReactBlock url={url} name={name} {...props} />;
