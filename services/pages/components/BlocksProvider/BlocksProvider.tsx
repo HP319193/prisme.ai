@@ -21,6 +21,7 @@ const HeadFromString = ({ children }: { children: string }) => {
 
 export const BlocksProvider: FC = ({ children }) => {
   const { id } = useWorkspace();
+  const { user } = useUser();
   const {
     i18n: { language },
   } = useTranslation();
@@ -38,16 +39,22 @@ export const BlocksProvider: FC = ({ children }) => {
     },
     [id]
   );
+
   const auth = useMemo(() => {
     return {
       getSigninUrl: async ({ redirect = '' } = {}) => {
-        return initAuthentication({ redirect });
+        if (!user || user.authData?.anonymous) {
+          return initAuthentication({ redirect });
+        }
+
+        return redirect;
       },
       getSignupUrl: async ({ redirect = '' } = {}) => {
         return `/signup${redirect ? `?redirect=${redirect}` : ''}`;
       },
     };
-  }, [initAuthentication]);
+  }, [initAuthentication, user]);
+
   const changeBlockConfig = useCallback((_block, newConfig) => {
     const { [original]: block = _block } = _block || {};
     return {

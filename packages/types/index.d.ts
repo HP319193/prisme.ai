@@ -795,10 +795,12 @@ declare namespace Prismeai {
     })[];
     export type AnyValue = any;
     export interface ApiKey {
+        name?: string;
         apiKey: string;
         subjectType: string;
         subjectId: string;
         rules: PermissionRule[];
+        disabled?: boolean;
     }
     export interface App {
         workspaceId: string;
