@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useBlock } from '../Provider';
 import { useBlocks } from '../Provider/blocksContext';
 import useLocalizedText from '../useLocalizedText';
@@ -20,17 +20,19 @@ export const Signin = ({
   const {
     utils: { auth: { getSigninUrl, getSignupUrl } = {} },
   } = useBlocks();
+
   const { localize } = useLocalizedText();
   const signin = useCallback(async () => {
     if (!getSigninUrl) return;
     const url = await getSigninUrl({ redirect });
     window.location.assign(url);
-  }, []);
+  }, [getSigninUrl]);
+
   const signup = useCallback(async () => {
     if (!getSignupUrl) return;
     const url = await getSignupUrl({ redirect });
     window.location.assign(url);
-  }, []);
+  }, [getSignupUrl]);
 
   return (
     <button onClick={up ? signup : signin} className={className}>
