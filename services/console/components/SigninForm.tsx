@@ -112,8 +112,9 @@ export const SigninForm = ({ show403 }: SigninFormProps) => {
           <Title className="text-center !text-3xl">{show403}</Title> <br />
           <div>
             <Button
-              onClick={() => {
-                initAuthentication();
+              onClick={async () => {
+                const url = await initAuthentication();
+                window.location.assign(url);
               }}
               variant="primary"
               className="w-full !h-12 !mb-4 !font-bold"
