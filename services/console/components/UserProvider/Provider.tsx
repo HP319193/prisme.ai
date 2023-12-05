@@ -175,11 +175,10 @@ export const UserProvider: FC<UserProviderProps> = ({
     async ({ redirect } = {}) => {
       const redirectOnceAuthenticated =
         redirect ||
-        (Storage.get('redirect-once-signup') ||
-        window.location.href.includes('/signin')
+        Storage.get('redirect-once-authenticated') ||
+        (window.location.href.includes('/signin')
           ? new URL('/', window.location.href).toString()
           : window.location.href);
-      Storage.remove('redirect-once-signup');
       Storage.set('redirect-once-authenticated', redirectOnceAuthenticated);
       // redirect_uri must be on the same domain we want the session on (i.e current one)
       const redirectionUrl = new URL('/signin', window.location.href);

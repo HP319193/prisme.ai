@@ -55,7 +55,7 @@ export const SignupForm = ({
 
   const submit = useCallback(
     async ({ email, password, firstName, lastName }: Values) => {
-      Storage.set('redirect-once-signup', redirect);
+      Storage.set('redirect-once-authenticated', redirect);
       const user = await signup(email, password, firstName, lastName, language);
       if (!user) return;
       function next() {
