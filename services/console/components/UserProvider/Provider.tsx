@@ -8,6 +8,7 @@ import { Loading } from '@prisme.ai/design-system';
 import getConfig from 'next/config';
 import { useTranslation } from 'next-i18next';
 import cookie from 'js-cookie';
+import QueryString from 'qs';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_URL = '' },
@@ -158,12 +159,19 @@ export const UserProvider: FC<UserProviderProps> = ({
 
       // Only redirect if api.token is set to avoid OIDC signout when we come from legacy tokens
       if (clearOpSession && !api.legacyToken) {
-        const redirectionUrl = new URL('/signin', window.location.href);
+        const { back } = QueryString.parse(
+          window.location.search.replace(/^\?/, '')
+        );
+
+        const redirectionUrl = new URL(
+          back ? `${back}` : '/',
+          window.location.href
+        );
         const signoutUrl = api.getSignoutURL(redirectionUrl.toString());
         window.location.assign(signoutUrl);
       } else {
         if (!PUBLIC_URLS.includes(route)) {
-          push('/signin');
+          push('/');
         }
       }
     },
