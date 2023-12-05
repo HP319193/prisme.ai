@@ -145,7 +145,7 @@ export const BlockLoader: TBlockLoader = ({
       ...props
     } = block;
 
-    if (blocks) {
+    if (blocks && blocks.length > 0) {
       return {
         ...output,
         blockName: 'BlocksList',
