@@ -31,8 +31,9 @@ function getBlockName(name: string) {
   }
 }
 
-const recursiveConfigContext = createContext<Record<string, any>>({});
-const useRecursiveConfigContext = () => useContext(recursiveConfigContext);
+export const recursiveConfigContext = createContext<Record<string, any>>({});
+export const useRecursiveConfigContext = () =>
+  useContext(recursiveConfigContext);
 
 async function callAutomation(
   workspaceId: string,

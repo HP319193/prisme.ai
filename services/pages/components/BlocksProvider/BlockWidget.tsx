@@ -2,9 +2,12 @@ import { useBlock } from '@prisme.ai/blocks';
 import { InfoBubble, schemaFormUtils } from '@prisme.ai/design-system';
 import { FieldComponent } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
 import { Tooltip } from 'antd';
-import { useEffect } from 'react';
-import { useField } from 'react-final-form';
-import BlockLoader from '../Page/BlockLoader';
+import { useEffect, useState } from 'react';
+import { useField, useForm } from 'react-final-form';
+import BlockLoader, {
+  recursiveConfigContext,
+  useRecursiveConfigContext,
+} from '../Page/BlockLoader';
 
 export const BlockWidget: FieldComponent = ({
   schema,
@@ -15,6 +18,21 @@ export const BlockWidget: FieldComponent = ({
   const { ['ui:options']: { block: { slug, ...config } } = {} } = schema;
   const { events } = useBlock();
   const field = useField(name);
+  const form = useForm();
+  const [formValues, setFormValues] = useState({});
+  const recursive = useRecursiveConfigContext();
+
+  useEffect(() => {
+    // Values are extravcted to be injected in Block inherited config as {{formValues}}
+    form.subscribe(
+      ({ values }) => {
+        setFormValues(values.values);
+      },
+      {
+        values: true,
+      }
+    );
+  }, [form]);
 
   useEffect(() => {
     if (!config.onChange || !events) return;
@@ -50,7 +68,9 @@ export const BlockWidget: FieldComponent = ({
         </label>
       )}
       <Tooltip title={hasError} overlayClassName="pr-form-error">
-        <BlockLoader name={slug} config={config} />
+        <recursiveConfigContext.Provider value={{ ...recursive, formValues }}>
+          <BlockLoader name={slug} config={config} />
+        </recursiveConfigContext.Provider>
       </Tooltip>
       <InfoBubble
         className="pr-form-block__description"
