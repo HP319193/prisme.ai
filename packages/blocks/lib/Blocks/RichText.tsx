@@ -167,9 +167,16 @@ export const RichText = ({
         default:
           // This fixes crashes when html is invalid and tags contains invalid
           // characters
+
           if (!domNode.name.match(/^[a-z\-]+$/)) {
             domNode.name = domNode.name.replace(/[^a-zA-Z0-9\-]/g, '');
           }
+
+          // This fix crash when the lib try to set child for an unclosed node which can't accept children
+          if (domNode.name == 'img' && domNode.children.length > 0) {
+            domNode.name = 'div';
+          }
+
           return domNode;
       }
     },
