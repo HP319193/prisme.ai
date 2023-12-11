@@ -99,6 +99,7 @@ As long as they are ISO8601 dates, dates can be tested directly within condition
 `date({{mydate}}).day == 3`  
 `date({{mydate}}).day in {{allowedDays}}`     
 `date({{mydate}}).ts == 1649836805493`  
+`date({{mydate}}).iso == '2022-04-13T08:00:05.493Z'`  
 
 * Tested values are **UTC** based  
 * **day** starts on **0** for **Sunday** (so **3** is **Wednesday**)

@@ -1,5 +1,5 @@
 import { isLocalizedObject } from '@prisme.ai/design-system';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { BlockContext, useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
 import useLocalizedText from '../../useLocalizedText';
@@ -15,6 +15,7 @@ interface TabsViewConfig extends BaseBlockConfig {
     content: BlocksListConfig;
   } & ActionConfig)[];
   direction: 'vertical' | 'horizontal';
+  selected?: number;
 }
 
 interface TabsViewProps extends TabsViewConfig {
@@ -38,9 +39,13 @@ export const TabsView = ({
   direction,
   className,
   events,
+  selected = 0,
 }: TabsViewProps) => {
   const { localize } = useLocalizedText();
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState(selected);
+  useEffect(() => {
+    setCurrentTab(selected);
+  }, [selected]);
   const isHorizontal = direction !== 'vertical';
   const {
     components: { Link },
