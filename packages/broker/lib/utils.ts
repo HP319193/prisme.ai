@@ -31,13 +31,25 @@ function extractObjectsByPath(rootObject: any, path: string | string[]): any {
   return rootObject?.[splittedPath[splittedPath.length - 1]];
 }
 
-export function redact(event: any, fields: string[], replaceWith = 'REDACTED') {
+export function redact(
+  event: any,
+  fields: string[],
+  replaceWith = 'REDACTED',
+  opts?: { stopWhenBelowSize?: number }
+) {
   for (const field of fields) {
     const parentPath = field.split('.');
     const lastKey = parentPath.pop();
     const parentObj = extractObjectsByPath(event, parentPath);
     if (parentObj && lastKey && lastKey in parentObj) {
       parentObj[lastKey] = replaceWith;
+    }
+
+    if (
+      opts?.stopWhenBelowSize &&
+      JSON.stringify(event).length <= opts?.stopWhenBelowSize
+    ) {
+      break;
     }
   }
 }
