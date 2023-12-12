@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import Agent from 'agentkeepalive';
 //@ts-ignore
 import followRedirects from 'follow-redirects';
 import { GatewayConfig, syscfg } from '../config';
@@ -29,6 +30,12 @@ export const validatorSchema = {
   timeout: 'number', // seconds
 };
 
+const keepaliveAgent = new Agent({
+  keepAlive: true,
+  freeSocketTimeout: 4000,
+  timeout: 0,
+});
+
 export async function init(params: Params, gtwcfg: GatewayConfig) {
   const service = gtwcfg.service(params.service);
   const timeout = params.timeout || 20000;
@@ -42,6 +49,7 @@ export async function init(params: Params, gtwcfg: GatewayConfig) {
     timeout: timeout,
     proxyTimeout: timeout,
     xfwd: syscfg.X_FORWARDED_HEADERS,
+    agent: keepaliveAgent,
     onError(err, req, res) {
       if ((<any>err).code === 'ERR_FR_MAX_BODY_LENGTH_EXCEEDED') {
         err = new PayloadTooLarge(

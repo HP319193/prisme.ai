@@ -37,6 +37,7 @@
     "@prisme.ai/broker": "^0.1.2",
     "@prisme.ai/permissions": "^1.0.0",
     "@prisme.ai/types": "^1.0.6",
+    "agentkeepalive": "^4.5.0",
     "argparse": "^2.0.1",
     "bcrypt": "^5.0.1",
     "connect-redis": "^6.0.0",

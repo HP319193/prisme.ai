@@ -1,3 +1,4 @@
+import Agent from 'agentkeepalive';
 import { URL, URLSearchParams } from 'url';
 import FormData from 'form-data';
 import nodeFetch, { RequestInit, Response } from 'node-fetch';
@@ -17,6 +18,17 @@ import { EventType } from '../../../../eda';
 import { logger } from '../../../../logger';
 import { getAccessToken } from '../../../../utils/jwks';
 import { InvalidInstructionError } from '../../../../errors';
+
+const keepaliveAgent = new Agent({
+  keepAlive: true,
+  freeSocketTimeout: 4000,
+  timeout: 0,
+});
+const httpsKeepAliveAgent = new Agent.HttpsAgent({
+  keepAlive: true,
+  freeSocketTimeout: 4000,
+  timeout: 0,
+});
 
 const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages'].map(
   (cur) => `${API_URL}${cur}`
@@ -105,6 +117,13 @@ export async function fetch(
       'x-prismeai-workspace-id': ctx.workspaceId,
     },
     method: method,
+    agent: function (_parsedURL) {
+      if (_parsedURL.protocol == 'http:') {
+        return keepaliveAgent;
+      } else {
+        return httpsKeepAliveAgent;
+      }
+    },
   };
 
   // Process body
@@ -114,7 +133,7 @@ export async function fetch(
       params.body = new FormData();
       for (const { fieldname, value, ...opts } of multipart) {
         let convertedValue: any = value;
-        // Only test the beginning as Regexp.test is under the good a recursive function which crashes (exceeded call stack) on big file base64
+        // Only test the beginning as Regexp.test is under the hood a recursive function that crashes (exceeded call stack) on big file base64
         const isBase64 =
           typeof value === 'string' && base64Regex.test(value.slice(0, 1024)); // Must slice a multiplicator of 4 to fit with b64 regex !
         if (isBase64) {
