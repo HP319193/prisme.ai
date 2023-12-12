@@ -25,6 +25,7 @@ import ItemsGroup, {
 import SearchInput from '../../components/Navigation/SearchInput';
 import { useTracking } from '../../components/Tracking';
 import AddPageButton from './AddPageButton';
+import NestedNavigation from './NestedNavigation';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   onCreateAutomation?: () => void;
@@ -217,6 +218,51 @@ export const Navigation = ({
     });
   }, [searchValue, trackEvent]);
 
+  const automationsTree = useMemo(
+    () =>
+      filteredAutomations.map(([slug, { name }]) => ({
+        slug: slug,
+        path: localize(name),
+        render: (
+          <Item
+            key={slug}
+            href={`/workspaces/${id}/automations/${slug}`}
+            icon={
+              <Tooltip title={localize(name)} placement="right">
+                <div>
+                  <AutomationIcon
+                    color={`#${stringToHexaColor(localize(name))}`}
+                    width="1.6rem"
+                    height="1.6rem"
+                  />
+                </div>
+              </Tooltip>
+            }
+          >
+            <div className="flex flex-1 flex-col max-w-full">
+              <div className="text-ellipsis overflow-hidden">
+                <Highlight
+                  highlight={searchValue}
+                  component={<span className="font-bold text-accent" />}
+                >
+                  {localize(name)}
+                </Highlight>
+              </div>
+              <div className="text-ellipsis overflow-hidden text-xs text-gray">
+                <Highlight
+                  highlight={searchValue}
+                  component={<span className="font-bold text-accent" />}
+                >
+                  {`/${slug}`}
+                </Highlight>
+              </div>
+            </div>
+          </Item>
+        ),
+      })),
+    [filteredAutomations, id, localize, searchValue]
+  );
+
   return (
     <div className={`flex flex-col max-h-full ${props.className}`} {...props}>
       <SearchInput
@@ -291,42 +337,10 @@ export const Navigation = ({
             creating={creatingAutomation}
             tooltip={t('workspace.add.automation')}
           >
-            {filteredAutomations.map(([slug, { name }]) => (
-              <Item
-                key={slug}
-                href={`/workspaces/${id}/automations/${slug}`}
-                icon={
-                  <Tooltip title={localize(name)} placement="right">
-                    <div>
-                      <AutomationIcon
-                        color={`#${stringToHexaColor(localize(name))}`}
-                        width="1.6rem"
-                        height="1.6rem"
-                      />
-                    </div>
-                  </Tooltip>
-                }
-              >
-                <div className="flex flex-1 flex-col max-w-full">
-                  <div className="text-ellipsis overflow-hidden">
-                    <Highlight
-                      highlight={searchValue}
-                      component={<span className="font-bold text-accent" />}
-                    >
-                      {localize(name)}
-                    </Highlight>
-                  </div>
-                  <div className="text-ellipsis overflow-hidden text-xs text-gray">
-                    <Highlight
-                      highlight={searchValue}
-                      component={<span className="font-bold text-accent" />}
-                    >
-                      {`/${slug}`}
-                    </Highlight>
-                  </div>
-                </div>
-              </Item>
-            ))}
+            <NestedNavigation
+              open={!!searchValue && filteredAutomations.length > 0}
+              links={automationsTree}
+            />
           </ItemsGroup>
         )}
         {!(searchValue && filteredBlocks.length === 0) && (
