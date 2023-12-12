@@ -50,6 +50,7 @@ Default.args = {
   type: 'external',
   value: 'https://prisme.ai',
   text: 'Link',
+  disabled: false,
 };
 
 export const ContentAsBlocks = Template.bind({});
