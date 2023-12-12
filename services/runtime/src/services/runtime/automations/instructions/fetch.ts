@@ -52,7 +52,7 @@ export async function fetch(
   opts?: {
     maxRetries?: number;
   }
-) {
+): Promise<any> {
   if (!fetchParams.url) {
     throw new InvalidInstructionError(`Invalid fetch instruction : empty url`);
   }
