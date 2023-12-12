@@ -1,7 +1,7 @@
 import Agent from 'agentkeepalive';
 import { URL, URLSearchParams } from 'url';
 import FormData from 'form-data';
-import nodeFetch, { RequestInit, Response } from 'node-fetch';
+import nodeFetch, { RequestInit, Response, FetchError } from 'node-fetch';
 import { DebouncedFunc } from 'lodash';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
@@ -46,13 +46,17 @@ interface StreamChunk {
 }
 
 export async function fetch(
-  fetch: Prismeai.Fetch['fetch'],
+  fetchParams: Prismeai.Fetch['fetch'],
   ctx: ContextsManager,
-  broker: Broker
+  broker: Broker,
+  opts?: {
+    maxRetries?: number;
+  }
 ) {
-  if (!fetch.url) {
+  if (!fetchParams.url) {
     throw new InvalidInstructionError(`Invalid fetch instruction : empty url`);
   }
+  const maxRetries = opts?.maxRetries || 2;
   let {
     url,
     body,
@@ -63,7 +67,7 @@ export async function fetch(
     emitErrors = true,
     stream,
     prismeaiApiKey,
-  } = fetch;
+  } = fetchParams;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
   )
@@ -165,7 +169,22 @@ export async function fetch(
     }
   }
 
-  const result = await nodeFetch(parsedURL, params);
+  let result: Response;
+  try {
+    result = await nodeFetch(parsedURL, params);
+  } catch (e) {
+    const err = <FetchError>e;
+    if (err?.code == 'ECONNRESET' && maxRetries > 0) {
+      logger.info({
+        msg: `Retrying request towards ${url} as we received ${err?.code} error ...`,
+      });
+      return await fetch(fetchParams, ctx, broker, {
+        ...opts,
+        maxRetries: maxRetries - 1,
+      });
+    }
+    throw e;
+  }
   let responseBody, error;
   if (!stream?.event) {
     responseBody = await getResponseBody(result);
@@ -233,7 +252,7 @@ export async function fetch(
 
   if (error && emitErrors) {
     broker.send<Prismeai.FailedFetch['payload']>(EventType.FailedFetch, {
-      request: fetch,
+      request: fetchParams,
       response: {
         status: result.status,
         body: error,
