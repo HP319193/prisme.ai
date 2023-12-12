@@ -52,6 +52,10 @@ interface Config {
 }
 export const cleanAttribute = (values: any) => (attribute: string) => {
   const trimed = attribute.trim();
+
+  if (trimed !== '' && typeof +trimed === 'number' && !Number.isNaN(+trimed)) {
+    return +trimed;
+  }
   if (trimed.match(/^'.+'$/) || trimed.match(/^".+"$/)) {
     return trimed.substring(1, trimed.length - 1);
   }
@@ -66,7 +70,7 @@ export const cleanAttribute = (values: any) => (attribute: string) => {
 export function applyFilter(filter: string, value: string, values: any) {
   if (!filter) return value;
   const [fn, attrs = ''] = filter.split(/\:/);
-  switch (fn) {
+  switch (fn.trim()) {
     case 'date': {
       const [format = '', lang = 'en'] = attrs
         .split(/,/)
@@ -80,6 +84,14 @@ export function applyFilter(filter: string, value: string, values: any) {
     case 'if': {
       const [True, False] = attrs.split(/,/).map(cleanAttribute(values));
       return value ? True : False;
+    }
+    case 'formatNumber': {
+      const [lang, maximumFractionDigits] = attrs
+        .split(/,/)
+        .map(cleanAttribute(values));
+      return new Intl.NumberFormat(lang, { maximumFractionDigits }).format(
+        +value
+      );
     }
     default:
       return value;

@@ -396,6 +396,11 @@ it('should interpolate expression with filters', () => {
       bar: 'BAR',
     })
   ).toBe('FOO');
+  expect(
+    interpolateExpression("{{ foo | formatNumber : 'fr', 2 }}", {
+      foo: 12345.6789,
+    })
+  ).toBe('12 345,68');
 });
 
 it('should not read self value', () => {
