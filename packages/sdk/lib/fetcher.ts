@@ -75,7 +75,8 @@ export class Fetcher {
 
   protected async _fetch<T>(
     url: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    maxRetries?: number
   ): Promise<T> {
     const res = await this.prepareRequest(url, options);
     if (options.redirect === 'manual' && res.status === 0) {
@@ -87,6 +88,17 @@ export class Fetcher {
       this.overwriteClientId = this.lastReceivedHeaders[this.clientIdHeader];
     }
     if (!res.ok) {
+      maxRetries = typeof maxRetries === 'undefined' ? 2 : maxRetries;
+      if (
+        res.statusText?.length &&
+        res.statusText.includes('ECONNRESET') &&
+        maxRetries > 0
+      ) {
+        console.log(
+          `Retrying request towards ${url} as we received ECONNRESET error : ${res.statusText}`
+        );
+        return await this._fetch(url, options, maxRetries - 1);
+      }
       let error;
       try {
         error = new ApiError(await res.json(), res.status);

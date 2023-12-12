@@ -15,7 +15,7 @@ import {
 } from '../../../../../config';
 import { Broker, EventSource } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
-import { logger } from '../../../../logger';
+import { Logger } from '../../../../logger';
 import { getAccessToken } from '../../../../utils/jwks';
 import { InvalidInstructionError } from '../../../../errors';
 
@@ -47,6 +47,7 @@ interface StreamChunk {
 
 export async function fetch(
   fetchParams: Prismeai.Fetch['fetch'],
+  logger: Logger,
   ctx: ContextsManager,
   broker: Broker,
   opts?: {
@@ -179,7 +180,7 @@ export async function fetch(
       logger.info({
         msg: `Retrying request towards ${url} as we received ${err?.code} error ...`,
       });
-      return await fetch(fetchParams, ctx, broker, {
+      return await fetch(fetchParams, logger, ctx, broker, {
         ...opts,
         maxRetries: maxRetries - 1,
       });
