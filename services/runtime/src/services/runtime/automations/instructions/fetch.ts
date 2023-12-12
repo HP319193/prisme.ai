@@ -56,7 +56,8 @@ export async function fetch(
   if (!fetchParams.url) {
     throw new InvalidInstructionError(`Invalid fetch instruction : empty url`);
   }
-  const maxRetries = opts?.maxRetries || 2;
+  const maxRetries =
+    typeof opts?.maxRetries !== 'undefined' ? opts.maxRetries : 2;
   let {
     url,
     body,
