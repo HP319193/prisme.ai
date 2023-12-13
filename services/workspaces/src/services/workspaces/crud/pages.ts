@@ -299,10 +299,15 @@ class Pages {
           if (!cur.slug) {
             return blocks;
           }
-          return {
-            ...blocks,
-            [cur.slug]: cur.url,
-          };
+          return cur.url
+            ? {
+                ...blocks,
+                [cur.slug]: cur.url,
+              }
+            : {
+                ...blocks,
+                [cur.slug]: cur,
+              };
         }, {});
         if (!Object.keys(blocks).length) {
           return false;
