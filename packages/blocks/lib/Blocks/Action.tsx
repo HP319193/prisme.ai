@@ -22,12 +22,14 @@ export interface ActionConfig extends BaseBlockConfig {
     noLabel?: string;
     placement?: TooltipProps['placement'];
   };
+  disabled: boolean;
 }
 
 export interface ActionProps extends ActionConfig {
   events: BlockContext['events'];
   Link: BlocksDependenciesContext['components']['Link'];
   onClick?: () => void;
+  disabled: boolean;
 }
 
 export const ActionButton = ({
@@ -38,6 +40,7 @@ export const ActionButton = ({
   Link,
   onClick,
   popup,
+  disabled,
 }: ActionProps) => {
   const {
     utils: { BlockLoader },
@@ -56,7 +59,9 @@ export const ActionButton = ({
     case 'event':
       return (
         <div
-          className={`pr-block-action pr-block-action--${type} ${className}`}
+          className={`pr-block-action pr-block-action--${type} ${
+            disabled ? '.pr-block-action-wrapper__disabled' : ''
+          } ${className}`}
         >
           <button
             type="button"
@@ -64,6 +69,7 @@ export const ActionButton = ({
             onClick={onClick}
             dangerouslySetInnerHTML={html ? { __html: html } : undefined}
             children={children}
+            disabled={disabled}
           />
         </div>
       );
@@ -72,7 +78,9 @@ export const ActionButton = ({
       return (
         <Link
           href={value}
-          className={`pr-block-action pr-block-action--link ${className}`}
+          className={`pr-block-action pr-block-action--link ${
+            disabled ? '.pr-block-action-wrapper__disabled' : ''
+          } ${className}`}
           target={popup ? '_blank' : undefined}
         >
           <button
@@ -81,6 +89,7 @@ export const ActionButton = ({
             className="pr-block-action__button"
             dangerouslySetInnerHTML={html ? { __html: html } : undefined}
             children={children}
+            disabled={disabled}
           />
         </Link>
       );
@@ -88,7 +97,9 @@ export const ActionButton = ({
       return (
         <a
           href={`#${value}`}
-          className={`pr-block-action pr-block-action--link ${className}`}
+          className={`pr-block-action pr-block-action--link ${
+            disabled ? '.pr-block-action-wrapper__disabled' : ''
+          } ${className}`}
         >
           <button
             type="button"
@@ -96,6 +107,7 @@ export const ActionButton = ({
             className="pr-block-action__button"
             dangerouslySetInnerHTML={html ? { __html: html } : undefined}
             children={children}
+            disabled={disabled}
           />
         </a>
       );
@@ -188,6 +200,9 @@ const defaultStyles = `:block {
 }
 :block .pr-block-action__button{
   padding: 0.5rem 1rem;
+}
+:block .pr-block-action-wrapper__disabled {
+  pointer-events: none;
 }
 :block.pr-block-action--event .pr-block-action__button {
   background: var(--accent-color);

@@ -134,12 +134,18 @@ export class EventsFactory {
       event.size > this.validatorOpts?.eventsMaxLen &&
       exceedingSizeLimit?.redact?.length
     ) {
+      const redactFields = exceedingSizeLimit?.redact.map(
+        (field) => `payload.${field}`
+      );
       redact(
         event,
-        exceedingSizeLimit?.redact.map((field) => `payload.${field}`),
+        redactFields,
         'replaceWith' in exceedingSizeLimit
           ? exceedingSizeLimit.replaceWith
-          : 'LARGE_CONTENT_STRIPPED'
+          : 'LARGE_CONTENT_STRIPPED',
+        {
+          stopWhenBelowSize: this.validatorOpts?.eventsMaxLen,
+        }
       );
       event.size = JSON.stringify(event).length;
     }

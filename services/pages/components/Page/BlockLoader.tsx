@@ -107,6 +107,7 @@ export const BlockLoader: TBlockLoader = ({
         };
       }
 
+      // This should be rewrote as a WorkspaceBlock Component
       return {
         ...output,
         ...block,
@@ -132,37 +133,54 @@ export const BlockLoader: TBlockLoader = ({
       console.error(`"${name}" Block is not installed`);
       return output;
     }
-
     const debugUrl = debug.get(name);
     const b = app.blocks[name];
-    const block = typeof b === 'string' ? { url: b } : b;
+    const appBlock = typeof b === 'string' ? { url: b } : b;
     if (debugUrl) {
-      block.url = debugUrl;
+      appBlock.url = debugUrl;
     }
 
-    const {
-      url = getBlockName('BlocksList'),
-      blocks = undefined,
-      ...props
-    } = block;
+    if (appBlock.url) {
+      const {
+        url = getBlockName('BlocksList'),
+        blocks = undefined,
+        ...props
+      } = appBlock;
 
-    if (blocks && blocks.length > 0) {
+      if (blocks && blocks.length > 0) {
+        return {
+          ...output,
+          blockName: 'BlocksList',
+          computedConfig: computeBlock(
+            {
+              ...output.computedConfig,
+              blocks,
+              ...props,
+            },
+            recursiveConfig
+          ),
+        };
+      }
       return {
         ...output,
-        blockName: 'BlocksList',
-        computedConfig: computeBlock(
-          {
-            ...output.computedConfig,
-            blocks,
-            ...props,
-          },
-          recursiveConfig
-        ),
+        url,
       };
     }
+
+    // This should be rewrote as a WorkspaceBlock Component
     return {
       ...output,
-      url,
+      ...appBlock,
+      computedConfig: computeBlock(
+        {
+          ...prevConfig.current,
+          ...appBlock,
+        },
+        recursiveConfig,
+        true // merged from a templated Block and a config, so there should
+        // not exist any original here
+      ),
+      blockName: 'BlocksList',
     };
   }, [config, name, recursiveConfig, page?.appInstances, debug]);
 
