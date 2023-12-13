@@ -59,9 +59,8 @@ export const AutomationProvider = ({
   children,
 }: AutomationProviderProps) => {
   const { t } = useTranslation('workspaces');
-  const [automation, setAutomation] = useState<
-    AutomationContext['automation']
-  >();
+  const [automation, setAutomation] =
+    useState<AutomationContext['automation']>();
   const [slug, setSlug] = useState(automationSlug);
   const [loading, setLoading] = useState<AutomationContext['loading']>(true);
   const [saving, setSaving] = useState<AutomationContext['saving']>(false);
@@ -104,12 +103,13 @@ export const AutomationProvider = ({
     [automation, slug, workspaceId]
   );
 
-  const deleteAutomation: AutomationContext['deleteAutomation'] = useCallback(async () => {
-    if (!workspaceId || !automation) return null;
-    setAutomation(undefined);
-    api.deleteAutomation(workspaceId, slug);
-    return automation;
-  }, [automation, slug, workspaceId]);
+  const deleteAutomation: AutomationContext['deleteAutomation'] =
+    useCallback(async () => {
+      if (!workspaceId || !automation) return null;
+      setAutomation(undefined);
+      api.deleteAutomation(workspaceId, slug);
+      return automation;
+    }, [automation, slug, workspaceId]);
 
   useEffect(() => {
     const initAutomation = async () => {

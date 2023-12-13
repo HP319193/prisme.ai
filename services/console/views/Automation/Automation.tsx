@@ -484,7 +484,11 @@ export const AutomationWithProvider = () => {
     <TrackingCategory category="Automation Builder">
       <AutomationProvider
         workspaceId={workspace.id}
-        automationSlug={`${automationId}`}
+        automationSlug={
+          Array.isArray(automationId)
+            ? automationId.join('/')
+            : `${automationId}`
+        }
       >
         <Automation />
       </AutomationProvider>
