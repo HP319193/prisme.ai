@@ -15,6 +15,54 @@ import { useTracking } from '../Tracking';
 import useLocalizedText from '../../utils/useLocalizedText';
 import copy from '../../utils/Copy';
 import SchemaForm from '../SchemaForm/SchemaForm';
+import ItemsGroup from '../Navigation/ItemsGroup';
+
+interface PreviewResultProps {
+  result: string;
+  link: string;
+}
+const PreviewResult = ({ result, link }: PreviewResultProps) => {
+  const { t } = useTranslation('workspaces');
+  const [open, setOpen] = useState(true);
+  const prettyPreview = useMemo(() => {
+    setOpen(false);
+    if (typeof result === 'string') {
+      if (result.match(/^http/)) {
+        if (result.match(/\.(png|jpeg|jpg|png|svg)$/)) {
+          // eslint-disable-next-line @next/next/no-img-element
+          return <img src={result} alt="" />;
+        }
+        return <a href={result}>{result}</a>;
+      }
+    }
+    setOpen(true);
+    return null;
+  }, [result]);
+  const details = (
+    <>
+      <CodeEditorInline
+        readOnly
+        value={result}
+        mode="json"
+        className="!flex-auto"
+      />
+      <Link href={link}>
+        <a className="mt-4 text-right">{t('automations.play.activity')}</a>
+      </Link>
+    </>
+  );
+  if (prettyPreview) {
+    return (
+      <>
+        {prettyPreview}
+        <ItemsGroup open={open} onClick={() => setOpen(!open)} title="details">
+          {details}
+        </ItemsGroup>
+      </>
+    );
+  }
+  return details;
+};
 
 const PlayView = () => {
   const {
@@ -201,19 +249,10 @@ const PlayView = () => {
           )}
           {!running && result && (
             <>
-              <CodeEditorInline
-                readOnly
-                value={result}
-                mode="json"
-                className="!flex-auto"
+              <PreviewResult
+                result={result}
+                link={`/workspaces/${wId}?source.correlationId=${correlationId}`}
               />
-              <Link
-                href={`/workspaces/${wId}?source.correlationId=${correlationId}`}
-              >
-                <a className="mt-4 text-right">
-                  {t('automations.play.activity')}
-                </a>
-              </Link>
             </>
           )}
         </div>
