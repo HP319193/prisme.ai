@@ -28,7 +28,7 @@ export const EVENTS_STORAGE_ES_OPTIONS: StoreDriverOptions = {
   host: EVENTS_STORAGE_ES_HOST,
   user: EVENTS_STORAGE_ES_USER,
   password: EVENTS_STORAGE_ES_PASSWORD,
-  driverOptions: {},
+  driverOptions: extractOptsFromEnv('EVENTS_STORAGE_ES_OPT_'),
 };
 
 export const EVENTS_STORAGE_ES_BULK_REFRESH = ['true', 'yes', 'y'].includes(
