@@ -4,6 +4,7 @@ import {
   StoreDriverType,
 } from '../src/services/events/store';
 import { AccessManagerOptions } from '@prisme.ai/permissions';
+import set from 'lodash.set';
 
 /*
  * Events storage
@@ -59,9 +60,6 @@ function extractOptsFromEnv(prefix: string) {
       } else if (parseInt(v)) {
         v = parseInt(v);
       }
-      return {
-        ...env,
-        [k.slice(prefix.length)]: v,
-      };
+      return set(env, k.slice(prefix.length), v);
     }, {});
 }
