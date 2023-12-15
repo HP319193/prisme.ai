@@ -26,3 +26,17 @@ blocks:
 * **url** might references a **.js** entrypoint for the block, or any other URL that will be loaded inside an iframe.  
 
 If **url** points to a **.js** file, this must be the entrypoint of a [BlockProtocol module](https://blockprotocol.org/).  
+
+## Builtin functionnalities
+
+A page is like a BlocksList Block, but with built-in functionnalities. Here the list of thing you can activate by passing the correct parameter to the page from `updateOn` event or init `autoamtion`:
+
+### Redirection
+
+You can initiate a redirection to another page by sending an object with a `reidrect` key. This object will may contains the following attributes:
+
+- `url`: The url where to redirect. It can be a relative or absolute one. If not set, the current location will be used, usefull when you just want to change the current language.
+- `locale`: Change the current locale.
+- `method`: HTTP method. Default is `get`. Can be `post`.
+- `body`: object going with post redirection and acting as body.
+- `push`: will use `pushState` method which will change the current browser url without reloading the page.
