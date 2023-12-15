@@ -13,7 +13,7 @@ interface RedirectGetAttributes {
 }
 
 export function useRedirect() {
-  const { push } = useRouter();
+  const { push, asPath } = useRouter();
   return useCallback(
     ({ url, redirect }: RedirectGetAttributes) => {
       function redirectGet(url: string, locale?: string) {
@@ -43,8 +43,13 @@ export function useRedirect() {
       }
 
       if (redirect) {
-        const { url, method = 'get', body = {}, locale, push } = redirect;
-        if (!url) return;
+        const {
+          url = asPath,
+          method = 'get',
+          body = {},
+          locale,
+          push,
+        } = redirect;
         if (push) {
           return window.history.pushState({}, '', url);
         }
@@ -57,6 +62,6 @@ export function useRedirect() {
         redirectGet(url);
       }
     },
-    [push]
+    [asPath, push]
   );
 }
