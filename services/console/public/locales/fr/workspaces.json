@@ -568,6 +568,7 @@
       "title": "Exécuter l'Automatisation",
       "parameters": "Paramètres",
       "results": "Résultat",
+      "details": "Détails",
       "label": "Lancer",
       "empty": "Lancer votre automation ici <1>Démarrer</1>",
       "activity": "voir l'activité…",

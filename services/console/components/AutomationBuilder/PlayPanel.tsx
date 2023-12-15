@@ -55,7 +55,11 @@ const PreviewResult = ({ result, link }: PreviewResultProps) => {
     return (
       <>
         {prettyPreview}
-        <ItemsGroup open={open} onClick={() => setOpen(!open)} title="details">
+        <ItemsGroup
+          open={open}
+          onClick={() => setOpen(!open)}
+          title={t('automations.play.details')}
+        >
           {details}
         </ItemsGroup>
       </>
