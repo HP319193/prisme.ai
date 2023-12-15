@@ -18,6 +18,7 @@ import fastDeepEqual from 'fast-deep-equal';
 import isServerSide from '../../utils/isServerSide';
 import { useRedirect } from './useRedirect';
 import { applyCommands } from './commands';
+import { useRouter } from 'next/router';
 
 /**
  * This function aims to replace deprecated Block names by the new one
@@ -191,12 +192,12 @@ export const BlockLoader: TBlockLoader = ({
 
   const redirect = useRedirect();
   const automationLoadingState = useRef(-1);
+  const { query } = useRouter();
   const initWithAutomation = useCallback(async () => {
     if (
       !user ||
       !page ||
       !page.workspaceId ||
-      !loaded ||
       automationLoadingState.current > -1
     )
       return;
@@ -222,6 +223,18 @@ export const BlockLoader: TBlockLoader = ({
     } catch {}
     automationLoadingState.current = 1;
   }, [automation, loaded, page, redirect, user]);
+
+  // This is needed to re-init block when page navigate without reloading
+  // by changing query string
+  const refetch = useRef(() => {
+    if (automation) {
+      automationLoadingState.current = -1;
+      initWithAutomation();
+    }
+  });
+  useEffect(() => {
+    refetch.current();
+  }, [query]);
 
   useEffect(() => {
     if (!user || !loaded || !events) return;

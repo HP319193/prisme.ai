@@ -60,7 +60,7 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
           .filter(
             (cur) =>
               !(cur.labels || []).includes('suggestions') ||
-              cur.createdBy === user.id
+              cur.createdBy === user?.id
           )
           .map(({ createdAt, updatedAt, ...workspace }) => ({
             ...workspace,
@@ -69,7 +69,7 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
           }))
       );
       fetching.current = false;
-    }, [fetching]);
+    }, [user?.id]);
 
   const createWorkspace: WorkspacesContext['createWorkspace'] = useCallback(
     async (name: string) => {
