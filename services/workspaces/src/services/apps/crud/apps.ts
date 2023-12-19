@@ -15,7 +15,7 @@ import {
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
-import { logger } from '@azure/storage-blob';
+import { logger } from '../../../logger';
 
 export interface ListAppsQuery {
   text?: string;

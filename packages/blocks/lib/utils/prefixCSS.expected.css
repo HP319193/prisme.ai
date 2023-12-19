@@ -10,7 +10,6 @@
   --light-gray-color: #e5e5e5;
   --warning-color: orange;
   --error-color: #ff4d4f;
-  /* Schema Form */
   --pr-form-object-border: 1px solid var(--light-gray-color);
   --pr-form-accent-color: var(--accent-color);
   --pr-form-error-color: var(--error-color);
@@ -120,14 +119,12 @@
 }
 
 .prefix #react-flow__arrowclosed {
-  /* accent color */
   stroke: #015dff;
   fill: #015dff;
   path: #015dff;
 }
 
 .prefix #react-flow__arrow polyline {
-  /* accent color */
   stroke: #015dff;
   fill: #015dff;
   path: #015dff;
