@@ -5,6 +5,18 @@ import parse from 'css/lib/parse';
 // @ts-ignore
 import Identity from 'css/lib/stringify/identity';
 
+function removeComments(css: string) {
+  return css.replace(/\/\*[^*]+\*\//g, '');
+}
+function extractImports(css: string): [string, string[]] {
+  const imports = css.match(/@import url([^)]+["'])\);?/g);
+
+  const cssWithoutImports = imports
+    ? imports.reduce((prev, rule) => prev.replace(rule, ''), css)
+    : css;
+  return [cssWithoutImports, imports || []];
+}
+
 export function prefixCSS(
   cssText: string,
   {
@@ -37,11 +49,13 @@ export function prefixCSS(
     });
   }
 
+  const [css, imports] = extractImports(removeComments(cssText));
+
   try {
-    const parsed = parse(cssText);
+    const parsed = parse(css);
     parsed.stylesheet.rules = processRules(parsed.stylesheet?.rules || []);
     const compiler = new Identity();
-    return compiler.compile(parsed);
+    return `${imports.join('\n')}${compiler.compile(parsed)}`;
   } catch (e) {
     console.trace(new Error(`Failed to get prefix css on: ${cssText}`), e);
     return cssText;
