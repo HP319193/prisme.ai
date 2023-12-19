@@ -26,4 +26,7 @@ export const filters = ({ sessionId }: { sessionId?: string }) => ({
     'source.sessionId': `${sessionId}`,
     'source.socketId': '*',
   },
+  interactions: {
+    type: 'runtime.interactions.triggered',
+  },
 });

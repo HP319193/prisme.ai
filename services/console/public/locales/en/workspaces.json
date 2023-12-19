@@ -186,7 +186,8 @@
         "label_shares": "Workspace shares",
         "label_application": "Applications events",
         "label_inputEvents": "User events",
-        "label_mySession": "My session"
+        "label_mySession": "My session",
+        "label_interactions": "Interactions triggered"
       },
       "reset": "Reset filters"
     },

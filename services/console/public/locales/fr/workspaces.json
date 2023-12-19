@@ -186,7 +186,8 @@
         "label_shares": "Partages d'accès",
         "label_application": "Evénements applicatifs",
         "label_inputEvents": "Evénements utilisateurs",
-        "label_mySession": "Ma session"
+        "label_mySession": "Ma session",
+        "label_interactions": "Intéractions déclenchées"
       },
       "reset": "Réinitialiser les filtres"
     },
