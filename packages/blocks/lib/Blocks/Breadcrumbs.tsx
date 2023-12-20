@@ -23,6 +23,8 @@ export const Breadcrumbs = ({
 }: BreadcrumbsProps) => {
   const last = (links || []).length - 1;
 
+  if (!Array.isArray(links)) return null;
+
   return (
     <nav
       className={`pr-block-breadcrumbs ${className}`}
