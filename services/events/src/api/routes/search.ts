@@ -4,8 +4,8 @@ import {
   ELASTIC_SEARCH_FORBIDDEN_MAX_DEPTH,
   ELASTIC_SEARCH_TIMEOUT,
 } from '../../../config';
-import { PrismeError, SearchError } from '../../errors';
-import { ActionType, SubjectType } from '../../permissions';
+import { ForbiddenError, PrismeError, SearchError } from '../../errors';
+import { ActionType, Role, SubjectType } from '../../permissions';
 import { EventsStore } from '../../services/events/store';
 import { ElasticsearchStore } from '../../services/events/store/ElasticsearchStore';
 import { asyncRoute } from '../utils/async';
@@ -27,8 +27,14 @@ export function initSearchRoutes(eventsStore: EventsStore) {
     >,
     res: Response<PrismeaiAPI.Search.Responses.$200>
   ) {
-    if (workspaceId && workspaceId.includes('*')) {
-      throw new Error('Forbidden wildcard workspaceId');
+    if (!workspaceId) {
+      workspaceId = '*';
+    }
+    if (
+      workspaceId.includes('*') &&
+      accessManager.user?.role !== Role.SuperAdmin
+    ) {
+      throw new ForbiddenError('Forbidden wildcard workspaceId');
     }
     const {
       limit = 100,
@@ -39,7 +45,7 @@ export function initSearchRoutes(eventsStore: EventsStore) {
       source,
       runtime_mappings: runtimeMappings,
     } = body;
-    if (aggs || runtimeMappings) {
+    if ((aggs || runtimeMappings) && workspaceId !== '*') {
       await accessManager.throwUnlessCan(
         ActionType.AggregateSearch,
         SubjectType.Workspace,

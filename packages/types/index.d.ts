@@ -3441,6 +3441,59 @@ declare namespace PrismeaiAPI {
             export type $403 = Prismeai.ForbiddenError;
         }
     }
+    namespace GlobalSearch {
+        export interface RequestBody {
+            scope?: "events";
+            /**
+             * Page size. Limit response documents, but aggregations still execute on all documents matching the given query
+             */
+            limit?: number;
+            /**
+             * Page number returned by response's documents field
+             */
+            page?: number;
+            /**
+             * Elasticsearch DSL query to filter response documents
+             */
+            query: {
+                [name: string]: any;
+            };
+            /**
+             * Elasticsearch aggregations executed on response documents
+             */
+            aggs?: {
+                [name: string]: any;
+            };
+            /**
+             * Elasticsearch runtime_mappings executed on runtime
+             */
+            runtime_mappings?: {
+                [name: string]: any;
+            };
+            /**
+             * Elasticsearch _source
+             */
+            source?: string[];
+            sort?: {
+                [name: string]: any;
+            }[];
+        }
+        namespace Responses {
+            export interface $200 {
+                size?: number;
+                documents?: {
+                    [name: string]: any;
+                }[];
+                aggs?: {
+                    [name: string]: any;
+                };
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace ImportExistingWorkspace {
         namespace Parameters {
             export type WorkspaceId = string;

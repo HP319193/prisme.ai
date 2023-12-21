@@ -43,12 +43,17 @@ export class ObjectNotFoundError extends PrismeError {
 
 export class ConfigurationError extends PrismeError {
   constructor(msg: string, details: any) {
-    super(msg, details, 500);
+    super(msg, details, ErrorSeverity.Fatal);
   }
 }
 
 export class SearchError extends PrismeError {
   constructor(msg: string, details?: any) {
     super(msg, details);
+  }
+}
+export class ForbiddenError extends PrismeError {
+  constructor(msg: string = 'Unauthorized access') {
+    super(msg, {});
   }
 }

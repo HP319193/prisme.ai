@@ -3860,7 +3860,7 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
+      requestBody: &SEARCH_REQUEST
         required: true
         content:
           application/json:
@@ -3904,7 +3904,7 @@ paths:
                     additionalProperties: true
                     description: 'Elasticsearch sort'
 
-      responses:
+      responses: &SEARCH_RESPONSES
         '200':
           description: Success Response
           content:
@@ -3947,6 +3947,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
+
+  /v2/search:
+    post:
+      description: Cross-workspace search API, reserved to super admins
+      operationId: globalSearch
+      tags:
+        - 'Prisme.ai Events'
+      requestBody: *SEARCH_REQUEST
+      responses: *SEARCH_RESPONSES
 
   ############################################# runtime
   /v2/workspaces/{workspaceId}/webhooks/{automationSlug}:
