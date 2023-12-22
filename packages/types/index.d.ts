@@ -2380,6 +2380,16 @@ declare namespace Prismeai {
             workspaceId: string;
         };
     }
+    export interface UpdatedUser {
+        /**
+         * example:
+         * gateway.users.updated
+         */
+        type: "gateway.users.updated";
+        payload: {
+            user: User;
+        };
+    }
     export interface UpdatedWorkspace {
         /**
          * example:

@@ -202,16 +202,29 @@ async function patchUserHandler(
   >,
   res: Response<Partial<PrismeaiAPI.PatchUser.Responses.$200>>
 ) {
-  const { context, body, logger, params } = req;
+  const { context, body, logger, params, broker } = req;
   const identity = services.identity(context, logger);
 
-  return res.send(
-    await identity.patchUser(
-      params.userId || context.userId,
-      body,
-      isSuperAdmin(req as any)
-    )
+  const user = await identity.patchUser(
+    params.userId || context.userId,
+    body,
+    isSuperAdmin(req as any)
   );
+
+  broker
+    .send<Prismeai.UpdatedUser['payload']>(
+      EventType.UpdatedUser,
+      {
+        user: user as Prismeai.User,
+      },
+      {},
+      {},
+      {
+        disableValidation: true,
+      }
+    )
+    .catch(logger.error);
+  return res.send(user);
 }
 
 async function setMetaHandler(

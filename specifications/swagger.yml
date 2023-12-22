@@ -1916,6 +1916,25 @@ components:
             email:
               type: string
 
+    UpdatedUser:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.users.updated
+          enum:
+            - gateway.users.updated
+        payload:
+          type: object
+          required:
+            - user
+          properties:
+            user:
+              $ref: "#/components/schemas/User"
+
     ########################## Events API events ##########################
 
     CleanedEvents:
