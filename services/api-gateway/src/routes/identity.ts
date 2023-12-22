@@ -9,7 +9,6 @@ import {
 } from '../middlewares/authentication';
 import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
-import { FindUserQuery } from '../services/identity/users';
 import { initAuthProviders } from './authProviders';
 import Provider from 'oidc-provider';
 
@@ -177,30 +176,24 @@ async function deleteAccessTokenHandler(
  * Internal route
  */
 async function findContactsHandler(
-  req: Request<any, any, FindUserQuery>,
+  req: Request<
+    any,
+    any,
+    PrismeaiAPI.FindContacts.RequestBody,
+    PrismeaiAPI.FindContacts.QueryParameters
+  >,
   res: Response<{
     contacts: Prismeai.User[];
   }>
 ) {
-  const {
-    context,
-    body: { email, ids },
-    logger,
-    user,
-  } = req;
+  const { context, body, logger, user } = req;
   if (user?.authData?.anonymous) {
     throw new AuthenticationError();
   }
   const identity = services.identity(context, logger);
-  return res.send({
-    contacts: await identity.findContacts(
-      {
-        email,
-        ids,
-      },
-      isSuperAdmin(req)
-    ),
-  });
+  return res.send(
+    await identity.findContacts(body, req.query, isSuperAdmin(req as any))
+  );
 }
 
 async function setMetaHandler(

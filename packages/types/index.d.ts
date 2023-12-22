@@ -3110,15 +3110,27 @@ declare namespace PrismeaiAPI {
         }
     }
     namespace FindContacts {
-        export type RequestBody = {
-            email: string;
-            ids?: string[];
-        } | {
+        namespace Parameters {
+            export type Limit = number;
+            export type Page = number;
+        }
+        export interface QueryParameters {
+            page?: Parameters.Page;
+            limit?: Parameters.Limit;
+        }
+        export interface RequestBody {
             email?: string;
-            ids: string[];
-        };
+            ids?: string[];
+            firstName?: string;
+            lastName?: string;
+            authProvider?: string;
+        }
         namespace Responses {
             export interface $200 {
+                /**
+                 * Total number of matching contacts
+                 */
+                size?: number;
                 contacts: Prismeai.Contact[];
             }
             export type $403 = Prismeai.ForbiddenError;

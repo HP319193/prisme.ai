@@ -3232,18 +3232,28 @@ paths:
 
   /v2/contacts:
     post:
-      description: Retrieve some public contact
+      description: Retrieve some public contact. Normal users can only search specific email/ids
       operationId: findContacts
       tags:
         - API Gateway
+      parameters:
+        - name: 'page'
+          in: 'query'
+          description: 'Page number'
+          schema:
+            type: number
+        - name: 'limit'
+          in: 'query'
+          description: 'Page size'
+          required: false
+          schema:
+            type: number
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              oneOf:
-                - required: ['email']
-                - required: ['ids']
+              additionalProperties: false
               properties:
                 email:
                   type: string
@@ -3251,6 +3261,12 @@ paths:
                   type: array
                   items:
                     type: string
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                authProvider:
+                  type: string
       responses:
         '200':
           description: Success Response
@@ -3261,6 +3277,9 @@ paths:
                 required:
                   - contacts
                 properties:
+                  size:
+                    type: number
+                    description: "Total number of matching contacts"
                   contacts:
                     type: array
                     items:
