@@ -1163,11 +1163,15 @@ declare namespace Prismeai {
          * Name
          */
         lastName?: string;
+        language?: string;
         /**
          * Profile picture URL
          */
         photo?: string;
         status?: "pending" | "validated" | "deactivated";
+        meta?: {
+            [key: string]: any;
+        };
         /**
          * Unique id
          */
@@ -3676,6 +3680,41 @@ declare namespace PrismeaiAPI {
                 success: boolean;
             }
             export type $401 = Prismeai.AuthenticationError;
+        }
+    }
+    namespace PatchMyUser {
+        export interface RequestBody {
+            firstName?: string;
+            lastName?: string;
+            meta?: {
+                [name: string]: any;
+            };
+        }
+        namespace Responses {
+            export type $200 = Prismeai.User;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+        }
+    }
+    namespace PatchUser {
+        namespace Parameters {
+            export type UserId = string;
+        }
+        export interface PathParameters {
+            userId: Parameters.UserId;
+        }
+        export interface RequestBody {
+            firstName?: string;
+            lastName?: string;
+            status?: "pending" | "validated" | "deactivated";
+            meta?: {
+                [name: string]: any;
+            };
+        }
+        namespace Responses {
+            export type $200 = Prismeai.User;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
     namespace PublishApp {

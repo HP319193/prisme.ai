@@ -173,7 +173,7 @@ async function deleteAccessTokenHandler(
 }
 
 /**
- * Internal route
+ * Users route
  */
 async function findContactsHandler(
   req: Request<
@@ -182,9 +182,7 @@ async function findContactsHandler(
     PrismeaiAPI.FindContacts.RequestBody,
     PrismeaiAPI.FindContacts.QueryParameters
   >,
-  res: Response<{
-    contacts: Prismeai.User[];
-  }>
+  res: Response<PrismeaiAPI.FindContacts.Responses.$200>
 ) {
   const { context, body, logger, user } = req;
   if (user?.authData?.anonymous) {
@@ -193,6 +191,26 @@ async function findContactsHandler(
   const identity = services.identity(context, logger);
   return res.send(
     await identity.findContacts(body, req.query, isSuperAdmin(req as any))
+  );
+}
+
+async function patchUserHandler(
+  req: Request<
+    PrismeaiAPI.PatchUser.PathParameters,
+    any,
+    PrismeaiAPI.PatchUser.RequestBody
+  >,
+  res: Response<Partial<PrismeaiAPI.PatchUser.Responses.$200>>
+) {
+  const { context, body, logger, params } = req;
+  const identity = services.identity(context, logger);
+
+  return res.send(
+    await identity.patchUser(
+      params.userId || context.userId,
+      body,
+      isSuperAdmin(req as any)
+    )
   );
 }
 
@@ -253,6 +271,9 @@ export default function initIdentityRoutes(oidc: Provider) {
   app.get(`/me`, isAuthenticated, meHandler);
   app.post(`/contacts`, findContactsHandler);
 
+  // Users management, super admin only
+  app.patch('/users/:userId', isAuthenticated, patchUserHandler as any);
+
   // From there, only routes restricted to users, forbidden to access tokens
   app.use(forbidAccessTokens);
 
@@ -260,6 +281,7 @@ export default function initIdentityRoutes(oidc: Provider) {
   app.post(`/signup`, signupHandler);
 
   // User account
+  app.patch(`/user`, isAuthenticated, patchUserHandler as any);
   app.post(`/user/password`, resetPasswordHandler);
   app.post(`/user/validate`, validateAccountHandler);
   app.post(`/user/mfa`, reAuthenticate, enforceMFA, setupUserMFAHandler);

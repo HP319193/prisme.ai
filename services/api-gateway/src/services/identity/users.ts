@@ -15,6 +15,7 @@ import {
   NotFoundError,
   ValidateEmailError,
   RequestValidationError,
+  ForbiddenError,
 } from '../../types/errors';
 import { comparePasswords, hashPassword } from './utils';
 import { EmailTemplate, sendMail } from '../../utils/email';
@@ -299,10 +300,41 @@ const filterUserFields = (user: User): Prismeai.User => {
   };
 };
 
+export const patchUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
+  async function (userId: string, user: Partial<User>, isSuperAdmin: boolean) {
+    if (!userId) {
+      throw new RequestValidationError(`Missing target userId`);
+    }
+    if (!isSuperAdmin && ctx?.userId !== userId) {
+      throw new ForbiddenError('You can only update your own user');
+    }
+    const authorizedFields = new Set(
+      isSuperAdmin
+        ? ['firstName', 'lastName', 'status', 'meta']
+        : ['firstName', 'lastName', 'meta']
+    );
+    const unauthorizedField = Object.keys(user).find(
+      (field) => !authorizedFields.has(field)
+    );
+    if (unauthorizedField) {
+      throw new ForbiddenError(
+        `Unauthorized update on '${unauthorizedField}' field`
+      );
+    }
+
+    const existingUser = await get(Users, ctx)(userId);
+
+    return await updateUser(
+      Users,
+      ctx
+    )({ ...existingUser, id: userId, ...user });
+  };
+
 export const updateUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function (user: Partial<User> & { id: string }) {
     // MongoDB driver always $set & so can have partial object, but care if another driver gets in !
     await Users.save(user as User);
+    return user;
   };
 
 export const login = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
@@ -497,13 +529,24 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
     return {
       size: resultSize,
       contacts: users.map(
-        ({ email, firstName, lastName, photo, id, status }) => ({
+        ({
+          email,
+          firstName,
+          lastName,
+          language,
+          photo,
+          id,
+          status,
+          meta,
+        }) => ({
           id,
           email: isSuperAdmin ? email : undefined,
           firstName,
           lastName,
+          language: isSuperAdmin ? language : undefined,
           status: isSuperAdmin ? status : undefined,
           photo,
+          meta: isSuperAdmin ? meta : undefined,
         })
       ),
     };

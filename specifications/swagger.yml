@@ -59,6 +59,8 @@ components:
             lastName:
               type: string
               description: Name
+            language:
+              type: string
             photo:
               type: string
               description: Profile picture URL
@@ -68,6 +70,8 @@ components:
                 - pending
                 - validated
                 - deactivated
+            meta:
+              type: object
 
         - $ref: '#/components/schemas/Object'
 
@@ -3048,6 +3052,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationError'
 
+  /v2/user:
+    patch:
+      description: Update my user
+      operationId: patchMyUser
+      tags:
+        - API Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                meta:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '401': *AuthenticationError
+
   /v2/user/accessTokens:
     get:
       description: Retrieve user personal access tokens
@@ -3286,6 +3325,54 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Contact'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /v2/users/{userId}:
+    patch:
+      description: User management API, reserved to super admins.
+      operationId: patchUser
+      tags:
+        - API Gateway
+      parameters:
+        - name: 'userId'
+          in: 'path'
+          description: 'Target user id'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              additionalProperties: false
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                status: *USER_STATUS
+                meta:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '404':
           description: Object not found
           content:

@@ -7,6 +7,7 @@ import {
   findContacts,
   get,
   login,
+  patchUser,
   updateUser,
   signup,
   sendResetPasswordLink,
@@ -46,6 +47,7 @@ export default (ctx?: PrismeContext, logger?: Logger) => {
   return {
     signup: signup(Users, ctx),
     get: get(Users, ctx),
+    patchUser: patchUser(Users, ctx),
     updateUser: updateUser(Users, ctx),
     login: login(Users, ctx),
     anonymousLogin: anonymousLogin(Users, ctx),

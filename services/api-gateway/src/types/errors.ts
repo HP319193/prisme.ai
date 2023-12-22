@@ -28,8 +28,8 @@ export class ConfigurationError extends PrismeError {
 }
 
 export class ForbiddenError extends PrismeError {
-  constructor() {
-    super('Forbidden', undefined, 403);
+  constructor(msg = 'Forbidden') {
+    super(msg, undefined, 403);
   }
 }
 
