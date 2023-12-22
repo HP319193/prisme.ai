@@ -309,7 +309,7 @@ export const patchUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       throw new ForbiddenError('You can only update your own user');
     }
     const authorizedFields = new Set(
-      isSuperAdmin
+      isSuperAdmin && ctx?.userId !== userId
         ? ['firstName', 'lastName', 'meta', 'status']
         : ['firstName', 'lastName', 'meta', 'photo', 'language']
     );
