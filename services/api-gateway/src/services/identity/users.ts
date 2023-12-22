@@ -310,8 +310,8 @@ export const patchUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
     }
     const authorizedFields = new Set(
       isSuperAdmin
-        ? ['firstName', 'lastName', 'status', 'meta']
-        : ['firstName', 'lastName', 'meta']
+        ? ['firstName', 'lastName', 'meta', 'status']
+        : ['firstName', 'lastName', 'meta', 'photo', 'language']
     );
     const unauthorizedField = Object.keys(user).find(
       (field) => !authorizedFields.has(field)

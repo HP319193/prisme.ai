@@ -3689,6 +3689,8 @@ declare namespace PrismeaiAPI {
             meta?: {
                 [name: string]: any;
             };
+            photo?: string;
+            language?: string;
         }
         namespace Responses {
             export type $200 = Prismeai.User;

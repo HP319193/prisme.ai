@@ -3064,6 +3064,7 @@ paths:
           application/json:
             schema:
               type: object
+              additionalProperties: false
               properties:
                 firstName:
                   type: string
@@ -3072,6 +3073,10 @@ paths:
                 meta:
                   type: object
                   additionalProperties: true
+                photo:
+                  type: string
+                language:
+                  type: string
       responses:
         '200':
           description: Success Response
