@@ -1167,6 +1167,7 @@ declare namespace Prismeai {
          * Profile picture URL
          */
         photo?: string;
+        status?: "pending" | "validated" | "deactivated";
         /**
          * Unique id
          */
@@ -2411,7 +2412,7 @@ declare namespace Prismeai {
          * foo@prisme.ai
          */
         email?: string;
-        status?: "pending" | "validated" | "deactivated";
+        status?: "pending" | "validated" | "deactivated" | "pending" | "validated" | "deactivated";
         language?: string;
         authData?: {
             [name: string]: any;
@@ -2696,7 +2697,7 @@ declare namespace PrismeaiAPI {
                  * foo@prisme.ai
                  */
                 email?: string;
-                status?: "pending" | "validated" | "deactivated";
+                status?: "pending" | "validated" | "deactivated" | "pending" | "validated" | "deactivated";
                 language?: string;
                 authData?: {
                     [name: string]: any;
@@ -3124,6 +3125,7 @@ declare namespace PrismeaiAPI {
             firstName?: string;
             lastName?: string;
             authProvider?: string;
+            status?: "pending" | "validated" | "deactivated";
         }
         namespace Responses {
             export interface $200 {
@@ -3255,7 +3257,7 @@ declare namespace PrismeaiAPI {
                  * foo@prisme.ai
                  */
                 email?: string;
-                status?: "pending" | "validated" | "deactivated";
+                status?: "pending" | "validated" | "deactivated" | "pending" | "validated" | "deactivated";
                 language?: string;
                 authData?: {
                     [name: string]: any;

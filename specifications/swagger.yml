@@ -62,6 +62,12 @@ components:
             photo:
               type: string
               description: Profile picture URL
+            status: &USER_STATUS
+              type: string
+              enum:
+                - pending
+                - validated
+                - deactivated
 
         - $ref: '#/components/schemas/Object'
 
@@ -92,12 +98,7 @@ components:
             email:
               type: string
               example: foo@prisme.ai
-            status:
-              type: string
-              enum:
-                - pending
-                - validated
-                - deactivated
+            status: *USER_STATUS
             language:
               type: string
             authData:
@@ -3267,6 +3268,7 @@ paths:
                   type: string
                 authProvider:
                   type: string
+                status: *USER_STATUS
       responses:
         '200':
           description: Success Response

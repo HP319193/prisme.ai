@@ -418,6 +418,7 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       firstName,
       lastName,
       authProvider,
+      status,
     }: PrismeaiAPI.FindContacts.RequestBody,
     opts: FindOpts,
     isSuperAdmin?: boolean
@@ -461,6 +462,10 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
         };
       }
 
+      if (status) {
+        mongoQuery.status = status;
+      }
+
       authProvider = authProvider || 'prismeai';
       if (authProvider === 'prismeai') {
         mongoQuery['password'] = { $exists: true };
@@ -480,6 +485,9 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
           'Either ids or email body field must be provided.'
         );
       }
+
+      limit = 1;
+      page = 0;
     }
 
     [users, resultSize] = await Promise.all([
@@ -488,12 +496,15 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
     ]);
     return {
       size: resultSize,
-      contacts: users.map(({ email, firstName, lastName, photo, id }) => ({
-        email: isSuperAdmin ? email : undefined,
-        firstName,
-        lastName,
-        photo,
-        id,
-      })),
+      contacts: users.map(
+        ({ email, firstName, lastName, photo, id, status }) => ({
+          id,
+          email: isSuperAdmin ? email : undefined,
+          firstName,
+          lastName,
+          status: isSuperAdmin ? status : undefined,
+          photo,
+        })
+      ),
     };
   };
