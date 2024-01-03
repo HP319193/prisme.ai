@@ -15,18 +15,24 @@ export const Image = ({
   caption,
   src = '',
   alt,
+  sectionId = '',
 }: ImageConfig) => {
-  const {localize } = useLocalizedText()
+  const { localize } = useLocalizedText();
   return (
-    <figure className={`pr-block-image ${className}`}>
-      <img className="pr-block-image__image" src={src} loading="lazy" alt={localize(alt)} />
+    <figure className={`pr-block-image ${className}`} id={sectionId}>
+      <img
+        className="pr-block-image__image"
+        src={src}
+        loading="lazy"
+        alt={localize(alt)}
+      />
       {caption && (
         <figcaption className="pr-block-image__caption">
           <RichText>{localize(caption)}</RichText>
         </figcaption>
       )}
     </figure>
-  )
+  );
 };
 
 export const ImageInContext = () => {

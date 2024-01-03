@@ -54,6 +54,7 @@ export const Form = ({
   uploadFile,
   className,
   buttons,
+  sectionId = '',
   ...config
 }: FormProps) => {
   const { t } = useTranslation();
@@ -137,7 +138,10 @@ export const Form = ({
   if (!config.schema) return null;
 
   return (
-    <div className={`pr-block-form ${className}          block-form`}>
+    <div
+      className={`pr-block-form ${className}          block-form`}
+      id={sectionId}
+    >
       {config.title && (
         <div className="pr-block-form__title">{localize(config.title)}</div>
       )}

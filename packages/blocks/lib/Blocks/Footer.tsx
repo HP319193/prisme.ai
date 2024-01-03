@@ -8,12 +8,16 @@ export interface FooterConfig extends BaseBlockConfig {
   content: BlocksListConfig;
 }
 
-export const Footer = ({ content, className = '' }: FooterConfig) => {
+export const Footer = ({
+  content,
+  className = '',
+  sectionId = '',
+}: FooterConfig) => {
   const {
     utils: { BlockLoader },
   } = useBlocks();
   return (
-    <footer className={`pr-block-footer ${className}`}>
+    <footer className={`pr-block-footer ${className}`} id={sectionId}>
       {content && <BlockLoader name="BlocksList" config={content} />}
     </footer>
   );

@@ -9,8 +9,9 @@ import { BaseBlock } from './BaseBlock';
 import { keysKebabToCamel } from '../utils/kebabToCamel';
 import mustache from 'mustache';
 import { Tooltip } from 'antd';
+import { BaseBlockConfig } from './types';
 
-interface RichTextConfig {
+interface RichTextConfig extends BaseBlockConfig {
   content: string | Prismeai.LocalizedText;
   allowScripts?: boolean;
   values?: Record<string, ReactNode>;
@@ -113,6 +114,7 @@ export const RichText = ({
   // @deprecated
   container = 'div',
   tag = container,
+  sectionId = '',
 }: Omit<RichTextConfig, 'content'> & {
   children: RichTextConfig['content'];
 } & HTMLAttributes<HTMLDivElement>) => {
@@ -201,7 +203,9 @@ export const RichText = ({
   if (!Container) return <>{child}</>;
 
   return (
-    <Container className={`pr-block-rich-text ${className}`}>{child}</Container>
+    <Container className={`pr-block-rich-text ${className}`} id={sectionId}>
+      {child}
+    </Container>
   );
 };
 

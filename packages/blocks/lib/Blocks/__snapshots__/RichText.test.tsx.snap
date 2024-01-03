@@ -3,6 +3,7 @@
 exports[`should render 1`] = `
 <div
   className="pr-block-rich-text  __block-unique-id"
+  id=""
 >
   <h1
     id="title"
@@ -32,6 +33,7 @@ exports[`should render 1`] = `
 exports[`should render without crashing 1`] = `
 <div
   className="pr-block-rich-text  __block-unique-id"
+  id=""
 >
   <div>
     <a
@@ -44,6 +46,7 @@ exports[`should render without crashing 1`] = `
 exports[`should render without markdown 1`] = `
 <div
   className="pr-block-rich-text  __block-unique-id"
+  id=""
 >
   hello world
 </div>

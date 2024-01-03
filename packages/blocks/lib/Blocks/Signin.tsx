@@ -16,6 +16,7 @@ export const Signin = ({
   up,
   redirect,
   className,
+  sectionId = '',
 }: SigninConfig) => {
   const {
     utils: { auth: { getSigninUrl, getSignupUrl } = {} },
@@ -35,7 +36,7 @@ export const Signin = ({
   }, [getSignupUrl]);
 
   return (
-    <button onClick={up ? signup : signin} className={className}>
+    <button onClick={up ? signup : signin} className={className} id={sectionId}>
       {localize(label)}
     </button>
   );
