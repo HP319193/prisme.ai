@@ -35,6 +35,7 @@ export const init = (
     `${root}/workspaces/:workspaceId/search`,
     initSearchRoutes(eventsStore)
   );
+  app.use(`${root}/search`, initSearchRoutes(eventsStore));
 
   return { io };
 };

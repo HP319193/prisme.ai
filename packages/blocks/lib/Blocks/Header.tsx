@@ -51,6 +51,7 @@ export const Header = ({
   className,
   level = 1,
   fixed,
+  sectionId = '',
   ...config
 }: HeaderProps) => {
   const { localize } = useLocalizedText();
@@ -92,6 +93,7 @@ export const Header = ({
       className={`pr-block-header ${className} ${
         fixed ? 'pr-block-header--fixed' : ''
       } ${hasScrolled ? 'pr-block-header--has-scrolled' : ''}`}
+      id={sectionId}
     >
       <div className="pr-block-header__container">
         <div className="pr-block-header__left">

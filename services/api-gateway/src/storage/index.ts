@@ -2,7 +2,7 @@ export * from './types';
 import { StorageDriver, StorageOptions } from '.';
 import { MongodbDriver } from './mongodb';
 import { ConfigurationError } from '../types/errors';
-import { SaveOpts } from './types';
+import { FindOpts, SaveOpts } from './types';
 import { CacheDriver } from '../cache';
 import { logger } from '../logger';
 
@@ -70,7 +70,7 @@ export function buildStorage<Model>(
       return ret;
     }
 
-    async find(query: Partial<Model> & Record<string, any>) {
+    async find(query: Partial<Model> & Record<string, any>, opts?: FindOpts) {
       const cacheKey = this.getCacheKey(query);
       if (cacheKey && this.cache) {
         try {
@@ -81,12 +81,16 @@ export function buildStorage<Model>(
         } catch {}
       }
 
-      const result = await super.find(query);
+      const result = await super.find(query, opts);
       if (result.length == 1 && cacheKey) {
         this.updateCache(result[0]);
       }
 
       return result;
+    }
+
+    async count(query: Partial<Model> & Record<string, any>) {
+      return await super.count(query);
     }
 
     async delete(id: string | Partial<Model>): Promise<boolean> {

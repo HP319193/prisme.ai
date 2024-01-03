@@ -1,4 +1,4 @@
-import { StorageDriver, SaveOpts, StorageOptions } from '.';
+import { StorageDriver, SaveOpts, StorageOptions, FindOpts } from '.';
 import {
   Collection,
   Db,
@@ -101,10 +101,18 @@ export class MongodbDriver implements StorageDriver<any> {
     return this.prepareData(document);
   }
 
-  async find(query: Record<string, string>) {
+  async find(query: Record<string, string>, opts?: FindOpts) {
     const collection = await this.collection();
-    const result = await collection.find(query);
+
+    const limit = opts?.limit || 50;
+    const skip = (opts?.page || 0) * limit;
+    const result = await collection.find(query).skip(skip).limit(limit);
     return (await result.toArray()).map((cur) => this.prepareData(cur));
+  }
+
+  async count(query: Record<string, string>) {
+    const collection = await this.collection();
+    return await collection.count(query);
   }
 
   async delete(id: string | Record<string, any>): Promise<boolean> {

@@ -4,7 +4,7 @@ import isEmail from 'is-email';
 import { ObjectId } from 'mongodb';
 import { URL } from 'url';
 import { PrismeContext } from '../../middlewares';
-import { StorageDriver } from '../../storage';
+import { FindOpts, StorageDriver } from '../../storage';
 import {
   AlreadyUsed,
   AuthenticationError,
@@ -14,6 +14,8 @@ import {
   InvalidOrExpiredToken,
   NotFoundError,
   ValidateEmailError,
+  RequestValidationError,
+  ForbiddenError,
 } from '../../types/errors';
 import { comparePasswords, hashPassword } from './utils';
 import { EmailTemplate, sendMail } from '../../utils/email';
@@ -298,10 +300,41 @@ const filterUserFields = (user: User): Prismeai.User => {
   };
 };
 
+export const patchUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
+  async function (userId: string, user: Partial<User>, isSuperAdmin: boolean) {
+    if (!userId) {
+      throw new RequestValidationError(`Missing target userId`);
+    }
+    if (!isSuperAdmin && ctx?.userId !== userId) {
+      throw new ForbiddenError('You can only update your own user');
+    }
+    const authorizedFields = new Set(
+      isSuperAdmin && ctx?.userId !== userId
+        ? ['firstName', 'lastName', 'meta', 'status']
+        : ['firstName', 'lastName', 'meta', 'photo', 'language']
+    );
+    const unauthorizedField = Object.keys(user).find(
+      (field) => !authorizedFields.has(field)
+    );
+    if (unauthorizedField) {
+      throw new ForbiddenError(
+        `Unauthorized update on '${unauthorizedField}' field`
+      );
+    }
+
+    const existingUser = await get(Users, ctx)(userId);
+
+    return await updateUser(
+      Users,
+      ctx
+    )({ ...existingUser, id: userId, ...user });
+  };
+
 export const updateUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function (user: Partial<User> & { id: string }) {
     // MongoDB driver always $set & so can have partial object, but care if another driver gets in !
     await Users.save(user as User);
+    return filterUserFields(user as User);
   };
 
 export const login = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
@@ -406,35 +439,115 @@ export const externalLoginOrSignup = (
     return { ...filterUserFields(user), newAccount };
   };
 
-export interface FindUserQuery {
-  email?: string;
-  ids?: string[];
+function escapeRegex(str: string) {
+  return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function (
-    { email, ids }: FindUserQuery,
-    addEmail?: boolean
-  ): Promise<Prismeai.Contact[]> {
+    {
+      email,
+      ids,
+      firstName,
+      lastName,
+      authProvider,
+      status,
+    }: PrismeaiAPI.FindContacts.RequestBody,
+    opts: FindOpts,
+    isSuperAdmin?: boolean
+  ): Promise<PrismeaiAPI.FindContacts.Responses.$200> {
     let users: User[] = [];
-    if (email) {
-      users = await Users.find({ email: email.toLowerCase().trim() });
-    } else if (ids) {
+    const mongoQuery: any = {};
+
+    // Both super admin & normal users can match by exact id
+    if (ids) {
       try {
-        const mongoIds = ids.map((id) => new ObjectId(id));
-        users = await Users.find({
-          _id: {
-            $in: mongoIds,
-          },
-        });
-      } catch (error) {
+        mongoQuery['_id'] = {
+          $in: ids.map((id) => new ObjectId(id)),
+        };
+      } catch {
         throw new PrismeError(`Invalid id (${ids.join(',')})`, { ids }, 400);
       }
     }
-    return users.map(({ email, firstName, lastName, photo, id }) => ({
-      email: addEmail ? email : undefined,
-      firstName,
-      lastName,
-      photo,
-      id,
-    }));
+
+    let page = 0;
+    let limit = 1;
+    let resultSize = 1;
+
+    // Super admin only filters
+    if (isSuperAdmin) {
+      if (email) {
+        mongoQuery.email = {
+          $regex: escapeRegex(email.toLowerCase().trim()),
+          $options: 'i',
+        };
+      }
+      if (firstName) {
+        mongoQuery.firstName = {
+          $regex: escapeRegex(firstName.toLowerCase().trim()),
+          $options: 'i',
+        };
+      }
+      if (lastName) {
+        mongoQuery.lastName = {
+          $regex: escapeRegex(lastName.toLowerCase().trim()),
+          $options: 'i',
+        };
+      }
+
+      if (status) {
+        mongoQuery.status = status;
+      }
+
+      authProvider = authProvider || 'prismeai';
+      if (authProvider === 'prismeai') {
+        mongoQuery['password'] = { $exists: true };
+      } else {
+        mongoQuery['authData.' + authProvider] = { $exists: true };
+      }
+
+      limit = opts?.limit || 50;
+      page = opts?.page || 0;
+    } else {
+      // Normal user filters
+      if (email) {
+        mongoQuery.email = email.toLowerCase().trim();
+      }
+      if (!Object.keys(mongoQuery).length) {
+        throw new RequestValidationError(
+          'Either ids or email body field must be provided.'
+        );
+      }
+
+      limit = 1;
+      page = 0;
+    }
+
+    [users, resultSize] = await Promise.all([
+      Users.find(mongoQuery, { page, limit }),
+      limit > 1 ? Users.count(mongoQuery) : Promise.resolve(1),
+    ]);
+    return {
+      size: resultSize,
+      contacts: users.map(
+        ({
+          email,
+          firstName,
+          lastName,
+          language,
+          photo,
+          id,
+          status,
+          meta,
+        }) => ({
+          id,
+          email: isSuperAdmin ? email : undefined,
+          firstName,
+          lastName,
+          language: isSuperAdmin ? language : undefined,
+          status: isSuperAdmin ? status : undefined,
+          photo,
+          meta: isSuperAdmin ? meta : undefined,
+        })
+      ),
+    };
   };

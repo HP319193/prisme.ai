@@ -16,6 +16,7 @@ export const BlocksList = ({
   blocks = [],
   className,
   tag = 'div',
+  sectionId = '',
 }: BlocksListConfig) => {
   const {
     utils: { BlockLoader },
@@ -70,7 +71,10 @@ export const BlocksList = ({
   if (typeof Tag === 'object' && Object.keys(Tag).length === 0) return null;
 
   return (
-    <Tag className={`pr-block-blocks-list ${className ? className : ''}`}>
+    <Tag
+      className={`pr-block-blocks-list ${className ? className : ''}`}
+      id={sectionId}
+    >
       {memoizedBlocks}
     </Tag>
   );

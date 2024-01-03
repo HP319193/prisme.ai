@@ -22,6 +22,7 @@ export enum EventType {
   SucceededSignup = 'gateway.signup.succeeded',
   SucceededPasswordResetRequested = 'gateway.passwordReset.requested',
   SucceededPasswordReset = 'gateway.passwordReset.succeeded',
+  UpdatedUser = 'gateway.users.updated',
 
   UpdatedWorkspaceSecurity = 'workspaces.security.updated',
   CreatedWorkspace = 'workspaces.created',

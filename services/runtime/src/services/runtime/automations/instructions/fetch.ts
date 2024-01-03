@@ -15,7 +15,7 @@ import {
 } from '../../../../../config';
 import { Broker, EventSource } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
-import { Logger } from '../../../../logger';
+import { Logger, logger } from '../../../../logger';
 import { getAccessToken } from '../../../../utils/jwks';
 import { InvalidInstructionError } from '../../../../errors';
 
@@ -206,15 +206,16 @@ export async function fetch(
       ? throttle(send, stream?.concatenate?.throttle)
       : send;
 
-    await streamResponse(result.body, async (chunk: StreamChunk) => {
-      try {
-        if (result.status >= 400 && result.status < 600) {
-          error = chunk;
-          responseBody = chunk;
-        } else {
-          if (stream?.concatenate?.path) {
-            chunk.data.forEach((data) => {
-              try {
+    await streamResponse(
+      result.body,
+      async (chunk: StreamChunk) => {
+        try {
+          if (result.status >= 400 && result.status < 600) {
+            error = chunk;
+            responseBody = chunk;
+          } else {
+            if (stream?.concatenate?.path) {
+              chunk.data.forEach((data) => {
                 const toConcatenate = get(data, stream?.concatenate?.path!);
                 if (toConcatenate) {
                   if (!concatenated) {
@@ -222,29 +223,41 @@ export async function fetch(
                   } else {
                     concatenated = concatenated.concat(toConcatenate);
                   }
+                } else {
+                  broker
+                    .send(EventType.Error, {
+                      error: 'FailedChunkConcatenation',
+                      message:
+                        'Invalid fetch streamed response chunk or concatenation parameter',
+                      chunk: data,
+                    })
+                    .catch(logger.error);
                 }
-              } catch {}
-            });
+              });
+            }
+            await emitEvent(
+              stream?.event!,
+              {
+                index: chunkIndex,
+                chunk,
+                concatenated: concatenated
+                  ? { value: concatenated }
+                  : undefined,
+                additionalPayload: stream?.payload,
+              },
+              {
+                serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+              },
+              { target: stream?.target, options: stream?.options }
+            );
+            chunkIndex++;
           }
-          await emitEvent(
-            stream?.event!,
-            {
-              index: chunkIndex,
-              chunk,
-              concatenated: concatenated ? { value: concatenated } : undefined,
-              additionalPayload: stream?.payload,
-            },
-            {
-              serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
-            },
-            { target: stream?.target, options: stream?.options }
-          );
-          chunkIndex++;
+        } catch (err) {
+          logger.warn({ msg: `Could not stream fetch response chunk`, err });
         }
-      } catch (err) {
-        logger.warn({ msg: `Could not stream fetch response chunk`, err });
-      }
-    });
+      },
+      broker
+    );
 
     if (stream?.concatenate?.throttle) {
       // If the events were throttled we flush at the end in order to emit the last one right away.
@@ -278,7 +291,8 @@ async function getResponseBody(response: Response) {
 
 async function streamResponse(
   stream: NodeJS.ReadableStream,
-  callback: (chunk: StreamChunk) => Promise<void>
+  callback: (chunk: StreamChunk) => Promise<void>,
+  broker: Broker
 ) {
   for await (const buffer of stream) {
     const str = buffer.toString().trim();
@@ -288,7 +302,15 @@ async function streamResponse(
         return callback({
           data: [JSON.parse(str)],
         });
-      } catch {}
+      } catch {
+        broker
+          .send(EventType.Error, {
+            error: 'FailedChunkParsing',
+            message: 'Could not parse JSON chunk from fetch streamed response',
+            chunk: str,
+          })
+          .catch(logger.error);
+      }
     }
     const chunk: StreamChunk = str.split('\n').reduce<StreamChunk>(
       (chunk, line) => {

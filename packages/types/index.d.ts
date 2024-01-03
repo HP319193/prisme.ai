@@ -1163,10 +1163,15 @@ declare namespace Prismeai {
          * Name
          */
         lastName?: string;
+        language?: string;
         /**
          * Profile picture URL
          */
         photo?: string;
+        status?: "pending" | "validated" | "deactivated";
+        meta?: {
+            [key: string]: any;
+        };
         /**
          * Unique id
          */
@@ -2375,6 +2380,16 @@ declare namespace Prismeai {
             workspaceId: string;
         };
     }
+    export interface UpdatedUser {
+        /**
+         * example:
+         * gateway.users.updated
+         */
+        type: "gateway.users.updated";
+        payload: {
+            user: User;
+        };
+    }
     export interface UpdatedWorkspace {
         /**
          * example:
@@ -2411,7 +2426,7 @@ declare namespace Prismeai {
          * foo@prisme.ai
          */
         email?: string;
-        status?: "pending" | "validated" | "deactivated";
+        status?: "pending" | "validated" | "deactivated" | "pending" | "validated" | "deactivated";
         language?: string;
         authData?: {
             [name: string]: any;
@@ -2696,7 +2711,7 @@ declare namespace PrismeaiAPI {
                  * foo@prisme.ai
                  */
                 email?: string;
-                status?: "pending" | "validated" | "deactivated";
+                status?: "pending" | "validated" | "deactivated" | "pending" | "validated" | "deactivated";
                 language?: string;
                 authData?: {
                     [name: string]: any;
@@ -3110,15 +3125,28 @@ declare namespace PrismeaiAPI {
         }
     }
     namespace FindContacts {
-        export type RequestBody = {
-            email: string;
-            ids?: string[];
-        } | {
+        namespace Parameters {
+            export type Limit = number;
+            export type Page = number;
+        }
+        export interface QueryParameters {
+            page?: Parameters.Page;
+            limit?: Parameters.Limit;
+        }
+        export interface RequestBody {
             email?: string;
-            ids: string[];
-        };
+            ids?: string[];
+            firstName?: string;
+            lastName?: string;
+            authProvider?: string;
+            status?: "pending" | "validated" | "deactivated";
+        }
         namespace Responses {
             export interface $200 {
+                /**
+                 * Total number of matching contacts
+                 */
+                size?: number;
                 contacts: Prismeai.Contact[];
             }
             export type $403 = Prismeai.ForbiddenError;
@@ -3243,7 +3271,7 @@ declare namespace PrismeaiAPI {
                  * foo@prisme.ai
                  */
                 email?: string;
-                status?: "pending" | "validated" | "deactivated";
+                status?: "pending" | "validated" | "deactivated" | "pending" | "validated" | "deactivated";
                 language?: string;
                 authData?: {
                     [name: string]: any;
@@ -3441,6 +3469,59 @@ declare namespace PrismeaiAPI {
             export type $403 = Prismeai.ForbiddenError;
         }
     }
+    namespace GlobalSearch {
+        export interface RequestBody {
+            scope?: "events";
+            /**
+             * Page size. Limit response documents, but aggregations still execute on all documents matching the given query
+             */
+            limit?: number;
+            /**
+             * Page number returned by response's documents field
+             */
+            page?: number;
+            /**
+             * Elasticsearch DSL query to filter response documents
+             */
+            query: {
+                [name: string]: any;
+            };
+            /**
+             * Elasticsearch aggregations executed on response documents
+             */
+            aggs?: {
+                [name: string]: any;
+            };
+            /**
+             * Elasticsearch runtime_mappings executed on runtime
+             */
+            runtime_mappings?: {
+                [name: string]: any;
+            };
+            /**
+             * Elasticsearch _source
+             */
+            source?: string[];
+            sort?: {
+                [name: string]: any;
+            }[];
+        }
+        namespace Responses {
+            export interface $200 {
+                size?: number;
+                documents?: {
+                    [name: string]: any;
+                }[];
+                aggs?: {
+                    [name: string]: any;
+                };
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace ImportExistingWorkspace {
         namespace Parameters {
             export type WorkspaceId = string;
@@ -3609,6 +3690,43 @@ declare namespace PrismeaiAPI {
                 success: boolean;
             }
             export type $401 = Prismeai.AuthenticationError;
+        }
+    }
+    namespace PatchMyUser {
+        export interface RequestBody {
+            firstName?: string;
+            lastName?: string;
+            meta?: {
+                [name: string]: any;
+            };
+            photo?: string;
+            language?: string;
+        }
+        namespace Responses {
+            export type $200 = Prismeai.User;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+        }
+    }
+    namespace PatchUser {
+        namespace Parameters {
+            export type UserId = string;
+        }
+        export interface PathParameters {
+            userId: Parameters.UserId;
+        }
+        export interface RequestBody {
+            firstName?: string;
+            lastName?: string;
+            status?: "pending" | "validated" | "deactivated";
+            meta?: {
+                [name: string]: any;
+            };
+        }
+        namespace Responses {
+            export type $200 = Prismeai.User;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
     namespace PublishApp {

@@ -41,6 +41,7 @@ export const ActionButton = ({
   onClick,
   popup,
   disabled,
+  sectionId = '',
 }: ActionProps) => {
   const {
     utils: { BlockLoader },
@@ -62,6 +63,7 @@ export const ActionButton = ({
           className={`pr-block-action pr-block-action--${type} ${
             disabled ? '.pr-block-action-wrapper__disabled' : ''
           } ${className}`}
+          id={sectionId}
         >
           <button
             type="button"
@@ -90,6 +92,7 @@ export const ActionButton = ({
             dangerouslySetInnerHTML={html ? { __html: html } : undefined}
             children={children}
             disabled={disabled}
+            id={sectionId}
           />
         </Link>
       );
@@ -100,6 +103,7 @@ export const ActionButton = ({
           className={`pr-block-action pr-block-action--link ${
             disabled ? '.pr-block-action-wrapper__disabled' : ''
           } ${className}`}
+          id={sectionId}
         >
           <button
             type="button"
@@ -117,6 +121,7 @@ export const ActionButton = ({
           className={`pr-block-action ${className}`}
           dangerouslySetInnerHTML={html ? { __html: html } : undefined}
           children={children}
+          id={sectionId}
         />
       );
   }

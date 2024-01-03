@@ -59,9 +59,19 @@ components:
             lastName:
               type: string
               description: Name
+            language:
+              type: string
             photo:
               type: string
               description: Profile picture URL
+            status: &USER_STATUS
+              type: string
+              enum:
+                - pending
+                - validated
+                - deactivated
+            meta:
+              type: object
 
         - $ref: '#/components/schemas/Object'
 
@@ -92,12 +102,7 @@ components:
             email:
               type: string
               example: foo@prisme.ai
-            status:
-              type: string
-              enum:
-                - pending
-                - validated
-                - deactivated
+            status: *USER_STATUS
             language:
               type: string
             authData:
@@ -1911,6 +1916,25 @@ components:
             email:
               type: string
 
+    UpdatedUser:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.users.updated
+          enum:
+            - gateway.users.updated
+        payload:
+          type: object
+          required:
+            - user
+          properties:
+            user:
+              $ref: "#/components/schemas/User"
+
     ########################## Events API events ##########################
 
     CleanedEvents:
@@ -3047,6 +3071,46 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationError'
 
+  /v2/user:
+    patch:
+      description: Update my user
+      operationId: patchMyUser
+      tags:
+        - API Gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                meta:
+                  type: object
+                  additionalProperties: true
+                photo:
+                  type: string
+                language:
+                  type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '401': *AuthenticationError
+
   /v2/user/accessTokens:
     get:
       description: Retrieve user personal access tokens
@@ -3232,18 +3296,28 @@ paths:
 
   /v2/contacts:
     post:
-      description: Retrieve some public contact
+      description: Retrieve some public contact. Normal users can only search specific email/ids
       operationId: findContacts
       tags:
         - API Gateway
+      parameters:
+        - name: 'page'
+          in: 'query'
+          description: 'Page number'
+          schema:
+            type: number
+        - name: 'limit'
+          in: 'query'
+          description: 'Page size'
+          required: false
+          schema:
+            type: number
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              oneOf:
-                - required: ['email']
-                - required: ['ids']
+              additionalProperties: false
               properties:
                 email:
                   type: string
@@ -3251,6 +3325,13 @@ paths:
                   type: array
                   items:
                     type: string
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                authProvider:
+                  type: string
+                status: *USER_STATUS
       responses:
         '200':
           description: Success Response
@@ -3261,10 +3342,61 @@ paths:
                 required:
                   - contacts
                 properties:
+                  size:
+                    type: number
+                    description: "Total number of matching contacts"
                   contacts:
                     type: array
                     items:
                       $ref: '#/components/schemas/Contact'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /v2/users/{userId}:
+    patch:
+      description: User management API, reserved to super admins.
+      operationId: patchUser
+      tags:
+        - API Gateway
+      parameters:
+        - name: 'userId'
+          in: 'path'
+          description: 'Target user id'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              additionalProperties: false
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                status: *USER_STATUS
+                meta:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '404':
           description: Object not found
           content:
@@ -3860,7 +3992,7 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
+      requestBody: &SEARCH_REQUEST
         required: true
         content:
           application/json:
@@ -3904,7 +4036,7 @@ paths:
                     additionalProperties: true
                     description: 'Elasticsearch sort'
 
-      responses:
+      responses: &SEARCH_RESPONSES
         '200':
           description: Success Response
           content:
@@ -3947,6 +4079,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadParametersError'
+
+  /v2/search:
+    post:
+      description: Cross-workspace search API, reserved to super admins
+      operationId: globalSearch
+      tags:
+        - 'Prisme.ai Events'
+      requestBody: *SEARCH_REQUEST
+      responses: *SEARCH_RESPONSES
 
   ############################################# runtime
   /v2/workspaces/{workspaceId}/webhooks/{automationSlug}:
