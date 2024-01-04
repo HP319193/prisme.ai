@@ -38,10 +38,21 @@ export const useRecursiveConfigContext = () =>
 
 async function callAutomation(
   workspaceId: string,
-  automation: string,
+  automation: Prismeai.Block['automation'],
   query: any
 ) {
-  return await api.callAutomation(workspaceId, automation, query);
+  const { slug, payload = {} } =
+    !automation || typeof automation === 'string'
+      ? { slug: automation }
+      : automation;
+
+  if (!slug) return;
+
+  return await api.callAutomation(
+    workspaceId,
+    slug,
+    computeBlock(payload, query)
+  );
 }
 
 export const BlockLoader: TBlockLoader = ({
@@ -208,6 +219,7 @@ export const BlockLoader: TBlockLoader = ({
       const query = {
         pageSlug: page.slug,
         ...Object.fromEntries(urlSearchParams.entries()),
+        ...computedConfig,
       };
 
       const newConfig = await callAutomation(
@@ -222,7 +234,7 @@ export const BlockLoader: TBlockLoader = ({
       }));
     } catch {}
     automationLoadingState.current = 1;
-  }, [automation, loaded, page, redirect, user]);
+  }, [automation, computedConfig, page, redirect, user]);
 
   // This is needed to re-init block when page navigate without reloading
   // by changing query string

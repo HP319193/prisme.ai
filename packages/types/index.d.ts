@@ -1047,13 +1047,20 @@ declare namespace Prismeai {
          * default config applied to the Block. Usefull for extended Blocks.
          */
         config?: AnyValue;
+        automation?: string | {
+            slug?: string;
+            payload?: AnyValue;
+        };
         blocks?: {
             [name: string]: any;
             slug: string;
             appInstance?: string;
             onInit?: string;
             updateOn?: string;
-            automation?: string;
+            automation?: string | {
+                slug?: string;
+                payload?: AnyValue;
+            };
         }[];
         /**
          * Css applied to Block
@@ -1410,7 +1417,10 @@ declare namespace Prismeai {
             appInstance?: string;
             onInit?: string;
             updateOn?: string;
-            automation?: string;
+            automation?: string | {
+                slug?: string;
+                payload?: AnyValue;
+            };
         }[];
         labels?: string[];
         events?: ProcessedEvents;
@@ -1424,7 +1434,10 @@ declare namespace Prismeai {
         onInit?: string;
         updateOn?: string;
         notifyOn?: string;
-        automation?: string;
+        automation?: string | {
+            slug?: string;
+            payload?: AnyValue;
+        };
         appInstances: {
             slug?: string;
             blocks?: {
@@ -1824,7 +1837,10 @@ declare namespace Prismeai {
             appInstance?: string;
             onInit?: string;
             updateOn?: string;
-            automation?: string;
+            automation?: string | {
+                slug?: string;
+                payload?: AnyValue;
+            };
         }[];
         labels?: string[];
         events?: ProcessedEvents;
@@ -1838,7 +1854,10 @@ declare namespace Prismeai {
         onInit?: string;
         updateOn?: string;
         notifyOn?: string;
-        automation?: string;
+        automation?: string | {
+            slug?: string;
+            payload?: AnyValue;
+        };
     }
     export interface PageDetails {
         appInstances: {
@@ -2260,7 +2279,10 @@ declare namespace Prismeai {
         type: "runtime.interactions.triggered";
         payload: {
             workspaceId: string;
-            automation: string;
+            automation: string | {
+                slug?: string;
+                payload?: AnyValue;
+            };
             trigger: {
                 type: TriggerType;
                 value: string;
