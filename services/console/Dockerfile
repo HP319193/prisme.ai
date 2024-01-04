@@ -36,5 +36,4 @@ ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-
 CMD ["npm", "--prefix", "services/console", "start"]

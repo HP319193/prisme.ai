@@ -61,7 +61,7 @@ export const ActionButton = ({
       return (
         <div
           className={`pr-block-action pr-block-action--${type} ${
-            disabled ? '.pr-block-action-wrapper__disabled' : ''
+            disabled ? 'pr-block-action-wrapper__disabled' : ''
           } ${className}`}
           id={sectionId}
         >
