@@ -12,15 +12,21 @@ export async function getBlocksConfigFromServer(
   let pageWithConfig = { ...page };
 
   if (page.automation) {
+    const { slug, payload = {} } =
+      typeof page.automation === 'string'
+        ? {
+            slug: page.automation,
+          }
+        : page.automation;
     try {
-      const config = await api.callAutomation(
-        workspaceId,
-        page.automation,
-        query
-      );
+      if (!slug) {
+        throw new Error('No automation slug');
+      }
+      const config = await api.callAutomation(workspaceId, slug, query);
       return {
         ...pageWithConfig,
         ...config,
+        ...payload,
       };
     } catch (e) {
       console.log(e);
@@ -37,6 +43,12 @@ export async function getBlocksConfigFromServer(
         index
       ) => {
         if (!automation) return;
+        const { slug, payload = {} } =
+          typeof automation === 'string'
+            ? {
+                slug: automation,
+              }
+            : automation;
         try {
           const config = await api.callAutomation(
             workspaceId,
