@@ -10,17 +10,22 @@ export const Link = ({
   href: string;
   children: ReactElement;
 } & HTMLAttributes<HTMLAnchorElement>) => {
-  const [isPreview, setIsPreview] = useState(false);
   const { asPath } = useRouter();
-  const setPreview = useCallback(() => {
-    setIsPreview(true);
-  }, []);
 
-  const fullHref = `${
-    !href || href.match(/^\?/) ? asPath.replace(/\?.*$/, '') : ''
-  }${href || ''}`;
+  let fullHref = href;
+  try {
+    const { origin } = window.location;
+    if (origin === new URL(href).origin) {
+      fullHref = href.replace(origin, '');
+    }
+  } catch {}
+
+  fullHref = `${!href || href.match(/^\?/) ? asPath.replace(/\?.*$/, '') : ''}${
+    href || ''
+  }`;
 
   const [, lang, url] = fullHref.match(/^\/?(\w{2})\/(.*$)/) || [, , fullHref];
+
   const { class: _className, className = _className, ...aProps } = props as any;
   return (
     <NextLink href={url} locale={lang}>
@@ -29,7 +34,6 @@ export const Link = ({
         className={className}
         onClick={(e) => {
           props.onClick && props.onClick(e);
-          if (!isPreview) return;
 
           window.parent.postMessage(
             { type: 'pagePreviewNavigation', href },
