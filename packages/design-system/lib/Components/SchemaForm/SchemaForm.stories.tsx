@@ -161,11 +161,11 @@ WithOneOf.args = {
             type: 'string',
           },
           blip: {
-            default: 'barred',
+            default: 'blip1',
             type: 'string',
           },
           bar: {
-            default: 'barred',
+            default: 'bar1',
             type: 'string',
           },
         },
@@ -176,11 +176,11 @@ WithOneOf.args = {
             type: 'boolean',
           },
           blip: {
-            default: 'blipped',
+            default: 'blip2',
             type: 'string',
           },
           biw: {
-            default: 'biwwed',
+            default: 'biw2',
             type: 'string',
           },
         },

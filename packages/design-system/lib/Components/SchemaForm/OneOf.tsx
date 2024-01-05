@@ -105,6 +105,23 @@ export const OneOf = ({
   }, [selected]);
 
   useEffect(() => {
+    const newValue = Object.entries(childSchema.properties || {}).reduce(
+      (acc, [key, value]) => {
+        if (value.default) {
+          return {
+            ...acc,
+            [key]: value.default,
+          };
+        }
+        return acc;
+      },
+      {}
+    );
+
+    field.input.onChange(newValue);
+  }, [childSchema]);
+
+  useEffect(() => {
     const value = oneOf?.[isNaN(+selected) ? 0 : +selected]?.value;
     if (value === undefined) return;
     setTimeout(() => field.input.onChange(value));
