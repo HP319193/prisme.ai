@@ -135,12 +135,12 @@ class FunctionCall extends Evaluatable {
       case 'slice':
         const [inputArr, start, end] = functionArgs;
         if (
-          !Array.isArray(inputArr) ||
+          (!Array.isArray(inputArr) && typeof inputArr !== 'string') ||
           typeof start !== 'number' ||
           (typeof end !== 'undefined' && typeof end !== 'number')
         ) {
           throw new InvalidExpressionSyntax(
-            `Bad slice() arguments. Ex usage : slice({{someArray}}, 0, 5) or slice({{someArray}}, 5)`
+            `Bad slice() arguments. Ex usage : slice({{someArrayOrString}}, 0, 5) or slice({{someArrayOrString}}, 5)`
           );
         }
         return inputArr.slice(start, end);
