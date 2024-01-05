@@ -698,6 +698,15 @@ components:
           $ref: '#/components/schemas/AnyValue'
           description: 'default config applied to the Block. Usefull for extended Blocks.'
           deprecated: true
+        automation:
+          oneOf:
+            - type: string
+            - type: object
+              properties:
+                slug:
+                  type: string
+                payload:
+                  $ref: '#/components/schemas/AnyValue'
         blocks:
           type: array
           items:
@@ -714,7 +723,14 @@ components:
               updateOn:
                 type: string
               automation:
-                type: string
+                oneOf:
+                  - type: string
+                  - type: object
+                    properties:
+                      slug:
+                        type: string
+                      payload:
+                        $ref: '#/components/schemas/AnyValue'
             additionalProperties: true
         css:
           type: string
@@ -792,7 +808,14 @@ components:
               updateOn:
                 type: string
               automation:
-                type: string
+                oneOf:
+                  - type: string
+                  - type: object
+                    properties:
+                      slug:
+                        type: string
+                      payload:
+                        $ref: '#/components/schemas/AnyValue'
             additionalProperties: true
         styles:
           type: string
@@ -803,7 +826,14 @@ components:
         notifyOn:
           type: string
         automation:
-          type: string
+          oneOf:
+            - type: string
+            - type: object
+              properties:
+                slug:
+                  type: string
+                payload:
+                  $ref: '#/components/schemas/AnyValue'
 
     PageDetails:
       type: object
@@ -1933,7 +1963,7 @@ components:
             - user
           properties:
             user:
-              $ref: "#/components/schemas/User"
+              $ref: '#/components/schemas/User'
 
     ########################## Events API events ##########################
 
@@ -2589,7 +2619,14 @@ components:
             workspaceId:
               type: string
             automation:
-              type: string
+              oneOf:
+                - type: string
+                - type: object
+                  properties:
+                    slug:
+                      type: string
+                    payload:
+                      $ref: '#/components/schemas/AnyValue'
             trigger:
               type: object
               required:
@@ -3344,7 +3381,7 @@ paths:
                 properties:
                   size:
                     type: number
-                    description: "Total number of matching contacts"
+                    description: 'Total number of matching contacts'
                   contacts:
                     type: array
                     items:
