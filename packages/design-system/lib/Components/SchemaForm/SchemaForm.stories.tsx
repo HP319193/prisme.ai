@@ -160,12 +160,28 @@ WithOneOf.args = {
           foo: {
             type: 'string',
           },
+          blip: {
+            default: 'barred',
+            type: 'string',
+          },
+          bar: {
+            default: 'barred',
+            type: 'string',
+          },
         },
       },
       {
         properties: {
           foo: {
             type: 'boolean',
+          },
+          blip: {
+            default: 'blipped',
+            type: 'string',
+          },
+          biw: {
+            default: 'biwwed',
+            type: 'string',
           },
         },
       },

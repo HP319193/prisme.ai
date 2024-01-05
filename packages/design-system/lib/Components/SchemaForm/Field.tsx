@@ -23,7 +23,10 @@ export const Field = ({ components, ...props }: FieldComponentProps) => {
     }
   }, [_default, props.schema.default]);
   useEffect(() => {
-    if (!_default || field.input.value !== undefined) return;
+    if (!_default || field.input.value !== undefined) {
+      // Fix nested oneOf
+      field.input.onChange(field.input.value);
+    }
     field.input.onChange(_default);
   }, [_default]);
 
