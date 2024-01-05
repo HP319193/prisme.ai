@@ -50,11 +50,7 @@ export async function getBlocksConfigFromServer(
               }
             : automation;
         try {
-          const config = await api.callAutomation(
-            workspaceId,
-            automation,
-            query
-          );
+          const config = await api.callAutomation(workspaceId, slug, query);
           pageWithConfig.blocks = pageWithConfig.blocks || [];
           pageWithConfig.blocks[index] = {
             ...pageWithConfig.blocks[index],
