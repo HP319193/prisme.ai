@@ -48,11 +48,10 @@ async function callAutomation(
 
   if (!slug) return;
 
-  return await api.callAutomation(
-    workspaceId,
-    slug,
-    computeBlock(payload, query)
-  );
+  return await api.callAutomation(workspaceId, slug, {
+    ...query,
+    ...computeBlock(payload, query),
+  });
 }
 
 export const BlockLoader: TBlockLoader = ({
