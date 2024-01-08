@@ -2619,14 +2619,7 @@ components:
             workspaceId:
               type: string
             automation:
-              oneOf:
-                - type: string
-                - type: object
-                  properties:
-                    slug:
-                      type: string
-                    payload:
-                      $ref: '#/components/schemas/AnyValue'
+              type: string
             trigger:
               type: object
               required:

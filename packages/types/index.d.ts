@@ -2279,10 +2279,7 @@ declare namespace Prismeai {
         type: "runtime.interactions.triggered";
         payload: {
             workspaceId: string;
-            automation: string | {
-                slug?: string;
-                payload?: AnyValue;
-            };
+            automation: string;
             trigger: {
                 type: TriggerType;
                 value: string;

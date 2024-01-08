@@ -274,7 +274,7 @@ class Workspaces {
       };
     }
     if (ids) {
-      mongoQuery._id = {
+      mongoQuery.id = {
         $in: ids.split(','),
       };
     }
