@@ -44,6 +44,7 @@ export function initSearchRoutes(eventsStore: EventsStore) {
       sort,
       source,
       runtime_mappings: runtimeMappings,
+      track_total_hits,
     } = body;
     if ((aggs || runtimeMappings) && workspaceId !== '*') {
       await accessManager.throwUnlessCan(
@@ -64,6 +65,7 @@ export function initSearchRoutes(eventsStore: EventsStore) {
           sort,
           _source: source,
           runtime_mappings: runtimeMappings,
+          track_total_hits,
         }
       );
       return res.send({

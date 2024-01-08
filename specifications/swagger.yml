@@ -4072,6 +4072,9 @@ paths:
                     type: object
                     additionalProperties: true
                     description: 'Elasticsearch sort'
+                track_total_hits:
+                  type: boolean
+                  description: Get real total instead of 10000
 
       responses: &SEARCH_RESPONSES
         '200':
