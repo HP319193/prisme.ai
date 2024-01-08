@@ -3527,6 +3527,10 @@ declare namespace PrismeaiAPI {
             sort?: {
                 [name: string]: any;
             }[];
+            /**
+             * Get real total instead of 10000
+             */
+            track_total_hits?: boolean;
         }
         namespace Responses {
             export interface $200 {
@@ -3887,6 +3891,10 @@ declare namespace PrismeaiAPI {
             sort?: {
                 [name: string]: any;
             }[];
+            /**
+             * Get real total instead of 10000
+             */
+            track_total_hits?: boolean;
         }
         namespace Responses {
             export interface $200 {
