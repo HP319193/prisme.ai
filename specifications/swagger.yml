@@ -4243,6 +4243,12 @@ paths:
           example: '-createdAt'
           schema:
             type: string
+        - name: 'ids'
+          in: 'query'
+          description: 'Comma-separated ids'
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Success Response
