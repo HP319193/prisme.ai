@@ -75,7 +75,8 @@ export function applyFilter(filter: string, value: string, values: any) {
       const [format = '', lang = 'en'] = attrs
         .split(/,/)
         .map(cleanAttribute(values));
-      return dayjs(value).locale(lang).format(format);
+      const date = dayjs(value);
+      return Number.isNaN(+date) ? '' : date.locale(lang).format(format);
     }
     case 'from-now': {
       const [lang = 'en'] = attrs.split(/,/).map(cleanAttribute(values));
