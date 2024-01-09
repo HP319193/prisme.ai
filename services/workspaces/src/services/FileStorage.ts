@@ -52,7 +52,10 @@ class FileStorage {
     query: any,
     opts?: FindOptions
   ) {
-    const result = await accessManager.findAll(SubjectType.File, query, opts);
+    const result = await accessManager.findAll(SubjectType.File, query, {
+      sort: '-createdAt',
+      ...opts,
+    });
     return result.map((file) => ({
       ...file,
       url: this.getUrl(this.driver.type(), file.path, baseUrl),
