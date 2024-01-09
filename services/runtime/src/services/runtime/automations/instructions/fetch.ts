@@ -223,15 +223,6 @@ export async function fetch(
                   } else {
                     concatenated = concatenated.concat(toConcatenate);
                   }
-                } else {
-                  broker
-                    .send(EventType.Error, {
-                      error: 'FailedChunkConcatenation',
-                      message:
-                        'Invalid fetch streamed response chunk or concatenation parameter',
-                      chunk: data,
-                    })
-                    .catch(logger.error);
                 }
               });
             }

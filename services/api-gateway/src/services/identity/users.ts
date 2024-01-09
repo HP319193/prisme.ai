@@ -458,20 +458,21 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
     let users: User[] = [];
     const mongoQuery: any = {};
 
+    let page = 0;
+    let limit = 1;
+    let resultSize = 1;
+
     // Both super admin & normal users can match by exact id
     if (ids) {
       try {
         mongoQuery['_id'] = {
           $in: ids.map((id) => new ObjectId(id)),
         };
+        limit = ids.length;
       } catch {
         throw new PrismeError(`Invalid id (${ids.join(',')})`, { ids }, 400);
       }
     }
-
-    let page = 0;
-    let limit = 1;
-    let resultSize = 1;
 
     // Super admin only filters
     if (isSuperAdmin) {
@@ -511,6 +512,7 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       // Normal user filters
       if (email) {
         mongoQuery.email = email.toLowerCase().trim();
+        limit = 1;
       }
       if (!Object.keys(mongoQuery).length) {
         throw new RequestValidationError(
@@ -518,7 +520,6 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
         );
       }
 
-      limit = 1;
       page = 0;
     }
 
