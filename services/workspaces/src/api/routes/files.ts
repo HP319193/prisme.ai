@@ -91,7 +91,7 @@ export default function init(fileStorage: FileStorage) {
       context,
       accessManager,
       params: { workspaceId },
-      query: { limit, page, ...query },
+      query: { limit, page, sort = '-createdAt', ...query },
     }: Request<any, any, any, PrismeaiAPI.ListFiles.QueryParameters>,
     res: Response<PrismeaiAPI.ListFiles.Responses.$200>
   ) {
@@ -107,6 +107,7 @@ export default function init(fileStorage: FileStorage) {
           limit,
           page,
         },
+        sort,
       }
     );
     res.send(result);

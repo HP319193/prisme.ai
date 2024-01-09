@@ -6548,6 +6548,13 @@ paths:
             additionalProperties: true
           style: form
           explode: false
+        - name: 'sort'
+          in: 'query'
+          description: 'Sort by a specific field'
+          required: false
+          example: '-createdAt'
+          schema:
+            type: string
       responses:
         '200':
           description: Success Response

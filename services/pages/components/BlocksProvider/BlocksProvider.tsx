@@ -27,9 +27,13 @@ export const BlocksProvider: FC = ({ children }) => {
   } = useTranslation();
   const { initAuthentication } = useUser();
   const uploadFile = useCallback(
-    async (file: string) => {
+    async (file: string, expiresAfter) => {
       if (!id) return file;
-      const [{ url, mimetype, name }] = await api.uploadFiles(file, id);
+      const [{ url, mimetype, name }] = await api.uploadFiles(
+        file,
+        id,
+        expiresAfter
+      );
 
       return {
         value: url,

@@ -724,13 +724,20 @@ export class Api extends Fetcher {
     return response;
   }
 
-  async uploadFiles(files: string | string[], workspaceId: string) {
+  async uploadFiles(
+    files: string | string[],
+    workspaceId: string,
+    expiresAfter?: number
+  ) {
     const formData = new FormData();
     (Array.isArray(files) ? files : [files]).forEach((file) => {
       try {
         formData.append('file', ...dataURItoBlob(file));
       } catch {}
     });
+    if (expiresAfter) {
+      formData.append('expiresAfter', `${expiresAfter}`);
+    }
     try {
       return await this._fetch<PrismeaiAPI.UploadFile.Responses.$200>(
         `/workspaces/${workspaceId}/files`,

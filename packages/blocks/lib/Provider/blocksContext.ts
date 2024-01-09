@@ -1,6 +1,6 @@
 import { SchemaForm } from '@prisme.ai/design-system';
 import { SchemaFormContext } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
-import { createContext, FC, ReactElement, ReactNode, useContext } from 'react';
+import { createContext, FC, ReactElement, useContext } from 'react';
 import { Block, TBlockLoader } from './types';
 
 export interface BlocksDependenciesContext {
@@ -33,7 +33,7 @@ export const blocksContext = createContext<BlocksDependenciesContext>({
   },
   utils: {
     BlockLoader: () => null,
-    uploadFile: async (base64: string) => '',
+    uploadFile: async (base64: string, expiresAfter?: number) => '',
     getWorkspaceHost() {
       return `${window.location.protocol}//${window.location.host}`;
     },

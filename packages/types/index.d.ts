@@ -3660,6 +3660,7 @@ declare namespace PrismeaiAPI {
             export interface Query {
                 [name: string]: any;
             }
+            export type Sort = string;
             export type WorkspaceId = string;
         }
         export interface PathParameters {
@@ -3669,6 +3670,7 @@ declare namespace PrismeaiAPI {
             page?: Parameters.Page;
             limit?: Parameters.Limit;
             query?: Parameters.Query;
+            sort?: Parameters.Sort;
         }
         namespace Responses {
             export type $200 = Prismeai.File[];

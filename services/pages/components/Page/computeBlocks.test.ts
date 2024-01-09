@@ -374,6 +374,11 @@ it('should interpolate expression with filters', () => {
     })
   ).toBe('');
   expect(
+    interpolateExpression("{{foo|date:'LL',lang,'—'}}", {
+      foo: null,
+    })
+  ).toBe('—');
+  expect(
     interpolateExpression('{{foo|from-now}}', {
       foo: new Date(Date.now() - 1000 * 60 * 60),
     })

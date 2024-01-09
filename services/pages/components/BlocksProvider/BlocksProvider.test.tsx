@@ -30,7 +30,7 @@ it('should upload a file', async () => {
     },
   } = root.root.children[0] as renderer.ReactTestInstance;
   const value = await uploadFile('file.jpg');
-  expect(api.uploadFiles).toHaveBeenCalledWith('file.jpg', '42');
+  expect(api.uploadFiles).toHaveBeenCalledWith('file.jpg', '42', undefined);
   expect(value).toEqual({
     value: 'http://thefile',
     preview: 'http://thefile',
