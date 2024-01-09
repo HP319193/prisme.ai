@@ -66,7 +66,8 @@ export interface SchemaFormContext {
       schema: Schema
     ) => UiOptionsAutocomplete['autocomplete']['options'] | null;
     uploadFile: (
-      base64File: string
+      base64File: string,
+      expiresAfter?: number
     ) => Promise<
       string | { value: string; preview: string | ReactElement; label?: string }
     >;
