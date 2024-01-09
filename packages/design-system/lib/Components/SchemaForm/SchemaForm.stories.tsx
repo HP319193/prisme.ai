@@ -189,6 +189,53 @@ WithOneOf.args = {
   },
 };
 
+export const WithOneOfProperty = Template.bind({});
+WithOneOfProperty.args = {
+  initialValues: {
+    foo: true,
+  },
+  schema: {
+    type: 'object',
+    properties: {
+      test: {
+        type: 'object',
+        oneOf: [
+          {
+            properties: {
+              foo: {
+                type: 'string',
+              },
+              blip: {
+                default: 'blip1',
+                type: 'string',
+              },
+              bar: {
+                default: 'bar1',
+                type: 'string',
+              },
+            },
+          },
+          {
+            properties: {
+              foo: {
+                type: 'boolean',
+              },
+              blip: {
+                default: 'blip2',
+                type: 'string',
+              },
+              biw: {
+                default: 'biw2',
+                type: 'string',
+              },
+            },
+          },
+        ],
+      },
+    },
+  },
+};
+
 export const WithOneOfWithValues = Template.bind({});
 WithOneOfWithValues.args = {
   initialValues: {

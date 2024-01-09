@@ -118,7 +118,7 @@ export const OneOf = ({
       {}
     );
 
-    field.input.onChange(newValue);
+    setTimeout(() => field.input.onChange(newValue));
   }, [childSchema]);
 
   useEffect(() => {
