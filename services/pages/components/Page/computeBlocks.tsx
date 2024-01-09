@@ -72,11 +72,11 @@ export function applyFilter(filter: string, value: string, values: any) {
   const [fn, attrs = ''] = filter.split(/\:/);
   switch (fn.trim()) {
     case 'date': {
-      const [format = '', lang = 'en'] = attrs
+      const [format = '', lang = 'en', fallback = ''] = attrs
         .split(/,/)
         .map(cleanAttribute(values));
       const date = dayjs(value);
-      return Number.isNaN(+date) ? '' : date.locale(lang).format(format);
+      return Number.isNaN(+date) ? fallback : date.locale(lang).format(format);
     }
     case 'from-now': {
       const [lang = 'en'] = attrs.split(/,/).map(cleanAttribute(values));
