@@ -319,6 +319,8 @@ async function streamResponse(
           chunk.id = line.slice(3);
         } else if (line.startsWith('retry:')) {
           chunk.retry = parseInt(line.slice(6));
+        } else {
+          logger.warn({ msg: 'Invalid SSE chunk line', line });
         }
         return chunk;
       },
