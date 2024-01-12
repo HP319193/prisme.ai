@@ -33,7 +33,10 @@ export default {
 
   API_KEY_HEADER,
 
-  ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE: [API_KEY_HEADER],
+  ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE: [
+    API_KEY_HEADER,
+    'x-prismeai-workspace-id',
+  ],
 
   ROLE_HEADER: process.env.ROLE_HEADER || 'x-prismeai-role',
 
