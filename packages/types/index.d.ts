@@ -1706,6 +1706,10 @@ declare namespace Prismeai {
         metadata?: {
             [name: string]: any;
         };
+        /**
+         * Reflects whether the file has public-read ACL at storage provider
+         */
+        public?: boolean;
     }
     export interface ForbiddenError {
         /**
@@ -4178,6 +4182,10 @@ declare namespace PrismeaiAPI {
              * File expiration time in seconds
              */
             expiresAfter?: string;
+            /**
+             * Set to true to make uploaded file publicly available
+             */
+            public?: string;
         }
         namespace Responses {
             export type $200 = Prismeai.File[];

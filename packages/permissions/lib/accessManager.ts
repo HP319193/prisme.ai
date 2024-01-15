@@ -315,7 +315,10 @@ export class AccessManager<
 
   async create<returnType extends SubjectType>(
     subjectType: returnType,
-    subject: Omit<SubjectInterfaces[returnType], 'id'> & { id?: string }
+    subject: Omit<SubjectInterfaces[returnType], 'id'> & { id?: string },
+    opts?: {
+      publicRead?: boolean;
+    }
   ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions, user } = this.checkAsUser();
     await this.throwUnlessCan(ActionType.Create, subjectType, <any>subject!!);
@@ -323,6 +326,16 @@ export class AccessManager<
     const date = new Date();
     const autoAssignRole =
       this.permissionsConfig.subjects[subjectType]?.author?.assignRole;
+
+    const basePermissions = opts?.publicRead
+      ? {
+          '*': {
+            policies: {
+              read: true,
+            },
+          },
+        }
+      : {};
     const object = new Model({
       ...this.filterFieldsBeforeUpdate(subject),
       createdBy: user.id,
@@ -331,11 +344,12 @@ export class AccessManager<
       updatedAt: date.toISOString(),
       permissions: autoAssignRole
         ? {
+            ...basePermissions,
             [user.id]: {
               role: autoAssignRole,
             },
           }
-        : {},
+        : basePermissions,
     });
     object.id = subject.id || object._id!!.toString();
     await object.save();

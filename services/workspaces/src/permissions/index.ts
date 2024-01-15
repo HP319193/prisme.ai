@@ -100,6 +100,7 @@ export function initAccessManager(
           expiresAt: { type: String },
           expiresAfter: { type: Number },
           metadata: Schema.Types.Mixed,
+          public: Boolean,
         },
       },
     },

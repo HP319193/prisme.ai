@@ -1,4 +1,4 @@
-import { Application, static as staticFolder } from 'express';
+import { Application } from 'express';
 
 import sys from './sys';
 import initMigrate from './migrate';
@@ -8,9 +8,8 @@ import initSecurity from './security';
 import initApps from './apps';
 import initAppInstances from './appInstances';
 import { initPagesBackoffice, initPagesPublic } from './pages';
-import initFiles from './files';
+import initFiles, { initDownloadProxy } from './files';
 import FileStorage from '../../services/FileStorage';
-import { UPLOADS_STORAGE_FILESYSTEM_DIRPATH } from '../../../config';
 import { AccessManager } from '../../permissions';
 import { Broker } from '@prisme.ai/broker';
 import { DSULStorage } from '../../services/DSULStorage';
@@ -56,6 +55,6 @@ export const init = (
 
   const files = initFiles(uploadsStorage);
   app.use(`${root}/workspaces/:workspaceId/files`, files);
-  app.use(`${root}/files`, staticFolder(UPLOADS_STORAGE_FILESYSTEM_DIRPATH));
+  app.use(`${root}/files`, initDownloadProxy(uploadsStorage));
 };
 export default init;

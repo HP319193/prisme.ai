@@ -385,7 +385,7 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>WORKSPACES_STORAGE_S3_LIKE_BASE_URL</td>
     <td>runtime & workspaces</td>
-    <td>Workspaces s3 like storage : base url</td>
+    <td>Workspaces s3 like storage : base download url. If omitted, workspaces API will be used as  proxy</td>
     <td></td>
   </tr>       
   <tr>
@@ -473,7 +473,7 @@ Then, for when you want to run this service directly from its docker image, you 
   <tr>
     <td>UPLOADS_STORAGE_AZURE_BLOB_BASE_URL</td>
     <td>runtime & workspaces</td>
-    <td>Base public download url for uploads azure blob container</td>
+    <td>Base public download url for uploads azure blob container : If omitted, workspaces API will be used as  proxy</td>
     <td></td>
   </tr>             
 

@@ -911,6 +911,9 @@ components:
         metadata:
           type: object
           additionalProperties: true
+        public:
+          type: boolean
+          description: "Reflects whether the file has public-read ACL at storage provider"
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################
@@ -6490,6 +6493,10 @@ paths:
                 expiresAfter:
                   type: string
                   description: File expiration time in seconds
+                public:
+                  type: string
+                  description: "Set to true to make uploaded file publicly available"
+
 
       responses:
         '200':
