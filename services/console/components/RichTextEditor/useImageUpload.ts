@@ -11,6 +11,7 @@ export function useImageUpload(value: string, setValue: any) {
 
   const parseImages = useCallback(
     (value: string) => {
+      if (typeof value !== 'string') return;
       const imagesData = (value.match(/(data:[^"]+)"/g) || []).map(
         (res: string) => (res.match(/(data:[^"]+)"/) || [])[1]
       );
