@@ -286,7 +286,7 @@ async function streamResponse(
   broker: Broker
 ) {
   for await (const buffer of stream) {
-    const str = buffer.toString().trim();
+    const str = buffer.toString();
     // No stream : entire json response is given at once
     if (str[0] === '[' || str[0] === '{') {
       try {
@@ -303,7 +303,7 @@ async function streamResponse(
           .catch(logger.error);
       }
     }
-    const chunk: StreamChunk = str.split('\n').reduce<StreamChunk>(
+    const chunk: StreamChunk = str.split('\n\n').reduce<StreamChunk>(
       (chunk, line) => {
         if (line.startsWith('data:')) {
           let content = line.slice(5).trim();
@@ -319,6 +319,8 @@ async function streamResponse(
           chunk.id = line.slice(3);
         } else if (line.startsWith('retry:')) {
           chunk.retry = parseInt(line.slice(6));
+        } else {
+          logger.warn({ msg: 'Invalid SSE chunk line', line });
         }
         return chunk;
       },

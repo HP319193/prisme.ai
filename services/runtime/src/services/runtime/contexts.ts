@@ -510,15 +510,15 @@ export class ContextsManager {
       type?: Prismeai.ContextSetType;
     }
   ) {
-    const { ttl, persist = true } = opts || {};
-    let type: Prismeai.ContextSetType = opts?.type || 'replace';
-    if ((path || '').endsWith('[]')) {
-      type = 'push';
-      path = path.slice(0, -2);
-    }
-    const splittedPath = parseVariableName(path);
-
     try {
+      const { ttl, persist = true } = opts || {};
+      let type: Prismeai.ContextSetType = opts?.type || 'replace';
+      if ((path || '').endsWith('[]')) {
+        type = 'push';
+        path = path.slice(0, -2);
+      }
+
+      const splittedPath = parseVariableName(path);
       const { parent, lastKey, context, subPath } =
         this.findParentVariableFor(splittedPath);
       const prevValue = parent[lastKey];

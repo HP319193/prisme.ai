@@ -36,6 +36,19 @@ export function buildNestedTree(paths: { path: string }[]) {
       currentPath = nextPath;
     });
   });
+  function sortItems(items: Path[]) {
+    items.sort((a, b) => {
+      if (a.items.length && !b.items.length) return -1;
+      if (!a.items.length && b.items.length) return 1;
+      if (a.path === b.path) return 0;
+      return a.path < b.path ? -1 : 1;
+    });
+    items.forEach((item) => {
+      if (item.items.length) sortItems(item.items);
+    });
+  }
+  sortItems(root.items);
+  console.log(JSON.stringify(root.items, null, '  '));
   return root.items;
 }
 

@@ -17,14 +17,9 @@ it('should build nested tree', () => {
       },
     ])
   ).toEqual([
-    { path: 'a single name', items: [] },
     {
       path: 'folder',
       items: [
-        {
-          path: 'truc',
-          items: [],
-        },
         {
           path: 'chose',
           items: [
@@ -34,7 +29,53 @@ it('should build nested tree', () => {
             },
           ],
         },
+        {
+          path: 'truc',
+          items: [],
+        },
       ],
+    },
+    { path: 'a single name', items: [] },
+  ]);
+});
+
+it('should sort folders before files', () => {
+  expect(
+    buildNestedTree([
+      {
+        path: 'def',
+      },
+      {
+        path: 'path/where',
+      },
+      {
+        path: 'path/to',
+      },
+      {
+        path: 'abc',
+      },
+    ])
+  ).toEqual([
+    {
+      path: 'path',
+      items: [
+        {
+          path: 'to',
+          items: [],
+        },
+        {
+          path: 'where',
+          items: [],
+        },
+      ],
+    },
+    {
+      path: 'abc',
+      items: [],
+    },
+    {
+      path: 'def',
+      items: [],
     },
   ]);
 });
