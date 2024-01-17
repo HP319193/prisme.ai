@@ -48,7 +48,7 @@ export function buildNestedTree(paths: { path: string }[]) {
     });
   }
   sortItems(root.items);
-  console.log(JSON.stringify(root.items, null, '  '));
+
   return root.items;
 }
 
