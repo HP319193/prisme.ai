@@ -38,7 +38,7 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
           string,
           { name: string; description?: string; slug: string }[]
         ][]
-      >((prev, [name, list, more]) => {
+      >((prev, [name, list, more], index) => {
         const matching = (
           search
             ? Object.keys(list).filter((slug) =>
@@ -54,6 +54,14 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
           slug: name,
           description: (list[name] || {}).description,
         }));
+        if (index > 0) {
+          // First group is builtin instructions and is already sorted specificaly
+          matching.sort((a, b) => {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+          });
+        }
         if (!matching) return prev;
         return [...prev, [name, more.icon, matching]];
       }, [])
