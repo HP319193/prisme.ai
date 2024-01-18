@@ -1707,9 +1707,13 @@ declare namespace Prismeai {
             [name: string]: any;
         };
         /**
-         * Reflects whether the file has public-read ACL at storage provider
+         * Reflects whether the file has public-read ACL at storage provider. True by default
          */
         public?: boolean;
+        /**
+         * A share token to append as a ?token query parameter to grant read access with given url
+         */
+        shareToken?: string;
     }
     export interface ForbiddenError {
         /**
@@ -4186,6 +4190,10 @@ declare namespace PrismeaiAPI {
              * Set to true to make uploaded file publicly available
              */
             public?: string;
+            /**
+             * If enabled, return a share token that will allow anybody access the file
+             */
+            shareToken?: string;
         }
         namespace Responses {
             export type $200 = Prismeai.File[];

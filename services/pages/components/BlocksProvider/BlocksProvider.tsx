@@ -27,13 +27,22 @@ export const BlocksProvider: FC = ({ children }) => {
   } = useTranslation();
   const { initAuthentication } = useUser();
   const uploadFile = useCallback(
-    async (file: string, expiresAfter) => {
+    async (
+      file: string,
+      opts?: {
+        expiresAfter?: number;
+        public?: boolean;
+        shareToken?: boolean;
+      }
+    ) => {
       if (!id) return file;
-      const [{ url, mimetype, name }] = await api.uploadFiles(
-        file,
-        id,
-        expiresAfter
-      );
+      // Delete these lines as soon as we migrated existing blocks using legacy syntax
+      if (typeof opts === 'number') {
+        opts = {
+          expiresAfter: opts,
+        };
+      }
+      const [{ url, mimetype, name }] = await api.uploadFiles(file, id, opts);
 
       return {
         value: url,

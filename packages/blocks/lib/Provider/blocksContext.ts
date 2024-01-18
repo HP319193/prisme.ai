@@ -33,7 +33,7 @@ export const blocksContext = createContext<BlocksDependenciesContext>({
   },
   utils: {
     BlockLoader: () => null,
-    uploadFile: async (base64: string, expiresAfter?: number) => '',
+    uploadFile: async (base64: string, opts) => '',
     getWorkspaceHost() {
       return `${window.location.protocol}//${window.location.host}`;
     },
