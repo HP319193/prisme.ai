@@ -3,9 +3,11 @@ import { BlobServiceClient, ContainerClient } from '@azure/storage-blob';
 import {
   DriverType,
   ExportOptions,
+  GetOptions,
   IStorage,
   ObjectList,
   SaveOptions,
+  Streamed,
 } from '../types';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 import path from 'path';
@@ -65,11 +67,16 @@ export default class AzureBlob implements IStorage {
     }
   }
 
-  public async get(key: string) {
+  public async get(key: string, opts?: GetOptions) {
     try {
       const blobClient = this.client.getBlockBlobClient(key);
       const content = await blobClient.download(0);
-      return streamToBuffer(content.readableStreamBody as stream.Readable);
+      if (opts?.stream) {
+        content.readableStreamBody?.pipe(opts?.stream);
+        return Streamed;
+      } else {
+        return streamToBuffer(content.readableStreamBody as stream.Readable);
+      }
     } catch {
       throw new ObjectNotFoundError();
     }
@@ -174,10 +181,10 @@ export default class AzureBlob implements IStorage {
       zlib: { level: 9 }, // Sets the compression level.
     });
 
-    let completionPromise: Promise<'streamed' | Buffer>;
+    let completionPromise: Promise<typeof Streamed | Buffer>;
     if (outStream) {
       archive.pipe(outStream);
-      completionPromise = Promise.resolve('streamed');
+      completionPromise = Promise.resolve(Streamed);
     } else {
       completionPromise = streamToBuffer(archive);
     }
@@ -188,7 +195,7 @@ export default class AzureBlob implements IStorage {
           return;
         }
         return await this.get(key).then((body) => {
-          archive.append(body, {
+          archive.append(body as Buffer, {
             name: key.slice(path.dirname(prefix).length),
           });
         });

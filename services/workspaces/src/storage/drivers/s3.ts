@@ -2,9 +2,11 @@ import archiver from 'archiver';
 import {
   DriverType,
   ExportOptions,
+  GetOptions,
   IStorage,
   ObjectList,
   SaveOptions,
+  Streamed,
 } from '../types';
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
@@ -84,9 +86,9 @@ export default class S3Like implements IStorage {
     });
   }
 
-  public get(key: string) {
+  public get(key: string, opts?: GetOptions) {
     return new Promise<Buffer>((resolve: any, reject: any) => {
-      this.client.getObject(
+      const getReq = this.client.getObject(
         {
           Key: key,
           Bucket: this.options.bucket,
@@ -95,10 +97,14 @@ export default class S3Like implements IStorage {
           if (err) {
             reject(new ObjectNotFoundError());
           } else {
-            resolve(data.Body);
+            resolve(opts?.stream ? Streamed : data.Body);
           }
         }
       );
+
+      if (opts?.stream) {
+        getReq.createReadStream().pipe(opts?.stream);
+      }
     });
   }
 
@@ -173,13 +179,15 @@ export default class S3Like implements IStorage {
   }
 
   public async save(key: string, data: any, opts?: SaveOptions) {
-    const params = {
+    const params: AWS.S3.PutObjectRequest = {
       Bucket: this.options.bucket,
       Key: key,
       Body: data,
       CacheControl: this.options.cacheControl,
       ContentType: opts?.mimetype,
+      ACL: opts?.public ? 'public-read' : 'private',
     };
+
     const result = await new Promise((resolve: any, reject: any) => {
       this.client.putObject(params, function (err: any, data: any) {
         if (err) {
@@ -264,10 +272,10 @@ export default class S3Like implements IStorage {
       zlib: { level: 9 }, // Sets the compression level.
     });
 
-    let completionPromise: Promise<'streamed' | Buffer>;
+    let completionPromise: Promise<typeof Streamed | Buffer>;
     if (outStream) {
       archive.pipe(outStream);
-      completionPromise = Promise.resolve('streamed');
+      completionPromise = Promise.resolve(Streamed);
     } else {
       completionPromise = streamToBuffer(archive);
     }

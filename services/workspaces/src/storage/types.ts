@@ -4,8 +4,13 @@ export type ObjectList = {
   key: string;
 }[];
 
+export interface GetOptions {
+  stream?: stream.Writable;
+}
+
 export interface SaveOptions {
   mimetype?: string;
+  public?: boolean;
 }
 
 export interface ExportOptions {
@@ -13,10 +18,12 @@ export interface ExportOptions {
   exclude?: string[];
 }
 
+export const Streamed = Symbol('streamed');
+
 export interface IStorage {
   type(): DriverType;
 
-  get(id: string): Promise<any>;
+  get(id: string, opts?: GetOptions): Promise<any | typeof Streamed>;
   find(prefix: string): Promise<ObjectList>;
 
   save(id: string, data: any, options?: SaveOptions): Promise<any>;
@@ -29,7 +36,7 @@ export interface IStorage {
     prefix: string,
     outStream?: stream.Writable,
     opts?: ExportOptions
-  ): Promise<Buffer | 'streamed'>;
+  ): Promise<Buffer | typeof Streamed>;
 }
 
 export enum DriverType {

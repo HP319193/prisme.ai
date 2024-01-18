@@ -141,7 +141,10 @@ export async function fetch(
         let convertedValue: any = value;
         // Only test the beginning as Regexp.test is under the hood a recursive function that crashes (exceeded call stack) on big file base64
         const isBase64 =
-          typeof value === 'string' && base64Regex.test(value.slice(0, 1024)); // Must slice a multiplicator of 4 to fit with b64 regex !
+          typeof value === 'string' &&
+          value.toLowerCase() != 'false' &&
+          value.toLowerCase() != 'true' &&
+          base64Regex.test(value.slice(0, 1024)); // Must slice a multiplicator of 4 to fit with b64 regex !
         if (isBase64) {
           convertedValue = Buffer.from(value as any, 'base64');
         } else if (Array.isArray(value)) {
