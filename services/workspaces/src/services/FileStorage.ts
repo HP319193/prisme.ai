@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { remove as removeDiacritics } from 'diacritics';
 import { FilterQuery, FindOptions } from '@prisme.ai/permissions';
 import { nanoid } from 'nanoid';
@@ -117,6 +118,7 @@ class FileStorage {
           expiresAfter,
           mimetype,
           metadata,
+          shareToken,
           public: publicFile,
         }) => {
           const id = nanoid();
@@ -131,6 +133,10 @@ class FileStorage {
             ).toISOString();
           }
 
+          shareToken =
+            shareToken !== 'true'
+              ? undefined
+              : crypto.randomBytes(64).toString('hex');
           const details = await accessManager.create(
             SubjectType.File,
             {
@@ -144,6 +150,7 @@ class FileStorage {
               expiresAfter,
               metadata,
               public: publicFile,
+              shareToken,
             },
             {
               publicRead: publicFile,

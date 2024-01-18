@@ -55,6 +55,6 @@ export const init = (
 
   const files = initFiles(uploadsStorage);
   app.use(`${root}/workspaces/:workspaceId/files`, files);
-  app.use(`${root}/files`, initDownloadProxy(uploadsStorage));
+  app.use(`${root}/files`, initDownloadProxy(accessManager, uploadsStorage));
 };
 export default init;

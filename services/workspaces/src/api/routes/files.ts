@@ -3,6 +3,12 @@ import { asyncRoute } from '../utils/async';
 import multer from 'multer';
 import FileStorage, { FileUploadRequest } from '../../services/FileStorage';
 import { UPLOADS_DEFAULT_VISIBILITY } from '../../../config';
+import {
+  AccessManager,
+  ActionType,
+  SubjectType,
+  getSuperAdmin,
+} from '../../permissions';
 
 export default function init(fileStorage: FileStorage) {
   async function uploadFileHandler(
@@ -43,7 +49,12 @@ export default function init(fileStorage: FileStorage) {
     const fileUploadRequests: FileUploadRequest[] = (
       (files as Express.Multer.File[]) || []
     ).map(({ size, originalname: name, buffer, mimetype }, idx) => {
-      const { expiresAfter, public: publicFile, metadata } = body || {};
+      const {
+        expiresAfter,
+        public: publicFile,
+        shareToken,
+        metadata,
+      } = body || {};
 
       return {
         name,
@@ -56,6 +67,7 @@ export default function init(fileStorage: FileStorage) {
         public: Array.isArray(publicFile)
           ? publicFile[idx] !== defaultPublic
           : publicFile !== defaultPublic,
+        shareToken,
         metadata: Object.entries(metadata)
           .filter(([k, v]) => !Array.isArray(v) || v.length > idx)
           .reduce(
@@ -170,20 +182,40 @@ function parseDataURI(uri: string) {
   };
 }
 
-export function initDownloadProxy(fileStorage: FileStorage) {
+export function initDownloadProxy(
+  baseAccessManager: AccessManager,
+  fileStorage: FileStorage
+) {
+  let authorizedAccessManager: Required<AccessManager>;
+  getSuperAdmin(baseAccessManager).then(
+    (superAdmin) => (authorizedAccessManager = superAdmin)
+  );
+
   return asyncRoute(async function download(
     req: Request<PrismeaiAPI.GetFile.PathParameters>,
     res: Response<PrismeaiAPI.GetFile.Responses.$200>,
     next: NextFunction
   ) {
     const path = req.path[0] === '/' ? req.path.slice(1) : req.path;
-    await fileStorage.get(
-      req.accessManager,
+    const file = await fileStorage.get(
+      authorizedAccessManager,
       {
         path,
       },
       req.context?.http?.baseUrl!
     );
+
+    if (
+      !req.query.token ||
+      !file.shareToken ||
+      req.query.token !== file.shareToken
+    ) {
+      await req.accessManager.throwUnlessCan(
+        ActionType.Read,
+        SubjectType.File,
+        file
+      );
+    }
     await fileStorage.download(path, res);
   });
 }

@@ -101,6 +101,7 @@ export function initAccessManager(
           expiresAfter: { type: Number },
           metadata: Schema.Types.Mixed,
           public: Boolean,
+          shareToken: String,
         },
       },
     },
