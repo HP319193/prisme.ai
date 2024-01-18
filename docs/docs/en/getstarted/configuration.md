@@ -590,6 +590,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>Allowed upload mimetypes, comma-separated</td>
     <td>image/*,text/*,video/*,audio/*,application/*</td>
   </tr>             
+  <tr>
+    <td>UPLOADS_DEFAULT_VISIBILITY</td>
+    <td>workspaces</td>
+    <td>If not explicitly set in API request, default uploads visibility</td>
+    <td>public</td>
+  </tr>               
         
 </table>
 
