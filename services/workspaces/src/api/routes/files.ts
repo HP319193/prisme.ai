@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import { asyncRoute } from '../utils/async';
 import multer from 'multer';
 import FileStorage, { FileUploadRequest } from '../../services/FileStorage';
+import { UPLOADS_DEFAULT_VISIBILITY } from '../../../config';
 
 export default function init(fileStorage: FileStorage) {
   async function uploadFileHandler(
@@ -36,6 +37,9 @@ export default function init(fileStorage: FileStorage) {
       }
     }
 
+    // Note that true / false are inverted here, as we explicitly check for any value !== defaultPublic, meaning it's public
+    const defaultPublic =
+      UPLOADS_DEFAULT_VISIBILITY === 'private' ? 'true' : 'false';
     const fileUploadRequests: FileUploadRequest[] = (
       (files as Express.Multer.File[]) || []
     ).map(({ size, originalname: name, buffer, mimetype }, idx) => {
@@ -50,8 +54,8 @@ export default function init(fileStorage: FileStorage) {
           ? expiresAfter[idx]
           : expiresAfter,
         public: Array.isArray(publicFile)
-          ? publicFile[idx] === 'true'
-          : publicFile === 'true',
+          ? publicFile[idx] !== defaultPublic
+          : publicFile !== defaultPublic,
         metadata: Object.entries(metadata)
           .filter(([k, v]) => !Array.isArray(v) || v.length > idx)
           .reduce(

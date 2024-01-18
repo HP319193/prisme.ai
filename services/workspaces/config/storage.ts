@@ -23,6 +23,9 @@ export const UPLOADS_ALLOWED_MIMETYPES = (
   'image/*,text/*,video/*,audio/*,application/*'
 ).split(',');
 
+export const UPLOADS_DEFAULT_VISIBILITY =
+  process.env.UPLOADS_DEFAULT_VISIBILITY || 'public';
+
 /*
  * Filesystem Configuration
  */

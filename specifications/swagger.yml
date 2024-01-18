@@ -913,7 +913,7 @@ components:
           additionalProperties: true
         public:
           type: boolean
-          description: "Reflects whether the file has public-read ACL at storage provider"
+          description: "Reflects whether the file has public-read ACL at storage provider. True by default"
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################
