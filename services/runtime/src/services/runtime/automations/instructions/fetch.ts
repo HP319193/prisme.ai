@@ -30,7 +30,7 @@ const httpsKeepAliveAgent = new Agent.HttpsAgent({
   timeout: 0,
 });
 
-const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages'].map(
+const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages', '/files'].map(
   (cur) => `${API_URL}${cur}`
 );
 
