@@ -188,22 +188,41 @@ export function interpolateValue(value: any, values: any): any {
 
   if (Array.isArray(value)) {
     const output = value.flatMap((v) => {
-      if (
+      const hidden =
         !v[TEMPLATE_REPEAT] &&
         v[TEMPLATE_IF] &&
-        !testCondition(v[TEMPLATE_IF], values)
-      )
-        return [];
+        !testCondition(v[TEMPLATE_IF], values);
       const blocks = v[TEMPLATE_REPEAT] ? repeatBlock(v, values) : [v];
-      return blocks.map((v) => (v.slug ? v : interpolateValue(v, values)));
+      return blocks.map((v) => {
+        if (v.slug) {
+          if (hidden) {
+            return { ...v, hidden };
+          }
+          const newValue = { ...v };
+          delete newValue.hidden;
+          return newValue;
+        }
+        const interpolated = interpolateValue(v, values);
+        if (
+          hidden &&
+          typeof interpolated === 'object' &&
+          !Array.isArray(interpolated)
+        ) {
+          return { ...interpolated, hidden };
+        }
+        return interpolated;
+      });
     });
     if (equal(value, output)) return value;
     return output;
   }
   if (typeof value === 'object') {
-    if (value[TEMPLATE_IF] && !testCondition(value[TEMPLATE_IF], values))
-      return null;
-    const output = value.slug ? value : computeBlock(value, values);
+    const hidden =
+      value[TEMPLATE_IF] && !testCondition(value[TEMPLATE_IF], values);
+    let output = value.slug ? value : computeBlock(value, values);
+    if (hidden && typeof output === 'object' && !Array.isArray(output)) {
+      output = { ...output, hidden };
+    }
     if (equal(value, output)) return value;
     return output;
   }
@@ -227,19 +246,18 @@ export function computeBlock(
     [original]: cleanedOriginalConfig,
   };
 
-  if (!testCondition(_if, values)) {
-    return computed;
-  }
-
-  return Object.entries(blockConfig).reduce((prev, [k, v]) => {
+  const ret = Object.entries(blockConfig).reduce((prev, [k, v]) => {
     const { [k]: ignored, ...filteredValues } = blockConfig;
+
     const allValues = {
       ...filteredValues,
       ...values,
     };
+
     return {
       ...prev,
       [k]: interpolateValue(v, allValues),
     };
   }, computed);
+  return !testCondition(_if, values) ? { ...ret, hidden: true } : ret;
 }
