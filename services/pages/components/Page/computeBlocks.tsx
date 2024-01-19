@@ -114,7 +114,7 @@ export function interpolateExpression(expression: string, values: any) {
     let interpolation = '';
     try {
       interpolation =
-        key === '$index' ? values.$index : jsonpath.value(values, key);
+        key === '$index' ? values[$index] : jsonpath.value(values, key);
       if (typeof interpolation === 'string') {
         interpolation = interpolateExpression(interpolation, values);
       }
