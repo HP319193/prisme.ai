@@ -165,6 +165,8 @@ it('should filter with template.if', () => {
     [original]: block,
   });
   expect(computeBlock(block, { foo: false })).toEqual({
+    slug: 'RichText',
+    hidden: true,
     [original]: block,
   });
 });
@@ -199,8 +201,18 @@ it('should filter with template.if in Block values', () => {
   });
   expect(computeBlock(block, { foo: false })).toEqual({
     slug: 'RichText',
-    array: [],
-    object: null,
+    object: {
+      bar: 'bar',
+      hidden: true,
+      [original]: block.object,
+    },
+    array: [
+      {
+        bar: 'bar',
+        hidden: true,
+        [original]: block.array[0],
+      },
+    ],
     [original]: block,
   });
 });

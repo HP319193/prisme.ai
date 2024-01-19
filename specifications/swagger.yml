@@ -911,6 +911,12 @@ components:
         metadata:
           type: object
           additionalProperties: true
+        public:
+          type: boolean
+          description: "Reflects whether the file has public-read ACL at storage provider. True by default"
+        shareToken:
+          type: string
+          description: "A share token to append as a ?token query parameter to grant read access with given url"
 
     ###############################################################################################################################################
     ############################################################ Automation Instructions ############################################################
@@ -6490,6 +6496,13 @@ paths:
                 expiresAfter:
                   type: string
                   description: File expiration time in seconds
+                public:
+                  type: string
+                  description: "Set to true to make uploaded file publicly available"
+                shareToken:
+                  type: string
+                  description: "If enabled, return a share token that will allow anybody access the file"
+
 
       responses:
         '200':

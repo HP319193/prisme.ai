@@ -1,8 +1,15 @@
 import archiver from 'archiver';
 import stream from 'stream';
-import { DriverType, ExportOptions, IStorage, ObjectList } from '../types';
+import {
+  DriverType,
+  ExportOptions,
+  GetOptions,
+  IStorage,
+  ObjectList,
+  Streamed,
+} from '../types';
 import { join, dirname, basename } from 'path';
-import fs, { promises as promisesFs } from 'fs';
+import fs, { createReadStream, promises as promisesFs } from 'fs';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 import { streamToBuffer } from '../../utils/streamToBuffer';
 
@@ -51,9 +58,22 @@ export default class Filesystem implements IStorage {
     return join(this.options.dirpath || '', key);
   }
 
-  async get(key: string) {
+  async get(key: string, opts?: GetOptions) {
+    const path = this.getPath(key);
     return await new Promise((resolve: any, reject: any) => {
-      fs.readFile(this.getPath(key), (err, data) => {
+      if (opts?.stream) {
+        const stream = createReadStream(path);
+        stream.pipe(opts.stream);
+        stream.on('end', () => {
+          resolve(Streamed);
+        });
+        stream.on('error', () => {
+          reject(new ObjectNotFoundError());
+        });
+        return;
+      }
+
+      fs.readFile(path, (err, data) => {
         if (err) {
           reject(new ObjectNotFoundError());
         }
@@ -166,10 +186,10 @@ export default class Filesystem implements IStorage {
       zlib: { level: 9 }, // Sets the compression level.
     });
 
-    let completionPromise: Promise<'streamed' | Buffer>;
+    let completionPromise: Promise<typeof Streamed | Buffer>;
     if (outStream) {
       archive.pipe(outStream);
-      completionPromise = Promise.resolve('streamed');
+      completionPromise = Promise.resolve(Streamed);
     } else {
       completionPromise = streamToBuffer(archive);
     }

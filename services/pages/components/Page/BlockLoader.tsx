@@ -351,7 +351,9 @@ export const BlockLoader: TBlockLoader = ({
   );
 
   if (!page || !render) return null;
-
+  if (computedConfig?.hidden) {
+    return null;
+  }
   return (
     <recursiveConfigContext.Provider value={cumulatedConfig}>
       <BLoader

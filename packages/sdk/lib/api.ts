@@ -727,7 +727,11 @@ export class Api extends Fetcher {
   async uploadFiles(
     files: string | string[],
     workspaceId: string,
-    expiresAfter?: number
+    opts?: {
+      expiresAfter?: number;
+      public?: boolean;
+      shareToken?: boolean;
+    }
   ) {
     const formData = new FormData();
     (Array.isArray(files) ? files : [files]).forEach((file) => {
@@ -735,8 +739,14 @@ export class Api extends Fetcher {
         formData.append('file', ...dataURItoBlob(file));
       } catch {}
     });
-    if (expiresAfter) {
-      formData.append('expiresAfter', `${expiresAfter}`);
+    if (opts?.expiresAfter) {
+      formData.append('expiresAfter', `${opts?.expiresAfter}`);
+    }
+    if (typeof opts?.public === 'boolean') {
+      formData.append('public', `${opts?.public}`);
+    }
+    if (typeof opts?.shareToken === 'boolean') {
+      formData.append('shareToken', `${opts?.shareToken}`);
     }
     try {
       return await this._fetch<PrismeaiAPI.UploadFile.Responses.$200>(

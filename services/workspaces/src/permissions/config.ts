@@ -3,7 +3,8 @@ import {
   NativeSubjectType,
   PermissionsConfig,
 } from '@prisme.ai/permissions';
-import { LAST_CUSTOM_RULE_PRIORITY } from '../../config';
+import { LAST_CUSTOM_RULE_PRIORITY, UPLOADS_STORAGE_TYPE } from '../../config';
+import { DriverType } from '../storage/types';
 
 export const ActionType = {
   ...NativeActionType,
@@ -233,3 +234,16 @@ export const config: PermissionsConfig<
     },
   ],
 };
+
+// Kep retrocompatibility with files uploaded before private files feature so they are still readables
+if (UPLOADS_STORAGE_TYPE == DriverType.FILESYSTEM) {
+  config.abac.push({
+    action: ActionType.Read,
+    subject: SubjectType.File,
+    conditions: {
+      public: {
+        $exists: false,
+      },
+    },
+  });
+}

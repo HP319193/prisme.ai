@@ -1,6 +1,8 @@
+import crypto from 'crypto';
 import { remove as removeDiacritics } from 'diacritics';
 import { FilterQuery, FindOptions } from '@prisme.ai/permissions';
 import { nanoid } from 'nanoid';
+import stream from 'stream';
 import {
   UPLOADS_STORAGE_S3_LIKE_BASE_URL,
   UPLOADS_FILESYSTEM_DOWNLOAD_URL,
@@ -8,7 +10,7 @@ import {
 } from '../../config';
 import { logger } from '../logger';
 import { AccessManager, Role, SubjectType } from '../permissions';
-import { DriverType, IStorage } from '../storage/types';
+import { DriverType, IStorage, Streamed } from '../storage/types';
 import { UPLOADS_MAX_SIZE, UPLOADS_ALLOWED_MIMETYPES } from '../../config';
 import { InvalidUploadError } from '../errors';
 
@@ -34,16 +36,21 @@ class FileStorage {
   }
 
   getUrl(storageType: DriverType, path: string, baseUrl: string) {
-    if (storageType === DriverType.FILESYSTEM) {
-      return `${UPLOADS_FILESYSTEM_DOWNLOAD_URL || baseUrl}/v2/files/${path}`;
-    }
-    if (storageType === DriverType.S3_LIKE) {
+    if (
+      storageType === DriverType.S3_LIKE &&
+      UPLOADS_STORAGE_S3_LIKE_BASE_URL
+    ) {
       return `${UPLOADS_STORAGE_S3_LIKE_BASE_URL}/${path}`;
     }
-    if (storageType === DriverType.AZURE_BLOB) {
+    if (
+      storageType === DriverType.AZURE_BLOB &&
+      UPLOADS_STORAGE_AZURE_BLOB_BASE_URL
+    ) {
       return `${UPLOADS_STORAGE_AZURE_BLOB_BASE_URL}/${path}`;
     }
-    throw new Error(`Unsupported upload storage type '${storageType}'`);
+
+    // Proxy mode can be forced by simply not providing storage BASE_URL env var
+    return `${UPLOADS_FILESYSTEM_DOWNLOAD_URL || baseUrl}/v2/files/${path}`;
   }
 
   async list(
@@ -111,6 +118,8 @@ class FileStorage {
           expiresAfter,
           mimetype,
           metadata,
+          shareToken,
+          public: publicFile,
         }) => {
           const id = nanoid();
           const filename = removeDiacritics(originalname)
@@ -124,21 +133,37 @@ class FileStorage {
             ).toISOString();
           }
 
-          const details = await accessManager.create(SubjectType.File, {
-            mimetype,
-            name: originalname,
-            size,
-            workspaceId,
-            path,
-            id,
-            expiresAt,
-            expiresAfter,
-            metadata,
-          });
+          shareToken =
+            shareToken !== 'true'
+              ? undefined
+              : crypto.randomBytes(64).toString('hex');
+          const details = await accessManager.create(
+            SubjectType.File,
+            {
+              mimetype,
+              name: originalname,
+              size,
+              workspaceId,
+              path,
+              id,
+              expiresAt,
+              expiresAfter,
+              metadata,
+              public: publicFile,
+              shareToken,
+            },
+            {
+              publicRead: publicFile,
+            }
+          );
 
           return {
             ...details,
-            url: this.getUrl(this.driver.type(), path, baseUrl),
+            url: this.getUrl(
+              publicFile ? this.driver.type() : DriverType.FILESYSTEM,
+              path,
+              baseUrl
+            ),
           };
         }
       )
@@ -148,11 +173,22 @@ class FileStorage {
       fileDetails.map(async (file, idx) => {
         await this.driver.save(file.path, files[idx].buffer, {
           mimetype: file.mimetype,
+          public: file.public,
         });
       })
     );
 
     return fileDetails;
+  }
+
+  async download(path: string, out: stream.Writable) {
+    const data = await this.driver.get(path, {
+      stream: out,
+    });
+    // If driver does not support streaming, handle it ourselves
+    if (data !== Streamed) {
+      out.end(data);
+    }
   }
 
   async delete(
