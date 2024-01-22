@@ -11,7 +11,7 @@ import {
 import AWS from 'aws-sdk';
 import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 import path from 'path';
-import stream, { addAbortSignal } from 'stream';
+import stream from 'stream';
 import { streamToBuffer } from '../../utils/streamToBuffer';
 
 export interface S3Options {

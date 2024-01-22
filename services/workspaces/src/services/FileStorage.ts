@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import { remove as removeDiacritics } from 'diacritics';
 import { FilterQuery, FindOptions } from '@prisme.ai/permissions';
 import { nanoid } from 'nanoid';

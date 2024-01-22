@@ -396,8 +396,8 @@ export class AccessManager<
         },
       });
     }
-    await currentSubject.save();
 
+    await currentSubject.save();
     return currentSubject.filterFields(permissions);
   }
 
