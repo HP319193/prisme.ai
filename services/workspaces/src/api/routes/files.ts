@@ -120,6 +120,25 @@ export default function init(fileStorage: FileStorage) {
     res.send({ id });
   }
 
+  async function updateFileHandler(
+    {
+      context,
+      body,
+      params: { id },
+      accessManager,
+    }: Request<PrismeaiAPI.GetFile.PathParameters>,
+    res: Response<PrismeaiAPI.GetFile.Responses.$200>
+  ) {
+    const result = await fileStorage.updateFile(
+      accessManager,
+      id,
+      body,
+      context?.http?.baseUrl!
+    );
+
+    res.send(result);
+  }
+
   async function listFilesHandler(
     {
       context,
@@ -151,6 +170,7 @@ export default function init(fileStorage: FileStorage) {
 
   const upload = multer();
   app.post(`/`, upload.any(), asyncRoute(uploadFileHandler));
+  app.patch(`/:id`, asyncRoute(updateFileHandler));
   app.delete(`/:id`, asyncRoute(deleteFileHandler));
   app.get(`/`, asyncRoute(listFilesHandler));
   app.get(`/:id`, asyncRoute(getFileHandler));

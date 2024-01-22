@@ -6,6 +6,7 @@ import {
   GetOptions,
   IStorage,
   ObjectList,
+  SaveOptions,
   Streamed,
 } from '../types';
 import { join, dirname, basename } from 'path';
@@ -99,7 +100,11 @@ export default class Filesystem implements IStorage {
     });
   }
 
-  async save(key: string, data: any) {
+  async save(key: string, data: any, opts?: SaveOptions) {
+    // Ignore irrelevant ACL options (specific to cloud provider object storages)
+    if (data === undefined && typeof opts?.public !== 'undefined') {
+      return;
+    }
     const filepath = this.getPath(key);
     const parentDirectory = dirname(filepath);
     mkdir(parentDirectory);
