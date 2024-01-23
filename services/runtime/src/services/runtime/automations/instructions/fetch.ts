@@ -272,9 +272,9 @@ export async function fetch(
   }
 
   if (outputMode === 'data_url') {
-    return `data:${result.headers.get(
-      'content-type'
-    )};base64,${responseBody.toString('base64')}`;
+    return `data:${
+      result.headers.get('content-type') || 'application/octet-stream'
+    };base64,${responseBody.toString('base64')}`;
   } else if (outputMode === 'detailed_response') {
     return {
       headers: Object.entries(result.headers.raw()).reduce(
