@@ -236,6 +236,10 @@ export function initDownloadProxy(
         file
       );
     }
+
+    if (file.mimetype) {
+      res.setHeader('content-type', file.mimetype);
+    }
     await fileStorage.download(path, res);
   });
 }
