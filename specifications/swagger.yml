@@ -1227,6 +1227,13 @@ components:
                   $ref: '#/components/schemas/PrismeEventTarget'
                 options:
                   $ref: '#/components/schemas/PrismeEventOptions'
+            resultMode:
+              type: string
+              default: body
+              enum:
+                - body
+                - detailed_response
+                - data_url
 
     Comment:
       type: object
