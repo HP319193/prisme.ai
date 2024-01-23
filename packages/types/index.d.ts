@@ -1587,7 +1587,7 @@ declare namespace Prismeai {
                     target?: PrismeEventTarget;
                     options?: PrismeEventOptions;
                 };
-                resultMode?: "body" | "detailed_response" | "data_url";
+                outputMode?: "body" | "detailed_response" | "data_url";
             };
             response: {
                 status: number;
@@ -1690,7 +1690,7 @@ declare namespace Prismeai {
                 target?: PrismeEventTarget;
                 options?: PrismeEventOptions;
             };
-            resultMode?: "body" | "detailed_response" | "data_url";
+            outputMode?: "body" | "detailed_response" | "data_url";
         };
     }
     export interface File {

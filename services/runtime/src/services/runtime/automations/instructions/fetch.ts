@@ -69,7 +69,7 @@ export async function fetch(
     emitErrors = true,
     stream,
     prismeaiApiKey,
-    resultMode,
+    outputMode,
   } = fetchParams;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
@@ -271,11 +271,11 @@ export async function fetch(
     });
   }
 
-  if (resultMode === 'data_url') {
+  if (outputMode === 'data_url') {
     return `data:${result.headers.get(
       'content-type'
     )};base64,${responseBody.toString('base64')}`;
-  } else if (resultMode === 'detailed_response') {
+  } else if (outputMode === 'detailed_response') {
     return {
       headers: Object.entries(result.headers.raw()).reduce(
         (prevHeaders, [name, values]) => ({
