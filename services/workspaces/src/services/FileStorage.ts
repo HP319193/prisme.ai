@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import { remove as removeDiacritics } from 'diacritics';
 import { FilterQuery, FindOptions } from '@prisme.ai/permissions';
 import { nanoid } from 'nanoid';
@@ -13,6 +12,7 @@ import { AccessManager, Role, SubjectType } from '../permissions';
 import { DriverType, IStorage, Streamed } from '../storage/types';
 import { UPLOADS_MAX_SIZE, UPLOADS_ALLOWED_MIMETYPES } from '../../config';
 import { InvalidUploadError } from '../errors';
+import { token } from '../utils';
 
 const ALLOWED_MIMETYPES_REGEXP = `^(${UPLOADS_ALLOWED_MIMETYPES.map((cur) =>
   cur.replace(/[*]/g, '.*')
@@ -35,7 +35,11 @@ class FileStorage {
     return `${workspaceId}/${fileId}.${filename}`;
   }
 
-  getUrl(storageType: DriverType, path: string, baseUrl: string) {
+  getUrl(file: Omit<Prismeai.File, 'url'>, baseUrl: string) {
+    const storageType = file.public
+      ? this.driver.type()
+      : DriverType.FILESYSTEM;
+    const path = file.path;
     if (
       storageType === DriverType.S3_LIKE &&
       UPLOADS_STORAGE_S3_LIKE_BASE_URL
@@ -65,7 +69,7 @@ class FileStorage {
     });
     return result.map((file) => ({
       ...file,
-      url: this.getUrl(this.driver.type(), file.path, baseUrl),
+      url: this.getUrl(file, baseUrl),
     }));
   }
 
@@ -77,7 +81,7 @@ class FileStorage {
     const file = await accessManager.get(SubjectType.File, id);
     return {
       ...file,
-      url: this.getUrl(this.driver.type(), file.path, baseUrl),
+      url: this.getUrl(file, baseUrl),
     };
   }
 
@@ -133,10 +137,7 @@ class FileStorage {
             ).toISOString();
           }
 
-          shareToken =
-            shareToken !== 'true'
-              ? undefined
-              : crypto.randomBytes(64).toString('hex');
+          shareToken = shareToken !== 'true' ? undefined : token();
           const details = await accessManager.create(
             SubjectType.File,
             {
@@ -159,11 +160,7 @@ class FileStorage {
 
           return {
             ...details,
-            url: this.getUrl(
-              publicFile ? this.driver.type() : DriverType.FILESYSTEM,
-              path,
-              baseUrl
-            ),
+            url: this.getUrl(details, baseUrl),
           };
         }
       )
@@ -179,6 +176,59 @@ class FileStorage {
     );
 
     return fileDetails;
+  }
+
+  async updateFile(
+    accessManager: Required<AccessManager>,
+    id: string,
+    userPatch: Partial<Prismeai.File>,
+    baseUrl: string
+  ) {
+    const currentFile = await this.get(
+      accessManager,
+      {
+        $or: [{ id }, { path: id }],
+      },
+      baseUrl
+    );
+
+    const {
+      public: publicPatch,
+      shareToken: shareTokenPatch,
+      ...patchedField
+    } = userPatch;
+    const updateReq: Partial<Prismeai.File> = patchedField;
+    if (
+      typeof publicPatch === 'boolean' &&
+      publicPatch !== currentFile.public
+    ) {
+      await this.driver.save(currentFile.path, undefined, {
+        public: publicPatch,
+      });
+      updateReq.public = publicPatch;
+    }
+
+    if (shareTokenPatch && !currentFile.shareToken) {
+      updateReq.shareToken = token();
+    } else if ((shareTokenPatch as any) === false && currentFile.shareToken) {
+      updateReq.shareToken = undefined;
+    }
+
+    let updatedFile: Omit<Prismeai.File, 'url'> & { id: string } = {
+      ...currentFile,
+      ...updateReq,
+      id: currentFile.id,
+    };
+    if (Object.keys(updateReq).length || typeof publicPatch === 'boolean') {
+      updatedFile = await accessManager.update(SubjectType.File, updatedFile, {
+        publicRead: updatedFile.public,
+      });
+    }
+
+    return {
+      ...updatedFile,
+      url: this.getUrl(updatedFile, baseUrl),
+    };
   }
 
   async download(path: string, out: stream.Writable) {

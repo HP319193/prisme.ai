@@ -69,6 +69,7 @@ export async function fetch(
     emitErrors = true,
     stream,
     prismeaiApiKey,
+    outputMode,
   } = fetchParams;
   const lowercasedHeaders: Record<string, string> = Object.entries(
     headers || {}
@@ -269,16 +270,44 @@ export async function fetch(
       },
     });
   }
-  return responseBody;
+
+  if (outputMode === 'data_url') {
+    const base64 =
+      typeof responseBody === 'string'
+        ? Buffer.from(responseBody).toString('base64')
+        : responseBody.toString('base64');
+    return `data:${
+      result.headers.get('content-type') || 'application/octet-stream'
+    };base64,${base64}`;
+  } else if (outputMode === 'detailed_response') {
+    return {
+      headers: Object.entries(result.headers.raw()).reduce(
+        (prevHeaders, [name, values]) => ({
+          ...prevHeaders,
+          [name]:
+            Array.isArray(values) && values.length === 1 ? values[0] : values,
+        }),
+        {}
+      ),
+      status: result.status,
+      body: responseBody,
+    };
+  } else {
+    return responseBody;
+  }
 }
 
 async function getResponseBody(response: Response) {
-  const parseJSON = (response.headers.get('Content-Type') || '').includes(
-    'application/json'
-  );
-  if (parseJSON) {
+  const contentType = response.headers.get('Content-Type') || '';
+  if (contentType.includes('application/json')) {
     const json = await response.json();
     return json;
+  }
+  if (contentType.includes('text/')) {
+    return await response.text();
+  }
+  if (contentType.includes('application/')) {
+    return await response.buffer();
   }
   return await response.text();
 }

@@ -128,6 +128,10 @@ export default class AzureBlob implements IStorage {
   }
 
   public async save(key: string, data: any, opts?: SaveOptions) {
+    // Azure does not support object level ACL
+    if (data === undefined && typeof opts?.public !== 'undefined') {
+      return;
+    }
     try {
       const blobClient = this.client.getBlockBlobClient(key);
       await blobClient.upload(data, data.length, {

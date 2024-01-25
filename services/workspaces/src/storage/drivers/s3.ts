@@ -179,6 +179,10 @@ export default class S3Like implements IStorage {
   }
 
   public async save(key: string, data: any, opts?: SaveOptions) {
+    // If we only want to change S3 file ACL, use copy
+    if (data === undefined && typeof opts?.public !== 'undefined') {
+      return await this.copy(key, key, opts);
+    }
     const params: AWS.S3.PutObjectRequest = {
       Bucket: this.options.bucket,
       Key: key,
@@ -205,12 +209,25 @@ export default class S3Like implements IStorage {
     return result;
   }
 
-  public async copy(from: string, to: string) {
+  public async copy(from: string, to: string, opts?: SaveOptions) {
+    const additionalS3Meta: Partial<AWS.S3.CopyObjectRequest> = {};
+    if (typeof opts?.public !== 'undefined') {
+      additionalS3Meta.ACL = opts?.public ? 'public-read' : 'private';
+      if (from === to) {
+        // S3 rejects self-copies not changing any metadata
+        additionalS3Meta.Metadata = {
+          CopyReason: 'acl.updated',
+        };
+        additionalS3Meta.MetadataDirective = 'REPLACE';
+      }
+    }
+
     const objects = await this.find(from, true);
     // If we do not replace whitespaces with +, API raised an error upon double whitespaces
     const copyPaths = objects.map(({ key }) => ({
       CopySource: `/${this.options.bucket}/${key}`.replace(/(\s)/g, '+'),
       Key: from === key ? to : path.join(to, key.slice(from.length)),
+      ...additionalS3Meta,
     }));
     const result = await Promise.all(
       copyPaths.map(

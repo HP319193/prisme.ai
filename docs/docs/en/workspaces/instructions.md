@@ -150,8 +150,9 @@ Sends an HTTP request to call external web services
 - **body** : Request body (might be a JSON object, a string, a number, ...)
 - **multipart** : List of field definitions for multipart/form-data requests
 - **emitErrors** : Boolean enabling or disabling error events upon 4xx or 5xx responses. Enabled by default.  
-- **output** : Name of the variable that will store the response body
 - **stream** : For streamed responses, emit data chunks as they are received
+- **outputMode** : Choose between 'body' | 'detailed_response' | 'data_url'. Defaults to 'body'  
+- **output** : Name of the variable that will store the response body
 
 When receiving 4xx or 5xx HTTP errors, a native event `runtime.fetch.failed` is automatically emitted, including both request & response contents.
 

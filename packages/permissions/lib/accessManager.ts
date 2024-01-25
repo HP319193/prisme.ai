@@ -359,7 +359,10 @@ export class AccessManager<
 
   async update<returnType extends SubjectType>(
     subjectType: returnType,
-    updatedSubject: Partial<SubjectInterfaces[returnType]> & { id: string }
+    updatedSubject: Partial<SubjectInterfaces[returnType]> & { id: string },
+    opts?: {
+      publicRead?: boolean;
+    }
   ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions, user } = this.checkAsUser();
 
@@ -385,8 +388,16 @@ export class AccessManager<
       updatedAt: date.toISOString(),
       updatedBy: user.id,
     });
-    await currentSubject.save();
+    if (typeof opts?.publicRead === 'boolean') {
+      currentSubject.set({
+        permissions: {
+          ...currentSubject.toJSON().permissions,
+          '*': opts?.publicRead ? { policies: { read: true } } : {},
+        },
+      });
+    }
 
+    await currentSubject.save();
     return currentSubject.filterFields(permissions);
   }
 

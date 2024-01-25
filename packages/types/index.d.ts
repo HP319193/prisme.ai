@@ -1587,6 +1587,7 @@ declare namespace Prismeai {
                     target?: PrismeEventTarget;
                     options?: PrismeEventOptions;
                 };
+                outputMode?: "body" | "detailed_response" | "data_url";
             };
             response: {
                 status: number;
@@ -1689,6 +1690,7 @@ declare namespace Prismeai {
                 target?: PrismeEventTarget;
                 options?: PrismeEventOptions;
             };
+            outputMode?: "body" | "detailed_response" | "data_url";
         };
     }
     export interface File {
@@ -4117,6 +4119,39 @@ declare namespace PrismeaiAPI {
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace UpdateFile {
+        namespace Parameters {
+            export type Id = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            id: Parameters.Id;
+        }
+        export interface RequestBody {
+            /**
+             * File expiration time in seconds
+             */
+            expiresAfter?: string;
+            /**
+             * Set to true to make uploaded file publicly available
+             */
+            public?: string;
+            /**
+             * If enabled, return a share token that will allow anybody access the file
+             */
+            shareToken?: string;
+            metadata?: {
+                [name: string]: any;
+            };
+        }
+        namespace Responses {
+            export type $200 = Prismeai.File[];
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
         }
     }
     namespace UpdatePage {

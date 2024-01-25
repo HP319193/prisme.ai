@@ -221,6 +221,8 @@ export const BlockLoader: TBlockLoader = ({
         ...computedConfig,
       };
 
+      delete query.blocks;
+
       const newConfig = await callAutomation(
         page.workspaceId,
         automation,
