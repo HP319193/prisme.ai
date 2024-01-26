@@ -358,18 +358,31 @@ class Workspaces {
           }
         )
         .catch(() => undefined), // Might crash if no import exist
+      // Duplicate runtime model with updated root fields
       this.storage
-        .copy(
-          {
-            workspaceId,
-            dsulType: DSULType.RuntimeModel,
-          },
-          {
-            workspaceId: newWorkspace.id,
-            dsulType: DSULType.RuntimeModel,
+        .get({
+          workspaceId,
+          dsulType: DSULType.RuntimeModel,
+        })
+        .catch(() => undefined)
+        .then((model) => {
+          if (!model) {
+            return;
           }
-        )
-        .catch(() => undefined),
+
+          const updatedRuntimeModel = {
+            ...model,
+            ...newWorkspace,
+          };
+
+          return this.storage.save(
+            {
+              workspaceId: newWorkspace.id,
+              dsulType: DSULType.RuntimeModel,
+            },
+            updatedRuntimeModel
+          );
+        }),
     ]);
 
     this.broker.send<Prismeai.DuplicatedWorkspace['payload']>(

@@ -36,7 +36,6 @@ import OutputForm from './Panel/OutputForm';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { Schema } from '@prisme.ai/design-system';
 import removeAccent from 'remove-accents';
-import { useTracking } from '../Tracking';
 
 type InstructionSchemaTupple = [
   string,
