@@ -234,7 +234,7 @@ export const BlockLoader: TBlockLoader = ({
         ...prev,
         ...newConfig,
       }));
-      if (newConfig.userTopics) {
+      if (updateOn && newConfig.userTopics) {
         events.listenTopics({ event: updateOn, topics: newConfig.userTopics });
       }
     } catch {}
