@@ -191,7 +191,7 @@ export default function init(fileStorage: FileStorage) {
     if (!file.shareToken) {
       file = (await fileStorage.updateFile(
         accessManager,
-        file.createdAt,
+        file.id,
         {
           shareToken: true as any,
         },
@@ -208,14 +208,14 @@ export default function init(fileStorage: FileStorage) {
     const expiresAt = Date.now() + expiresIn;
     const { token } = await temporaryToken(
       file.shareToken,
-      Date.now() + expiresIn,
+      expiresAt,
       file.createdAt
     );
 
     res.send({
       url: `${file.url}?token=${token}`,
       expiresAt: new Date(expiresAt).toISOString(),
-      expiresIn,
+      expiresIn: expiresIn / 1000,
     });
   }
 
