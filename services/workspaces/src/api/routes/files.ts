@@ -204,7 +204,7 @@ export default function init(fileStorage: FileStorage) {
         {}
       );
     }
-    const expiresIn = body.expiresIn || 60 * 1000; // Default to 1min
+    const expiresIn = (body.expiresIn || 60) * 1000; // Default to 1min
     const expiresAt = Date.now() + expiresIn;
     const { token } = await temporaryToken(
       file.shareToken,
