@@ -4,6 +4,7 @@ import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import equal from 'fast-deep-equal';
+import sift from 'sift';
 
 import('dayjs/locale/en');
 import('dayjs/locale/fr');
@@ -94,6 +95,13 @@ export function applyFilter(filter: string, value: string, values: any) {
         +value
       );
     }
+    case 'filter':
+      if (!Array.isArray(value)) return value;
+      const [filtersVarName] = attrs.split(/,/);
+      const filters = values[filtersVarName || 'filters'];
+      console.log(filtersVarName, filters, values);
+      if (!filters) return value;
+      return value.filter(sift(filters));
     default:
       return value;
   }
