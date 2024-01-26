@@ -475,7 +475,7 @@ it('should not create a new array', () => {
     foo: [],
   };
   const to = computeBlock(block, {});
-  console.log(to);
+
   expect(block.foo).toBe(to.foo);
 });
 
