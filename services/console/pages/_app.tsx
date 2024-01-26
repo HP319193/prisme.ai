@@ -16,10 +16,16 @@ import { WorkspacesUsageProvider } from '../components/WorkspacesUsage';
 import QueryStringProvider from '../providers/QueryStringProvider';
 import WorkspacesProvider from '../providers/Workspaces/WorkspacesProvider';
 import { PublicBlocksProvider } from '../components/BlocksProvider';
-import OnBoarding from '../components/OnBoarding';
 import InstallWorkspace from '../components/InstallWorkspace';
 import Tracking from '../components/Tracking';
 import Storage from '../utils/Storage';
+import getConfig from 'next/config';
+
+const {
+  publicRuntimeConfig: { FEATURES: { ONBOARDING = false } = {} },
+} = getConfig();
+
+const OnBoarding = dynamic(import('../components/OnBoarding'));
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -97,7 +103,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <Sentry />
                 <InstallWorkspace>
                   {getLayout(<Component {...pageProps} />)}
-                  <OnBoarding />
+                  {ONBOARDING && <OnBoarding />}
                 </InstallWorkspace>
               </Tracking>
             </PermissionsProvider>
