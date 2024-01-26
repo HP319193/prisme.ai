@@ -43,6 +43,7 @@
     "react-quill": "^2.0.0",
     "react-transition-group": "^4.4.2",
     "remove-accents": "^0.4.3",
+    "sift": "^17.0.1",
     "socket.io-client": "^4.4.1",
     "use-resize-observer": "^9.0.2"
   },

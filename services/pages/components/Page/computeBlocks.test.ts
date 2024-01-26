@@ -699,3 +699,83 @@ it('should interpolated interopolable values', () => {
     [original]: block,
   });
 });
+
+it('should apply filter filter', () => {
+  const block = {
+    items: '{{items|filter}}',
+    filters: {
+      foo: 'bar',
+    },
+  };
+  expect(
+    computeBlock(block, {
+      items: [
+        {
+          foo: 'foo',
+        },
+        {
+          foo: 'bar',
+        },
+        {
+          foo: 'foo',
+        },
+        {
+          foo: 'bar',
+        },
+      ],
+    })
+  ).toEqual({
+    items: [
+      {
+        foo: 'bar',
+      },
+      {
+        foo: 'bar',
+      },
+    ],
+    filters: {
+      foo: 'bar',
+    },
+    [original]: block,
+  });
+});
+
+it('should apply filter filter with custom var name', () => {
+  const block = {
+    items: '{{items|filter:myFilters}}',
+    myFilters: {
+      foo: 'bar',
+    },
+  };
+  expect(
+    computeBlock(block, {
+      items: [
+        {
+          foo: 'foo',
+        },
+        {
+          foo: 'bar',
+        },
+        {
+          foo: 'foo',
+        },
+        {
+          foo: 'bar',
+        },
+      ],
+    })
+  ).toEqual({
+    items: [
+      {
+        foo: 'bar',
+      },
+      {
+        foo: 'bar',
+      },
+    ],
+    myFilters: {
+      foo: 'bar',
+    },
+    [original]: block,
+  });
+});
