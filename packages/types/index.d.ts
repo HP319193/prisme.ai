@@ -4009,6 +4009,32 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace ShareFile {
+        namespace Parameters {
+            export type Id = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            id: Parameters.Id;
+        }
+        export interface RequestBody {
+            /**
+             * Returned share url will expire in N seconds
+             */
+            expiresIn?: number;
+        }
+        namespace Responses {
+            export interface $200 {
+                url?: string;
+                expiresAt?: string;
+                expiresIn?: number;
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+        }
+    }
     namespace Signup {
         export interface RequestBody {
             email: string;

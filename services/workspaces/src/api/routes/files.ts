@@ -9,6 +9,8 @@ import {
   SubjectType,
   getSuperAdmin,
 } from '../../permissions';
+import { temporaryToken, validateTemporaryToken } from '../../utils';
+import { PrismeError } from '../../errors';
 
 export default function init(fileStorage: FileStorage) {
   async function uploadFileHandler(
@@ -166,6 +168,57 @@ export default function init(fileStorage: FileStorage) {
     res.send(result);
   }
 
+  async function shareFileHandler(
+    {
+      context,
+      body,
+      params: { id },
+      accessManager,
+    }: Request<
+      PrismeaiAPI.ShareFile.PathParameters,
+      any,
+      PrismeaiAPI.ShareFile.RequestBody
+    >,
+    res: Response<PrismeaiAPI.ShareFile.Responses.$200>
+  ) {
+    let file = await fileStorage.get(
+      accessManager,
+      {
+        $or: [{ id }, { path: id }],
+      },
+      context?.http?.baseUrl!
+    );
+    if (!file.shareToken) {
+      file = (await fileStorage.updateFile(
+        accessManager,
+        file.createdAt,
+        {
+          shareToken: true as any,
+        },
+        context?.http?.baseUrl!
+      )) as any;
+    }
+    if (!file.shareToken) {
+      throw new PrismeError(
+        'Unexpected error occured : could not generate a share url',
+        {}
+      );
+    }
+    const expiresIn = body.expiresIn || 60 * 1000; // Default to 1min
+    const expiresAt = Date.now() + expiresIn;
+    const { token } = await temporaryToken(
+      file.shareToken,
+      Date.now() + expiresIn,
+      file.createdAt
+    );
+
+    res.send({
+      url: `${file.url}?token=${token}`,
+      expiresAt: new Date(expiresAt).toISOString(),
+      expiresIn,
+    });
+  }
+
   const app = express.Router({ mergeParams: true });
 
   const upload = multer();
@@ -174,6 +227,7 @@ export default function init(fileStorage: FileStorage) {
   app.delete(`/:id`, asyncRoute(deleteFileHandler));
   app.get(`/`, asyncRoute(listFilesHandler));
   app.get(`/:id`, asyncRoute(getFileHandler));
+  app.post(`/:id/share`, asyncRoute(shareFileHandler));
 
   return app;
 }
@@ -230,11 +284,22 @@ export function initDownloadProxy(
       !file.shareToken ||
       req.query.token !== file.shareToken
     ) {
-      await req.accessManager.throwUnlessCan(
-        ActionType.Read,
-        SubjectType.File,
-        file
-      );
+      const isTemporaryToken =
+        file.shareToken &&
+        file.createdAt &&
+        req.query.token &&
+        (await validateTemporaryToken(
+          file.shareToken!,
+          file.createdAt,
+          req.query.token as string
+        ));
+      if (!isTemporaryToken) {
+        await req.accessManager.throwUnlessCan(
+          ActionType.Read,
+          SubjectType.File,
+          file
+        );
+      }
     }
 
     if (file.mimetype) {
