@@ -208,7 +208,8 @@ export const BlockLoader: TBlockLoader = ({
       !user ||
       !page ||
       !page.workspaceId ||
-      automationLoadingState.current > -1
+      automationLoadingState.current > -1 ||
+      !events
     )
       return;
 
@@ -233,9 +234,12 @@ export const BlockLoader: TBlockLoader = ({
         ...prev,
         ...newConfig,
       }));
+      if (newConfig.userTopics) {
+        events.listenTopics({ event: updateOn, topics: newConfig.userTopics });
+      }
     } catch {}
     automationLoadingState.current = 1;
-  }, [automation, computedConfig, page, redirect, user]);
+  }, [automation, computedConfig, events, page, redirect, updateOn, user]);
 
   // This is needed to re-init block when page navigate without reloading
   // by changing query string
