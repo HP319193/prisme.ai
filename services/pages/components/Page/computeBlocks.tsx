@@ -99,9 +99,13 @@ export function applyFilter(filter: string, value: string, values: any) {
       if (!Array.isArray(value)) return value;
       const [filtersVarName] = attrs.split(/,/);
       const filters = values[filtersVarName || 'filters'];
-      console.log(filtersVarName, filters, values);
       if (!filters) return value;
-      return value.filter(sift(filters));
+      try {
+        return value.filter(sift(filters));
+      } catch (e) {
+        console.error(e);
+        return [];
+      }
     default:
       return value;
   }
@@ -262,7 +266,6 @@ export function computeBlock(
       ...filteredValues,
       ...values,
     };
-
     return {
       ...prev,
       [k]: interpolateValue(v, allValues),
