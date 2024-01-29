@@ -284,10 +284,11 @@ export default class Runtime {
     };
 
     payload.wait.oneOf.forEach((cur) => {
-      if (!this.pendingWaits[cur.event]) {
-        this.pendingWaits[cur.event] = [];
+      const pendingWaitId = `${event?.source?.workspaceId}-${cur?.event}`;
+      if (!this.pendingWaits[pendingWaitId]) {
+        this.pendingWaits[pendingWaitId] = [];
       }
-      this.pendingWaits[cur.event].push({
+      this.pendingWaits[pendingWaitId].push({
         event: cur.event,
         filters: cur.filters,
         cancelTriggers: cur.cancelTriggers,
@@ -297,12 +298,13 @@ export default class Runtime {
   }
 
   private fulfillPendingWaits(event: Prismeai.PrismeEvent, broker: Broker) {
-    const pendingWaits = this.pendingWaits[event.type];
+    const pendingWaitId = `${event?.source?.workspaceId}-${event.type}`;
+    const pendingWaits = this.pendingWaits[pendingWaitId];
     if (!pendingWaits?.length) {
       return;
     }
     const matchingWaits: PendingWait[] = [];
-    this.pendingWaits[event.type] = pendingWaits.filter((cur) => {
+    this.pendingWaits[pendingWaitId] = pendingWaits.filter((cur) => {
       if (cur.request.expiresAt < Date.now() || cur.request.alreadyFulfilled) {
         return false; // Clean outdated waits
       }
