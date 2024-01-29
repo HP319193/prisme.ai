@@ -83,4 +83,27 @@ it('should apply $merge commands', () => {
   ).toEqual({
     foo: false,
   });
+
+  expect(
+    applyCommands(
+      {
+        things: {
+          list: [{ id: 1 }],
+        },
+      },
+      {
+        $merge: {
+          'things.list': [
+            {
+              id: 2,
+            },
+          ],
+        },
+      }
+    )
+  ).toEqual({
+    things: {
+      list: [{ id: 1 }, { id: 2 }],
+    },
+  });
 });
