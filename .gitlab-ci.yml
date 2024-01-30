@@ -595,37 +595,14 @@ container_scanning:
   dependencies: []
   script:
     - gtcs scan
+
+security_runtime_dockerfile:
+  extends: container_scanning
   rules:
     - if: $CONTAINER_SCANNING_DISABLED == 'true' || $CONTAINER_SCANNING_DISABLED == '1'
       when: never
     - if: $CI_COMMIT_BRANCH
       variables:
-        CS_DOCKERFILE_PATH: 'services/console/Dockerfile'
-      changes:
-        - 'services/console/Dockerfile'
-    - if: $CI_COMMIT_BRANCH
-      variables:
-        CS_DOCKERFILE_PATH: 'services/pages/Dockerfile'
-      changes:
-        - 'services/pages/Dockerfile'
-    - if: $CI_COMMIT_BRANCH
-      variables:
-        CS_DOCKERFILE_PATH: 'services/workspaces/Dockerfile'
-      changes:
-        - 'services/workspaces/Dockerfile'
-    - if: $CI_COMMIT_BRANCH
-      variables:
         CS_DOCKERFILE_PATH: 'services/runtime/Dockerfile'
       changes:
         - 'services/runtime/Dockerfile'
-    - if: $CI_COMMIT_BRANCH
-      variables:
-        CS_DOCKERFILE_PATH: 'services/events/Dockerfile'
-      changes:
-        - 'services/events/Dockerfile'
-    - if: $CI_COMMIT_BRANCH
-      variables:
-        CS_DOCKERFILE_PATH: 'services/api-gateway/Dockerfile'
-      changes:
-        - 'services/api-gateway/Dockerfile'
-
