@@ -41,11 +41,6 @@ stages:
   - deploy
   - performance
 
-# sast:
-#   stage: test
-# include:
-#   - template: Security/SAST.gitlab-ci.yml
-
 backend_npm_install:
   stage: dependencies
   needs:
@@ -584,8 +579,12 @@ container_scanning:
     # https://docs.gitlab.com/ee/user/application_security/container_scanning/index.html#overriding-the-container-scanning-template
     # https://docs.gitlab.com/ee/user/application_security/container_scanning/#vulnerability-allowlisting
     GIT_STRATEGY: none
-    CS_IMAGE: $CI_REGISTRY_IMAGE/tutorial-image
   allow_failure: true
+  parallel:
+    matrix:
+      - CS_IMAGE:
+        - $CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
+        - $CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
   artifacts:
     reports:
       container_scanning: gl-container-scanning-report.json
@@ -596,13 +595,15 @@ container_scanning:
   script:
     - gtcs scan
 
-security_runtime_dockerfile:
-  extends: container_scanning
-  rules:
-    - if: $CONTAINER_SCANNING_DISABLED == 'true' || $CONTAINER_SCANNING_DISABLED == '1'
-      when: never
-    - if: $CI_COMMIT_BRANCH
-      variables:
-        CS_DOCKERFILE_PATH: 'services/runtime/Dockerfile'
-      changes:
-        - 'services/runtime/Dockerfile'
+# container_scanning:
+#   extends: .security_container_matrix
+  # variables:
+  #   CS_IMAGE: $CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
+  # rules:
+  #   - if: $CONTAINER_SCANNING_DISABLED == 'true' || $CONTAINER_SCANNING_DISABLED == '1'
+  #     when: never
+  #   - if: $CI_COMMIT_BRANCH
+  #     variables:
+  #       CS_DOCKERFILE_PATH: 'services/runtime/Dockerfile'
+  #     changes:
+  #       - 'services/runtime/Dockerfile'
