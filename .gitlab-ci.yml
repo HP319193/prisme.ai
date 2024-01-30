@@ -560,3 +560,14 @@ security_sast:
   script:
     - bearer scan . --format gitlab-sast --output gl-sast-report.json
 
+security_dependencies:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^main$/
+      changes: &BACKEND_DEPS_CHANGES
+        - 'services/**/package.json'
+        - 'packages/**/package.json'
+        - 'package.json'
+  script:
+    - npm audit
+
