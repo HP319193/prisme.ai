@@ -582,9 +582,39 @@ container_scanning:
   allow_failure: true
   parallel:
     matrix:
-      - CS_IMAGE:
-        - $CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
-        - $CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME
+      - TARGET:
+        - console
+        - pages
+        - runtime
+        - workspaces
+        - events
+        - api-gateway
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "pages"'
+      variables:
+        CS_IMAGE: 'services/pages/Dockerfile'
+      changes:
+        - 'services/pages/Dockerfile'
+    - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "workspaces"'
+      variables:
+        CS_IMAGE: 'services/workspaces/Dockerfile'
+      changes:
+        - 'services/workspaces/Dockerfile'
+    - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "runtime"'
+      variables:
+        CS_IMAGE: 'services/runtime/Dockerfile'
+      changes:
+        - 'services/runtime/Dockerfile'
+    - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "events"'
+      variables:
+        CS_IMAGE: 'services/events/Dockerfile'
+      changes:
+        - 'services/events/Dockerfile'
+    - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "api-gateway"'
+      variables:
+        CS_IMAGE: 'services/api-gateway/Dockerfile'
+      changes:
+        - 'services/api-gateway/Dockerfile'
   artifacts:
     reports:
       container_scanning: gl-container-scanning-report.json
@@ -594,16 +624,3 @@ container_scanning:
   dependencies: []
   script:
     - gtcs scan
-
-# container_scanning:
-#   extends: .security_container_matrix
-  # variables:
-  #   CS_IMAGE: $CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME
-  # rules:
-  #   - if: $CONTAINER_SCANNING_DISABLED == 'true' || $CONTAINER_SCANNING_DISABLED == '1'
-  #     when: never
-  #   - if: $CI_COMMIT_BRANCH
-  #     variables:
-  #       CS_DOCKERFILE_PATH: 'services/runtime/Dockerfile'
-  #     changes:
-  #       - 'services/runtime/Dockerfile'
