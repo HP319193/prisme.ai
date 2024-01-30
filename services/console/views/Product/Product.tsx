@@ -6,7 +6,7 @@ export const Product = memo(function Product() {
   const iframe = useRef<HTMLIFrameElement>(null);
   const {
     query: { slug = [] },
-    push,
+    replace,
   } = useRouter();
 
   const [productSlug] = Array.isArray(slug) ? slug : [slug];
@@ -21,21 +21,21 @@ export const Product = memo(function Product() {
       type: 'api.token',
       token: api.token,
     });
+
     const listener = ({ data: { type = '', path = '' } = {} }) => {
       if (type !== 'page.navigate' || !path) return;
       const [prefix] = window.location.pathname.split(`product/${productSlug}`);
       const rootPath = `${prefix}product/${productSlug}`;
-      //window.history.pushState({}, '', `${rootPath}${path}`);
-      push(`${rootPath}${path}`);
+      replace(`${rootPath}${path}`);
     };
     window.addEventListener('message', listener);
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, [productSlug, push]);
+  }, [productSlug, replace]);
 
   if (!productUrl) return null;
-  return <iframe ref={iframe} src={productUrl} className="h-full" />;
+  return <iframe ref={iframe} src={productUrl} className="h-full" allow="*" />;
 });
 
 export default Product;

@@ -30,5 +30,23 @@
   "title": {
     "myAccount": "Mon compte · Prisme.ai",
     "workspaceManagement": "{{workspaceName}} · Gestion · Prisme.ai"
+  },
+  "header": {
+    "notifications": {
+      "title": "Notifications"
+    },
+    "help": {
+      "title": "Aide"
+    },
+    "menu": {
+      "title": "Menu"
+    }
+  },
+  "sidebar": {
+    "expand": "Étendre",
+    "expand_in": "Réduire",
+    "settings": {
+      "title": "Réglages de la liste des produits"
+    }
   }
 }

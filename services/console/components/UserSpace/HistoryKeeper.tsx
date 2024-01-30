@@ -31,10 +31,6 @@ export const HistoryKeeper = ({ children }: HistoryKeeperProps) => {
       return new Map(
         newHistories.map(([source, current]) => {
           if (basePath.match(source)) {
-            console.log([
-              source,
-              `${window.location.pathname}${window.location.search}${window.location.hash}`,
-            ]);
             return [
               source,
               `${window.location.pathname}${window.location.search}${window.location.hash}`,
@@ -46,7 +42,6 @@ export const HistoryKeeper = ({ children }: HistoryKeeperProps) => {
     });
   }, [router]);
 
-  console.log({ histories });
   return (
     <>
       {Children.map(children, (child: ReactElement) => ({
