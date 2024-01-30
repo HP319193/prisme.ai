@@ -549,15 +549,12 @@ security_sast:
   image:
     name: "bearer/bearer"
     entrypoint: [""]
-  only:
-    refs:
-      - main
   rules:
     - if: $SAST_DISABLED == 'true' || $SAST_DISABLED == '1'
       when: never
     - if: $SAST_EXCLUDED_ANALYZERS =~ /bearer-scan/
       when: never
-    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_BRANCH == 'main'
       exists:
         - '**/package.json'
   script:
