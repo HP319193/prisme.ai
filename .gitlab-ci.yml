@@ -598,17 +598,34 @@ container_scanning:
   rules:
     - if: $CONTAINER_SCANNING_DISABLED == 'true' || $CONTAINER_SCANNING_DISABLED == '1'
       when: never
-    - if: $CI_COMMIT_BRANCH &&
-          $CI_GITLAB_FIPS_MODE == "true" &&
-          $CS_ANALYZER_IMAGE !~ /-(fips|ubi)\z/
-      variables:
-        CS_IMAGE_SUFFIX: -fips
-      changes:
-        - 'services/**/Dockerfile'
-        - 'dependencies.dockerfile'
     - if: $CI_COMMIT_BRANCH
-      changes: &BACKEND_DEPS_CHANGES
-        - 'services/**/Dockerfile'
-        - 'dependencies.dockerfile'
-
+      variables:
+        CS_DOCKERFILE_PATH: 'services/console/Dockerfile'
+      changes:
+        - 'services/console/Dockerfile'
+    - if: $CI_COMMIT_BRANCH
+      variables:
+        CS_DOCKERFILE_PATH: 'services/pages/Dockerfile'
+      changes:
+        - 'services/pages/Dockerfile'
+    - if: $CI_COMMIT_BRANCH
+      variables:
+        CS_DOCKERFILE_PATH: 'services/workspaces/Dockerfile'
+      changes:
+        - 'services/workspaces/Dockerfile'
+    - if: $CI_COMMIT_BRANCH
+      variables:
+        CS_DOCKERFILE_PATH: 'services/runtime/Dockerfile'
+      changes:
+        - 'services/runtime/Dockerfile'
+    - if: $CI_COMMIT_BRANCH
+      variables:
+        CS_DOCKERFILE_PATH: 'services/events/Dockerfile'
+      changes:
+        - 'services/events/Dockerfile'
+    - if: $CI_COMMIT_BRANCH
+      variables:
+        CS_DOCKERFILE_PATH: 'services/api-gateway/Dockerfile'
+      changes:
+        - 'services/api-gateway/Dockerfile'
 
