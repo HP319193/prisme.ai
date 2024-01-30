@@ -590,29 +590,34 @@ container_scanning:
         - events
         - api-gateway
   rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "console"'
+      variables:
+        CS_IMAGE: '$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME'
+      changes:
+        - 'services/console/Dockerfile'
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "pages"'
       variables:
-        CS_IMAGE: 'services/pages/Dockerfile'
+        CS_IMAGE: '$CONTAINER_BASE_IMAGE/$PAGES_IMAGE_NAME'
       changes:
         - 'services/pages/Dockerfile'
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "workspaces"'
       variables:
-        CS_IMAGE: 'services/workspaces/Dockerfile'
+        CS_IMAGE: '$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME'
       changes:
         - 'services/workspaces/Dockerfile'
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "runtime"'
       variables:
-        CS_IMAGE: 'services/runtime/Dockerfile'
+        CS_IMAGE: '$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME'
       changes:
         - 'services/runtime/Dockerfile'
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "events"'
       variables:
-        CS_IMAGE: 'services/events/Dockerfile'
+        CS_IMAGE: '$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME'
       changes:
         - 'services/events/Dockerfile'
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "api-gateway"'
       variables:
-        CS_IMAGE: 'services/api-gateway/Dockerfile'
+        CS_IMAGE: '$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME'
       changes:
         - 'services/api-gateway/Dockerfile'
   artifacts:
