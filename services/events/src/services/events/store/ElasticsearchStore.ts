@@ -18,6 +18,7 @@ import {
   BulkInsertResult,
 } from './types';
 import { sizeStringToBytes } from '../../../utils/sizeStringToBytes';
+import { PrismeContext } from '../../../api/middlewares';
 
 function mergeArrays(firstArray: any[] = [], secondArray: any[] = []) {
   const mergedMap = new Map();
@@ -306,7 +307,8 @@ export class ElasticsearchStore implements EventsStore {
   async _search(
     workspaceId: string,
     options: SearchOptions = {},
-    body: any
+    body: any,
+    ctx?: PrismeContext
   ): Promise<elasticsearch.ApiResponse['body']> {
     const index = this.getWorkspaceEventsIndexName(workspaceId);
     const page = options.page || 0;
@@ -321,6 +323,9 @@ export class ElasticsearchStore implements EventsStore {
         },
         {
           maxRetries: 3,
+          headers: {
+            'X-Opaque-Id': `${workspaceId}-${ctx?.correlationId}`,
+          },
         }
       );
       if (result.body._shards?.failed) {
@@ -340,13 +345,15 @@ export class ElasticsearchStore implements EventsStore {
 
   async search(
     workspaceId: string,
-    options: SearchOptions = {}
+    options: SearchOptions = {},
+    ctx?: PrismeContext
   ): Promise<Prismeai.PrismeEvent[]> {
     try {
       const result = await this._search(
         workspaceId,
         options,
-        this.buildSearchBody(options)
+        this.buildSearchBody(options),
+        ctx
       );
       return result.hits.hits.map((cur: any) => {
         delete cur._source['@timestamp'];

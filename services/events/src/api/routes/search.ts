@@ -16,6 +16,7 @@ export function initSearchRoutes(eventsStore: EventsStore) {
 
   async function getWorkspaceSearchHandler(
     {
+      context,
       params: { workspaceId },
       body,
       accessManager,
@@ -66,7 +67,8 @@ export function initSearchRoutes(eventsStore: EventsStore) {
           _source: source,
           runtime_mappings: runtimeMappings,
           track_total_hits,
-        }
+        },
+        context
       );
       return res.send({
         size: hits?.total?.value,
