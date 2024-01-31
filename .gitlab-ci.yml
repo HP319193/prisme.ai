@@ -557,6 +557,21 @@ security_sast:
   script:
     - bearer scan . --format gitlab-sast --output gl-sast-report.json || exit 0
 
+security_sast_mr:
+  allow_failure: true
+  image:
+    name: "node:20"
+    entrypoint: [""]
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - 'services/**/*'
+  script:
+    - curl -sfL https://raw.githubusercontent.com/Bearer/bearer/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+    - curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin
+    - bearer scan . --diff --format=rdjson --output=rd.json || export BEARER_EXIT=$?
+    - cat rd.json | reviewdog -f=rdjson -reporter=gitlab-mr-discussion
+
 security_dependencies:
   stage: test
   allow_failure: true
@@ -594,32 +609,32 @@ container_scanning:
       variables:
         CS_IMAGE: '$CONTAINER_BASE_IMAGE/$CONSOLE_IMAGE_NAME'
       changes:
-        - 'services/console/Dockerfile'
+        - 'services/**/Dockerfile' # Re scan every images each time to keep all image reports in gitlab UI
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "pages"'
       variables:
         CS_IMAGE: '$CONTAINER_BASE_IMAGE/$PAGES_IMAGE_NAME'
       changes:
-        - 'services/pages/Dockerfile'
+        - 'services/**/Dockerfile'
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "workspaces"'
       variables:
         CS_IMAGE: '$CONTAINER_BASE_IMAGE/$WORKSPACES_IMAGE_NAME'
       changes:
-        - 'services/workspaces/Dockerfile'
+        - 'services/**/Dockerfile'
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "runtime"'
       variables:
         CS_IMAGE: '$CONTAINER_BASE_IMAGE/$RUNTIME_IMAGE_NAME'
       changes:
-        - 'services/runtime/Dockerfile'
+        - 'services/**/Dockerfile'
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "events"'
       variables:
         CS_IMAGE: '$CONTAINER_BASE_IMAGE/$EVENTS_IMAGE_NAME'
       changes:
-        - 'services/events/Dockerfile'
+        - 'services/**/Dockerfile'
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "api-gateway"'
       variables:
         CS_IMAGE: '$CONTAINER_BASE_IMAGE/$API_GATEWAY_IMAGE_NAME'
       changes:
-        - 'services/api-gateway/Dockerfile'
+        - 'services/**/Dockerfile'
   artifacts:
     reports:
       container_scanning: gl-container-scanning-report.json
