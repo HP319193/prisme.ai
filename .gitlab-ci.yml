@@ -528,6 +528,8 @@ load_performance:
     reports:
       load_performance: load-performance.json
 
+# Security
+
 sast:
   stage: test
   artifacts:
@@ -644,3 +646,17 @@ container_scanning:
   dependencies: []
   script:
     - gtcs scan
+
+security_dockerfile:
+  image:
+    name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
+    entrypoint: [""]
+  stage: test
+  allow_failure: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - '**/Dockerfile'
+  dependencies: []
+  script:
+    - checkov -d . --framework dockerfile || echo "checkov terminated."
