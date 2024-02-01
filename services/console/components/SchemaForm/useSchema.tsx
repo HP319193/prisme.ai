@@ -3,6 +3,8 @@ import {
   FilePdfOutlined,
   FileTextOutlined,
   FileUnknownOutlined,
+  FileExcelOutlined,
+  FilePptOutlined,
   FileWordOutlined,
 } from '@ant-design/icons';
 import { Schema, Tooltip } from '@prisme.ai/design-system';
@@ -24,9 +26,31 @@ export const getPreview = (mimetype: string, url: string) => {
       <FilePdfOutlined className="text-4xl !text-accent flex items-center" />
     );
   }
-  if (mimetype.includes('officedocument')) {
+  if (
+    mimetype.includes('officedocument.wordprocessingml') ||
+    mimetype.includes('msword') ||
+    mimetype.includes('ms-word')
+  ) {
     return (
       <FileWordOutlined className="text-4xl !text-accent flex items-center" />
+    );
+  }
+
+  if (
+    mimetype.includes('officedocument.spreadsheetml') ||
+    mimetype.includes('ms-excel')
+  ) {
+    return (
+      <FileExcelOutlined className="text-4xl !text-accent flex items-center" />
+    );
+  }
+
+  if (
+    mimetype.includes('officedocument.presentationml') ||
+    mimetype.includes('ms-powerpoint')
+  ) {
+    return (
+      <FilePptOutlined className="text-4xl !text-accent flex items-center" />
     );
   }
   if (type === 'audio') {

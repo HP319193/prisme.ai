@@ -432,6 +432,15 @@
                 }
               }
             }
+          },
+          "outputMode": {
+            "type": "string",
+            "default": "body",
+            "enum": [
+              "body",
+              "detailed_response",
+              "data_url"
+            ]
           }
         }
       }
