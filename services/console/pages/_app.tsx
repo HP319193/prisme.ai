@@ -76,7 +76,7 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
 
   return (
     <QueryStringProvider>
-      <UserProvider redirectTo="/workspaces">
+      <UserProvider redirectTo="/">
         <UserSpace>{getLayout(<Component {...pageProps} />)}</UserSpace>
       </UserProvider>
     </QueryStringProvider>

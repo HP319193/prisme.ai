@@ -423,6 +423,23 @@ export const UserProvider: FC<UserProviderProps> = ({
     };
   }, []);
 
+  const updateMeta = useCallback((meta: Record<string, any>) => {
+    setUser(
+      (user) =>
+        ({
+          ...user,
+          meta: {
+            ...user?.meta,
+            ...meta,
+          },
+        } as Prismeai.User)
+    );
+    Object.entries(meta).forEach(([k, v]) => {
+      console.log(k, v);
+      api.users().setMeta(k, v);
+    });
+  }, []);
+
   const isPublicUrl = isPublic || PUBLIC_URLS.includes(route);
 
   if (!isPublicUrl && loading) return <Loading />;
@@ -443,6 +460,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         passwordReset,
         sendValidationMail,
         validateMail,
+        updateMeta,
       }}
     >
       {isPublicUrl && (

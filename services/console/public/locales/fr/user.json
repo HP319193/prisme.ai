@@ -38,8 +38,23 @@
     "help": {
       "title": "Aide"
     },
-    "menu": {
-      "title": "Menu"
+    "products": {
+      "title": "Produits",
+      "seeall": "Voir tous les produits"
+    },
+    "user": {
+      "profile": {
+        "title": "Voir le profil"
+      },
+      "settings": {
+        "title": "Paramètres du compte"
+      },
+      "shortcuts": {
+        "title": "Mes raccourcis"
+      },
+      "signout": {
+        "title": "Déconnexion"
+      }
     }
   },
   "sidebar": {

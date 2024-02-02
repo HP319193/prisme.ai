@@ -1,18 +1,24 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Storage from '../../utils/Storage';
 import Button from './Button';
 import HistoryKeeper from './HistoryKeeper';
-import { useProducts } from './useProducts';
+import { BuilderProduct, Product } from './useProducts';
 import burgerIcon from '../../public/images/sidebar-burger.svg';
 import gearIcon from '../../public/images/sidebar-gear.svg';
 import { useTranslation } from 'next-i18next';
+import { useUser } from '../UserProvider';
 
 export const ProductsSidbar = () => {
   const { t } = useTranslation('user');
   const [expanded, setExpanded] = useState(!!Storage.get('sidebarExpanded'));
-  const products = useProducts();
+  const { user, updateMeta } = useUser();
+  const products: Product[] = useMemo(
+    () => user.meta?.products || [],
+    [user.meta?.products]
+  );
+
   const router = useRouter();
   const toggleSidebar = useCallback(() => {
     setExpanded(!expanded);
@@ -22,6 +28,36 @@ export const ProductsSidbar = () => {
   const selected = useMemo(() => {
     return products.findIndex(({ href }) => router.asPath.match(href));
   }, [products, router.asPath]);
+
+  const updateUserMeta = useRef((product: Product) => {});
+  updateUserMeta.current = (product: Product) => {
+    if (user.meta?.products?.find(({ href = '' }) => product.href === href))
+      return;
+
+    updateMeta({
+      products: [...(user?.meta?.products || []), product],
+    });
+  };
+
+  useEffect(() => {
+    let product: Product;
+    if (router.asPath.match(/^\/workspaces/)) {
+      product = BuilderProduct;
+    } else {
+      const [, slug] = router.asPath.match(/^\/product\/(.+)/) || [];
+      if (!slug) return;
+
+      // async fetch product
+      //if (exists)
+      product = {
+        href: `/product/${slug}`,
+        name: 'test',
+        icon: 'test',
+      };
+    }
+    updateUserMeta.current(product);
+  }, [router]);
+
   return (
     <div
       className={`flex flex-col bg-[#E6EFFF] py-[31px] overflow-hidden transition-all`}

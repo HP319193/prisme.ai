@@ -4,7 +4,14 @@ import { useUser } from '../UserProvider';
 import hash from 'hash-sum';
 import Color from 'color';
 
-export const AvatarPlaceholder = ({ text }: { text: string }) => {
+interface AvatarProps {
+  size?: string;
+}
+
+export const AvatarPlaceholder = ({
+  text,
+  size,
+}: { text: string } & AvatarProps) => {
   const color = useMemo(() => {
     return `#${hash(text).substring(0, 6)}`;
   }, [text]);
@@ -13,11 +20,13 @@ export const AvatarPlaceholder = ({ text }: { text: string }) => {
   }, [color]);
   return (
     <span
-      className="flex justify-center items-center w-[2.4rem] h-[2.4rem] block text-white rounded-[100%]"
+      className="flex justify-center items-center block text-white rounded-[100%]"
       role="img"
       style={{
         backgroundColor: color,
         color: textColor,
+        height: size,
+        width: size,
       }}
     >
       {text}
@@ -25,16 +34,23 @@ export const AvatarPlaceholder = ({ text }: { text: string }) => {
   );
 };
 
-export const Avatar = () => {
+export const Avatar = ({ size = '2.4rem' }: AvatarProps) => {
   const { user } = useUser();
   const initials = useMemo(() => {
     return user?.firstName?.charAt(0) + user?.lastName?.charAt(0);
   }, [user.firstName, user.lastName]);
 
   return user.photo ? (
-    <Image src={user.photo} alt={initials} />
+    <Image
+      src={user.photo}
+      alt={initials}
+      style={{
+        height: size,
+        width: size,
+      }}
+    />
   ) : (
-    <AvatarPlaceholder text={initials} />
+    <AvatarPlaceholder text={initials} size={size} />
   );
 };
 export default Avatar;
