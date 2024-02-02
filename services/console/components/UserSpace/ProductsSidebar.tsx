@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Storage from '../../utils/Storage';
 import Button from './Button';
 import HistoryKeeper from './HistoryKeeper';
-import { BuilderProduct, Product } from './useProducts';
+import { builderProduct, Product, useProducts } from '../../providers/Products';
 import burgerIcon from '../../public/images/sidebar-burger.svg';
 import gearIcon from '../../public/images/sidebar-gear.svg';
 import { useTranslation } from 'next-i18next';
@@ -14,11 +14,11 @@ export const ProductsSidbar = () => {
   const { t } = useTranslation('user');
   const [expanded, setExpanded] = useState(!!Storage.get('sidebarExpanded'));
   const { user, updateMeta } = useUser();
+  const { fetchProducts } = useProducts();
   const products: Product[] = useMemo(
-    () => user.meta?.products || [],
-    [user.meta?.products]
+    () => (user && user.meta?.products) || [],
+    [user]
   );
-
   const router = useRouter();
   const toggleSidebar = useCallback(() => {
     setExpanded(!expanded);
@@ -38,25 +38,29 @@ export const ProductsSidbar = () => {
       products: [...(user?.meta?.products || []), product],
     });
   };
-
   useEffect(() => {
-    let product: Product;
-    if (router.asPath.match(/^\/workspaces/)) {
-      product = BuilderProduct;
-    } else {
-      const [, slug] = router.asPath.match(/^\/product\/(.+)/) || [];
-      if (!slug) return;
-
-      // async fetch product
-      //if (exists)
-      product = {
-        href: `/product/${slug}`,
-        name: 'test',
-        icon: 'test',
-      };
+    if (!user) return;
+    async function getProduct(path: string) {
+      if (router.asPath.match(/^\/workspaces/)) {
+        return builderProduct;
+      } else {
+        const [, slug] = router.asPath.match(/^\/product\/([^/$]+)/) || [];
+        if (!slug) return;
+        if (user?.meta?.products?.find(({ slug: s = '' }) => slug === s))
+          return;
+        const results = await fetchProducts({ slugs: [slug] });
+        if (!results.size) return null;
+        const result = results.get(slug);
+        return result;
+      }
     }
-    updateUserMeta.current(product);
-  }, [router]);
+    async function updateUser() {
+      const product = await getProduct(router.asPath);
+      if (!product) return;
+      updateUserMeta.current(product);
+    }
+    updateUser();
+  }, [fetchProducts, router, user]);
 
   return (
     <div

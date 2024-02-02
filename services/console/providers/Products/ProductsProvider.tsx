@@ -1,0 +1,139 @@
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { useContext } from '../../utils/useContext';
+import consoleIcon from '../../public/images/icon-console.svg';
+import getConfig from 'next/config';
+
+const {
+  publicRuntimeConfig: { PRODUCTS_ENDPOINT = '' },
+} = getConfig();
+
+export interface Product {
+  slug: string;
+  href: string;
+  name: string;
+  icon: string;
+  description: Prismeai.LocalizedText;
+  highlighted?: boolean;
+}
+
+export interface ProductsContext {
+  products: Map<string, Product>;
+  highlighted: Map<string, Product>;
+  fetchProducts: (query: {
+    slugs?: string[];
+    highlighted?: true;
+  }) => Promise<Map<string, Product>>;
+  searchProducts: (query: { q?: string }) => Promise<Map<string, Product>>;
+}
+
+interface ProductsContextProviderProps {
+  children: ReactNode;
+}
+
+export const productsContext = createContext<ProductsContext | undefined>(
+  undefined
+);
+
+export const useProducts = () => useContext<ProductsContext>(productsContext);
+
+export const builderProduct: Product = {
+  slug: 'workspaces',
+  href: '/workspaces',
+  name: 'Product Builder',
+  icon: consoleIcon.src,
+  description: {
+    fr: 'Créer et gérer vos produits',
+    en: 'Create and manage your products',
+  },
+};
+
+export const ProductsProvider = ({
+  children,
+}: ProductsContextProviderProps) => {
+  const [products, setProducts] = useState<ProductsContext['products']>(
+    new Map([['workspaces', builderProduct]])
+  );
+  const highlighted = useMemo(
+    () =>
+      new Map(
+        Array.from(products.entries()).filter(([, { highlighted }]) => ({
+          highlighted,
+        }))
+      ),
+    [products]
+  );
+  const fetchProducts: ProductsContext['fetchProducts'] = useCallback(
+    async (query) => {
+      if (!PRODUCTS_ENDPOINT) return new Map();
+      async function fetchResults() {
+        try {
+          const results = await fetch(PRODUCTS_ENDPOINT, {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify(query),
+          });
+          if (!results.ok) {
+            throw new Error(results.statusText);
+          }
+          const { list }: { list: Product[] } = await results.json();
+          return list;
+        } catch {
+          return null;
+        }
+      }
+      const list = await fetchResults();
+      if (!list) return new Map();
+      const fetched = new Map(
+        list.map(({ slug, name, icon, description }) => [
+          slug,
+          {
+            slug,
+            href: `/product/${slug}`,
+            name,
+            icon,
+            description,
+          },
+        ])
+      );
+
+      setProducts((prev) => {
+        const newList = new Map(prev);
+        Array.from(fetched.entries()).forEach(([slug, product]) => {
+          newList.set(slug, product);
+        });
+        return newList;
+      });
+      return fetched;
+    },
+    []
+  );
+
+  const searchProducts: ProductsContext['searchProducts'] =
+    useCallback(async () => {
+      // TODO : fetch from API
+      return new Map();
+    }, []);
+
+  useEffect(() => {
+    fetchProducts({ highlighted: true });
+  }, [fetchProducts]);
+
+  return (
+    <productsContext.Provider
+      value={{ products, highlighted, fetchProducts, searchProducts }}
+    >
+      {children}
+    </productsContext.Provider>
+  );
+};
+
+export default ProductsProvider;

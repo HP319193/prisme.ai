@@ -37,9 +37,10 @@ export const AvatarPlaceholder = ({
 export const Avatar = ({ size = '2.4rem' }: AvatarProps) => {
   const { user } = useUser();
   const initials = useMemo(() => {
+    if (!user) return;
     return user?.firstName?.charAt(0) + user?.lastName?.charAt(0);
-  }, [user.firstName, user.lastName]);
-
+  }, [user]);
+  if (!user) return null;
   return user.photo ? (
     <Image
       src={user.photo}
