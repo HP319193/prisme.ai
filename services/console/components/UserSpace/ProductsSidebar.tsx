@@ -35,6 +35,12 @@ export const ProductsSidbar = () => {
     setExpanded(!expanded);
     Storage.set('sidebarExpanded', !expanded);
   }, [expanded]);
+  const [history, setHistory] = useState(new Map());
+
+  useEffect(() => {
+    const history = new Map(Storage.get('productsHistory') || []);
+    setHistory(history);
+  }, []);
 
   const selected = useMemo(() => {
     return products.findIndex(({ href }) => router.asPath.match(href));
@@ -73,6 +79,17 @@ export const ProductsSidbar = () => {
     updateUser();
   }, [fetchProducts, router, user]);
 
+  useEffect(() => {
+    const slug = getProductSlug(router.asPath);
+    if (!slug) return;
+    setHistory((history) => {
+      const newHistory = new Map(history);
+      newHistory.set(slug, router.asPath);
+      Storage.set('productsHistory', Array.from(newHistory));
+      return newHistory;
+    });
+  }, [fetchProducts, router, user]);
+
   const removeProduct = useCallback(
     (slug: string) => () => {
       if (!user || !user?.meta?.products) return;
@@ -108,36 +125,34 @@ export const ProductsSidbar = () => {
             tooltip={t('sidebar.expand', { context: expanded ? 'in' : '' })}
             onClick={toggleSidebar}
           />
-          <HistoryKeeper>
-            {products.map(({ slug, href, icon, name }, index) => (
-              <div key={href} className="flex relative group">
-                <Link href={href}>
-                  <a className="flex flex-1">
-                    <Button
-                      expanded={expanded}
-                      selected={index === selected}
-                      icon={icon}
-                      name={name}
-                    />
-                  </a>
-                </Link>
-                <div className="absolute top-1/2 right-6 transition-opacity opacity-0 group-hover:opacity-100">
-                  <Tooltip title={t('sidebar.unpin.tooltip')} placement="right">
-                    <ConfirmButton
-                      onConfirm={removeProduct(slug)}
-                      className="!m-0 !p-0 !-mt-1"
-                      confirmLabel={t('sidebar.unpin.confirm')}
-                      yesLabel={t('sidebar.unpin.yes')}
-                      noLabel={t('sidebar.unpin.no')}
-                      placement="right"
-                    >
-                      <Image src={unpinIcon} alt="" />
-                    </ConfirmButton>
-                  </Tooltip>
-                </div>
+          {products.map(({ slug, href, icon, name }, index) => (
+            <div key={href} className="flex relative group">
+              <Link href={history.get(slug) || href}>
+                <a className="flex flex-1">
+                  <Button
+                    expanded={expanded}
+                    selected={index === selected}
+                    icon={icon}
+                    name={name}
+                  />
+                </a>
+              </Link>
+              <div className="absolute top-1/2 right-6 transition-opacity opacity-0 group-hover:opacity-100">
+                <Tooltip title={t('sidebar.unpin.tooltip')} placement="right">
+                  <ConfirmButton
+                    onConfirm={removeProduct(slug)}
+                    className="!m-0 !p-0 !-mt-1"
+                    confirmLabel={t('sidebar.unpin.confirm')}
+                    yesLabel={t('sidebar.unpin.yes')}
+                    noLabel={t('sidebar.unpin.no')}
+                    placement="right"
+                  >
+                    <Image src={unpinIcon} alt="" />
+                  </ConfirmButton>
+                </Tooltip>
               </div>
-            ))}
-          </HistoryKeeper>
+            </div>
+          ))}
         </div>
       </div>
     </div>
