@@ -26,10 +26,12 @@ export interface Product {
 export interface ProductsContext {
   products: Map<string, Product>;
   highlighted: Map<string, Product>;
-  fetchProducts: (query: {
+  fetchProducts: (query?: {
     slugs?: string[];
     highlighted?: true;
-  }) => Promise<Map<string, Product>>;
+    page?: number;
+    limit?: number;
+  }) => Promise<{ list: Map<string, Product>; total: number; page: number }>;
   searchProducts: (query: { q?: string }) => Promise<Map<string, Product>>;
 }
 
@@ -52,6 +54,7 @@ export const builderProduct: Product = {
     fr: 'Créer et gérer vos produits',
     en: 'Create and manage your products',
   },
+  highlighted: true,
 };
 
 export const ProductsProvider = ({
@@ -63,9 +66,7 @@ export const ProductsProvider = ({
   const highlighted = useMemo(
     () =>
       new Map(
-        Array.from(products.entries()).filter(([, { highlighted }]) => ({
-          highlighted,
-        }))
+        Array.from(products).filter(([, { highlighted }]) => highlighted)
       ),
     [products]
   );
@@ -84,16 +85,17 @@ export const ProductsProvider = ({
           if (!results.ok) {
             throw new Error(results.statusText);
           }
-          const { list }: { list: Product[] } = await results.json();
-          return list;
+          const res: { list: Product[]; total: number; page: number } =
+            await results.json();
+          return res;
         } catch {
-          return null;
+          return { list: null };
         }
       }
-      const list = await fetchResults();
+      const { list, ...rest } = await fetchResults();
       if (!list) return new Map();
       const fetched = new Map(
-        list.map(({ slug, name, icon, description }) => [
+        list.map(({ slug, name, icon, description, highlighted }) => [
           slug,
           {
             slug,
@@ -101,6 +103,7 @@ export const ProductsProvider = ({
             name,
             icon,
             description,
+            highlighted,
           },
         ])
       );
@@ -112,7 +115,10 @@ export const ProductsProvider = ({
         });
         return newList;
       });
-      return fetched;
+      return {
+        list: fetched,
+        ...rest,
+      };
     },
     []
   );

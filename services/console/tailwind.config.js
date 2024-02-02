@@ -26,7 +26,16 @@ module.exports = {
       DEFAULT: '10px',
     },
     extend: {
+      fontSize: {
+        'products-sm': '12px',
+        'products-base': '14px',
+        'products-lg': '16px',
+        'products-xl': '24px',
+      },
       colors: {
+        'products-bg': '#171C24',
+        'products-text': '#F9F9F9',
+        'product-text-on-white': '#171A35',
         // Antdesign secondary text color
         gray: 'var(--gray-color)',
         'light-gray': 'var(--light-gray-color)',

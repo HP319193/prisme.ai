@@ -59,9 +59,9 @@ export const ProductsSidbar = () => {
       } else {
         if (user?.meta?.products?.find(({ slug: s = '' }) => slug === s))
           return;
-        const results = await fetchProducts({ slugs: [slug] });
-        if (!results.size) return null;
-        const result = results.get(slug);
+        const { list } = await fetchProducts({ slugs: [slug] });
+        if (!list.size) return null;
+        const result = list.get(slug);
         return result;
       }
     }
