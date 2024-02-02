@@ -6,9 +6,20 @@ import Button from './Button';
 import HistoryKeeper from './HistoryKeeper';
 import { builderProduct, Product, useProducts } from '../../providers/Products';
 import burgerIcon from '../../public/images/sidebar-burger.svg';
-import gearIcon from '../../public/images/sidebar-gear.svg';
+import unpinIcon from '../../public/images/icon-unpin.svg';
 import { useTranslation } from 'next-i18next';
 import { useUser } from '../UserProvider';
+import Image from 'next/image';
+import ConfirmButton from '../ConfirmButton';
+import { Tooltip } from 'antd';
+
+function getProductSlug(path: string) {
+  if (path.match(/^\/workspaces/)) {
+    return 'workspaces';
+  }
+  const [, slug] = path.match(/^\/product\/([^/$]+)/) || [];
+  return slug;
+}
 
 export const ProductsSidbar = () => {
   const { t } = useTranslation('user');
@@ -41,11 +52,11 @@ export const ProductsSidbar = () => {
   useEffect(() => {
     if (!user) return;
     async function getProduct(path: string) {
-      if (router.asPath.match(/^\/workspaces/)) {
+      const slug = getProductSlug(path);
+      if (!slug) return;
+      if (slug === 'workspaces') {
         return builderProduct;
       } else {
-        const [, slug] = router.asPath.match(/^\/product\/([^/$]+)/) || [];
-        if (!slug) return;
         if (user?.meta?.products?.find(({ slug: s = '' }) => slug === s))
           return;
         const results = await fetchProducts({ slugs: [slug] });
@@ -61,6 +72,26 @@ export const ProductsSidbar = () => {
     }
     updateUser();
   }, [fetchProducts, router, user]);
+
+  const removeProduct = useCallback(
+    (slug: string) => () => {
+      if (!user || !user?.meta?.products) return;
+      const currentSlug = getProductSlug(router.asPath);
+      if (slug === currentSlug) {
+        router.push('/');
+      }
+      setTimeout(() => {
+        // Tiemout to get the product removed after the next run of this effect
+        // and avoid readding the product after removing it
+        updateMeta({
+          products: user.meta?.products?.filter(
+            ({ slug: s = '' }) => s !== slug
+          ),
+        });
+      }, 1000);
+    },
+    [router, updateMeta, user]
+  );
 
   return (
     <div
@@ -78,29 +109,36 @@ export const ProductsSidbar = () => {
             onClick={toggleSidebar}
           />
           <HistoryKeeper>
-            {products.map(({ href, icon, name }, index) => (
-              <Link href={href} key={href}>
-                <a className="flex">
-                  <Button
-                    expanded={expanded}
-                    selected={index === selected}
-                    icon={icon}
-                    name={name}
-                  />
-                </a>
-              </Link>
+            {products.map(({ slug, href, icon, name }, index) => (
+              <div key={href} className="flex relative group">
+                <Link href={href}>
+                  <a className="flex flex-1">
+                    <Button
+                      expanded={expanded}
+                      selected={index === selected}
+                      icon={icon}
+                      name={name}
+                    />
+                  </a>
+                </Link>
+                <div className="absolute top-1/2 right-6 transition-opacity opacity-0 group-hover:opacity-100">
+                  <Tooltip title={t('sidebar.unpin.tooltip')} placement="right">
+                    <ConfirmButton
+                      onConfirm={removeProduct(slug)}
+                      className="!m-0 !p-0 !-mt-1"
+                      confirmLabel={t('sidebar.unpin.confirm')}
+                      yesLabel={t('sidebar.unpin.yes')}
+                      noLabel={t('sidebar.unpin.no')}
+                      placement="right"
+                    >
+                      <Image src={unpinIcon} alt="" />
+                    </ConfirmButton>
+                  </Tooltip>
+                </div>
+              </div>
             ))}
           </HistoryKeeper>
         </div>
-        <Button
-          expanded={expanded}
-          selected={false}
-          icon={gearIcon.src}
-          tooltip={t('sidebar.settings.title')}
-          onClick={() => {
-            console.log('manage sidebar settings');
-          }}
-        />
       </div>
     </div>
   );

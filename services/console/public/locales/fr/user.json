@@ -60,8 +60,11 @@
   "sidebar": {
     "expand": "Étendre",
     "expand_in": "Réduire",
-    "settings": {
-      "title": "Réglages de la liste des produits"
+    "unpin": {
+      "tooltip": "Enlever le raccourci",
+      "confirm": "Voulez vous enlever ce raccourci de votre espace ? Vous pourrez toujours retrouver le produit depuis le catalogue.",
+      "yes": "Oui",
+      "no": "Non"
     }
   }
 }

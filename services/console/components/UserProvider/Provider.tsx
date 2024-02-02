@@ -435,7 +435,6 @@ export const UserProvider: FC<UserProviderProps> = ({
         } as Prismeai.User)
     );
     Object.entries(meta).forEach(([k, v]) => {
-      console.log(k, v);
       api.users().setMeta(k, v);
     });
   }, []);
