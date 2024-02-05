@@ -85,19 +85,19 @@ export default class Filesystem implements IStorage {
 
   async find(path: string): Promise<ObjectList> {
     const fullpath = this.getPath(path);
-    return new Promise((resolve, reject) => {
-      fs.readdir(fullpath, (err, files) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(
-            files.map((path) => ({
-              key: path,
-            }))
-          );
-        }
-      });
+    const dirents = await promisesFs.readdir(fullpath, {
+      withFileTypes: true,
     });
+    const paths = await Promise.all(
+      dirents.map((dirent) =>
+        dirent.isDirectory()
+          ? this.find(join(path, dirent.name)).then((keys) =>
+              keys.map(({ key }) => ({ key: join(dirent.name, key) }))
+            )
+          : { key: dirent.name }
+      )
+    );
+    return paths.flat();
   }
 
   async save(key: string, data: any, opts?: SaveOptions) {

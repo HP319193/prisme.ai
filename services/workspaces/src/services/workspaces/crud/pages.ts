@@ -342,12 +342,23 @@ class Pages {
   updatePage = async (
     workspaceId: string,
     slug: string,
-    pageUpdate: Prismeai.Page
+    pageUpdate: Prismeai.Page,
+    opts?: {
+      upsert?: boolean;
+    }
   ) => {
-    const currentPageMeta = await this.accessManager.get(SubjectType.Page, {
-      workspaceId,
-      slug,
-    });
+    let currentPageMeta: Prismeai.Page;
+    try {
+      currentPageMeta = (await this.accessManager.get(SubjectType.Page, {
+        workspaceId,
+        slug,
+      })) as Prismeai.Page;
+    } catch (error) {
+      if (opts?.upsert) {
+        return await this.createPage(workspaceId, pageUpdate);
+      }
+      throw error;
+    }
     const id = currentPageMeta.id!;
 
     const oldSlug = currentPageMeta.slug!;
@@ -374,7 +385,7 @@ class Pages {
       },
       page,
       {
-        mode: 'update',
+        mode: opts?.upsert ? 'replace' : 'update',
         updatedBy: this.accessManager.user?.id,
         additionalIndexFields: { events },
       }

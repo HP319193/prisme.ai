@@ -1114,11 +1114,18 @@ class Workspaces {
     let errors: any[] = [];
     let batch: Promise<void>[] = [];
     for (let [filepath, stream] of Object.entries(dsulStreams)) {
+      const splittedPath = filepath.split('/').slice(1);
+      if (
+        splittedPath?.[1] &&
+        parse(splittedPath[1] || '').name === FolderIndex
+      ) {
+        // Ignore folder indexes as we will rebuild them at the end
+        continue;
+      }
       const savePromise = new Promise<void>(async (resolve) => {
         try {
           const buffer = await streamToBuffer(stream);
           const content: any = yaml.load(buffer.toString());
-          const splittedPath = filepath.split('/').slice(1);
           const applied = await this.applyDSULFile(
             splittedPath,
             workspace,
@@ -1149,6 +1156,20 @@ class Workspaces {
       batch = [];
     }
     await Promise.all(batch);
+
+    // Update automations, pages & import indexes
+    try {
+      await Promise.all([
+        this.storage.refreshFolderIndex(workspaceId, DSULType.Pages),
+        this.storage.refreshFolderIndex(workspaceId, DSULType.Automations),
+        this.storage.refreshFolderIndex(workspaceId, DSULType.Imports),
+      ]);
+    } catch (err) {
+      errors.push({
+        msg: 'Could not refresh some dsul index. Some pages or automations might not appear in studio menus',
+        err,
+      });
+    }
 
     const updatedDetailedWorkspace = await this.getDetailedWorkspace(
       workspaceId,
@@ -1236,32 +1257,33 @@ class Workspaces {
           Object.entries(workspace.pages || {}).find(
             ([key, pageMeta]) => pageMeta.id === content.id
           )?.[0] || '';
-        if (
-          content.slug in (workspace.pages || {}) ||
-          oldSlug in (workspace.pages || {})
-        ) {
-          await this.pages.updatePage(
-            workspace.id!,
-            oldSlug || content.slug,
-            content
-          );
-        } else {
+        if (!content.slug) {
           content.slug = subfileSlug;
-          await this.pages.createPage(workspace.id!, content);
         }
+        // Use upsert method as we would otherwise reject MongoDB duplicate key error in case of unsynchronization between db & dsul
+        await this.pages.updatePage(
+          workspace.id!,
+          oldSlug || content.slug || subfileSlug,
+          content,
+          {
+            upsert: true,
+          }
+        );
         break;
 
       case DSULFolders.Automations:
-        if (content.slug in (workspace.automations || {})) {
-          await automations.updateAutomation(
-            workspace.id!,
-            content.slug,
-            content
-          );
-        } else {
+        if (!content.slug) {
           content.slug = subfileSlug;
-          await automations.createAutomation(workspace.id!, content);
         }
+        await automations.updateAutomation(
+          workspace.id!,
+          content.slug || subfileSlug,
+          content,
+          {
+            // avoid any update error in case of corrupted dsul
+            upsert: true,
+          }
+        );
         break;
 
       case DSULFolders.Imports:

@@ -141,7 +141,10 @@ class Automations {
   updateAutomation = async (
     workspaceId: string,
     slug: string,
-    automation: Prismeai.Automation
+    automation: Prismeai.Automation,
+    opts?: {
+      upsert?: boolean;
+    }
   ) => {
     await this.accessManager.throwUnlessCan(
       ActionType.Update,
@@ -154,7 +157,7 @@ class Automations {
     const events = await this.getProcessedEvents(workspaceId, automation);
 
     await this.storage.save({ workspaceId, slug }, automation, {
-      mode: 'update',
+      mode: opts?.upsert ? 'replace' : 'update',
       updatedBy: this.accessManager.user?.id,
       additionalIndexFields: { events },
     });
