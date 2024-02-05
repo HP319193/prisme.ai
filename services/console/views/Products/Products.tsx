@@ -65,7 +65,7 @@ export const Products = () => {
       <Text>Afficher des news ici</Text>
       <div className="flex flex-1 flex-col max-w-[1147px]">
         <Title className="text-products-xl">
-          {t('welcome.title', { user: user.firstName })}
+          {t('welcome.title', { user: user?.firstName })}
         </Title>
         <Text>{t('welcome.subtitle')}</Text>
         <div className="flex flex-col mr-[15px]">

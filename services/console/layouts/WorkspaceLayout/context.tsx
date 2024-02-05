@@ -21,12 +21,17 @@ export interface WorkspaceLayoutContext {
   setNewSource: (fn: WorkspaceLayoutContext['newSource']) => void;
   fullSidebar: boolean;
   setFullSidebar: (s: boolean) => void;
-  createAutomation: () => void;
+  createAutomation: (
+    values: Pick<Prismeai.Automation, 'slug' | 'name'>
+  ) => Promise<boolean>;
   createPage: (
     options?: { slug?: string; public?: true } & Partial<Prismeai.Page>
-  ) => void;
+  ) => Promise<boolean>;
   installApp: () => void;
-  createBlock: () => void;
+  createBlock: (values: {
+    slug: string;
+    name: Prismeai.LocalizedText;
+  }) => Promise<boolean>;
 }
 
 export const workspaceLayoutContext = createContext<

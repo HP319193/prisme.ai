@@ -157,7 +157,7 @@ export const WorkspaceSource: FC<WorkspaceSourceProps> = ({
   if (value === undefined) return null;
 
   return (
-    <div className="flex flex-1 flex-col" ref={ref}>
+    <div className="flex flex-1 flex-col h-full" ref={ref}>
       <PageHeader
         RightButtons={[
           <Button

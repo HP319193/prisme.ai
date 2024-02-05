@@ -12,9 +12,14 @@ const Loading = () => (
 );
 const Link = ({
   href = '',
+  children,
   ...props
 }: { href: string } & HTMLAttributes<HTMLAnchorElement>) => {
-  return <NextLink {...props} href={href || ''} />;
+  return (
+    <NextLink href={href || ''}>
+      <a {...props}>{children}</a>
+    </NextLink>
+  );
 };
 const DownIcon = ({ className }: { className?: string }) => (
   <Image src={down.src} width={14} height={14} alt="" className={className} />

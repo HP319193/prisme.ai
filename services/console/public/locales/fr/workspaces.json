@@ -99,7 +99,8 @@
       "automations": "Automatisations",
       "pages": "Pages",
       "apps": "Apps",
-      "blocks": "Blocks"
+      "blocks": "Blocks",
+      "stats": "Stats"
     },
     "add": {
       "automation": "Créer une Automatisation",
@@ -207,7 +208,9 @@
   "automations": {
     "link": "Automatisations",
     "create": {
-      "label": "Ajouter une automatisation",
+      "label": "Ajouter une Automatisation",
+      "label_inpath": "Ajouter une Automatisation dans ce dossier",
+      "submit": "Créer l'Automatisation",
       "defaultName": "Automatisation",
       "value": {
         "event": "un événement"
@@ -544,7 +547,7 @@
         "label": "Nom technique"
       },
       "name": {
-        "label": "Titre de l'automatisation"
+        "label": "Titre de l'Automatisation"
       },
       "description": {
         "label": "Description"
@@ -652,6 +655,7 @@
     "edit": "Éditer",
     "create": {
       "label": "Ajouter une Page",
+      "submit": "Créer la Page",
       "defaultName": "Page",
       "template": {
         "title": "Modèles de pages",
@@ -736,6 +740,10 @@
     },
     "blocks": {
       "add": "Ajouter un block",
+      "create": {
+        "label": "Ajouter un block",
+        "submit": "Créer le Block"
+      },
       "edit": "Editer",
       "remove": "Supprimer le block",
       "search": "Rechercher un block",
@@ -1476,7 +1484,9 @@
   "blocks": {
     "notFound": "Le Block n'existe pas.",
     "create": {
-      "defaultName": "Block"
+      "label": "Créer un Block",
+      "defaultName": "Block",
+      "submit": "Créer le Block"
     },
     "source": {
       "label": "Voir le code",

@@ -137,7 +137,6 @@ export const WorkspaceProvider = ({
   const createAutomation: WorkspaceContext['createAutomation'] = useCallback(
     async (automation) => {
       if (!workspace?.id) return null;
-      setCreatingAutomation(true);
       const newAutomation = await api.createAutomation(
         workspace.id,
         automation

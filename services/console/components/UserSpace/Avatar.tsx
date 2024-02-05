@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { useMemo } from 'react';
 import { useUser } from '../UserProvider';
-import hash from 'hash-sum';
 import Color from 'color';
+import { stringToHexaColor } from '../../utils/strings';
 
 interface AvatarProps {
   size?: string;
@@ -13,7 +13,7 @@ export const AvatarPlaceholder = ({
   size,
 }: { text: string } & AvatarProps) => {
   const color = useMemo(() => {
-    return `#${hash(text).substring(0, 6)}`;
+    return `#${stringToHexaColor(text)}`;
   }, [text]);
   const textColor = useMemo(() => {
     return Color(color).isLight() ? 'black' : 'white';

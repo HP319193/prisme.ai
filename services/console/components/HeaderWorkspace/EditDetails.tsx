@@ -5,7 +5,6 @@ import {
   DeleteOutlined,
   ExportOutlined,
   LoadingOutlined,
-  SettingOutlined,
   TagOutlined,
 } from '@ant-design/icons';
 import {
@@ -22,10 +21,7 @@ import { useTracking } from '../../components/Tracking';
 import useLocalizedText from '../../utils/useLocalizedText';
 import ConfirmButton from '../../components/ConfirmButton';
 import SchemaForm from '../../components/SchemaForm/SchemaForm';
-import {
-  SLUG_VALIDATION_REGEXP,
-  WORKSPACE_SLUG_VALIDATION_REGEXP,
-} from '../../utils/regex';
+import { WORKSPACE_SLUG_VALIDATION_REGEXP } from '../../utils/regex';
 import ArgumentsEditor from '../SchemaFormBuilder/ArgumentsEditor';
 import { Workspace } from '../../providers/Workspace';
 
@@ -60,6 +56,7 @@ export const EditDetails = ({
   onVersion,
   onExport,
   exporting,
+  children,
   ...props
 }: EditDetailsprops) => {
   const { t } = useTranslation('workspaces');
@@ -362,9 +359,7 @@ export const EditDetails = ({
       }}
       {...props}
     >
-      <button type="button" className="text-lg text-gray focus:outline-none">
-        <SettingOutlined />
-      </button>
+      {children}
     </Popover>
   );
 };

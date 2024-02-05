@@ -1,6 +1,7 @@
 import {
   Children,
   cloneElement,
+  HTMLAttributes,
   MutableRefObject,
   ReactElement,
   useCallback,
@@ -29,7 +30,8 @@ import FieldArrayUpload from './FieldArrayUpload';
 import { OnChange } from 'react-final-form-listeners';
 import { FormApi } from 'final-form';
 
-export interface SchemaFormProps {
+export interface SchemaFormProps
+  extends Omit<HTMLAttributes<HTMLFormElement>, 'onChange'> {
   schema: Schema;
   onSubmit?: (
     values: any
@@ -57,6 +59,8 @@ export const SchemaForm = ({
   utils,
   formRef,
   initialFieldObjectVisibility = true,
+  className,
+  ...props
 }: SchemaFormProps) => {
   if (!schema) return null;
   const values = useRef({ values: initialValues });
@@ -121,7 +125,8 @@ export const SchemaForm = ({
               onSubmit={handleSubmit}
               className={`pr-form ${
                 hasValidationErrors ? 'pr-form--has-validation-errors' : ''
-              }`}
+              } ${className || ''}`}
+              {...props}
             >
               {onChange && (
                 <OnChange name="values">
