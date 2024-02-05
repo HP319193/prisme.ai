@@ -76,6 +76,30 @@ The **Events** service is in charge of :
 [Documentation](/api)
 
 
+### Scaling Websockets
+
+To enable websockets with HTTP fallback (i.e default setting, useful in case of client side firewall restrictions) and multiple `prismeai-events` instances, HTTP traffic towards `prismeai-events` must be forwarded with sticky session : requests from the same agent must be forwarded to the same `prismeai-events` instance.  
+Indeed, by default, [client socket.io](https://socket.io/docs/v4/using-multiple-nodes#why-is-sticky-session-required) will establish websocket sessions with a few HTTP requests that must be processed by the same server. When there are multiple servers and no sticky sessions, end users will not be able to connect to to `prismeai-events` (with HTTP 400 errors `Session ID unknown`), and thus not be able to send or receive events.  
+
+As mentioned in [socket.io](https://socket.io/docs/v4/using-multiple-nodes#why-is-sticky-session-required) documentation, HTTP fallback can be disabled to force websocket establishement in a single & persistent TCP connection, avoiding the need for sticky sessions.  
+
+Otherwise, some kind of proxy or service mesh must be setup to configure sticky sessions between `prismeai-api-gateway` and `prismeai-events`.  
+Example with Istio on Kubernetes :  
+```yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: events-sticky-session
+spec:
+  host: prismeai-events-svc
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpHeaderName: 'user-agent' # Identiy same users with user agent header
+```
+
+
+
 ## Performance
 
 Minimum resources shall be tested and specified so that 99% of external consumers receive each event in less than **N** milliseconds when a total of **M** events per second are processed by the same workspace.
