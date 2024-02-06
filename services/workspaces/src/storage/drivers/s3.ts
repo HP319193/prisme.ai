@@ -72,9 +72,8 @@ export default class S3Like implements IStorage {
                 if (fullKeys) {
                   return { key: cur.Key!! };
                 }
-                const splittedKey = cur.Key!!?.split('/');
                 return {
-                  key: splittedKey[splittedKey.length - 1],
+                  key: cur.Key!!.slice(prefix.length + 1),
                 };
               })
           );
