@@ -90,14 +90,14 @@ Then, for when you want to run this service directly from its docker image, you 
   </tr>  
    <tr>
     <td>CONSOLE_URL</td>
-    <td>api-gateway, console, pages</td>
-    <td>Studio URL, used for emails & auth redirections</td>
+    <td>api-gateway, console, pages, runtime</td>
+    <td>Studio URL, used for emails, auth redirections & runtime variable {{global.studioUrl}}</td>
     <td>http://studio.local.prisme.ai:3000</td>
   </tr>       
   <tr>
     <td>PAGES_HOST</td>
-    <td>api-gateway, console, pages</td>
-    <td>Pages base domain starting with a '.', workspace slug will be prefixed as a subdomain. Used for pages builder & pages sign in redirection from api gateway</td>
+    <td>api-gateway, console, pages, runtime</td>
+    <td>Pages base domain starting with a '.', workspace slug will be prefixed as a subdomain. Used for pages builder, pages sign in redirection from api gateway, & runtime variable {{global.pagesUrl}}</td>
     <td>.pages.local.prisme.ai:3100</td>  
   </tr>
   <tr>

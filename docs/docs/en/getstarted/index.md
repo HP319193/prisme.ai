@@ -45,8 +45,8 @@ Here, both `collections.pages.local.prisme.ai` and `anyOtherWorkspace.pages.loca
 ```
 Where either `studio.local.prisme.ai` DNS or 100.100.100.100 IP point to the host docker machine.  
 
-**CONSOLE_URL** : Public URL serving the studio itself.  
-On a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** does, which could even be the same parent domain as **PAGES_HOST** since both services (Pages & Studio) will be served through different ports anyway.  
+**CONSOLE_URL** : Public URL serving the studio itself. Used by the 4 following services : api-gateway, console, pages, runtime.  
+On a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** does, which could even be the same parent domain as **PAGES_HOST** since both services (Pages & Studio) will be served through different ports anyway.  Used by the 4 following services : api-gateway, console, pages, runtime.    
 
 **API_URL** : Public URL serving the API, ended with /v2.  
 Again, on a single machine setup with Docker, this is just another domain pointing to the same IP as **PAGES_HOST** and **CONSOLE_URL** do, served through a third port.    
