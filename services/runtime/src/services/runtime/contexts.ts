@@ -460,7 +460,10 @@ export class ContextsManager {
         },
         trigger: trigger || {
           type: 'automation',
-          value: this.automationSlug || '',
+          value:
+            (this.appContext?.appInstanceFullSlug
+              ? `${this.appContext?.appInstanceFullSlug}.`
+              : '') + this.automationSlug || '',
         },
       }
     );
