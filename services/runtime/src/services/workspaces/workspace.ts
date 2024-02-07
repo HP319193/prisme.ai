@@ -110,7 +110,10 @@ export class Workspace {
               ...(prev.events[event] || []),
               {
                 type: 'event',
-                value: event,
+                value:
+                  (this.appContext?.appInstanceFullSlug
+                    ? `${this.appContext?.appInstanceFullSlug}.`
+                    : '') + event,
                 automationSlug: key,
                 workspace: this,
               },
@@ -123,7 +126,10 @@ export class Workspace {
             ...(prev.endpoints[endpointName] || []),
             {
               type: 'endpoint',
-              value: endpointName,
+              value:
+                (this.appContext?.appInstanceFullSlug
+                  ? `${this.appContext?.appInstanceFullSlug}.`
+                  : '') + endpointName,
               automationSlug: key,
               workspace: this,
             },

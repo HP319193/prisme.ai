@@ -472,7 +472,7 @@ describe('More advanced execution with appInstances', () => {
             slug: 'basicEmpty',
             trigger: expect.objectContaining({
               type: 'event',
-              value: 'triggerEmpty',
+              value: 'basicApp.triggerEmpty',
             }),
             break: false,
             output: {
