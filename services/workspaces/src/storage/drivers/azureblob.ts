@@ -56,9 +56,8 @@ export default class AzureBlob implements IStorage {
           ret.push({ key: blob.name });
           continue;
         }
-        const splittedKey = blob.name?.split('/');
         ret.push({
-          key: splittedKey[splittedKey.length - 1],
+          key: blob.name.slice(path.length + 1),
         });
       }
       return ret;
