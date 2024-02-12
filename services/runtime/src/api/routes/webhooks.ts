@@ -1,7 +1,8 @@
 import express, { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
-import Runtime from '../../services/runtime';
+import Runtime, { WehookChunkOutput } from '../../services/runtime';
 import { asyncRoute } from '../utils/async';
+import { ReadableStream } from '../../utils';
 import { UPLOADS_MAX_SIZE } from '../../../config';
 import { InvalidUploadError } from '../../errors';
 
@@ -61,6 +62,29 @@ export default function init(runtime: Runtime) {
           )
       : files;
 
+    let sseInitialized = false;
+    let statusCode = 200;
+    const outputBuffer = new ReadableStream<WehookChunkOutput>((chunk) => {
+      if (Object.keys(chunk?.headers || {}).length) {
+        Object.entries(chunk?.headers).forEach(([k, v]) => {
+          res.setHeader(k, v as string);
+        });
+      }
+      if (chunk?.chunk) {
+        if (!sseInitialized) {
+          res.setHeader('content-type', 'text/event-stream');
+          res.setHeader('cache-control', 'no-cache');
+          res.setHeader('connection', 'keep-alive');
+          res.flushHeaders();
+          sseInitialized = true;
+        }
+        res.write('data: ' + JSON.stringify(chunk?.chunk) + '\n\n');
+      }
+      if (chunk?.status) {
+        statusCode = chunk?.status;
+      }
+    });
+
     const outputs = await runtime.triggerWebhook(
       {
         workspaceId,
@@ -72,12 +96,24 @@ export default function init(runtime: Runtime) {
         headers: filteredHeaders,
         method,
         query,
+        $http: outputBuffer,
       },
       context,
       logger,
       broker
     );
-    res.send(outputs?.[0]?.output || {});
+    outputBuffer.push(null);
+
+    outputBuffer.on('end', () => {
+      res.status(statusCode);
+      const output = outputs?.[0]?.output || {};
+      if (!sseInitialized) {
+        res.send(output);
+      } else {
+        res.write('data: ' + JSON.stringify(output) + '\n\n');
+        res.end();
+      }
+    });
   }
 
   const app = express.Router({ mergeParams: true });

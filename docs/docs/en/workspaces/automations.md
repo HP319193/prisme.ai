@@ -26,6 +26,49 @@ From inside the automation defining an **URL** triger, 4 [variables](#variables)
 * **method**  
 * **query**  
 
+By default, these HTTP requests will receive the automation output as a response body.  
+However, an **$http** variable available inside the automation gives full control over the response status code or headers :  
+```yaml
+  - set:
+      name: $http
+      value:
+        headers:
+          foo: bar
+        status: 400
+  - set:
+      name: $http
+      value:
+        headers:
+          foo2: bar2 # More headers
+```
+
+This variable also allows [writing SSE events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events) in order to stream response chunks in real time :  
+```yaml
+  - set:
+      name: $http
+      value:
+        chunk: # A custom data object that will be stringified & injected in SSE events
+          foo2: bar2 
+  - set:
+      name: $http
+      value:
+        chunk: # Another chunk
+          foo2: bar2           
+```
+
+* **$http** is only available in the URL triggered automation & not from children calls (unless explicitly passed as a parameter)
+* **headers** cannot be set after the first **chunk** set  
+* When using SSE events (i.e with **chunk**), the automation output will also be sent as a last event  
+* Sending SSE events automatically sets the following headers :  
+```yaml
+Content-Type: "text/event-stream"
+Cache-Control: "no-cache"
+Connection: "keep-alive"
+```
+
+
+
+
 ### Events  
 An automation can also listen to a list of events.  
 Whenever such events are received, the automation is executed & can access event payload with **payload** variable, and event source (source IP, correlationId, userId, automation, ...) with **source** variable.  

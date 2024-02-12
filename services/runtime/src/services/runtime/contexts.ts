@@ -17,6 +17,7 @@ import { AppContext, DetailedAutomation } from '../workspaces';
 import { findSecretValues } from '../../utils/secrets';
 import { PrismeContext } from '../../api/middlewares';
 import { AccessManager, ActionType, SubjectType } from '../../permissions';
+import { Readable } from 'stream';
 
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
@@ -534,7 +535,11 @@ export class ContextsManager {
         value,
       };
 
-      if (type == 'delete') {
+      // Handle streams separately (i.e used for http SSE streaming from automations)
+      if (prevValue instanceof Readable) {
+        prevValue.push(JSON.stringify(value));
+        return; // We do not persist nor synchronize streams
+      } else if (type == 'delete') {
         if (Array.isArray(parent) && typeof lastKey === 'number') {
           parent.splice(lastKey, 1);
         } else {

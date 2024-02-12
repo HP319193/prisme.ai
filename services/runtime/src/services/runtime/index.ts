@@ -23,7 +23,7 @@ import {
   STUDIO_URL,
   PAGES_HOST,
 } from '../../../config';
-import { jsonPathMatches, redact } from '../../utils';
+import { jsonPathMatches, redact, ReadableStream } from '../../utils';
 import { PrismeContext } from '../../api/middlewares';
 import { AccessManager, SubjectType } from '../../permissions';
 
@@ -38,6 +38,12 @@ interface PendingWait {
     alreadyFulfilled: boolean;
   };
 }
+
+export type WehookChunkOutput = {
+  chunk?: object;
+  headers?: Record<string, string>;
+  status?: number;
+};
 
 export interface Webhook {
   workspaceId: string;
@@ -56,6 +62,7 @@ export interface Webhook {
   body: {
     [key: string]: any;
   };
+  $http?: ReadableStream<WehookChunkOutput>;
 }
 
 type EventName = string;
