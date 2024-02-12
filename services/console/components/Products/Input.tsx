@@ -1,7 +1,16 @@
-import { CSSProperties, HTMLAttributes, useMemo } from 'react';
+import {
+  CSSProperties,
+  useMemo,
+  DetailedHTMLProps,
+  InputHTMLAttributes,
+} from 'react';
 import searchIcon from '../../public/images/icon-search.svg';
 
-interface InputProps extends HTMLAttributes<HTMLInputElement> {
+interface InputProps
+  extends DetailedHTMLProps<
+    InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {
   as?: Extract<keyof JSX.IntrinsicElements, 'input'>;
   search?: boolean;
 }

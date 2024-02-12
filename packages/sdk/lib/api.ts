@@ -287,14 +287,17 @@ export class Api extends Fetcher {
     return await this.get(`/workspaces/${id}/security/roles`);
   }
 
-  async createWorkspace(name: string): Promise<Workspace> {
-    return await this.post('/workspaces', { name });
+  async createWorkspace(
+    newWorkspace: Partial<Prismeai.Workspace>
+  ): Promise<Workspace> {
+    return await this.post('/workspaces', newWorkspace);
   }
 
   async duplicateWorkspace({ id }: { id: string }): Promise<Workspace | null> {
     return await this.post(`/workspaces/${id}/versions/current/duplicate`, {});
   }
 
+  // @deprecated. Use api.workspaces(id).update() instead
   async updateWorkspace(
     workspace: Prismeai.DSULPatch
   ): Promise<Fetched<PrismeaiAPI.UpdateWorkspace.Responses.$200> | null> {
@@ -305,6 +308,7 @@ export class Api extends Fetcher {
     );
   }
 
+  // @deprecated. Use api.workspaces(id).delete() instead
   async deleteWorkspace(workspaceId: Workspace['id']): Promise<Workspace> {
     return await this.delete(`/workspaces/${workspaceId}`);
   }
@@ -724,6 +728,7 @@ export class Api extends Fetcher {
     return response;
   }
 
+  // @deprecated. Use api.workspaces(id).uploadFiles()
   async uploadFiles(
     files: string | string[],
     workspaceId: string,

@@ -13,7 +13,7 @@ export const MenuProducts = () => {
     <Menu
       items={[
         ...Array.from(highlighted.entries()).map(
-          ([slug, { href, name, icon, description }]) => ({
+          ([, { href, name, icon, description }]) => ({
             key: href,
             label: (
               <Tooltip title={localize(description)} placement="left">

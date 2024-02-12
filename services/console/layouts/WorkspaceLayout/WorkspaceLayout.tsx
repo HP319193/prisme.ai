@@ -1,4 +1,11 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, {
+  FC,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Loading, notification } from '@prisme.ai/design-system';
@@ -26,6 +33,18 @@ import EditShare from './EditShare';
 import WorkspaceIcon from '../../icons/workspace-simple.svgr';
 
 const { ProductLayout } = builtinBlocks;
+
+const WithProductLayoutContext = ({
+  children,
+}: {
+  children: (
+    props: ReturnType<typeof ProductLayout.useProductLayoutContext>
+  ) => ReactElement;
+}) => {
+  const context = ProductLayout.useProductLayoutContext();
+  return children(context);
+};
+
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
     workspace,
@@ -386,8 +405,29 @@ export const WorkspaceLayout: FC = ({ children }) => {
               config={{
                 sidebar: {
                   header: {
-                    logo: workspace.photo || (
-                      <WorkspaceIcon height={24} width={24} />
+                    logo: (
+                      <WithProductLayoutContext>
+                        {({ toggleSidebar }) => (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleSidebar();
+                            }}
+                          >
+                            {workspace.photo ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={workspace.photo}
+                                alt={localize(workspace.name)}
+                              />
+                            ) : (
+                              <WorkspaceIcon height={24} width={24} />
+                            )}
+                          </button>
+                        )}
+                      </WithProductLayoutContext>
                     ),
                     title: localize(workspace.name),
                     tooltip: localize(workspace.name),
@@ -412,14 +452,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
                   opened: true,
                 },
                 content: (
-                  <>
+                  <div className="bg-white flex flex-1 flex-col">
                     <Tabs />
                     {creatingAutomation || creatingPage ? (
                       <Loading />
                     ) : (
                       children
                     )}
-                  </>
+                  </div>
                 ),
               }}
             >

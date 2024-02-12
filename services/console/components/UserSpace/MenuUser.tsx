@@ -1,5 +1,6 @@
 import { Menu } from 'antd';
 import { useTranslation } from 'next-i18next';
+import Link from 'next/link';
 import { useUser } from '../UserProvider';
 import Avatar from './Avatar';
 
@@ -33,17 +34,20 @@ export const MenuUser = () => {
         },
         {
           key: '2',
-          label: t('header.user.profile.title'),
-          onClick: () => console.log('yo'),
+          label: <Link href="/profile">{t('header.user.profile.title')}</Link>,
         },
         {
           key: '3',
-          label: t('header.user.settings.title'),
+          label: (
+            <Link href="/settings">{t('header.user.settings.title')}</Link>
+          ),
           onClick: () => console.log('yo'),
         },
         {
           key: '4',
-          label: t('header.user.shortcuts.title'),
+          label: (
+            <Link href="/shortcuts">{t('header.user.shortcuts.title')}</Link>
+          ),
           onClick: () => console.log('yo'),
         },
         {
@@ -52,8 +56,7 @@ export const MenuUser = () => {
         },
         {
           key: '6',
-          label: t('header.user.signout.title'),
-          onClick: () => console.log('yo'),
+          label: <Link href="/signout">{t('header.user.signout.title')}</Link>,
         },
       ]}
     />

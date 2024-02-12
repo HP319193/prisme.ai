@@ -4,18 +4,17 @@
     "title": "Espaces de travail — $t(common:main.title)",
     "description": "Créez de nouveaux espaces de travail et de nouvelles apps, éditez les et exécutez les",
     "welcome": {
-      "title": "Bienvenue {{name}},",
-      "title_noname": "Bienvenue,",
-      "content": "Voici votre galerie, retrouvez-y nos suggestions pour vous aider à démarrer un workspace ou recherchez parmi vos workspaces déjà créés.",
-      "help": "<a href=\"https://docs.eda.prisme.ai/fr\">Besoin d’aide ?</a>"
+      "title": "Low-code Builder",
+      "description": "Voici votre galerie, retrouvez-y nos suggestions pour vous aider à démarrer un workspace ou recherchez parmi vos workspaces déjà créés.",
+      "help": "<a href=\"https://docs.eda.prisme.ai/fr\" target=\"_blank\">Besoin d’aide ? Nous sommes là.</a>"
     },
     "suggestions": {
       "title": "Suggestions",
       "error": "Une erreur s'est produite. Contactez le support si le problème persiste"
     },
-    "sectionTitle": "Mes Workspaces",
+    "sectionTitle": "Mes espaces de travail",
     "defaultDescription": "Créé par vous",
-    "search": "Recherche un workspace",
+    "search": "Recherche un espace de travail",
     "install": {
       "ok": "Votre workspace a bien été deployé !",
       "error": "Le workspace n'a pas pu être installé. Son identifiant est invalide."
@@ -54,7 +53,11 @@
       "label": "Dupliquer"
     },
     "create": {
-      "label": "Créer un nouveau Workspace vide"
+      "label": "Créer un nouveau Workspace vide",
+      "name": "Nom du nouvel espace de travail",
+      "description": "Description",
+      "photo": "Image",
+      "submit": "Créer l'espace de travail"
     },
     "import": {
       "label": "Importer un Workspace depuis une archive"
@@ -135,9 +138,8 @@
     }
   },
   "create": {
-    "description_first": "Créez votre premier workspace pour commencer à automatiser votre travail",
-    "description": "Nouveau workspace",
     "label": "Créer un workspace",
+    "description": "Partez à zéro pour votre projet",
     "defaultName": "Workspace"
   },
   "edit": {

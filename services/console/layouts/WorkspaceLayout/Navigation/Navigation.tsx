@@ -9,7 +9,7 @@ import SearchIcon from '../../../icons/search.svgr';
 import PageIcon from '../../../icons/page.svgr';
 import BlockIcon from '../../../icons/block.svgr';
 import AppIcon from '../../../icons/app.svgr';
-import PlusIcon from '../../../icons/plus.svgr';
+import PlusIcon from '../../../icons/plus-rounded.svgr';
 import AngleIcon from '../../../icons/angle-down.svgr';
 import FolderIcon from '../../../icons/folder.svgr';
 import CloseIcon from '../../../icons/close.svgr';
@@ -433,7 +433,11 @@ export const Navigation = () => {
         </div>
         {navigations.map(({ type, icon, title, href, active, items, opened }) =>
           items ? (
-            <RootLinksGroup items={items} opened={!!opened}>
+            <RootLinksGroup
+              items={items}
+              opened={!!opened}
+              key={`${type}-${href}`}
+            >
               <div
                 className={`product-layout-sidebar__item ${
                   active ? 'product-layout-sidebar__item--selected' : ''

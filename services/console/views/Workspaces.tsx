@@ -1,68 +1,122 @@
-import { Input, Layout, Loading } from '@prisme.ai/design-system';
-import Head from 'next/head';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-import packageJson from '../../../package.json';
-import Header from '../components/Header';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useWorkspaces } from '../providers/Workspaces';
-import { useUser } from '../components/UserProvider';
-import plus from '../icons/plus.svg';
 import { removeEmpty, search } from '../utils/filterUtils';
-import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
-import WorkspaceMenu from '../components/Workspaces/WorkspaceMenu';
+import { LoadingOutlined } from '@ant-design/icons';
 import { Workspace } from '../utils/api';
-import HeaderPopovers from './HeaderPopovers';
-import CardButton from '../components/Workspaces/CardButton';
-import WorkspaceCardButton from '../components/Workspaces/WorkspaceCardButton';
 import getConfig from 'next/config';
 import FadeScroll from '../components/FadeScroll';
-import MagnifierIcon from '../icons/magnifier.svgr';
-import { incrementName } from '../utils/incrementName';
 import { useTracking } from '../components/Tracking';
+import Title from '../components/Products/Title';
+import Text from '../components/Products/Text';
+import Input from '../components/Products/Input';
+import Link from 'next/link';
+import ProductCard from '../components/Products/ProductCard';
+import useLocalizedText from '../utils/useLocalizedText';
+import PlusIcon from '../icons/plus.svgr';
+import SearchIcon from '../icons/search.svgr';
+import WorkspaceIcon from '../icons/workspace-simple.svgr';
+import ThreeDotsIcon from '../icons/three-dots.svgr';
+import ImportIcon from '../icons/import.svgr';
+import CopyIcon from '../icons/copy.svgr';
+import TrashIcon from '../icons/trash.svgr';
+import { stringToHexaColor } from '../utils/strings';
+import { Dropdown, Menu, notification } from 'antd';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import ConfirmButton from '../components/ConfirmButton';
 
 const {
   publicRuntimeConfig: { SUGGESTIONS_ENDPOINT = '' },
 } = getConfig();
 
+const DftWorkspaceIcon = ({ color = 'black' }: { color?: string }) => (
+  <div className="flex w-[80px] justify-center">
+    <WorkspaceIcon width={40} height={40} style={{ color }} />
+  </div>
+);
+
+const MenuInCard = ({
+  items,
+  color = 'text-products-bg',
+}: {
+  items: ItemType[];
+  color?: string;
+}) => {
+  return (
+    <div onClick={(e) => e.stopPropagation()}>
+      <Dropdown
+        overlay={<Menu items={items} />}
+        trigger={['click']}
+        className="absolute top-0 right-0 invisible group-hover:visible"
+      >
+        <button
+          onClick={(e) => e.preventDefault()}
+          className="flex justify-end p-[30px]"
+        >
+          <ThreeDotsIcon height={20} className={color} />
+        </button>
+      </Dropdown>
+    </div>
+  );
+};
+
 export const WorkspacesView = () => {
   const { t } = useTranslation('workspaces');
+  const { localize } = useLocalizedText();
+  const [searchValue, setSearchValue] = useState('');
+  const { trackEvent } = useTracking();
+
   const { push } = useRouter();
   const {
     workspaces,
-    loading,
-    creating,
     fetchWorkspaces,
-    createWorkspace,
     duplicateWorkspace,
     duplicating,
     importArchive,
     importing,
+    deleteWorkspace,
   } = useWorkspaces();
-  const { trackEvent } = useTracking();
-  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     fetchWorkspaces();
   }, [fetchWorkspaces]);
 
-  const { user } = useUser();
-  const [searchValue, setSearchValue] = useState('');
-  const workspacesList = useMemo(
-    () => Array.from(workspaces.values()).filter(removeEmpty),
-    [workspaces]
-  );
-  const filtredWorkspacesList = useMemo(
+  const cardsEl = useRef<HTMLDivElement>(null);
+  const [inputWidth, setInputWidth] = useState(0);
+  useEffect(() => {
+    if (!cardsEl.current) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const cols = Math.floor(entry.contentRect.width / 426);
+
+        switch (cols) {
+          case 0:
+          case 1:
+            setInputWidth(400);
+            break;
+          case 2:
+            setInputWidth(826);
+            break;
+          case 3:
+            setInputWidth(1252);
+            break;
+          default:
+            setInputWidth(1672);
+        }
+      }
+    });
+    resizeObserver.observe(cardsEl.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  const filteredWorkspaces = useMemo(
     () =>
-      workspacesList
+      workspaces
+        .filter(removeEmpty)
         .sort(
           ({ updatedAt: A = 0 }, { updatedAt: B = 0 }) =>
             +new Date(B) - +new Date(A)
@@ -70,30 +124,38 @@ export const WorkspacesView = () => {
         .filter(({ name, description }) =>
           search(searchValue)(`${name} ${description}`)
         ),
-    [searchValue, workspacesList]
+    [searchValue, workspaces]
   );
 
-  const handleCreateWorkspace = useCallback(async () => {
-    const { id } = await createWorkspace(
-      incrementName(
-        t('create.defaultName'),
-        workspaces.map(({ name }) => name)
-      )
-    );
-    trackEvent({
-      name: 'Create new Workspace',
-      category: 'Workspaces',
-      action: 'click',
-      value: {
-        workspaceId: id,
-        userId: user?.id,
-      },
-    });
-    push(`/workspaces/${id}`);
-  }, [createWorkspace, push, t, trackEvent, user, workspaces]);
+  const [suggestions, setSuggestions] = useState<Workspace[]>([]);
+  useEffect(() => {
+    if (!SUGGESTIONS_ENDPOINT) return;
+    async function fetchSuggestions() {
+      try {
+        const res = await fetch(SUGGESTIONS_ENDPOINT);
+        if (!res.ok) {
+          throw new Error();
+        }
+        const suggestions: Workspace[] = await res.json();
+        if (!Array.isArray(suggestions)) return;
+        setSuggestions(suggestions.filter(({ id, name }) => id && name));
+      } catch (e) {
+        return;
+      }
+    }
+    fetchSuggestions();
+  }, []);
+
+  const filteredSuggestions = useMemo(
+    () =>
+      suggestions.filter(({ name, description }) =>
+        search(searchValue)(`${name} ${description}`)
+      ),
+    [searchValue, suggestions]
+  );
 
   const handleDuplicateWorkspace = useCallback(
-    (id: Workspace['id'], type?: 'suggestion') => async () => {
+    async (id: Workspace['id'], type?: 'suggestion') => {
       const workspace = await duplicateWorkspace(id);
       if (!workspace) return;
       trackEvent({
@@ -140,225 +202,202 @@ export const WorkspacesView = () => {
     filePickr.click();
   }, [handleImportArchive, trackEvent]);
 
-  const [suggestions, setSuggestions] = useState<Workspace[]>([]);
-  useEffect(() => {
-    if (!SUGGESTIONS_ENDPOINT) return;
-    async function fetchSuggestions() {
-      try {
-        const res = await fetch(SUGGESTIONS_ENDPOINT);
-        if (!res.ok) {
-          throw new Error();
-        }
-        const suggestions: Workspace[] = await res.json();
-        if (!Array.isArray(suggestions)) return;
-        setSuggestions(suggestions.filter(({ id, name }) => id && name));
-      } catch (e) {
-        return;
-      }
-    }
-    fetchSuggestions();
-  }, []);
-
-  const filtredSuggestions = useMemo(
-    () =>
-      suggestions.filter(({ name, description }) =>
-        search(searchValue)(`${name} ${description}`)
-      ),
-    [searchValue, suggestions]
+  const handleDeleteWorkspace = useCallback(
+    (workspaceId: string) => {
+      deleteWorkspace(workspaceId);
+      notification.success({
+        message: t('workspace.delete.toast'),
+        placement: 'bottomRight',
+      });
+    },
+    [deleteWorkspace, t]
   );
 
-  const ref = useRef<HTMLDivElement>(null);
-  const [cardWidth, setCardWidth] = useState<number>();
-  useLayoutEffect(() => {
-    const listener = () => {
-      setCardWidth(ref.current?.getBoundingClientRect()?.width);
-    };
-    window.addEventListener('resize', listener);
-    listener();
-    return () => {
-      window.removeEventListener('resize', listener);
-    };
-  }, []);
+  const getWorkspaceMenu = useCallback(
+    (workspaceId: string): ItemType[] => [
+      {
+        key: 'duplicate',
+        label: (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (duplicating.has(workspaceId)) return;
+              handleDuplicateWorkspace(workspaceId);
+            }}
+            className="focus:outline-none flex items-center w-[100%]"
+          >
+            {duplicating.has(workspaceId) ? <LoadingOutlined /> : <CopyIcon />}
+            <span className="ml-3">{t('workspace.duplicate.label')}</span>
+          </button>
+        ),
+      },
+      {
+        key: 'delete',
+        label: (
+          <ConfirmButton
+            confirmLabel={t('workspace.delete.confirm')}
+            onConfirm={() => handleDeleteWorkspace(workspaceId)}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="focus:outline-none flex items-center"
+            ButtonComponent="button"
+          >
+            <TrashIcon />
+            <span className="ml-3">{t('workspace.delete.label')}</span>
+          </ConfirmButton>
+        ),
+      },
+    ],
+    [duplicating, handleDeleteWorkspace, handleDuplicateWorkspace, t]
+  );
+  const getSuggestionMenu = useCallback(
+    (workspaceId: string): ItemType[] => [
+      {
+        key: 'duplicate',
+        label: (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (duplicating.has(workspaceId)) return;
+              handleDuplicateWorkspace(workspaceId);
+            }}
+            className="focus:outline-none flex items-center w-[100%]"
+          >
+            {duplicating.has(workspaceId) ? <LoadingOutlined /> : <CopyIcon />}
+            <span className="ml-3">{t('workspace.duplicate.label')}</span>
+          </button>
+        ),
+      },
+    ],
+    []
+  );
+  const createMenu: ItemType[] = useMemo(
+    () => [
+      {
+        key: 'create',
+        label: (
+          <Link href="/workspaces/new">
+            <a className="flex items-center">
+              <PlusIcon />
+              <span className="ml-3">{t('workspace.create.label')}</span>
+            </a>
+          </Link>
+        ),
+      },
+      {
+        key: 'import',
+        label: (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (importing) return;
+              handlePickArchive();
+            }}
+            className="focus:outline-none flex items-center"
+          >
+            {importing ? <LoadingOutlined /> : <ImportIcon />}
+            <span className="ml-3">{t('workspace.import.label')}</span>
+          </button>
+        ),
+      },
+    ],
+    [handlePickArchive, importing, t]
+  );
 
   return (
-    <>
-      <Head>
-        <title>{t('workspaces.title')}</title>
-        <meta name="description" content={t('workspaces.description')} />§
-      </Head>
-      <Layout
-        Header={
-          <Header
-            leftContent={
-              <div className="flex flex-row items-center justify-center">
-                <HeaderPopovers />
-              </div>
-            }
+    <div className="bg-products-bg flex flex-1 flex-col py-[25px] px-[53px] overflow-auto">
+      <div className="flex flex-1 flex-col ">
+        <Title className="text-products-xl">
+          {t('workspaces.welcome.title')}
+        </Title>
+        <Text>{t('workspaces.welcome.description')}</Text>
+        <Text>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t('workspaces.welcome.help'),
+            }}
           />
-        }
-        contentClassName="overflow-y-auto"
-        className="max-w-full"
-      >
-        <div className="mx-4 md:mx-8 lg:mx-32 my-4 md:my-8 lg:my-16">
-          <div className="bg-info px-14 py-8 rounded-[15px]">
-            <div className="text-2xl py-3 font-bold">
-              {t('workspaces.welcome.title', {
-                name: user && user.firstName,
-                context: !user || !user.firstName ? 'noname' : '',
-              })}
-            </div>
-            <div className="text-prisme-darkblue">
-              {t('workspaces.welcome.content')}
-            </div>
-            <div className="text-accent mt-4 text-sm">
-              <Trans
-                t={t}
-                i18nKey="workspaces.welcome.help"
-                components={{ a: <a target="_blank" /> }}
-              />
-            </div>
-          </div>
-
-          <div className="pt-6">
-            <Input
-              type="search"
-              value={searchValue}
-              onChange={({ target: { value } }) => setSearchValue(value)}
-              placeholder={t('workspaces.search')}
-              prefix={
-                <MagnifierIcon
-                  width="1rem"
-                  height="1rem"
-                  className="text-gray"
+        </Text>
+        <div className="flex flex-col mr-[15px] relative mt-11 mb-12">
+          <SearchIcon
+            width={15}
+            height={15}
+            className="absolute text-accent top-[calc(50%_-_7px)] left-[15px] pointer-events-none"
+          />
+          <Input
+            search
+            placeholder={t('workspaces.search')}
+            style={{
+              width: inputWidth ? `${inputWidth}px` : undefined,
+            }}
+            onChange={({ target: { value } }) => setSearchValue(value)}
+          />
+        </div>
+        <Title className="mt-11">{t('workspaces.suggestions.title')}</Title>
+        <div ref={cardsEl} className="flex flex-row flex-wrap -ml-[13px]">
+          <FadeScroll className="flex-1 pb-4 -mb-4">
+            {filteredSuggestions.map(({ id, description, name, photo }) => (
+              <div key={id} className="relative group">
+                <ProductCard
+                  title={localize(name)}
+                  description={localize(description)}
+                  icon={
+                    photo || (
+                      <DftWorkspaceIcon color={`#${stringToHexaColor(name)}`} />
+                    )
+                  }
+                  width="400px"
                 />
-              }
-              suffix={
-                searchValue && (
-                  <CloseOutlined onClick={() => setSearchValue('')} />
-                )
-              }
-              autoFocus
-            />
-          </div>
-          <div className="pt-10 onboarding-step-2">
-            <div className="text-xl py-3 font-bold">
-              {t('workspaces.suggestions.title')}
-            </div>
-            <div className="flex flex-nowrap -mx-2 sm:flex-col md:flex-row">
-              <CardButton
-                onClick={handleCreateWorkspace}
-                disabled={creating}
-                className={`${dragging ? 'prout' : 'lol'}
-                p-6 flex
-                ${dragging ? '' : 'border-accent border-dashed'}
-                ${dragging ? '!outline-accent !outline-dashed !outline-3' : ''}
-                bg-ultra-light-accent items-center !justify-start
-                onboarding-step-3`}
-                ref={ref}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setDragging(true);
-                }}
-                onDragLeave={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setDragging(false);
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setDragging(false);
-                  const file = e.dataTransfer.files[0];
-                  if (file.type !== 'application/zip') return;
-                  handleImportArchive(e.dataTransfer.files[0]);
-                }}
-              >
-                <span className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center">
-                  {creating ? (
-                    <LoadingOutlined className="text-3xl !text-white" />
-                  ) : (
-                    <Image src={plus.src} width={24} height={24} alt="" />
-                  )}
-                </span>
-                <span className="flex font-bold ml-4 ">
-                  {t('create.label', {
-                    context: workspaces.length === 0 ? 'first' : '',
-                  })}
-                </span>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <WorkspaceMenu
-                    className="absolute top-2 right-2 invisible group-hover:visible"
-                    onCreate={handleCreateWorkspace}
-                    creating={creating}
-                    onImport={handlePickArchive}
-                    importing={importing}
-                  />
-                </div>
-              </CardButton>
-              <FadeScroll
-                className="flex-1 pb-4 -mb-4"
-                navPosition="calc(50% - 20px)"
-              >
-                {filtredSuggestions.map((workspace) => (
-                  <div
-                    key={workspace.id}
-                    className="flex"
-                    style={{ minWidth: cardWidth && `${cardWidth}px` }}
-                  >
-                    <WorkspaceCardButton
-                      workspace={workspace}
-                      className="cursor-default"
-                      containerClassName="flex flex-1 w-[100%] md:w-[100%] lg:w-[100%] xl:w-[100%]"
-                    >
-                      <WorkspaceMenu
-                        className="absolute top-2 right-2 invisible group-hover:visible"
-                        onDuplicate={handleDuplicateWorkspace(
-                          workspace.id,
-                          'suggestion'
-                        )}
-                        duplicating={duplicating.has(workspace.id)}
-                      />
-                    </WorkspaceCardButton>
-                  </div>
-                ))}
-              </FadeScroll>
-            </div>
-          </div>
-          {loading && (
-            <div className="pt-24 flex flex-col">
-              <Loading />
-            </div>
-          )}
-          {!loading && filtredWorkspacesList.length > 0 && (
-            <div className="pt-10 flex flex-col">
-              <div className="text-xl py-3 font-bold">
-                {t('workspaces.sectionTitle')}
+                <MenuInCard items={getSuggestionMenu(id)} />
               </div>
-              <div className="flex flex-wrap -mx-2">
-                {filtredWorkspacesList.map((workspace) => (
-                  <WorkspaceCardButton
-                    key={workspace.id}
-                    workspace={workspace}
-                    href={`/workspaces/${workspace.id}`}
-                  >
-                    <WorkspaceMenu
-                      className="absolute top-2 right-2 invisible group-hover:visible"
-                      onDuplicate={handleDuplicateWorkspace(workspace.id)}
-                      duplicating={duplicating.has(workspace.id)}
+            ))}
+          </FadeScroll>
+        </div>
+        <Title className="mt-11">{t('workspaces.sectionTitle')}</Title>
+        <div ref={cardsEl} className="flex flex-row flex-wrap -ml-[13px]">
+          <Link href="/workspaces/new" key="new">
+            <a className="relative group">
+              <ProductCard
+                title={t('create.label')}
+                description={t('create.description')}
+                icon={
+                  <div className="bg-accent rounded m-[30px]">
+                    <PlusIcon
+                      width={32}
+                      height={32}
+                      className="text-white m-[18px]"
                     />
-                  </WorkspaceCardButton>
-                ))}
-              </div>
-            </div>
-          )}
+                  </div>
+                }
+                width="400px"
+                bgColor="transparent"
+                color="white"
+                className="rounded border-dashed border-[1px] border-[1BFBFBF]"
+              />
+              <MenuInCard items={createMenu} color="text-white" />
+            </a>
+          </Link>
+          {filteredWorkspaces.map(({ id, description, name, photo }) => (
+            <Link href={`/workspaces/${id}`} key={id}>
+              <a className="relative group">
+                <ProductCard
+                  title={localize(name)}
+                  description={localize(description)}
+                  icon={
+                    photo || (
+                      <DftWorkspaceIcon color={`#${stringToHexaColor(name)}`} />
+                    )
+                  }
+                  width="400px"
+                />
+                <MenuInCard items={getWorkspaceMenu(id)} />
+              </a>
+            </Link>
+          ))}
         </div>
-
-        <div className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]">
-          Prisme.ai v{packageJson.version}
-        </div>
-      </Layout>
-    </>
+      </div>
+    </div>
   );
 };
 

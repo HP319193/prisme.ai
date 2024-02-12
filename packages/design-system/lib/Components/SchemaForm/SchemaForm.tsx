@@ -5,6 +5,7 @@ import {
   MutableRefObject,
   ReactElement,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
 } from 'react';
@@ -44,6 +45,7 @@ export interface SchemaFormProps
   utils?: Partial<SchemaFormContext['utils']>;
   formRef?: MutableRefObject<FormApi<any, any>>;
   initialFieldObjectVisibility?: boolean;
+  autoFocus?: boolean;
 }
 
 const DefaultLocales = {};
@@ -60,10 +62,12 @@ export const SchemaForm = ({
   formRef,
   initialFieldObjectVisibility = true,
   className,
+  autoFocus,
   ...props
 }: SchemaFormProps) => {
   if (!schema) return null;
   const values = useRef({ values: initialValues });
+  const formElRef = useRef<HTMLFormElement>(null);
 
   const onSubmitHandle = useCallback(
     async (values: any) => {
@@ -105,6 +109,11 @@ export const SchemaForm = ({
     [utils]
   );
 
+  useEffect(() => {
+    if (!autoFocus) return;
+    formElRef.current?.querySelector('input')?.focus();
+  }, []);
+
   return (
     <context.Provider
       value={{
@@ -122,6 +131,7 @@ export const SchemaForm = ({
           formRef && (formRef.current = form);
           return (
             <form
+              ref={formElRef}
               onSubmit={handleSubmit}
               className={`pr-form ${
                 hasValidationErrors ? 'pr-form--has-validation-errors' : ''

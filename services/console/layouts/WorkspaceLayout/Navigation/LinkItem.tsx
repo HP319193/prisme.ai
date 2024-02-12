@@ -3,7 +3,7 @@ import { useOpenState } from './OpenStateProvider';
 import { Add } from './Add';
 import { Tooltip } from 'antd';
 import AngleIcon from '../../../icons/angle-down.svgr';
-import PlusIcon from '../../../icons/plus.svgr';
+import PlusIcon from '../../../icons/plus-rounded.svgr';
 import { StretchContent } from '@prisme.ai/design-system';
 import Link from 'next/link';
 import { Item } from './RootLinksGroup';

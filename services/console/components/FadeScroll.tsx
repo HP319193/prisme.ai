@@ -31,10 +31,8 @@ export const FadeScroll = ({
       if (!childrenRef.current) return;
       const target = e.target as HTMLDivElement;
       const { children } = childrenRef.current;
-      const {
-        width: scrollWidth,
-        left: containerLeft,
-      } = target.getBoundingClientRect();
+      const { width: scrollWidth, left: containerLeft } =
+        target.getBoundingClientRect();
 
       Array.from(children).forEach((c, k) => {
         const { right } = c.getBoundingClientRect();
@@ -97,7 +95,7 @@ export const FadeScroll = ({
           }}
           onClick={scrollPrev}
         >
-          <LeftCircleOutlined className="bg-white" />
+          <LeftCircleOutlined />
         </button>
       )}
       {showNext && (
@@ -108,7 +106,7 @@ export const FadeScroll = ({
           }}
           onClick={scrollNext}
         >
-          <RightCircleOutlined className="bg-white" />
+          <RightCircleOutlined />
         </button>
       )}
     </div>

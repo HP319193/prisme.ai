@@ -89,6 +89,7 @@ const defaultStyles = `:block {
   flex: 1;
   align-items: center;
   margin-left: 4px;
+  margin-right: 10px;
   font-size: 14px;
   font-weight: 500;
 }

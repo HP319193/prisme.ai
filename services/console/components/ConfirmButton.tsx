@@ -11,6 +11,7 @@ interface ConfirmButtonProps extends ButtonProps {
   yesLabel?: string;
   noLabel?: string;
   placement?: TooltipProps['placement'];
+  ButtonComponent?: string | React.ComponentType<ButtonProps>;
 }
 export const ConfirmButton = ({
   children,
@@ -19,6 +20,7 @@ export const ConfirmButton = ({
   yesLabel,
   noLabel,
   placement,
+  ButtonComponent = Button,
   ...props
 }: ConfirmButtonProps) => {
   const tooltipRef = useRef<{ close: () => void }>(null);
@@ -50,9 +52,9 @@ export const ConfirmButton = ({
       color="var(--warning-color)"
       placement={placement}
     >
-      <Button className="!text-warning" {...props}>
+      <ButtonComponent className="!text-warning" {...props}>
         {children}
-      </Button>
+      </ButtonComponent>
     </Tooltip>
   );
 };

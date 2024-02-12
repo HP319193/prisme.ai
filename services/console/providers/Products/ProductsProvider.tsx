@@ -48,7 +48,7 @@ export const useProducts = () => useContext<ProductsContext>(productsContext);
 export const builderProduct: Product = {
   slug: 'workspaces',
   href: '/workspaces',
-  name: 'Product Builder',
+  name: 'Low Code Builder',
   icon: consoleIcon.src,
   description: {
     fr: 'Créer et gérer vos produits',
