@@ -32,24 +32,20 @@ export const MenuUser = () => {
             pointerEvents: 'none',
           },
         },
-        {
+        /*{
           key: '2',
           label: <Link href="/profile">{t('header.user.profile.title')}</Link>,
-        },
+        },*/
         {
           key: '3',
-          label: (
-            <Link href="/settings">{t('header.user.settings.title')}</Link>
-          ),
-          onClick: () => console.log('yo'),
+          label: <Link href="/account">{t('header.user.settings.title')}</Link>,
         },
-        {
+        /*{
           key: '4',
           label: (
             <Link href="/shortcuts">{t('header.user.shortcuts.title')}</Link>
           ),
-          onClick: () => console.log('yo'),
-        },
+        },*/
         {
           key: '5',
           type: 'divider',

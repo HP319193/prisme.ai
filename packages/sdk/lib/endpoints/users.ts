@@ -9,13 +9,25 @@ export class UsersEndpoint {
     this.api = api;
   }
 
-  async setMeta(k: string, v: any) {
-    await this.api.post(`/user/meta`, {
+  async update(
+    data: Partial<Prismeai.User>
+  ): Promise<PrismeaiAPI.PatchUser.Responses.$200> {
+    if (!data.photo) {
+      delete data.photo;
+    }
+    return await this.api.patch('/user', data);
+  }
+
+  async setMeta(
+    k: string,
+    v: any
+  ): Promise<PrismeaiAPI.SetMeta.Responses.$200> {
+    return await this.api.post(`/user/meta`, {
       [k]: v,
     });
   }
-  async deleteMeta(k: string) {
-    await this.api.delete(`/user/meta/${k}`);
+  async deleteMeta(k: string): Promise<PrismeaiAPI.DeleteMeta.Responses.$200> {
+    return await this.api.delete(`/user/meta/${k}`);
   }
 }
 

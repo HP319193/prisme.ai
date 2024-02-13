@@ -37,6 +37,7 @@ export interface UserContext<
   passwordReset: (token: string, password: string) => Promise<any>;
   sendValidationMail: (email: string, language: string) => Promise<any>;
   validateMail: (token: string) => Promise<any>;
+  update: (data: Partial<Prismeai.User>) => void;
   updateMeta: (meta: Record<string, any>) => void;
 }
 

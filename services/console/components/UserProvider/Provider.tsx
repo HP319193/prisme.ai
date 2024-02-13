@@ -4,7 +4,7 @@ import api from '../../utils/api';
 import { ApiError } from '@prisme.ai/sdk';
 import { useRouter } from 'next/router';
 import Storage from '../../utils/Storage';
-import { Loading } from '@prisme.ai/design-system';
+import { Loading, notification } from '@prisme.ai/design-system';
 import getConfig from 'next/config';
 import { useTranslation } from 'next-i18next';
 import cookie from 'js-cookie';
@@ -64,8 +64,9 @@ export const UserProvider: FC<UserProviderProps> = ({
   isPublic = false,
 }) => {
   const {
+    t,
     i18n: { language },
-  } = useTranslation();
+  } = useTranslation('user');
 
   const [user, setUser] = useState<UserContext['user']>(null);
   const [loading, setLoading] = useState<UserContext['loading']>(true);
@@ -423,6 +424,26 @@ export const UserProvider: FC<UserProviderProps> = ({
     };
   }, []);
 
+  const update: UserContext['update'] = useCallback(
+    async (data) => {
+      if (!user?.id) return;
+      try {
+        const updated = await api.users(user.id).update(data);
+        setUser(updated);
+        notification.success({
+          message: t('edit.success'),
+          placement: 'bottomRight',
+        });
+      } catch (e: any) {
+        notification.error({
+          message: t('edit.error'),
+          placement: 'bottomRight',
+        });
+      }
+    },
+    [t, user?.id]
+  );
+
   const updateMeta = useCallback((meta: Record<string, any>) => {
     setUser(
       (user) =>
@@ -459,6 +480,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         passwordReset,
         sendValidationMail,
         validateMail,
+        update,
         updateMeta,
       }}
     >
