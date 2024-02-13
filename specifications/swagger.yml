@@ -1207,7 +1207,7 @@ components:
               description: Name of the variable which will hold the result
             stream:
               type: object
-              description: 'Instead of blocking until we can output the entire response, emit individual response parts through events'
+              description: 'By default, SSE chunks are written to the output variable which can be read in real time using repeat instruction. Change this behaviour to emit chunks as individual events instead.'
               required:
                 - event
               properties:

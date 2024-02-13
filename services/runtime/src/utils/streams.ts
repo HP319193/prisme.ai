@@ -4,9 +4,9 @@ import { logger } from '../logger';
 export type ChunkHandler<T = any> = (chunk: T) => any;
 
 export class ReadableStream<T> extends Readable {
-  callback: ChunkHandler<T>;
+  callback?: ChunkHandler<T>;
 
-  constructor(callback: ChunkHandler) {
+  constructor(callback?: ChunkHandler) {
     super();
     this.callback = callback;
 
@@ -16,7 +16,9 @@ export class ReadableStream<T> extends Readable {
       } catch {}
 
       try {
-        this.callback(chunk);
+        if (this.callback) {
+          this.callback(chunk);
+        }
       } catch (err) {
         logger.error({
           msg: `An error occured while passing ReadableStream chunk to parent callback`,

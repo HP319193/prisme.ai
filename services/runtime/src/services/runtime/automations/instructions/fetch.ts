@@ -13,11 +13,12 @@ import {
   RUNTIME_EMITS_BROKER_TOPIC,
   API_KEY_HEADER,
 } from '../../../../../config';
-import { Broker, EventSource } from '@prisme.ai/broker';
+import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 import { Logger, logger } from '../../../../logger';
 import { getAccessToken } from '../../../../utils/jwks';
 import { InvalidInstructionError } from '../../../../errors';
+import { ReadableStream } from '../../../../utils';
 
 const keepaliveAgent = new Agent({
   keepAlive: true,
@@ -125,6 +126,7 @@ export async function fetch(
     },
     method: method,
     agent: function (_parsedURL) {
+      // Provide our own http agent configured with a keepAlived socket timeout below than server side value, thus avoiding potential race conditions
       if (_parsedURL.protocol == 'http:') {
         return keepaliveAgent;
       } else {
@@ -191,26 +193,43 @@ export async function fetch(
     }
     throw e;
   }
-  let responseBody, error;
-  if (!stream?.event) {
+  let responseBody: any, error: any;
+
+  const isSSE = result.headers.get('content-type') === 'text/event-stream';
+  if (!stream?.event && !isSSE) {
     responseBody = await getResponseBody(result);
     if (result.status >= 400 && result.status < 600 && emitErrors) {
       error = responseBody;
     }
   } else {
+    outputMode = 'detailed_response';
+    if (!stream?.event) {
+      responseBody = new ReadableStream();
+    }
     let chunkIndex = 0;
     let concatenated: string | any[] | undefined;
-    const send = (
-      eventType: string,
-      payload: any,
-      partialSource: Partial<EventSource> | undefined,
-      additionalFields: any
-    ) => broker.send(eventType, payload, partialSource, additionalFields);
-    const emitEvent = stream?.concatenate?.throttle
+    const send = (payload: any) => {
+      if (responseBody instanceof ReadableStream) {
+        try {
+          payload = JSON.stringify(payload);
+        } catch {}
+        responseBody.push(payload);
+        return;
+      }
+      return broker.send(
+        stream?.event!,
+        payload,
+        {
+          serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+        },
+        { target: stream?.target, options: stream?.options }
+      );
+    };
+    const sendChunk = stream?.concatenate?.throttle
       ? throttle(send, stream?.concatenate?.throttle)
       : send;
 
-    await streamResponse(
+    const processingPromise = streamResponse(
       result.body,
       async (chunk: StreamChunk) => {
         try {
@@ -230,21 +249,12 @@ export async function fetch(
                 }
               });
             }
-            await emitEvent(
-              stream?.event!,
-              {
-                index: chunkIndex,
-                chunk,
-                concatenated: concatenated
-                  ? { value: concatenated }
-                  : undefined,
-                additionalPayload: stream?.payload,
-              },
-              {
-                serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
-              },
-              { target: stream?.target, options: stream?.options }
-            );
+            await sendChunk({
+              index: chunkIndex,
+              chunk,
+              concatenated: concatenated ? { value: concatenated } : undefined,
+              additionalPayload: stream?.payload,
+            });
             chunkIndex++;
           }
         } catch (err) {
@@ -254,9 +264,16 @@ export async function fetch(
       broker
     );
 
-    if (stream?.concatenate?.throttle) {
-      // If the events were throttled we flush at the end in order to emit the last one right away.
-      (emitEvent as DebouncedFunc<any>).flush();
+    if (stream?.event) {
+      await processingPromise;
+      if (stream?.concatenate?.throttle) {
+        // If the events were throttled we flush at the end in order to emit the last one right away.
+        (sendChunk as DebouncedFunc<any>).flush();
+      }
+    } else if (responseBody instanceof ReadableStream) {
+      processingPromise.then(() => {
+        responseBody.push(null);
+      });
     }
   }
 

@@ -110,7 +110,9 @@ export default function init(runtime: Runtime) {
       if (!sseInitialized) {
         res.send(output);
       } else {
-        res.write('data: ' + JSON.stringify(output) + '\n\n');
+        if (JSON.stringify(output) != '{}') {
+          res.write('data: ' + JSON.stringify(output) + '\n\n');
+        }
         res.end();
       }
     });

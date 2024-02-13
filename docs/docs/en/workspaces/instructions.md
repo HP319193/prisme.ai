@@ -150,13 +150,13 @@ Sends an HTTP request to call external web services
 - **body** : Request body (might be a JSON object, a string, a number, ...)
 - **multipart** : List of field definitions for multipart/form-data requests
 - **emitErrors** : Boolean enabling or disabling error events upon 4xx or 5xx responses. Enabled by default.  
-- **stream** : For streamed responses, emit data chunks as they are received
+- **stream** : For [streamed SSE responses](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events), emit data chunks as they are received
 - **outputMode** : Choose between 'body' | 'detailed_response' | 'data_url'. Defaults to 'body'  
 - **output** : Name of the variable that will store the response body
 
 When receiving 4xx or 5xx HTTP errors, a native event `runtime.fetch.failed` is automatically emitted, including both request & response contents.
 
-If **Content-Type** header is set to 'application/x-www-form-urlencoded', the **body** will be automatically transformed as an urlencoded body.
+If **Content-Type** header is set to 'application/x-www-form-urlencoded', the **body** will be automatically transformed into an urlencoded body.
 
 **multipart**
 
@@ -172,7 +172,39 @@ If **Content-Type** header is set to 'application/x-www-form-urlencoded', the **
         value: some random metadata
 ```
 
-**stream**
+**Handling SSE**  
+By default, HTTP responses indicating a `content-type: text/event-stream` header will force their **responseMode** to `detailed_response`, and their `{{output.body}}` will be a stream that can be read in real time from the calling automation :  
+
+```yaml
+- fetch:
+    url: "some SSE url (i.e openai /chat-completion endpoint)"
+    output: output
+- repeat:
+    'on': '{{output.body}}'
+    do:
+      - set:
+          name: test[]
+          value: '{{item}}'    
+```
+
+Here, the `repeat` instruction will block until all chunks have been processed & the HTTP socket is closed.  
+Each `{{item}}` will look like this :  
+```json
+{
+  "chunk": {
+    "data": [
+      "data1",
+      "data2"
+    ]
+  }
+}
+```
+Here, `data1` and `data2` correspond to 2 individual chunks written by the remote server, which can be grouped together if they were received at the same time.  
+If these data strings are valid JSON, they will be automatically parsed into objects.  
+
+
+Alternatively, we can `emit` received chunks so they can be processed asynchronously & concurrently from other automations :  
+
 ```yaml
 - fetch:
     url: ..
@@ -199,7 +231,6 @@ Each chunk will be emitted like this :
   }
 }
 ```
-If data strings are JSON, they will be automatically parsed into objects.  
 **stream** option also accepts **target** and **options** fields from emit instruction.  
 
 

@@ -4,6 +4,7 @@ import { runInstructions } from '..';
 import { Cache } from '../../../../cache';
 import { Workspace } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
+import { Readable } from 'stream';
 
 type RepeatOn = Extract<Prismeai.Repeat['repeat'], { on: string }>;
 type RepeatUntil = Extract<Prismeai.Repeat['repeat'], { until: number }>;
@@ -38,6 +39,26 @@ export async function repeat(
   const until = isRepeatUntil(value) ? value.until : undefined;
   const on = isRepeatOn(value) ? value.on : undefined;
   const { do: doInstructions } = value;
+
+  // Process streams separately
+  if (<any>on instanceof Readable) {
+    const stream = on as any as Readable;
+    for await (let buffer of stream) {
+      try {
+        buffer = buffer.toString();
+        buffer = JSON.parse(buffer);
+        ctx.set(REPEAT_ITEM_VAR_NAME, buffer);
+        await runInstructions(doInstructions, {
+          workspace,
+          ctx,
+          logger,
+          broker,
+          cache,
+        });
+      } catch {}
+    }
+    return;
+  }
 
   const values =
     typeof on === 'object' && !Array.isArray(on)

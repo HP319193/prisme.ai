@@ -17,7 +17,7 @@ import { AppContext, DetailedAutomation } from '../workspaces';
 import { findSecretValues } from '../../utils/secrets';
 import { PrismeContext } from '../../api/middlewares';
 import { AccessManager, ActionType, SubjectType } from '../../permissions';
-import { Readable } from 'stream';
+import { ReadableStream } from '../../utils';
 
 type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
@@ -536,7 +536,7 @@ export class ContextsManager {
       };
 
       // Handle streams separately (i.e used for http SSE streaming from automations)
-      if (prevValue instanceof Readable) {
+      if (prevValue instanceof ReadableStream) {
         prevValue.push(JSON.stringify(value));
         return; // We do not persist nor synchronize streams
       } else if (type == 'delete') {
@@ -566,7 +566,13 @@ export class ContextsManager {
         parent[lastKey] = { ...parent[lastKey], ..._.cloneDeep(value) };
       } else {
         // Replace target var with given value
-        parent[lastKey] = _.cloneDeep(value);
+        const containsStreams =
+          value instanceof ReadableStream ||
+          (typeof value === 'object' &&
+            Object.values(value || {}).some(
+              (cur) => cur instanceof ReadableStream
+            ));
+        parent[lastKey] = containsStreams ? value : _.cloneDeep(value);
 
         // Handle user/session switching
         if (
