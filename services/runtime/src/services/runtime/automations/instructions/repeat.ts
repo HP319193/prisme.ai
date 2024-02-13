@@ -47,6 +47,9 @@ export async function repeat(
       try {
         buffer = buffer.toString();
         buffer = JSON.parse(buffer);
+      } catch {}
+
+      try {
         ctx.set(REPEAT_ITEM_VAR_NAME, buffer);
         await runInstructions(doInstructions, {
           workspace,
