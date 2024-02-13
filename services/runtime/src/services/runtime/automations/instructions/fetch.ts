@@ -308,6 +308,7 @@ export async function fetch(
       ),
       status: result.status,
       body: responseBody,
+      stream: responseBody instanceof ReadableStream,
     };
   } else {
     return responseBody;
