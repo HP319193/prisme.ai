@@ -12,7 +12,10 @@ import consoleIcon from '../../public/images/icon-console.svg';
 import getConfig from 'next/config';
 
 const {
-  publicRuntimeConfig: { PRODUCTS_ENDPOINT = '' },
+  publicRuntimeConfig: {
+    PRODUCTS_ENDPOINT = '',
+    PRODUCTS_SEARCH_ENDPOINT = '',
+  },
 } = getConfig();
 
 export interface Product {
@@ -33,7 +36,8 @@ export interface ProductsContext {
     page?: number;
     limit?: number;
   }) => Promise<{ list: Map<string, Product>; total: number; page: number }>;
-  searchProducts: (query: { q?: string }) => Promise<Map<string, Product>>;
+  canSearch: boolean;
+  searchProducts: (query: { query?: string }) => Promise<Product[]>;
 }
 
 interface ProductsContextProviderProps {
@@ -128,11 +132,25 @@ export const ProductsProvider = ({
     []
   );
 
-  const searchProducts: ProductsContext['searchProducts'] =
-    useCallback(async () => {
-      // TODO : fetch from API
-      return new Map();
-    }, []);
+  const searchProducts: ProductsContext['searchProducts'] = useCallback(
+    async ({ query }) => {
+      const res = await fetch(PRODUCTS_SEARCH_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: 'test',
+          body: {
+            query,
+          },
+        }),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    },
+    []
+  );
 
   useEffect(() => {
     fetchProducts({ highlighted: true });
@@ -140,7 +158,13 @@ export const ProductsProvider = ({
 
   return (
     <productsContext.Provider
-      value={{ products, highlighted, fetchProducts, searchProducts }}
+      value={{
+        products,
+        highlighted,
+        fetchProducts,
+        canSearch: !!PRODUCTS_SEARCH_ENDPOINT,
+        searchProducts,
+      }}
     >
       {children}
     </productsContext.Provider>
