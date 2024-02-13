@@ -358,7 +358,7 @@ export const Navigation = () => {
         title: t('workspace.sections.stats'),
         href: `/workspaces/${workspace.id}/stats`,
         active: decodeURIComponent(asPath).match(
-          `^\/workspaces\/${workspace.id}\/stats\//`
+          `^/workspaces/${workspace.id}/stats`
         ),
       },
     ];
@@ -374,6 +374,7 @@ export const Navigation = () => {
     workspace.imports,
     workspace.pages,
   ]);
+  console.log(decodeURIComponent(asPath));
 
   return (
     <navigationContext.Provider value={{ add, highlight: searchQuery }}>

@@ -681,6 +681,7 @@ export class Api extends Fetcher {
     return await this.post(`/apps`, body);
   }
 
+  // @deprecated. Use api.workspaces(id).listAppInstances())
   async listAppInstances(
     workspaceId: PrismeaiAPI.ListAppInstances.PathParameters['workspaceId']
   ): Promise<Fetched<PrismeaiAPI.ListAppInstances.Responses.$200>> {
@@ -834,6 +835,7 @@ export class Api extends Fetcher {
     });
   }
 
+  // @deprecated. Use api.workspaces(id).getUsage())
   async getWorkspaceUsage(
     workspaceId: PrismeaiAPI.WorkspaceUsage.Parameters.WorkspaceId,
     {

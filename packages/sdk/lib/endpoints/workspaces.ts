@@ -1,6 +1,6 @@
 import { Api } from '../api';
 import { Fetched } from '../fetcher';
-import { dataURItoBlob } from '../utils';
+import { dataURItoBlob, removedUndefinedProperties } from '../utils';
 import WorkspacesVersionsEndpoint from './workspacesVersions';
 
 export class WorkspacesEndpoint {
@@ -65,6 +65,35 @@ export class WorkspacesEndpoint {
       console.error(e);
     }
     return [];
+  }
+
+  async listAppInstances(): Promise<
+    Fetched<PrismeaiAPI.ListAppInstances.Responses.$200>
+  > {
+    return await this.api.get(`/workspaces/${this.id}/apps`);
+  }
+
+  async getUsage({
+    afterDate,
+    beforeDate,
+    details,
+  }: {
+    afterDate?: PrismeaiAPI.WorkspaceUsage.Parameters.AfterDate;
+    beforeDate?: PrismeaiAPI.WorkspaceUsage.Parameters.BeforeDate;
+    details?: PrismeaiAPI.WorkspaceUsage.Parameters.Details;
+  } = {}): Promise<Fetched<PrismeaiAPI.WorkspaceUsage.Responses.$200>> {
+    const params = new URLSearchParams(
+      removedUndefinedProperties(
+        {
+          afterDate: `${afterDate || ''}`,
+          beforeDate: `${beforeDate || ''}`,
+          details: `${details || ''}`,
+        },
+        true
+      )
+    );
+
+    return this.api.get(`/workspaces/${this.id}/usage?${params.toString()}`);
   }
 }
 

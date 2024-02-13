@@ -1,8 +1,8 @@
 import Image from 'next/image';
-import stat from '../../../icons/stat.svg';
+import stat from '../../icons/stat.svg';
 import { WarningOutlined } from '@ant-design/icons';
 import { useTranslation } from 'next-i18next';
-import { AppUsageMetricsWithPhoto } from '../../../components/WorkspacesUsage';
+import { AppUsageMetricsWithPhoto } from '../../components/WorkspacesUsage';
 import { ApiError } from '@prisme.ai/sdk';
 import getConfig from 'next/config';
 

@@ -9,19 +9,19 @@ import {
   useEffect,
   HTMLAttributes,
 } from 'react';
-import { search } from '../../../utils/filterUtils';
-import useLocalizedText from '../../../utils/useLocalizedText';
+import { search } from '../../utils/filterUtils';
+import useLocalizedText from '../../utils/useLocalizedText';
 
-import SearchInput from '../../../components/Navigation/SearchInput';
-import Highlight from '../../../components/Highlight/Highlight';
-import Item from '../../../components/Navigation/Item';
+import SearchInput from '../../components/Navigation/SearchInput';
+import Highlight from '../../components/Highlight/Highlight';
+import Item from '../../components/Navigation/Item';
 import ItemsGroup, {
   ItemsGroupProps,
-} from '../../../components/Navigation/ItemsGroup';
+} from '../../components/Navigation/ItemsGroup';
 import Avatar from '../../../icons/avatar.svgr';
-import { Workspace } from '../../../utils/api';
-import WorkspaceIcon from '../../../components/Workspaces/WorkspaceIcon';
-import { useTracking } from '../../../components/Tracking';
+import { Workspace } from '../../utils/api';
+import WorkspaceIcon from '../../components/Workspaces/WorkspaceIcon';
+import { useTracking } from '../../components/Tracking';
 
 interface NavigationProps extends HTMLAttributes<HTMLDivElement> {
   workspaces: Workspace[];

@@ -9,7 +9,6 @@ import Sentry from '../../utils/Sentry';
 import InstallWorkspace from '../InstallWorkspace';
 import PermissionsProvider from '../PermissionsProvider';
 import Tracking from '../Tracking';
-import { WorkspacesUsageProvider } from '../WorkspacesUsage';
 
 const {
   publicRuntimeConfig: { FEATURES: { ONBOARDING = false } = {} },
@@ -25,28 +24,26 @@ export const WorkspaceBuilder = ({ children }: WorkspaceBuilderProps) => {
   const { t } = useTranslation('common');
   return (
     <WorkspacesProvider>
-      <WorkspacesUsageProvider>
-        <PermissionsProvider>
-          <AppsProvider>
-            <Tracking>
-              <Head>
-                <title>{t('main.title')}</title>
-                <meta
-                  name="viewport"
-                  content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
-                />
-                <meta name="description" content={t('main.description')} />
-                <link rel="icon" href="/favicon.png" />
-              </Head>
-              <Sentry />
-              <InstallWorkspace>
-                {children}
-                {ONBOARDING && <OnBoarding />}
-              </InstallWorkspace>
-            </Tracking>
-          </AppsProvider>
-        </PermissionsProvider>
-      </WorkspacesUsageProvider>
+      <PermissionsProvider>
+        <AppsProvider>
+          <Tracking>
+            <Head>
+              <title>{t('main.title')}</title>
+              <meta
+                name="viewport"
+                content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+              />
+              <meta name="description" content={t('main.description')} />
+              <link rel="icon" href="/favicon.png" />
+            </Head>
+            <Sentry />
+            <InstallWorkspace>
+              {children}
+              {ONBOARDING && <OnBoarding />}
+            </InstallWorkspace>
+          </Tracking>
+        </AppsProvider>
+      </PermissionsProvider>
     </WorkspacesProvider>
   );
 };
