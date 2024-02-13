@@ -19,3 +19,5 @@ export const MAXIMUM_APP_VERSION = parseInt(
 export const IMPORT_BATCH_SIZE = parseInt(
   process.env.IMPORT_BATCH_SIZE || '50'
 );
+
+export const PLATFORM_WORKSPACE_ID = 'platform';

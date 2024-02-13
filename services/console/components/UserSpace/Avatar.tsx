@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { useMemo } from 'react';
 import { useUser } from '../UserProvider';
 import Color from 'color';
@@ -42,7 +41,8 @@ export const Avatar = ({ size = '2.4rem' }: AvatarProps) => {
   }, [user]);
   if (!user) return null;
   return user.photo ? (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src={user.photo}
       alt={initials}
       style={{

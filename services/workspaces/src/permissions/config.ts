@@ -3,7 +3,11 @@ import {
   NativeSubjectType,
   PermissionsConfig,
 } from '@prisme.ai/permissions';
-import { LAST_CUSTOM_RULE_PRIORITY, UPLOADS_STORAGE_TYPE } from '../../config';
+import {
+  LAST_CUSTOM_RULE_PRIORITY,
+  PLATFORM_WORKSPACE_ID,
+  UPLOADS_STORAGE_TYPE,
+} from '../../config';
 import { DriverType } from '../storage/types';
 
 export const ActionType = {
@@ -231,6 +235,13 @@ export const config: PermissionsConfig<
     {
       action: ActionType.Read,
       subject: SubjectType.App,
+    },
+    {
+      action: ActionType.Create,
+      subject: SubjectType.File,
+      conditions: {
+        workspaceId: PLATFORM_WORKSPACE_ID,
+      },
     },
   ],
 };

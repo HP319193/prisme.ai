@@ -6,6 +6,7 @@ import {
   UPLOADS_STORAGE_S3_LIKE_BASE_URL,
   UPLOADS_FILESYSTEM_DOWNLOAD_URL,
   UPLOADS_STORAGE_AZURE_BLOB_BASE_URL,
+  PLATFORM_WORKSPACE_ID,
 } from '../../config';
 import { logger } from '../logger';
 import { AccessManager, Role, SubjectType } from '../permissions';
@@ -112,7 +113,11 @@ class FileStorage {
     this.validateUploads(files);
 
     // Without this & with multiple files, only first create() call would pull permissions & subsequent ones would throw a PermissionsError
-    await accessManager.pullRoleFromSubject(SubjectType.Workspace, workspaceId);
+    if (workspaceId !== PLATFORM_WORKSPACE_ID)
+      await accessManager.pullRoleFromSubject(
+        SubjectType.Workspace,
+        workspaceId
+      );
 
     const fileDetails = await Promise.all(
       files.map(

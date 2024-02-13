@@ -3766,6 +3766,19 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace PostUserPhoto {
+        export interface RequestBody {
+            /**
+             * Photo as binary
+             */
+            photo: string; // binary
+        }
+        namespace Responses {
+            export type $200 = Prismeai.User;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+        }
+    }
     namespace PublishApp {
         export interface RequestBody {
             workspaceId: string;

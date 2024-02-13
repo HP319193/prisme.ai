@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import services from '../services';
+import FormData from 'form-data';
 
 import {
   enforceMFA,
@@ -11,6 +12,8 @@ import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { initAuthProviders } from './authProviders';
 import Provider from 'oidc-provider';
+import { GatewayConfig } from '../config';
+import fetch from 'node-fetch';
 
 async function reAuthenticate(req: Request, res: Response, next: NextFunction) {
   if (!req.user?.email || !req.body?.currentPassword) {
@@ -278,7 +281,52 @@ async function deleteMetaHandler(
   res.send(meta);
 }
 
-export default function initIdentityRoutes(oidc: Provider) {
+function postUserPhotoHandler(workspaceServiceUrl: string) {
+  return async function postUserPhotoHandler(
+    req: Request<any, any, PrismeaiAPI.PostUserPhoto.RequestBody>,
+    res: Response<Partial<PrismeaiAPI.PostUserPhoto.Responses.$200>>
+  ) {
+    const identity = services.identity(req.context, req.logger);
+    if (
+      !req?.user?.id ||
+      !req.files ||
+      !Array.isArray(req.files) ||
+      !req.files.length
+    )
+      return;
+
+    const formData = new FormData();
+    const file = req.files[0];
+    formData.append('file', file.buffer, {
+      filename: file.originalname,
+      contentType: file.mimetype,
+    });
+    formData.append('public', 'true');
+    const result = await fetch(
+      `${workspaceServiceUrl}/v2/workspaces/platform/files`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+    const [{ url }] = await result.json();
+
+    const user = await identity.patchUser(
+      req.user.id,
+      {
+        photo: url,
+      },
+      false
+    );
+
+    res.send(user);
+  };
+}
+
+export default function initIdentityRoutes(
+  oidc: Provider,
+  gtwcfg: GatewayConfig
+) {
   const app = express.Router();
 
   app.get(`/me`, isAuthenticated, meHandler);
@@ -298,6 +346,11 @@ export default function initIdentityRoutes(oidc: Provider) {
   app.post(`/user/password`, resetPasswordHandler);
   app.post(`/user/validate`, validateAccountHandler);
   app.post(`/user/mfa`, reAuthenticate, enforceMFA, setupUserMFAHandler);
+  app.post(
+    `/user/photo`,
+    isAuthenticated,
+    postUserPhotoHandler(gtwcfg.config.services.workspaces.url)
+  );
 
   app.get(`/user/accessTokens`, isAuthenticated, listAccessTokensHandler);
   app.post(`/user/accessTokens`, isAuthenticated, createAccessTokenHandler);
