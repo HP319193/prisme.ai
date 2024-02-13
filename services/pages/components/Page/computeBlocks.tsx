@@ -196,6 +196,7 @@ export function interpolateValue(value: any, values: any): any {
 
   if (Array.isArray(value)) {
     const output = value.flatMap((v) => {
+      if (!v) return v;
       const hidden =
         !v[TEMPLATE_REPEAT] &&
         v[TEMPLATE_IF] &&
