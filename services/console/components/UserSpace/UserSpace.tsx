@@ -4,7 +4,6 @@ import logo from '../../public/images/header-logo.svg';
 import helpIcon from '../../public/images/header-help.svg';
 import menuIcon from '../../public/images/header-menu.svg';
 import bellIcon from '../../public/images/header-bell.svg';
-
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import Avatar from './Avatar';
@@ -14,6 +13,24 @@ import MenuUser from './MenuUser';
 import MenuProducts from './MenuProducts';
 import Link from 'next/link';
 import { ProductsProvider } from '../../providers/Products';
+import getConfig from 'next/config';
+import IFrameLoader from '../IFrameLoader';
+import { useTracking } from '../Tracking';
+import { Popover } from '@prisme.ai/design-system';
+
+const {
+  publicRuntimeConfig: { HEADER_POPOVERS },
+} = getConfig();
+
+function getHeaderPopovers() {
+  try {
+    return JSON.parse(HEADER_POPOVERS);
+  } catch {
+    return {};
+  }
+}
+
+const headerPopovers = getHeaderPopovers();
 
 interface UserSpaceProps {
   children: ReactNode;
@@ -21,6 +38,7 @@ interface UserSpaceProps {
 
 export const UserSpace = ({ children }: UserSpaceProps) => {
   const { t } = useTranslation('user');
+  const { trackEvent } = useTracking();
 
   return (
     <ProductsProvider>
@@ -32,12 +50,56 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
             </a>
           </Link>
           <div className="flex relative">
-            <button className="m-[1rem]">
-              <Image src={bellIcon} alt={t('header.notifications.title')} />
-            </button>
-            <button className="m-[1rem]">
-              <Image src={helpIcon} alt={t('header.notifications.help')} />
-            </button>
+            {headerPopovers.whatsNew && (
+              <Popover
+                trigger={['click']}
+                placement="bottomRight"
+                content={() => (
+                  <div className="flex h-[75vh] w-[30rem]">
+                    <IFrameLoader
+                      className="flex flex-1"
+                      src={headerPopovers.whatsNew}
+                    />
+                  </div>
+                )}
+                overlayClassName="pr-full-popover"
+                onOpenChange={(open) => {
+                  trackEvent({
+                    name: `Open header popover whatsNew`,
+                    action: 'click',
+                  });
+                }}
+              >
+                <button className="m-[1rem]">
+                  <Image src={bellIcon} alt={t('header.notifications.title')} />
+                </button>
+              </Popover>
+            )}
+            {headerPopovers.help && (
+              <Popover
+                trigger={['click']}
+                placement="bottomRight"
+                content={() => (
+                  <div className="flex h-[75vh] w-[30rem]">
+                    <IFrameLoader
+                      className="flex flex-1"
+                      src={headerPopovers.help}
+                    />
+                  </div>
+                )}
+                overlayClassName="pr-full-popover"
+                onOpenChange={(open) => {
+                  trackEvent({
+                    name: `Open header popover help`,
+                    action: 'click',
+                  });
+                }}
+              >
+                <button className="m-[1rem]">
+                  <Image src={helpIcon} alt={t('header.notifications.help')} />
+                </button>
+              </Popover>
+            )}
             <Dropdown
               autoFocus
               overlay={<MenuProducts />}
