@@ -72,7 +72,8 @@ export const ProductsProvider = ({
   );
   const fetchProducts: ProductsContext['fetchProducts'] = useCallback(
     async (query) => {
-      if (!PRODUCTS_ENDPOINT) return new Map();
+      if (!PRODUCTS_ENDPOINT)
+        return { list: new Map(), total: 0, page: query?.page || 1 };
       async function fetchResults() {
         try {
           const results = await fetch(PRODUCTS_ENDPOINT, {
@@ -89,12 +90,12 @@ export const ProductsProvider = ({
             await results.json();
           return res;
         } catch {
-          return { list: null };
+          return { list: [], total: 0, page: query?.page || 1 };
         }
       }
       const { list, ...rest } = await fetchResults();
-      if (!list) return new Map();
-      const fetched = new Map(
+
+      const fetched: Map<string, Product> = new Map(
         list.map(({ slug, name, icon, description, highlighted }) => [
           slug,
           {

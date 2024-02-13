@@ -25,6 +25,7 @@ export const ProductsSidbar = () => {
   const { t } = useTranslation('user');
   const [expanded, setExpanded] = useState(!!Storage.get('sidebarExpanded'));
   const { user, updateMeta } = useUser();
+  const [added, setAdded] = useState<string>('');
   const { fetchProducts } = useProducts();
   const products: Product[] = useMemo(
     () => (user && user.meta?.products) || [],
@@ -50,7 +51,7 @@ export const ProductsSidbar = () => {
   updateUserMeta.current = (product: Product) => {
     if (user.meta?.products?.find(({ href = '' }) => product.href === href))
       return;
-
+    setAdded(product.slug);
     updateMeta({
       products: [...(user?.meta?.products || []), product],
     });
@@ -126,7 +127,12 @@ export const ProductsSidbar = () => {
             onClick={toggleSidebar}
           />
           {products.map(({ slug, href, icon, name }, index) => (
-            <div key={href} className="flex relative group">
+            <div
+              key={href}
+              className={`flex relative group ${
+                added === slug ? 'animate-add-product animate-[' : ''
+              }`}
+            >
               <Link href={history.get(slug) || href}>
                 <a className="flex flex-1">
                   <Button

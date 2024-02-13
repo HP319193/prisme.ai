@@ -66,6 +66,9 @@ module.exports = {
         'green-200': '#E7F6F6',
         'orange-500': '#FD6E6E',
       },
+      animation: {
+        'add-product': 'bounce .2s',
+      },
     },
   },
   plugins: [],
