@@ -16,6 +16,7 @@ export const useScrollListener = <T extends HTMLElement>({
 
   const ref = useCallback(
     (element: T) => {
+      console.log(element);
       const listener = (e: Event) => {
         const target = e.target as T;
         if (!target) return;

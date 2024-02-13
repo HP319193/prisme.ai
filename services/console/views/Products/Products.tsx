@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import ProductCard from '../../components/Products/ProductCard';
 import useLocalizedText from '../../utils/useLocalizedText';
 import Link from 'next/link';
+import useScrollListener from '../../components/useScrollListener';
 
 export const Products = () => {
   const { t } = useTranslation('products');
@@ -15,21 +16,22 @@ export const Products = () => {
   const { user } = useUser();
   const { products, fetchProducts } = useProducts();
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const cardsEl = useRef<HTMLDivElement>(null);
   const [inputWidth, setInputWidth] = useState(0);
+  const { ref, bottom } = useScrollListener<HTMLDivElement>({ margin: -1 });
 
-  const hasOther = useMemo(() => products.size < total, [products.size, total]);
+  const hasMore = useRef(false);
   useEffect(() => {
     async function fetch() {
-      const { total } = await fetchProducts({
+      const limit = page === 1 ? 19 : 21;
+      const { list } = await fetchProducts({
         page,
-        limit: page === 1 ? 11 : 12,
+        limit,
       });
-      setTotal(total);
+      hasMore.current = list.size === limit;
     }
     fetch();
-  }, [fetchProducts, page, products.size]);
+  }, [fetchProducts, page]);
 
   useEffect(() => {
     if (!cardsEl.current) return;
@@ -59,8 +61,18 @@ export const Products = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (bottom && hasMore.current) {
+      hasMore.current = false;
+      setPage(page + 1);
+    }
+  }, [bottom, hasMore, page]);
+
   return (
-    <div className="bg-products-bg flex flex-1 flex-col py-[25px] px-[53px] overflow-auto">
+    <div
+      className="bg-products-bg flex flex-1 flex-col py-[25px] px-[53px] overflow-auto"
+      ref={ref}
+    >
       <Title>{t('news.title')}</Title>
       <Text>Afficher des news ici</Text>
       <div className="flex flex-1 flex-col max-w-[1147px]">
@@ -95,12 +107,12 @@ export const Products = () => {
           )}
         </div>
       </div>
-      {hasOther && (
+      {hasMore.current && (
         <button
           className="text-products-text"
           onClick={() => setPage(page + 1)}
         >
-          next
+          {t('list.more')}
         </button>
       )}
     </div>

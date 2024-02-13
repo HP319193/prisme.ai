@@ -10,6 +10,7 @@
     "placeholder": "J'ai besoin de…"
   },
   "list": {
-    "title": "Les produits Prisme.ai"
+    "title": "Les produits Prisme.ai",
+    "more": "Charger plus de produits"
   }
 }

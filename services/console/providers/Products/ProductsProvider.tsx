@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useContext } from '../../utils/useContext';
@@ -63,6 +64,7 @@ export const ProductsProvider = ({
   const [products, setProducts] = useState<ProductsContext['products']>(
     new Map([['workspaces', builderProduct]])
   );
+  const loading = useRef(false);
   const highlighted = useMemo(
     () =>
       new Map(
@@ -72,8 +74,9 @@ export const ProductsProvider = ({
   );
   const fetchProducts: ProductsContext['fetchProducts'] = useCallback(
     async (query) => {
-      if (!PRODUCTS_ENDPOINT)
+      if (!PRODUCTS_ENDPOINT || loading.current)
         return { list: new Map(), total: 0, page: query?.page || 1 };
+      loading.current = true;
       async function fetchResults() {
         try {
           const results = await fetch(PRODUCTS_ENDPOINT, {
@@ -116,6 +119,7 @@ export const ProductsProvider = ({
         });
         return newList;
       });
+      loading.current = false;
       return {
         list: fetched,
         ...rest,
