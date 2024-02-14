@@ -15,7 +15,6 @@ import Link from 'next/link';
 import ProductCard from '../components/Products/ProductCard';
 import useLocalizedText from '../utils/useLocalizedText';
 import PlusIcon from '../icons/plus.svgr';
-import SearchIcon from '../icons/search.svgr';
 import WorkspaceIcon from '../icons/workspace-simple.svgr';
 import ThreeDotsIcon from '../icons/three-dots.svgr';
 import ImportIcon from '../icons/import.svgr';
@@ -81,37 +80,6 @@ export const WorkspacesView = () => {
   useEffect(() => {
     fetchWorkspaces();
   }, [fetchWorkspaces]);
-
-  const cardsEl = useRef<HTMLDivElement>(null);
-  const [inputWidth, setInputWidth] = useState(0);
-  useEffect(() => {
-    if (!cardsEl.current) return;
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const cols = Math.floor(entry.contentRect.width / 426);
-
-        switch (cols) {
-          case 0:
-          case 1:
-            setInputWidth(400);
-            break;
-          case 2:
-            setInputWidth(826);
-            break;
-          case 3:
-            setInputWidth(1252);
-            break;
-          default:
-            setInputWidth(1672);
-        }
-      }
-    });
-    resizeObserver.observe(cardsEl.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
 
   const filteredWorkspaces = useMemo(
     () =>
@@ -270,7 +238,7 @@ export const WorkspacesView = () => {
         ),
       },
     ],
-    []
+    [duplicating, handleDuplicateWorkspace, t]
   );
   const createMenu: ItemType[] = useMemo(
     () => [
@@ -305,6 +273,22 @@ export const WorkspacesView = () => {
     [handlePickArchive, importing, t]
   );
 
+  const cardEl = useRef<HTMLAnchorElement>(null);
+  const [cardWidth, setCardWidth] = useState(0);
+  useEffect(() => {
+    if (!cardEl.current) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setCardWidth(entry.contentRect.width);
+      }
+    });
+    resizeObserver.observe(cardEl.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
   return (
     <div className="bg-products-bg flex flex-1 flex-col py-[25px] px-[53px] overflow-auto">
       <div className="flex flex-1 flex-col ">
@@ -320,25 +304,23 @@ export const WorkspacesView = () => {
           />
         </Text>
         <div className="flex flex-col mr-[15px] relative mt-11 mb-12">
-          <SearchIcon
-            width={15}
-            height={15}
-            className="absolute text-accent top-[calc(50%_-_7px)] left-[15px] pointer-events-none"
-          />
           <Input
             search
             placeholder={t('workspaces.search')}
-            style={{
-              width: inputWidth ? `${inputWidth}px` : undefined,
-            }}
             onChange={({ target: { value } }) => setSearchValue(value)}
           />
         </div>
         <Title className="mt-11">{t('workspaces.suggestions.title')}</Title>
-        <div ref={cardsEl} className="flex flex-row flex-wrap -ml-[13px]">
-          <FadeScroll className="flex-1 pb-4 -mb-4">
+        <div className="flex flex-row flex-wrap -ml-[13px]">
+          <FadeScroll className="flex-1 pb-4 -mb-4 w-[100%]">
             {filteredSuggestions.map(({ id, description, name, photo }) => (
-              <div key={id} className="relative group">
+              <div
+                key={id}
+                className="relative group w-[100%]  overflow-hidden"
+                style={{
+                  width: `${cardWidth}px`,
+                }}
+              >
                 <ProductCard
                   title={localize(name)}
                   description={localize(description)}
@@ -355,9 +337,12 @@ export const WorkspacesView = () => {
           </FadeScroll>
         </div>
         <Title className="mt-11">{t('workspaces.sectionTitle')}</Title>
-        <div ref={cardsEl} className="flex flex-row flex-wrap -ml-[13px]">
+        <div className="flex flex-row flex-wrap -ml-[13px]">
           <Link href="/workspaces/new" key="new">
-            <a className="relative group">
+            <a
+              ref={cardEl}
+              className="relative group w-[100%] 2xl:w-1/5 xl:w-1/4 lg:w-1/3 md:w-1/2 overflow-hidden"
+            >
               <ProductCard
                 title={t('create.label')}
                 description={t('create.description')}
@@ -380,7 +365,7 @@ export const WorkspacesView = () => {
           </Link>
           {filteredWorkspaces.map(({ id, description, name, photo }) => (
             <Link href={`/workspaces/${id}`} key={id}>
-              <a className="relative group">
+              <a className="relative group w-[100%] 2xl:w-1/5 xl:w-1/4 lg:w-1/3 md:w-1/2">
                 <ProductCard
                   title={localize(name)}
                   description={localize(description)}

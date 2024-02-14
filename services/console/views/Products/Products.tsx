@@ -21,8 +21,6 @@ export const Products = () => {
   const [searching, setSearching] = useState(false);
   const [found, setFound] = useState<Product[] | null>(null);
   const [page, setPage] = useState(1);
-  const cardsEl = useRef<HTMLDivElement>(null);
-  const [inputWidth, setInputWidth] = useState(0);
   const { ref, bottom } = useScrollListener<HTMLDivElement>({ margin: -1 });
 
   const hasMore = useRef(false);
@@ -37,34 +35,6 @@ export const Products = () => {
     }
     fetch();
   }, [fetchProducts, page]);
-
-  useEffect(() => {
-    if (!cardsEl.current) return;
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const cols = Math.floor(entry.contentRect.width / 290);
-        switch (cols) {
-          case 0:
-          case 1:
-            setInputWidth(264);
-            break;
-          case 2:
-            setInputWidth(553);
-            break;
-          case 3:
-            setInputWidth(846);
-            break;
-          default:
-            setInputWidth(1132);
-        }
-      }
-    });
-    resizeObserver.observe(cardsEl.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     if (bottom && hasMore.current) {
@@ -102,7 +72,7 @@ export const Products = () => {
     >
       {/*<Title>{t('news.title')}</Title>
       <Text>Afficher des news ici</Text>*/}
-      <div className="flex flex-1 flex-col max-w-[1147px]">
+      <div className="flex flex-1 flex-col ">
         <Title className="text-products-xl">
           {t('welcome.title', { user: user?.firstName })}
         </Title>
@@ -128,9 +98,6 @@ export const Products = () => {
               search
               name="query"
               placeholder={t('search.placeholder')}
-              style={{
-                width: inputWidth ? `${inputWidth}px` : undefined,
-              }}
               disabled={searching}
             />
             {found && (
@@ -147,10 +114,10 @@ export const Products = () => {
           </form>
         )}
         <Title className="mt-11">{t('list.title')}</Title>
-        <div ref={cardsEl} className="flex flex-row flex-wrap -ml-[13px]">
+        <div className="flex flex-row flex-wrap -ml-[13px]">
           {filteredProducts.map(({ slug, description, name, icon, href }) => (
             <Link href={href} key={slug}>
-              <a>
+              <a className="w-[100%] 2xl:w-1/5 xl:w-1/4 lg:w-1/3 md:w-1/2">
                 <ProductCard
                   title={localize(name)}
                   description={localize(description)}

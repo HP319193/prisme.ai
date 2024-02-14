@@ -374,7 +374,6 @@ export const Navigation = () => {
     workspace.imports,
     workspace.pages,
   ]);
-  console.log(decodeURIComponent(asPath));
 
   return (
     <navigationContext.Provider value={{ add, highlight: searchQuery }}>

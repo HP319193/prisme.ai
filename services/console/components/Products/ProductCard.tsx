@@ -22,10 +22,7 @@ export const ProductCard = ({
 }: ProductCardProps) => {
   return (
     <div
-      className={`flex  h-[130px] bg-[${bgColor}] rounded m-[13px] items-center ${className}`}
-      style={{
-        width: width || '264px',
-      }}
+      className={`flex h-[130px] bg-[${bgColor}] rounded m-[13px] items-center ${className}`}
     >
       {typeof icon === 'string' ? (
         <div className="flex w-[80px] justify-center">
