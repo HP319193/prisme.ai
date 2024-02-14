@@ -7,7 +7,10 @@ import { Button, Schema, SchemaForm } from '@prisme.ai/design-system';
 import { ButtonProps } from '@prisme.ai/design-system/lib/Components/Button';
 import SingleViewLayout from '../../components/Products/SingleViewLayout';
 
-const SubmitButton = ({ ...props }: ButtonProps) => {
+const SubmitButton = ({
+  updating,
+  ...props
+}: ButtonProps & { updating: boolean }) => {
   const { getState } = useForm();
   const { hasValidationErrors } = getState();
 
@@ -15,7 +18,7 @@ const SubmitButton = ({ ...props }: ButtonProps) => {
     <Button
       variant="primary"
       type="submit"
-      disabled={hasValidationErrors}
+      disabled={hasValidationErrors || updating}
       className="self-center !h-auto font-bold py-[10px] px-[30px] mt-[50px] !text-[20px] !font-bold"
       {...props}
     />
@@ -57,11 +60,17 @@ const Account = () => {
 
   const submit = useCallback(
     async ({ email, ...values }: any) => {
+      if (user.photo && !values.photo) {
+        values.photo = '';
+      }
+      if (user.photo === values.photo) {
+        delete values.photo;
+      }
       setUpdating(true);
       await update(values);
       setUpdating(false);
     },
-    [update]
+    [update, user.photo]
   );
 
   if (!user) {
@@ -78,7 +87,9 @@ const Account = () => {
           schema={schema}
           initialValues={user}
           buttons={[
-            <SubmitButton key="submit">{t('edit.submit')}</SubmitButton>,
+            <SubmitButton key="submit" updating={updating}>
+              {t('edit.submit')}
+            </SubmitButton>,
           ]}
           onSubmit={submit}
           autoFocus

@@ -1,5 +1,5 @@
 import { Api } from '../api';
-import { dataURItoBlob } from '../utils';
+import { dataURItoBlob, isDataURL } from '../utils';
 
 export class UsersEndpoint {
   private id: string;
@@ -13,17 +13,17 @@ export class UsersEndpoint {
   async update(
     data: Partial<Prismeai.User>
   ): Promise<PrismeaiAPI.PatchUser.Responses.$200> {
-    if (data.photo) {
+    if (isDataURL(data.photo)) {
       await this.updatePhoto(data.photo);
+      delete data.photo;
     }
-    delete data.photo;
     return await this.api.patch('/user', data);
   }
 
   async updatePhoto(
     photo: string
   ): Promise<PrismeaiAPI.PostUserPhoto.Responses.$200> {
-    if (typeof photo !== 'string' || !photo.match(/^data\:/)) {
+    if (!isDataURL(photo)) {
       throw new Error('Photo must be a dataurl file');
     }
     const formData = new FormData();

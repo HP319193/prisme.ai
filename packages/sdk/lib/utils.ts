@@ -35,3 +35,7 @@ export function dataURItoBlob(dataURI: string): [Blob, string] {
 
   return [new Blob([ia], { type: mimeString }), fileName];
 }
+
+export function isDataURL(file: any): file is string {
+  return !!(typeof file === 'string' && file.match(/^data\:/));
+}
