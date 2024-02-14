@@ -258,6 +258,26 @@ export const Navigation = () => {
         active: decodeURIComponent(asPath) === `/workspaces/${workspace.id}`,
       },
       {
+        type: 'page',
+        icon: <PageIcon width={20} height={25} />,
+        title: t('workspace.sections.pages'),
+        active: decodeURIComponent(asPath).match(
+          `^\/workspaces\/${workspace.id}\/pages\//`
+        ),
+        items: sortItems(
+          setActive(
+            generateNesting(
+              Object.entries(workspace.pages || {})
+                .filter(filterWithSearchQuery)
+                .map(([slug, page]) =>
+                  processItems({ type: 'page', slug, name: page.name || slug })
+                )
+            )
+          )
+        ),
+        opened: opened.has('page'),
+      },
+      {
         type: 'automation',
         icon: <AutomationIcon width={18} height={25} />,
         title: t('workspace.sections.automations'),
@@ -280,26 +300,6 @@ export const Navigation = () => {
           )
         ),
         opened: opened.has('automation') || searchQuery,
-      },
-      {
-        type: 'page',
-        icon: <PageIcon width={20} height={25} />,
-        title: t('workspace.sections.pages'),
-        active: decodeURIComponent(asPath).match(
-          `^\/workspaces\/${workspace.id}\/pages\//`
-        ),
-        items: sortItems(
-          setActive(
-            generateNesting(
-              Object.entries(workspace.pages || {})
-                .filter(filterWithSearchQuery)
-                .map(([slug, page]) =>
-                  processItems({ type: 'page', slug, name: page.name || slug })
-                )
-            )
-          )
-        ),
-        opened: opened.has('page'),
       },
       {
         type: 'block',
