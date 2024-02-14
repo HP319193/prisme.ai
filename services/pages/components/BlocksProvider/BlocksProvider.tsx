@@ -42,7 +42,9 @@ export const BlocksProvider: FC = ({ children }) => {
           expiresAfter: opts,
         };
       }
-      const [{ url, mimetype, name }] = await api.uploadFiles(file, id, opts);
+      const [{ url, mimetype, name }] = await api
+        .workspaces(id)
+        .uploadFiles(file, opts);
 
       return {
         value: url,

@@ -2,7 +2,6 @@ import {
   AudioOutlined,
   FilePdfOutlined,
   FileTextOutlined,
-  FileUnknownOutlined,
   FileExcelOutlined,
   FilePptOutlined,
   FileWordOutlined,
@@ -225,7 +224,9 @@ export const useSchema = (store: Record<string, any> = {}) => {
 
   const uploadFile = useCallback(
     async (file: string) => {
-      const [{ url, mimetype, name }] = await api.uploadFiles(file, id);
+      const [{ url, mimetype, name }] = await api
+        .workspaces(id)
+        .uploadFiles(file);
 
       return {
         value: url,

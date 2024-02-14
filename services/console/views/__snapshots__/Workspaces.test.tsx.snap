@@ -1,235 +1,279 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render empty 1`] = `
-Array [
+<div
+  className="bg-main-surface flex flex-1 flex-col py-[25px] px-[53px] overflow-auto"
+>
   <div
-    className="mx-4 md:mx-8 lg:mx-32 my-4 md:my-8 lg:my-16"
+    className="flex flex-1 flex-col "
   >
-    <div
-      className="bg-info px-14 py-8 rounded-[15px]"
+    <h2
+      className="text-main-text text-products-lg font-bold mb-2 mt-1 text-products-xl"
     >
-      <div
-        className="text-2xl py-3 font-bold"
-      >
-        workspaces.welcome.title
-      </div>
-      <div
-        className="text-prisme-darkblue"
-      >
-        workspaces.welcome.content
-      </div>
-      <div
-        className="text-accent mt-4 text-sm"
+      workspaces.welcome.title
+    </h2>
+    <p
+      className="text-main-text font-normal mb-2 mt-1 "
+    >
+      workspaces.welcome.description
+    </p>
+    <p
+      className="text-main-text font-normal mb-2 mt-1 "
+    >
+      <span
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "workspaces.welcome.help",
+          }
+        }
+      />
+    </p>
+    <div
+      className="flex flex-col mr-[15px] relative mt-11 mb-12"
+    >
+      <input
+        className="bg-main-element !text-main-text h-[50px] px-[50px] rounded-[5px] outline-none "
+        onChange={[Function]}
+        placeholder="workspaces.search"
+        style={
+          Object {
+            "backgroundImage": "url('/file.svg')",
+            "backgroundPosition": "left 20px top 50%",
+            "backgroundRepeat": "no-repeat",
+          }
+        }
       />
     </div>
+    <h2
+      className="text-main-text text-products-lg font-bold mb-2 mt-1 mt-11"
+    >
+      workspaces.suggestions.title
+    </h2>
     <div
-      className="pt-6"
-    />
-    <div
-      className="pt-10 onboarding-step-2"
+      className="flex flex-row flex-wrap -ml-[13px]"
     >
       <div
-        className="text-xl py-3 font-bold"
-      >
-        workspaces.suggestions.title
-      </div>
-      <div
-        className="flex flex-nowrap -mx-2 sm:flex-col md:flex-row"
+        className="flex relative overflow-hidden flex-1 pb-4 -mb-4 w-[100%]"
       >
         <div
-          className="
-        relative group flex flex-col h-32
-        w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]
-        "
-          onDragLeave={[Function]}
-          onDragOver={[Function]}
-          onDrop={[Function]}
-        >
-          <button
-            className="flex m-2 h-full justify-between overflow-hidden rounded border
-          transition-all
-          hover:-translate-y-1 hover:shadow-lg
-          lol
-                p-6 flex
-                border-accent border-dashed
-                
-                bg-ultra-light-accent items-center !justify-start
-                onboarding-step-3"
-            onClick={[Function]}
-          >
-            <span
-              className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center"
-            >
-              <div />
-            </span>
-            <span
-              className="flex font-bold ml-4 "
-            >
-              create.label
-            </span>
-            <div
-              onClick={[Function]}
-            >
-              <button
-                className="rotate-90"
-                onClick={[Function]}
-              />
-            </div>
-          </button>
-        </div>
-        <div
-          className="flex relative overflow-hidden flex-1 pb-4 -mb-4"
+          className="flex relative overflow-auto flex-1 pb-4 -mb-4 w-[100%]"
+          style={
+            Object {
+              "scrollSnapType": "x mandatory",
+            }
+          }
         >
           <div
-            className="flex relative overflow-auto flex-1 pb-4 -mb-4"
-            style={
-              Object {
-                "scrollSnapType": "x mandatory",
-              }
-            }
-          >
-            <div
-              className="flex flex-1"
-            />
-          </div>
-          <button
-            className="absolute right-0 !text-light-gray focus:outline-none text-xl"
-            onClick={[Function]}
-            style={
-              Object {
-                "top": "calc(50% - 20px)",
-              }
-            }
+            className="flex flex-1"
           />
         </div>
+        <button
+          className="absolute right-0 !text-light-gray focus:outline-none text-xl"
+          onClick={[Function]}
+          style={
+            Object {
+              "top": "calc(50% - 17px)",
+            }
+          }
+        />
       </div>
     </div>
+    <h2
+      className="text-main-text text-products-lg font-bold mb-2 mt-1 mt-11"
+    >
+      workspaces.sectionTitle
+    </h2>
     <div
-      className="pt-24 flex flex-col"
-    />
-  </div>,
-  <div
-    className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"
-  >
-    Prisme.ai v
-    6.8.0
-  </div>,
-]
+      className="flex flex-row flex-wrap -ml-[13px]"
+    >
+      <a
+        className="relative group w-[100%] 2xl:w-1/5 xl:w-1/4 lg:w-1/3 md:w-1/2 overflow-hidden"
+        href="/workspaces/new"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+      >
+        <div
+          className="flex h-[130px] bg-main-element rounded m-[13px] items-center rounded border-dashed border-[1px] border-[1BFBFBF] !bg-transparent"
+        >
+          <div
+            className="bg-accent rounded m-[30px]"
+          >
+            <SvgrURL
+              className="text-white m-[18px]"
+              height={32}
+              width={32}
+            />
+          </div>
+          <div
+            className="flex flex-1 flex-col overflow-hidden"
+          >
+            <div
+              className="text-main-text font-normal mb-2 mt-1 !font-bold !text-main-text overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
+            >
+              create.label
+            </div>
+            <div
+              className="text-main-text font-normal mb-2 mt-1 !text-main-text opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
+            >
+              create.description
+            </div>
+          </div>
+        </div>
+        <div
+          onClick={[Function]}
+        >
+          <button
+            className="flex justify-end p-[30px]"
+            onClick={[Function]}
+          >
+            <SvgrURL
+              className="text-main-text"
+              height={20}
+            />
+          </button>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
 `;
 
 exports[`should render some workspaces 1`] = `
-Array [
+<div
+  className="bg-main-surface flex flex-1 flex-col py-[25px] px-[53px] overflow-auto"
+>
   <div
-    className="mx-4 md:mx-8 lg:mx-32 my-4 md:my-8 lg:my-16"
+    className="flex flex-1 flex-col "
   >
-    <div
-      className="bg-info px-14 py-8 rounded-[15px]"
+    <h2
+      className="text-main-text text-products-lg font-bold mb-2 mt-1 text-products-xl"
     >
-      <div
-        className="text-2xl py-3 font-bold"
-      >
-        workspaces.welcome.title
-      </div>
-      <div
-        className="text-prisme-darkblue"
-      >
-        workspaces.welcome.content
-      </div>
-      <div
-        className="text-accent mt-4 text-sm"
+      workspaces.welcome.title
+    </h2>
+    <p
+      className="text-main-text font-normal mb-2 mt-1 "
+    >
+      workspaces.welcome.description
+    </p>
+    <p
+      className="text-main-text font-normal mb-2 mt-1 "
+    >
+      <span
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "workspaces.welcome.help",
+          }
+        }
+      />
+    </p>
+    <div
+      className="flex flex-col mr-[15px] relative mt-11 mb-12"
+    >
+      <input
+        className="bg-main-element !text-main-text h-[50px] px-[50px] rounded-[5px] outline-none "
+        onChange={[Function]}
+        placeholder="workspaces.search"
+        style={
+          Object {
+            "backgroundImage": "url('/file.svg')",
+            "backgroundPosition": "left 20px top 50%",
+            "backgroundRepeat": "no-repeat",
+          }
+        }
       />
     </div>
+    <h2
+      className="text-main-text text-products-lg font-bold mb-2 mt-1 mt-11"
+    >
+      workspaces.suggestions.title
+    </h2>
     <div
-      className="pt-6"
-    />
-    <div
-      className="pt-10 onboarding-step-2"
+      className="flex flex-row flex-wrap -ml-[13px]"
     >
       <div
-        className="text-xl py-3 font-bold"
-      >
-        workspaces.suggestions.title
-      </div>
-      <div
-        className="flex flex-nowrap -mx-2 sm:flex-col md:flex-row"
+        className="flex relative overflow-hidden flex-1 pb-4 -mb-4 w-[100%]"
       >
         <div
-          className="
-        relative group flex flex-col h-32
-        w-[100%] md:w-[calc(100%/2)] lg:w-[calc(100%/3)] xl:w-[calc(100%/4)]
-        "
-          onDragLeave={[Function]}
-          onDragOver={[Function]}
-          onDrop={[Function]}
-        >
-          <button
-            className="flex m-2 h-full justify-between overflow-hidden rounded border
-          transition-all
-          hover:-translate-y-1 hover:shadow-lg
-          lol
-                p-6 flex
-                border-accent border-dashed
-                
-                bg-ultra-light-accent items-center !justify-start
-                onboarding-step-3"
-            onClick={[Function]}
-          >
-            <span
-              className="flex min-w-[50px] bg-accent p-4 rounded items-center justify-center"
-            >
-              <div />
-            </span>
-            <span
-              className="flex font-bold ml-4 "
-            >
-              create.label
-            </span>
-            <div
-              onClick={[Function]}
-            >
-              <button
-                className="rotate-90"
-                onClick={[Function]}
-              />
-            </div>
-          </button>
-        </div>
-        <div
-          className="flex relative overflow-hidden flex-1 pb-4 -mb-4"
+          className="flex relative overflow-auto flex-1 pb-4 -mb-4 w-[100%]"
+          style={
+            Object {
+              "scrollSnapType": "x mandatory",
+            }
+          }
         >
           <div
-            className="flex relative overflow-auto flex-1 pb-4 -mb-4"
-            style={
-              Object {
-                "scrollSnapType": "x mandatory",
-              }
-            }
-          >
-            <div
-              className="flex flex-1"
-            />
-          </div>
-          <button
-            className="absolute right-0 !text-light-gray focus:outline-none text-xl"
-            onClick={[Function]}
-            style={
-              Object {
-                "top": "calc(50% - 20px)",
-              }
-            }
+            className="flex flex-1"
           />
         </div>
+        <button
+          className="absolute right-0 !text-light-gray focus:outline-none text-xl"
+          onClick={[Function]}
+          style={
+            Object {
+              "top": "calc(50% - 17px)",
+            }
+          }
+        />
       </div>
     </div>
+    <h2
+      className="text-main-text text-products-lg font-bold mb-2 mt-1 mt-11"
+    >
+      workspaces.sectionTitle
+    </h2>
     <div
-      className="pt-24 flex flex-col"
-    />
-  </div>,
-  <div
-    className="absolute bottom-1 right-1 text-gray mr-1 text-[10px]"
-  >
-    Prisme.ai v
-    6.8.0
-  </div>,
-]
+      className="flex flex-row flex-wrap -ml-[13px]"
+    >
+      <a
+        className="relative group w-[100%] 2xl:w-1/5 xl:w-1/4 lg:w-1/3 md:w-1/2 overflow-hidden"
+        href="/workspaces/new"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onTouchStart={[Function]}
+      >
+        <div
+          className="flex h-[130px] bg-main-element rounded m-[13px] items-center rounded border-dashed border-[1px] border-[1BFBFBF] !bg-transparent"
+        >
+          <div
+            className="bg-accent rounded m-[30px]"
+          >
+            <SvgrURL
+              className="text-white m-[18px]"
+              height={32}
+              width={32}
+            />
+          </div>
+          <div
+            className="flex flex-1 flex-col overflow-hidden"
+          >
+            <div
+              className="text-main-text font-normal mb-2 mt-1 !font-bold !text-main-text overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
+            >
+              create.label
+            </div>
+            <div
+              className="text-main-text font-normal mb-2 mt-1 !text-main-text opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
+            >
+              create.description
+            </div>
+          </div>
+        </div>
+        <div
+          onClick={[Function]}
+        >
+          <button
+            className="flex justify-end p-[30px]"
+            onClick={[Function]}
+          >
+            <SvgrURL
+              className="text-main-text"
+              height={20}
+            />
+          </button>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
 `;

@@ -1,9 +1,14 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, {
+  FC,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Layout, Loading, notification } from '@prisme.ai/design-system';
+import { Loading, notification } from '@prisme.ai/design-system';
 import { useTranslation } from 'next-i18next';
-import HeaderWorkspace from '../../components/HeaderWorkspace/HeaderWorkspace';
 import WorkspaceSource from '../../views/WorkspaceSource';
 import workspaceLayoutContext, {
   DisplayedSourceType,
@@ -12,9 +17,8 @@ import workspaceLayoutContext, {
 import useLocalizedText from '../../utils/useLocalizedText';
 import Storage from '../../utils/Storage';
 import AppsStore from '../../views/AppsStore';
-import Navigation from './Navigation';
+import Navigation from './Navigation/Navigation';
 import { useWorkspace } from '../../providers/Workspace';
-import Expand from '../../components/Navigation/Expand';
 import { incrementName } from '../../utils/incrementName';
 import { BlocksProvider } from '../../components/BlocksProvider';
 import api, { ApiError } from '../../utils/api';
@@ -22,6 +26,23 @@ import Tabs from './Tabs';
 import { TrackingCategory, useTracking } from '../../components/Tracking';
 import { usePermissions } from '../../components/PermissionsProvider';
 import WorkspaceBlocksProvider from '../../providers/WorkspaceBlocksProvider';
+import { BlockProvider, builtinBlocks } from '@prisme.ai/blocks';
+import EditDetails from './EditDetails';
+import EditShare from './EditShare';
+import WorkspaceIcon from '../../icons/workspace-simple.svgr';
+
+const { ProductLayout } = builtinBlocks;
+
+const WithProductLayoutContext = ({
+  children,
+}: {
+  children: (
+    props: ReturnType<typeof ProductLayout.useProductLayoutContext>
+  ) => ReactElement;
+}) => {
+  const context = ProductLayout.useProductLayoutContext();
+  return children(context);
+};
 
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
@@ -159,36 +180,52 @@ export const WorkspaceLayout: FC = ({ children }) => {
     [trackEvent]
   );
 
-  const createAutomationHandler = useCallback(async () => {
-    trackEvent({
-      category: 'Workspace',
-      name: 'Create Automation from navigation',
-      action: 'click',
-    });
-    const name = incrementName(
-      t(`automations.create.defaultName`),
-      Object.values(workspace.automations || {}).map(({ name }) =>
-        localize(name)
-      )
-    );
-    const createdAutomation = await createAutomation({
-      name,
-      do: [],
-    });
-    if (createdAutomation) {
-      await router.push(
-        `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
-      );
-    }
-  }, [
-    createAutomation,
-    localize,
-    router,
-    t,
-    trackEvent,
-    workspace.automations,
-    workspace.id,
-  ]);
+  const createAutomationHandler = useCallback(
+    async ({ slug, name }: Pick<Prismeai.Automation, 'slug' | 'name'>) => {
+      trackEvent({
+        category: 'Workspace',
+        name: 'Create Automation from navigation',
+        action: 'click',
+      });
+      try {
+        const createdAutomation = await createAutomation({
+          slug,
+          name:
+            name ||
+            incrementName(
+              t(`automations.create.defaultName`),
+              Object.values(workspace.automations || {}).map(({ name }) =>
+                localize(name)
+              )
+            ),
+          do: [],
+        });
+        if (createdAutomation) {
+          await router.push(
+            `/workspaces/${workspace.id}/automations/${createdAutomation.slug}`
+          );
+        }
+        return true;
+      } catch (e: any) {
+        if (e.error === 'AlreadyUsedError') {
+          notification.error({
+            message: t('alreadyUsed', { ns: 'errors' }),
+            placement: 'bottomRight',
+          });
+        }
+      }
+      return false;
+    },
+    [
+      createAutomation,
+      localize,
+      router,
+      t,
+      trackEvent,
+      workspace.automations,
+      workspace.id,
+    ]
+  );
 
   const createPageHandler: WorkspaceLayoutContext['createPage'] = useCallback(
     async ({ slug, public: isPublic, ...page } = {}) => {
@@ -199,35 +236,44 @@ export const WorkspaceLayout: FC = ({ children }) => {
           : 'Create Page from navigation',
         action: 'click',
       });
-      const name = slug
-        ? t(`pages.create.template.${slug}`)
-        : incrementName(
-            t(`pages.create.defaultName`),
-            Object.values(workspace.pages || {}).map(({ name }) =>
-              localize(name)
-            )
-          );
-      const createdPage = await createPage({
-        name: {
-          [language]: name,
-        },
-        slug,
-        blocks: [],
-        ...page,
-      });
-      if (isPublic && createdPage && createdPage.id) {
-        await addUserPermissions('pages', createdPage.id, {
-          target: { public: true },
-          permissions: {
-            policies: { read: true },
-          },
-        });
-      }
-      if (createdPage) {
-        await router.push(
-          `/workspaces/${workspace.id}/pages/${createdPage.slug}`
+      const name =
+        t(`pages.create.template.${slug}`, { defaultValue: null }) ||
+        incrementName(
+          t(`pages.create.defaultName`),
+          Object.values(workspace.pages || {}).map(({ name }) => localize(name))
         );
+      try {
+        const createdPage = await createPage({
+          name: {
+            [language]: name,
+          },
+          slug,
+          blocks: [],
+          ...page,
+        });
+        if (isPublic && createdPage && createdPage.id) {
+          await addUserPermissions('pages', createdPage.id, {
+            target: { public: true },
+            permissions: {
+              policies: { read: true },
+            },
+          });
+        }
+        if (createdPage) {
+          await router.push(
+            `/workspaces/${workspace.id}/pages/${createdPage.slug}`
+          );
+        }
+        return true;
+      } catch (e: any) {
+        if (e.error === 'AlreadyUsedError') {
+          notification.error({
+            message: t('alreadyUsed', { ns: 'errors' }),
+            placement: 'bottomRight',
+          });
+        }
       }
+      return false;
     },
     [
       addUserPermissions,
@@ -251,29 +297,56 @@ export const WorkspaceLayout: FC = ({ children }) => {
     });
   }, [trackEvent]);
 
-  const createBlockHandler = useCallback(async () => {
-    trackEvent({
-      category: 'Workspace',
-      name: 'Create Block from navigation',
-      action: 'click',
-    });
-    const name = incrementName(
-      t(`blocks.create.defaultName`),
-      Object.values(workspace.blocks || {}).map(({ name }) => localize(name))
-    );
-    const createdBlock = await createBlock({ slug: name, name, blocks: [] });
-    if (createdBlock) {
-      await router.push(`/workspaces/${workspace.id}/blocks/${name}`);
-    }
-  }, [
-    createBlock,
-    localize,
-    router,
-    t,
-    trackEvent,
-    workspace.blocks,
-    workspace.id,
-  ]);
+  const createBlockHandler: WorkspaceLayoutContext['createBlock'] = useCallback(
+    async ({ slug, name }) => {
+      trackEvent({
+        category: 'Workspace',
+        name: 'Create Block from navigation',
+        action: 'click',
+      });
+
+      try {
+        if (workspace?.blocks?.[slug]) {
+          const e: any = new Error();
+          e.error = 'AlreadyUsedError';
+          throw e;
+        }
+        const createdBlock = await createBlock({
+          slug,
+          name:
+            name ||
+            incrementName(
+              t(`blocks.create.defaultName`),
+              Object.values(workspace.blocks || {}).map(({ name }) =>
+                localize(name)
+              )
+            ),
+          blocks: [],
+        });
+        if (createdBlock) {
+          await router.push(`/workspaces/${workspace.id}/blocks/${name}`);
+        }
+        return true;
+      } catch (e: any) {
+        if (e.error === 'AlreadyUsedError') {
+          notification.error({
+            message: t('alreadyUsed', { ns: 'errors' }),
+            placement: 'bottomRight',
+          });
+        }
+      }
+      return false;
+    },
+    [
+      createBlock,
+      localize,
+      router,
+      t,
+      trackEvent,
+      workspace.blocks,
+      workspace.id,
+    ]
+  );
 
   return (
     <TrackingCategory category="Workspace">
@@ -310,66 +383,87 @@ export const WorkspaceLayout: FC = ({ children }) => {
                 })}
               />
             </Head>
-            <div
-              className={`
-          absolute top-[72px] bottom-0 right-0 left-0
-          bg-white
-          flex flex-1
-          transition-transform
-          transition-duration-200
-          transition-ease-in
-          z-20
-          ${displaySourceView ? '' : '-translate-y-full'}
-        `}
-            >
-              {mountSourceComponent && (
+            {mountSourceComponent && (
+              <div
+                className={`absolute z-[10000] top-0 left-0 right-0 bottom-0 bg-white transition-transform transition-duration-200 transition-ease-in ${
+                  displaySourceView ? '' : '-translate-x-full'
+                }`}
+              >
                 <WorkspaceSource
                   key={sourceDisplayed}
                   sourceDisplayed={sourceDisplayed}
                   onLoad={() => setDisplaySourceView(true)}
                 />
-              )}
-            </div>
-            <Layout Header={<HeaderWorkspace />} className="max-w-full">
-              <AppsStore
-                visible={appStoreVisible}
-                onCancel={() => setAppStoreVisible(false)}
-              />
-              <div className="h-full flex flex-row">
-                <Layout
-                  className={`${
-                    fullSidebar ? 'max-w-xs' : 'max-w-[4.2rem]'
-                  } transition-all p-0`}
-                >
-                  <div className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden onboarding-step-4">
-                    <Navigation
-                      onCreateAutomation={() => createAutomationHandler()}
-                      onCreatePage={() => createPageHandler()}
-                      onInstallApp={() => installAppHandler()}
-                      onCreateBlock={() => createBlockHandler()}
-                      onExpand={() => setFullSidebar(true)}
-                      className="max-h-[calc(100%-3rem)]"
-                    />
-                    <Expand
-                      expanded={fullSidebar}
-                      onToggle={() => {
-                        trackEvent({
-                          name: `${
-                            fullSidebar ? 'Minimize' : 'Expand'
-                          } sidebar`,
-                          action: 'click',
-                        });
-                        setFullSidebar(!fullSidebar);
-                      }}
-                    />
-                  </div>
-                </Layout>
-                <div className="flex h-full flex-col flex-1 min-w-[1px] max-w-full onboarding-step-5">
-                  <Tabs />
-                  {creatingAutomation || creatingPage ? <Loading /> : children}
-                </div>
               </div>
-            </Layout>
+            )}
+            <AppsStore
+              visible={appStoreVisible}
+              onCancel={() => setAppStoreVisible(false)}
+            />
+            <BlockProvider
+              config={{
+                sidebar: {
+                  header: {
+                    logo: (
+                      <WithProductLayoutContext>
+                        {({ toggleSidebar }) => (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleSidebar();
+                            }}
+                          >
+                            {workspace.photo ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={workspace.photo}
+                                alt={localize(workspace.name)}
+                              />
+                            ) : (
+                              <WorkspaceIcon height={24} width={24} />
+                            )}
+                          </button>
+                        )}
+                      </WithProductLayoutContext>
+                    ),
+                    title: localize(workspace.name),
+                    tooltip: localize(workspace.name),
+                    href: '/workspaces',
+                    back: '/workspaces',
+                    buttons: (
+                      <>
+                        <EditDetails className="product-layout-sidebar__header-button">
+                          <button>
+                            <ProductLayout.IconGear />
+                          </button>
+                        </EditDetails>
+                        <EditShare className="product-layout-sidebar__header-button">
+                          <button>
+                            <ProductLayout.IconShare />
+                          </button>
+                        </EditShare>
+                      </>
+                    ),
+                  },
+                  items: <Navigation />,
+                  opened: true,
+                },
+                content: (
+                  <div className="bg-white flex flex-1 flex-col max-h-full">
+                    <Tabs />
+                    {creatingAutomation || creatingPage ? (
+                      <Loading />
+                    ) : (
+                      children
+                    )}
+                  </div>
+                ),
+              }}
+            >
+              <ProductLayout />
+            </BlockProvider>
           </WorkspaceBlocksProvider>
         </BlocksProvider>
       </workspaceLayoutContext.Provider>

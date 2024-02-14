@@ -32,6 +32,8 @@ const builtInBlocksOrder = [
   'TabsView',
 ];
 
+const ignoredBlocks = ['ProductLayout'];
+
 export const useBlocks = () => {
   const { t } = useTranslation('workspaces');
   const { workspace: { name, blocks: workspaceBlocks, photo, imports } = {} } =
@@ -40,6 +42,7 @@ export const useBlocks = () => {
   const available: BlockInCatalog[] = useMemo(() => {
     const blocks: BlockInCatalog[] = [
       ...Object.keys(builtinBlocks)
+        .filter((key) => !ignoredBlocks.includes(key))
         .sort((a, b) => {
           const indexA = builtInBlocksOrder.indexOf(a);
           const indexB = builtInBlocksOrder.indexOf(b);

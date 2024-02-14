@@ -30,5 +30,58 @@
   "title": {
     "myAccount": "Mon compte · Prisme.ai",
     "workspaceManagement": "{{workspaceName}} · Gestion · Prisme.ai"
+  },
+  "header": {
+    "notifications": {
+      "title": "Notifications"
+    },
+    "help": {
+      "title": "Aide"
+    },
+    "products": {
+      "title": "Produits",
+      "seeall": "Voir tous les produits"
+    },
+    "user": {
+      "profile": {
+        "title": "Voir le profil"
+      },
+      "settings": {
+        "title": "Paramètres du compte"
+      },
+      "shortcuts": {
+        "title": "Mes raccourcis"
+      },
+      "signout": {
+        "title": "Déconnexion"
+      }
+    }
+  },
+  "sidebar": {
+    "expand": "Étendre",
+    "expand_in": "Réduire",
+    "unpin": {
+      "tooltip": "Enlever le raccourci",
+      "confirm": "Voulez vous enlever ce raccourci de votre espace ? Vous pourrez toujours retrouver le produit depuis le catalogue.",
+      "yes": "Oui",
+      "no": "Non"
+    }
+  },
+  "edit": {
+    "email": {
+      "label": "Email de connexion"
+    },
+    "firstName": {
+      "label": "Prénom"
+    },
+    "lastName": {
+      "label": "Nom"
+    },
+    "photo": {
+      "label": "Photo"
+    },
+    "submit": "Enregistrer",
+    "success": "Votre profil a bien été mis à jour",
+    "error": "Une erreur esr survenue. Veuillez contacter un administrateur"
   }
 }

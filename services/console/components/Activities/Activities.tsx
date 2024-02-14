@@ -10,7 +10,6 @@ import { useQueryString } from '../../providers/QueryStringProvider';
 import { useWorkspace } from '../../providers/Workspace';
 import { useEvents } from '../../providers/Events';
 import EventsList from './EventsList';
-import EmptyActivities from './EmptyActivities';
 import {
   ExceptionOutlined,
   PauseCircleOutlined,
@@ -173,7 +172,6 @@ export const Activities = () => {
             </button>
           </Tooltip>
         </div>
-        {!loading && isVirgin && <EmptyActivities />}
         {!loading && noResult && (
           <div className="flex flex-1 justify-center items-center">
             <div className="flex flex-1 justify-center items-center flex-col">

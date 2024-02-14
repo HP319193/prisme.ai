@@ -14,5 +14,8 @@
   "powered": "Powered by Prisme.ai",
   "yes": "Yes",
   "no": "No",
-  "duplicate": "Duplicate"
+  "duplicate": "Duplicate",
+  "schemaForm": {
+    "uploadLabel": "Choose a file"
+  }
 }

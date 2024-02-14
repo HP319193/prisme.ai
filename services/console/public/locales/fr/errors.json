@@ -5,5 +5,7 @@
   "share_CollaboratorNotFound": "Cet email ne correspond à aucun utilisateur existant.",
   "openapi": "{{path}} {{context}}",
   "openapi_should NOT have additional properties": "{{path}} est invalide",
-  "openapi_should be object": "{{path}} doit être un objet"
+  "openapi_should be object": "{{path}} doit être un objet",
+  "alreadyUsed": "Ce nom technique existe déjà. Veuillez en choisir un autre.",
+  "PayloadTooLarge": "Fichier trop volumineux"
 }

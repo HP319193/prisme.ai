@@ -37,6 +37,7 @@ const Template: Story<SchemaFormProps> = (props) => {
         initialValues={value}
         onSubmit={setValue}
         onChange={setValue}
+        autoFocus
         locales={{
           freeAdditionalPropertiesLabel: 'Free additional properties',
         }}
