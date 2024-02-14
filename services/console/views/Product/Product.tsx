@@ -22,7 +22,16 @@ export const Product = memo(function Product() {
       token: api.token,
     });
 
-    const listener = ({ data: { type = '', path = '' } = {} }) => {
+    const listener = ({
+      origin,
+      data: { type = '', path = '' } = {},
+    }: MessageEvent) => {
+      const { host: hostOrigin } = new URL(origin);
+      const { host: hostProduct } = new URL(productUrl);
+      if (hostOrigin != hostProduct) {
+        throw new Error('invalid origin');
+      }
+
       if (type !== 'page.navigate' || !path) return;
       const [prefix] = window.location.pathname.split(`product/${productSlug}`);
       const rootPath = `${prefix}product/${productSlug}`;
@@ -32,7 +41,7 @@ export const Product = memo(function Product() {
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, [productSlug, replace]);
+  }, [productSlug, productUrl, replace]);
 
   if (!productUrl) return null;
   return <iframe ref={iframe} src={productUrl} className="h-full" allow="*" />;
