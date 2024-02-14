@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Storage from '../../utils/Storage';
 import Button from './Button';
-import HistoryKeeper from './HistoryKeeper';
 import { builderProduct, Product, useProducts } from '../../providers/Products';
 import burgerIcon from '../../public/images/sidebar-burger.svg';
 import unpinIcon from '../../public/images/icon-unpin.svg';
@@ -21,7 +20,7 @@ function getProductSlug(path: string) {
   return slug;
 }
 
-export const ProductsSidbar = () => {
+export const ProductsSidebar = () => {
   const { t } = useTranslation('user');
   const [expanded, setExpanded] = useState(!!Storage.get('sidebarExpanded'));
   const { user, updateMeta } = useUser();
@@ -113,7 +112,7 @@ export const ProductsSidbar = () => {
 
   return (
     <div
-      className={`flex flex-col bg-[#E6EFFF] py-[31px] overflow-hidden transition-all`}
+      className={`flex flex-col bg-layout-surface py-[31px] overflow-hidden transition-all`}
       style={{
         width: expanded ? '300px' : '70px',
       }}
@@ -165,4 +164,4 @@ export const ProductsSidbar = () => {
   );
 };
 
-export default ProductsSidbar;
+export default ProductsSidebar;

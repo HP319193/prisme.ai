@@ -37,7 +37,7 @@ const defaultStyles = `:block {
   display: flex;
   flex-direction: column;
   flex: none;
-  background-color: #020B1A;
+  background-color: #1A2537;
   width: 81px;
   overflow: hidden;
   color: var(--text-color);

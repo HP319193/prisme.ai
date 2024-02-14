@@ -1573,7 +1573,7 @@ declare namespace Prismeai {
                  */
                 output?: string;
                 /**
-                 * Instead of blocking until we can output the entire response, emit individual response parts through events
+                 * By default, SSE chunks are written to the output variable which can be read in real time using repeat instruction. Change this behaviour to emit chunks as individual events instead.
                  */
                 stream?: {
                     event: string;
@@ -1676,7 +1676,7 @@ declare namespace Prismeai {
              */
             output?: string;
             /**
-             * Instead of blocking until we can output the entire response, emit individual response parts through events
+             * By default, SSE chunks are written to the output variable which can be read in real time using repeat instruction. Change this behaviour to emit chunks as individual events instead.
              */
             stream?: {
                 event: string;

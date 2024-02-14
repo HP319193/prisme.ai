@@ -67,7 +67,7 @@ export const Products = () => {
 
   return (
     <div
-      className="bg-products-bg flex flex-1 flex-col py-[25px] px-[53px] overflow-auto"
+      className="bg-main-surface flex flex-1 flex-col py-[25px] px-[53px] overflow-auto"
       ref={ref}
     >
       {/*<Title>{t('news.title')}</Title>
@@ -95,20 +95,21 @@ export const Products = () => {
             <Input
               value={searchQuery}
               onChange={({ target: { value } }) => setSearchQuery(value)}
-              search
+              search={!searching}
               name="query"
               placeholder={t('search.placeholder')}
               disabled={searching}
             />
             {found && (
               <button
+                type="button"
                 className="absolute top-[19px] right-[15px]"
                 onClick={() => {
                   setSearchQuery('');
                   setFound(null);
                 }}
               >
-                <CloseIcon />
+                <CloseIcon className="text-main-text" />
               </button>
             )}
           </form>
@@ -129,10 +130,7 @@ export const Products = () => {
         </div>
       </div>
       {hasMore.current && (
-        <button
-          className="text-products-text"
-          onClick={() => setPage(page + 1)}
-        >
+        <button className="text-main-text" onClick={() => setPage(page + 1)}>
           {t('list.more')}
         </button>
       )}

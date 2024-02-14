@@ -14,7 +14,7 @@ export const Title = ({
 }: TitleProps) => {
   return (
     <As
-      className={`text-products-text text-products-lg font-bold mb-2 mt-1 ${className}`}
+      className={`text-main-text text-products-lg font-bold mb-2 mt-1 ${className}`}
       {...props}
     />
   );

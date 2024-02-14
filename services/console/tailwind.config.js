@@ -33,9 +33,17 @@ module.exports = {
         'products-xl': '24px',
       },
       colors: {
-        'products-bg': '#171C24',
-        'products-text': '#F9F9F9',
-        'product-text-on-white': '#171A35',
+        // v2
+        'layout-surface': 'var(--layout-surface)',
+        'main-surface': 'var(--main-surface)',
+        'main-element': 'var(--main-element)',
+        'main-text': 'var(--main-text)',
+        'main-link': 'var(--main-link)',
+        primary: 'var(--primary)',
+        'primary-contrast': 'var(--primary-contrast)',
+        button: 'var(--button)',
+
+        // v1
         // Antdesign secondary text color
         gray: 'var(--gray-color)',
         'light-gray': 'var(--light-gray-color)',

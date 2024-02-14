@@ -50,7 +50,8 @@
       "toast": "le workspace a bien été supprimé"
     },
     "duplicate": {
-      "label": "Dupliquer"
+      "label": "Dupliquer",
+      "duplicating": "Duplication en cours…"
     },
     "create": {
       "label": "Créer un nouveau Workspace vide",

@@ -21,7 +21,7 @@ import ImportIcon from '../icons/import.svgr';
 import CopyIcon from '../icons/copy.svgr';
 import TrashIcon from '../icons/trash.svgr';
 import { stringToHexaColor } from '../utils/strings';
-import { Dropdown, Menu, notification } from 'antd';
+import { Dropdown, Menu, notification, Tooltip } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import ConfirmButton from '../components/ConfirmButton';
 
@@ -35,13 +35,7 @@ const DftWorkspaceIcon = ({ color = 'black' }: { color?: string }) => (
   </div>
 );
 
-const MenuInCard = ({
-  items,
-  color = 'text-products-bg',
-}: {
-  items: ItemType[];
-  color?: string;
-}) => {
+const MenuInCard = ({ items }: { items: ItemType[]; color?: string }) => {
   return (
     <div onClick={(e) => e.stopPropagation()}>
       <Dropdown
@@ -53,7 +47,7 @@ const MenuInCard = ({
           onClick={(e) => e.preventDefault()}
           className="flex justify-end p-[30px]"
         >
-          <ThreeDotsIcon height={20} className={color} />
+          <ThreeDotsIcon height={20} className="text-main-text" />
         </button>
       </Dropdown>
     </div>
@@ -219,27 +213,6 @@ export const WorkspacesView = () => {
     ],
     [duplicating, handleDeleteWorkspace, handleDuplicateWorkspace, t]
   );
-  const getSuggestionMenu = useCallback(
-    (workspaceId: string): ItemType[] => [
-      {
-        key: 'duplicate',
-        label: (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (duplicating.has(workspaceId)) return;
-              handleDuplicateWorkspace(workspaceId);
-            }}
-            className="focus:outline-none flex items-center w-[100%]"
-          >
-            {duplicating.has(workspaceId) ? <LoadingOutlined /> : <CopyIcon />}
-            <span className="ml-3">{t('workspace.duplicate.label')}</span>
-          </button>
-        ),
-      },
-    ],
-    [duplicating, handleDuplicateWorkspace, t]
-  );
   const createMenu: ItemType[] = useMemo(
     () => [
       {
@@ -290,7 +263,7 @@ export const WorkspacesView = () => {
   }, []);
 
   return (
-    <div className="bg-products-bg flex flex-1 flex-col py-[25px] px-[53px] overflow-auto">
+    <div className="bg-main-surface flex flex-1 flex-col py-[25px] px-[53px] overflow-auto">
       <div className="flex flex-1 flex-col ">
         <Title className="text-products-xl">
           {t('workspaces.welcome.title')}
@@ -329,9 +302,35 @@ export const WorkspacesView = () => {
                       <DftWorkspaceIcon color={`#${stringToHexaColor(name)}`} />
                     )
                   }
-                  width="400px"
                 />
-                <MenuInCard items={getSuggestionMenu(id)} />
+                <Tooltip
+                  title={
+                    duplicating.has(id)
+                      ? t('workspace.duplicate.duplicating')
+                      : t('workspace.duplicate.label')
+                  }
+                  placement="left"
+                >
+                  <button
+                    className="absolute bottom-[30px] right-[30px]"
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (duplicating.has(id)) return;
+                      handleDuplicateWorkspace(id);
+                    }}
+                  >
+                    {duplicating.has(id) ? (
+                      <LoadingOutlined className="!text-main-text [&>svg]:w-[24px] [&>svg]:h-[24px]" />
+                    ) : (
+                      <CopyIcon
+                        className="text-main-text"
+                        width={24}
+                        height={24}
+                      />
+                    )}
+                  </button>
+                </Tooltip>
               </div>
             ))}
           </FadeScroll>
@@ -355,12 +354,9 @@ export const WorkspacesView = () => {
                     />
                   </div>
                 }
-                width="400px"
-                bgColor="transparent"
-                color="white"
-                className="rounded border-dashed border-[1px] border-[1BFBFBF]"
+                className="rounded border-dashed border-[1px] border-[1BFBFBF] !bg-transparent"
               />
-              <MenuInCard items={createMenu} color="text-white" />
+              <MenuInCard items={createMenu} />
             </a>
           </Link>
           {filteredWorkspaces.map(({ id, description, name, photo }) => (
@@ -374,9 +370,11 @@ export const WorkspacesView = () => {
                       <DftWorkspaceIcon color={`#${stringToHexaColor(name)}`} />
                     )
                   }
-                  width="400px"
                 />
                 <MenuInCard items={getWorkspaceMenu(id)} />
+                <div className="absolute bottom-[30px] right-[30px] text-main-text underline">
+                  {t('edit.label')}
+                </div>
               </a>
             </Link>
           ))}

@@ -7,7 +7,7 @@ import bellIcon from '../../public/images/header-bell.svg';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import Avatar from './Avatar';
-import { ProductsSidbar } from './ProductsSidebar';
+import { ProductsSidebar } from './ProductsSidebar';
 import { Dropdown } from 'antd';
 import MenuUser from './MenuUser';
 import MenuProducts from './MenuProducts';
@@ -42,8 +42,8 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
 
   return (
     <ProductsProvider>
-      <div className="flex flex-col flex-1 min-h-full">
-        <div className="flex flex-row bg-[#0A1D3B] h-[70px] pl-[24px] justify-between">
+      <div className="dark flex flex-col flex-1 min-h-full">
+        <div className="flex flex-row bg-layout-surface h-[70px] pl-[24px] justify-between">
           <Link href="/">
             <a className="flex">
               <Image src={logo} alt="Prisme.ai" />
@@ -123,7 +123,7 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
           </div>
         </div>
         <div className="flex flex-row flex-1 max-h-[calc(100vh-70px)] max-w-[100vw]">
-          <ProductsSidbar />
+          <ProductsSidebar />
           <div className="flex flex-col flex-1 relative overflow-hidden">
             {<WorkspaceBuilder>{children}</WorkspaceBuilder>}
           </div>

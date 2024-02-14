@@ -1,28 +1,30 @@
 import { Tooltip } from 'antd';
-import { ReactNode } from 'react';
-import Text from './Text';
+import { ReactNode, useRef } from 'react';
+import { textClassName } from './Text';
 
 interface ProductCardProps {
   icon: string | ReactNode;
   title: string;
   description: string;
-  width?: string;
-  bgColor?: string;
-  color?: string;
   className?: string;
 }
 export const ProductCard = ({
   icon,
   title,
   description,
-  width,
-  bgColor = 'white',
-  color,
   className = '',
 }: ProductCardProps) => {
+  const titleRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+
+  function isOverflowing(el: HTMLElement | null) {
+    if (!el) return false;
+    return el.offsetWidth < el.scrollWidth;
+  }
+
   return (
     <div
-      className={`flex h-[130px] bg-[${bgColor}] rounded m-[13px] items-center ${className}`}
+      className={`flex h-[130px] bg-main-element rounded m-[13px] items-center ${className}`}
     >
       {typeof icon === 'string' ? (
         <div className="flex w-[80px] justify-center">
@@ -34,28 +36,26 @@ export const ProductCard = ({
       )}
       <div className="flex flex-1 flex-col overflow-hidden">
         <Tooltip
-          title={title.length > 50 ? title : undefined}
+          title={isOverflowing(titleRef.current) ? title : undefined}
           placement="bottom"
         >
-          <Text
-            className={`!font-bold ${
-              color ? `!text-[${color}]` : '!text-product-text-on-white'
-            } overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]`}
+          <div
+            ref={titleRef}
+            className={`${textClassName} !font-bold !text-main-text overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]`}
           >
             {title}
-          </Text>
+          </div>
         </Tooltip>
         <Tooltip
-          title={description.length > 50 ? description : undefined}
+          title={isOverflowing(textRef.current) ? description : undefined}
           placement="bottom"
         >
-          <Text
-            className={`${
-              color ? `!text-[${color}]` : '!text-product-text-on-white'
-            } opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]`}
+          <div
+            ref={textRef}
+            className={`${textClassName} !text-main-text opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]`}
           >
             {description}
-          </Text>
+          </div>
         </Tooltip>
       </div>
     </div>

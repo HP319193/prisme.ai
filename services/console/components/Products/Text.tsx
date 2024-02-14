@@ -5,13 +5,10 @@ interface TextProps extends HTMLAttributes<HTMLParagraphElement> {
   className?: string;
 }
 
+export const textClassName = 'text-main-text font-normal mb-2 mt-1';
+
 export const Text = ({ as: As = 'p', className = '', ...props }: TextProps) => {
-  return (
-    <As
-      className={`text-products-text text-products-base font-normal mb-2 mt-1 ${className}`}
-      {...props}
-    />
-  );
+  return <As className={`${textClassName} ${className}`} {...props} />;
 };
 
 export default Text;
