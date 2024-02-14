@@ -9,6 +9,7 @@ import IconGear from './IconGear';
 import IconHome from './IconHome';
 import IconShare from './IconShare';
 import IconCharts from './IconCharts';
+import Content from './Content';
 
 export const ProductLayout = ({
   sidebar,
@@ -19,7 +20,7 @@ export const ProductLayout = ({
     <ProductLayoutProvider opened={sidebar?.opened}>
       <div className={`product-layout ${className}`}>
         <Sidebar {...sidebar} />
-        <div className="product-layout-content">{content}</div>
+        <Content content={content} />
       </div>
     </ProductLayoutProvider>
   );
@@ -187,9 +188,80 @@ const defaultStyles = `:block {
   display: flex;
   flex: 1;
   flex-direction: column;
-  background-color: #0A1D3B;
+  background-color: var(--main-surface);
   min-width: 1px;
+  padding: 42px 26px 26px 26px;
 }
+.product-layout-content-title {
+  color: var(--main-text);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 26px;
+  margin-bottom: 12px;
+}
+.product-layout-content-description {
+  color: var(--main-text);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  margin-bottom: 40px;
+}
+.product-layout-content-tabs {
+  color: var(--main-text);
+  margin-bottom: 22px;
+}
+.product-layout-content-tab {
+  color: var(--main-text);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 26px;
+  opacity: .3;
+  transition: opacity .2s ease-in;
+  padding-right: 28px;
+}
+.product-layout-content-tab--active {
+  opacity: 1;
+}
+.product-layout-content-panel {
+  color: var(--main-text);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.product-layout-content-panel--1col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--main-element);
+  padding: 14px;
+  border-radius: 10px;
+}
+.product-layout-content-panel--2col,
+.product-layout-content-panel--3col {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+}
+.product-layout-content-panel--2col > .pr-block-blocks-list__block,
+.product-layout-content-panel--3col > .pr-block-blocks-list__block {
+  display: flex;
+  flex-direction: column;
+  background: var(--main-element);
+  padding: 14px;
+  border-radius: 10px;
+}
+.product-layout-content-panel--2col > .pr-block-blocks-list__block:nth-child(2),
+.product-layout-content-panel--3col > .pr-block-blocks-list__block:nth-child(2) {
+  flex: 1;
+  margin-left: 26px;
+}
+.product-layout-content-panel--3col > .pr-block-blocks-list__block:nth-child(2) {
+  margin-right: 26px;
+}
+
 `;
 
 export const ProductLayoutInContext = () => {

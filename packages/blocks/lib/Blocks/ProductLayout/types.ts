@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement } from 'react';
 import { ActionConfig } from '../Action';
 import { BlocksListConfig } from '../BlocksList';
 
@@ -21,6 +21,17 @@ export interface SidebarHeaderProps {
       } & ActionConfig)[];
 }
 
+export interface ContentProps {
+  title: BlockContent;
+  description: BlockContent;
+  tabs: ({
+    title: BlockContent;
+    content: BlockContent;
+    selected?: boolean;
+  } & ActionConfig)[];
+  content?: BlockContent;
+}
+
 export interface ProductLayoutProps {
   sidebar?: {
     header?: ReactElement | SidebarHeaderProps;
@@ -32,14 +43,5 @@ export interface ProductLayoutProps {
         } & ActionConfig)[];
     opened?: boolean;
   };
-  content?:
-    | ReactElement
-    | {
-        title: BlockContent;
-        description: BlockContent;
-        tabs: {
-          title: BlockContent;
-          content: BlockContent;
-        }[];
-      };
+  content?: ReactElement | ContentProps;
 }
