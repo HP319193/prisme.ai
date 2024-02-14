@@ -1,0 +1,16 @@
+{
+  "news": {
+    "title": "Latest news"
+  },
+  "welcome": {
+    "title": "Welcome {{user}},",
+    "subtitle": "Ready to explore Prisme.ai products? Start by expressing your need."
+  },
+  "search": {
+    "placeholder": "I need to…"
+  },
+  "list": {
+    "title": "Prisme.ai products",
+    "more": "Load more products"
+  }
+}

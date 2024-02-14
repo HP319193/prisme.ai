@@ -30,5 +30,58 @@
   "title": {
     "myAccount": "My account · Prisme.ai",
     "workspaceManagement": "{{workspaceName}} · Management · Prisme.ai"
+  },
+  "header": {
+    "notifications": {
+      "title": "Notifications"
+    },
+    "help": {
+      "title": "Help"
+    },
+    "products": {
+      "title": "Products",
+      "seeall": "See all products"
+    },
+    "user": {
+      "profile": {
+        "title": "View profile"
+      },
+      "settings": {
+        "title": "Account settings"
+      },
+      "shortcuts": {
+        "title": "My shortcuts"
+      },
+      "signout": {
+        "title": "Sign off"
+      }
+    }
+  },
+  "sidebar": {
+    "expand": "Expand",
+    "expand_in": "Reduce",
+    "unpin": {
+      "tooltip": "Remove shortcut",
+      "confirm": "Would you like to remove this shortcut from your space? You'll still be able to find the product from the catalog.",
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "edit": {
+    "email": {
+      "label": "Login email"
+    },
+    "firstName": {
+      "label": "First name"
+    },
+    "lastName": {
+      "label": "Last name"
+    },
+    "photo": {
+      "label": "Photo"
+    },
+    "submit": "Save",
+    "success": "Your profile has been updated",
+    "error": "An error has occurred. Please contact an administrator"
   }
 }

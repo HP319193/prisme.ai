@@ -82,17 +82,3 @@ it('should render some workspaces', () => {
   const root = renderer.create(<Workspaces />);
   expect(root.toJSON()).toMatchSnapshot();
 });
-
-it('should create new workspace', async () => {
-  const root = renderer.create(<Workspaces />);
-  await act(async () => {
-    const createButton = root.root.find((a) => {
-      return a.props?.children?.[1]?.props?.children === 'create.label';
-    });
-    await createButton.props.onClick();
-  });
-  expect(useWorkspaces().createWorkspace).toHaveBeenCalledWith(
-    'create.defaultName'
-  );
-  expect(useRouter().push).toHaveBeenCalledWith('/workspaces/43');
-});

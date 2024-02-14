@@ -4,10 +4,9 @@
     "title": "Workspaces — $t(common:main.title)",
     "description": "Create new Workspaces and new Apps, edit them, and run them",
     "welcome": {
-      "title": "Welcome {{name}},",
-      "title_noname": "Welcome,",
-      "content": "Here is your gallery, find our suggestions to help you start a workspace or search among your already created workspaces.",
-      "help": "<a href=\"https://docs.eda.prisme.ai/fr\">Need help?</a>"
+      "title": "Low-code Builder",
+      "description": "Here's your gallery, where you can find our suggestions to help you start a workspace, or search through the workspaces you've already created.",
+      "help": "<a href=\"https://docs.eda.prisme.ai/en\" target=\"_blank\">Need help? We're here to help.</a>"
     },
     "suggestions": {
       "title": "Suggestions",
@@ -51,10 +50,15 @@
       "toast": "Workspace has been deleted"
     },
     "duplicate": {
-      "label": "Duplicate"
+      "label": "Duplicate",
+      "duplicating": "Duplication in progress..."
     },
     "create": {
-      "label": "Create a new empty Workspace"
+      "label": "Create a new empty Workspace",
+      "name": "Name of new Workspace",
+      "description": "Description",
+      "photo": "Image",
+      "submit": "Create Workspace"
     },
     "import": {
       "label": "Import a Workspace from an archive"
@@ -99,7 +103,8 @@
       "automations": "Automations",
       "pages": "Pages",
       "apps": "Apps",
-      "blocks": "Blocks"
+      "blocks": "Blocks",
+      "stats": "Stats"
     },
     "add": {
       "automation": "Add an Automation",
@@ -134,9 +139,8 @@
     }
   },
   "create": {
-    "description_first": "Create your first workspace to start automating your work",
-    "description": "New workspace",
     "label": "Create a workspace",
+    "description": "Start your project from scratch",
     "defaultName": "Workspace"
   },
   "edit": {
@@ -208,6 +212,8 @@
     "link": "Automations",
     "create": {
       "label": "Add an Automation",
+      "label_inpath": "Add an Automation to this folder",
+      "submit": "Create Automation",
       "defaultName": "Automation",
       "value": {
         "event": "an event"
@@ -652,6 +658,7 @@
     "edit": "Éditer",
     "create": {
       "label": "Add a Page",
+      "submit": "Create Page",
       "defaultName": "Page",
       "template": {
         "title": "Pages templates",
@@ -736,6 +743,10 @@
     },
     "blocks": {
       "add": "Add a block",
+      "create": {
+        "label": "Add a Block",
+        "submit": "Create Block"
+      },
       "edit": "Edit",
       "remove": "Remove the block",
       "search": "Search a block",
@@ -1476,7 +1487,9 @@
   "blocks": {
     "notFound": "Block not found.",
     "create": {
-      "defaultName": "Block"
+      "label": "Create a Block",
+      "defaultName": "Block",
+      "submit": "Create Block"
     },
     "source": {
       "label": "See code",

@@ -2,6 +2,6 @@
 
 exports[`should render 1`] = `
 <div
-  className="flex grow justify-center align-center min-h-screen"
+  className="flex flex-1 justify-center items-center min-h-screen"
 />
 `;
