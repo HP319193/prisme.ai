@@ -118,13 +118,13 @@ export const OneOf = ({
       {}
     );
 
-    setTimeout(() => field.input.onChange(newValue));
+    field.input.onChange(newValue);
   }, [childSchema]);
 
   useEffect(() => {
     const value = oneOf?.[isNaN(+selected) ? 0 : +selected]?.value;
     if (value === undefined) return;
-    setTimeout(() => field.input.onChange(value));
+    field.input.onChange(value);
   }, [selected]);
 
   useEffect(() => {
@@ -149,6 +149,7 @@ export const OneOf = ({
         (name) => newValue[name] === field.input.value[name]
       )
     ) {
+      console.log('3');
       field.input.onChange({ ...newValue });
     }
   }, [selected]);
