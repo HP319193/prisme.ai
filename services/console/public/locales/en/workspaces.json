@@ -61,7 +61,9 @@
       "submit": "Create Workspace"
     },
     "import": {
-      "label": "Import a Workspace from an archive"
+      "label": "Import a Workspace from an archive",
+      "replace": "Merge with an archive",
+      "confirm": "Your Workspace will be replaced by the contents of the archive. You risk losing all or part of your current Workspace. Are you sure?"
     },
     "expandSidebar": "Expand",
     "collapseSidebar": "Collapse",
@@ -104,7 +106,7 @@
       "pages": "Pages",
       "apps": "Apps",
       "blocks": "Blocks",
-      "stats": "Stats"
+      "stats": "Usage"
     },
     "add": {
       "automation": "Add an Automation",
