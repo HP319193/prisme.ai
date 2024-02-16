@@ -1,5 +1,6 @@
 export enum StoreDriverType {
   Elasticsearch = 'elasticsearch',
+  Opensearch = 'opensearch',
 }
 
 export interface StoreDriverOptions {
@@ -51,3 +52,16 @@ export interface EventIndexStats {
 }
 
 export type EventsIndicesStats = Record<string, EventIndexStats>;
+
+export type ElasticBucket<
+  AdditionalBuckets = Record<
+    string,
+    {
+      buckets: ElasticBucket[];
+    }
+  >
+> = {
+  key: string;
+  doc_count: number;
+  buckets?: ElasticBucket[];
+} & AdditionalBuckets;

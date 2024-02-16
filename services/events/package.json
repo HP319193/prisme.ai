@@ -7,11 +7,12 @@
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf dist build",
     "ts-node": "ts-node",
-    "dev": "ts-node-dev -r dotenv/config --inspect=9230 --transpile-only --respawn ./src/app.ts",
+    "dev": "ts-node-dev -r dotenv/config --inspect=9231 --transpile-only --respawn ./src/app.ts",
     "start": "node --abort-on-uncaught-exception dist/index.js"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.16.0",
+    "@opensearch-project/opensearch": "^2.4.0",
     "@prisme.ai/broker": "^0.1.2",
     "@prisme.ai/permissions": "^1.0.0",
     "@prisme.ai/types": "^1.0.8",
