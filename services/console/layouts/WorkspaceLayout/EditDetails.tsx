@@ -1,12 +1,4 @@
-import {
-  AppstoreAddOutlined,
-  CloseCircleOutlined,
-  CodeOutlined,
-  DeleteOutlined,
-  ExportOutlined,
-  LoadingOutlined,
-  TagOutlined,
-} from '@ant-design/icons';
+import { CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
   Button,
   Collapse,
@@ -32,10 +24,6 @@ import { WORKSPACE_SLUG_VALIDATION_REGEXP } from '../../utils/regex';
 import ArgumentsEditor from '../../components/SchemaFormBuilder/ArgumentsEditor';
 import { useWorkspace, Workspace } from '../../providers/Workspace';
 import { useRouter } from 'next/router';
-import { DisplayedSourceType, useWorkspaceLayout } from './context';
-import PublishModal from '../../components/PublishModal';
-import VersionModal from '../../components/VersionModal';
-import api from '../../utils/api';
 
 interface EditDetailsprops {
   children: ReactNode;
@@ -48,12 +36,9 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
   const { trackEvent } = useTracking();
   const { workspace, saveWorkspace, deleteWorkspace, saving } = useWorkspace();
   const { push } = useRouter();
-  const { displaySource, sourceDisplayed } = useWorkspaceLayout();
+
   const [values, setValues] = useState(workspace);
-  const [publishVisible, setPublishVisible] = useState(false);
-  const [versionVisible, setVersionVisible] = useState(false);
   const [open, setOpen] = useState(false);
-  const [exporting, setExporting] = useState(false);
 
   const displaySchema: Schema = useMemo(
     () => ({
@@ -218,66 +203,6 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
     });
   }, [deleteWorkspace, push, t]);
 
-  const onDisplaySource = useCallback(() => {
-    trackEvent({
-      name: 'Display Source from Details',
-      action: 'click',
-    });
-    displaySource(
-      sourceDisplayed === DisplayedSourceType.Config
-        ? DisplayedSourceType.None
-        : DisplayedSourceType.Config
-    );
-  }, [displaySource, sourceDisplayed, trackEvent]);
-
-  const onDisplayRoles = useCallback(() => {
-    trackEvent({
-      name: 'Display Roles Edition',
-      action: 'click',
-    });
-    displaySource(
-      sourceDisplayed === DisplayedSourceType.Roles
-        ? DisplayedSourceType.None
-        : DisplayedSourceType.Roles
-    );
-  }, [displaySource, sourceDisplayed, trackEvent]);
-
-  const onPublishAsApp = useCallback(() => {
-    trackEvent({
-      name: 'Display Publish as App Modal',
-      action: 'click',
-    });
-    setPublishVisible(true);
-    setOpen(false);
-  }, [trackEvent]);
-
-  const onVersion = useCallback(() => {
-    trackEvent({
-      name: 'Display Versionning Modal',
-      action: 'click',
-    });
-    setVersionVisible(true);
-    setOpen(false);
-  }, [trackEvent]);
-
-  const onExport = useCallback(async () => {
-    trackEvent({
-      name: 'Export',
-      action: 'click',
-    });
-    if (exporting) return;
-    setExporting(true);
-    const zip = await api.workspaces(workspace.id).versions.export();
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.setAttribute('download', `workspace-${workspace.id}.zip`);
-    a.setAttribute('href', URL.createObjectURL(zip));
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setExporting(false);
-  }, [exporting, trackEvent, workspace.id]);
-
   const buttons = useMemo(
     () => [
       <div key="1" className="flex flex-1 justify-end !mt-2 mx-4">
@@ -291,15 +216,6 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
 
   return (
     <>
-      <PublishModal
-        visible={publishVisible}
-        close={() => setPublishVisible(false)}
-      />
-      <VersionModal
-        visible={versionVisible}
-        close={() => setVersionVisible(false)}
-      />
-
       <Popover
         titleClassName="flex m-0 pb-0 pt-4 pl-4 pr-4"
         title={({ setOpen }) => (
@@ -336,63 +252,6 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
                   />
                 ),
                 active: true,
-              },
-              {
-                key: 'actions',
-                label: t('workspace.details.actions.label'),
-                children: (
-                  <div className="!flex flex-1 justify-between !mt-4 !mb-6">
-                    <div className="flex flex-col items-start">
-                      <Button
-                        className="flex items-center"
-                        onClick={onDisplaySource}
-                      >
-                        <CodeOutlined className="mr-2" />
-                        {t(
-                          `expert.${
-                            sourceDisplayed === DisplayedSourceType.Config
-                              ? 'hide'
-                              : 'show'
-                          }`
-                        )}
-                      </Button>
-                      <Button
-                        className="flex items-center"
-                        onClick={onDisplayRoles}
-                      >
-                        <CodeOutlined className="mr-2" />
-                        {t(
-                          `expert.${
-                            sourceDisplayed === DisplayedSourceType.Roles
-                              ? 'hide'
-                              : 'security'
-                          }`
-                        )}
-                      </Button>
-                    </div>
-                    <div className="flex flex-col items-start">
-                      <Button
-                        className="flex items-center"
-                        onClick={onPublishAsApp}
-                      >
-                        <AppstoreAddOutlined className="mr-2" />
-                        {t(`apps.publish.menuLabel`)}
-                      </Button>
-                      <Button onClick={onVersion}>
-                        <TagOutlined className="mr-2" />
-                        {t('workspace.versions.create.label')}
-                      </Button>
-                      <Button onClick={onExport}>
-                        {exporting ? (
-                          <LoadingOutlined className="mr-2" />
-                        ) : (
-                          <ExportOutlined className="mr-2" />
-                        )}
-                        {t('workspace.versions.export.label')}
-                      </Button>
-                    </div>
-                  </div>
-                ),
               },
               {
                 key: 'config',

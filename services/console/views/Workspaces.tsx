@@ -209,7 +209,7 @@ export const WorkspacesView = () => {
             ButtonComponent="button"
           >
             {importing ? <LoadingOutlined /> : <ImportIcon />}
-            <span className="ml-3">{t('workspace.import.label')}</span>
+            <span className="ml-3">{t('workspace.import.replace')}</span>
           </ConfirmButton>
         ),
       },

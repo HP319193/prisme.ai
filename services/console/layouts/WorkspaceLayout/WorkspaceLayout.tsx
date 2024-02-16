@@ -29,7 +29,9 @@ import WorkspaceBlocksProvider from '../../providers/WorkspaceBlocksProvider';
 import { BlockProvider, builtinBlocks } from '@prisme.ai/blocks';
 import EditDetails from './EditDetails';
 import EditShare from './EditShare';
-import WorkspaceIcon from '../../icons/workspace-simple.svgr';
+import WorkspaceIcon from '/icons/workspace-simple.svgr';
+import ThreeDotsIcon from '/icons/three-dots.svgr';
+import ActionsMenu from './ActionsMenu';
 
 const { ProductLayout } = builtinBlocks;
 
@@ -444,6 +446,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
                             <ProductLayout.IconShare />
                           </button>
                         </EditShare>
+                        <ActionsMenu className="product-layout-sidebar__header-button !-mr-[14px]">
+                          <button type="button" className="flex">
+                            <ThreeDotsIcon
+                              height={20}
+                              className="product-layout-sidebar__header-button"
+                            />
+                          </button>
+                        </ActionsMenu>
                       </>
                     ),
                   },
