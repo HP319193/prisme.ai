@@ -1,4 +1,15 @@
 :root {
+  /* v2 */
+  --layout-surface: #020b1a;
+  --main-surface: #171c24;
+  --main-element: #373737;
+  --main-text: #f8faff;
+  --main-link: #8eb7ff;
+  --primary: #015dff;
+  --primary-contrast: white;
+  --button: #f8faff;
+
+  /* v1 */
   --light-gray-color: #e5e5e5;
   --accent-color: #015dff;
   --accent-contrast-color: white;

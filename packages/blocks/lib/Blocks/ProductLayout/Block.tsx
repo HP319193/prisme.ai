@@ -25,6 +25,8 @@ export const Block = ({
   if (isString(content))
     return <Component content={content} className={className} />;
   if (isBlock(content))
-    return <BlockLoader name="BlocksList" config={{ ...content, className }} />;
+    return (
+      <BlockLoader name="BlocksList" config={{ blocks: content, className }} />
+    );
   return <>{content}</>;
 };

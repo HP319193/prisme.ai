@@ -17,6 +17,7 @@ import getConfig from 'next/config';
 import IFrameLoader from '../IFrameLoader';
 import { useTracking } from '../Tracking';
 import { Popover } from '@prisme.ai/design-system';
+import { useUser } from '../UserProvider';
 
 const {
   publicRuntimeConfig: { HEADER_POPOVERS },
@@ -39,6 +40,7 @@ interface UserSpaceProps {
 export const UserSpace = ({ children }: UserSpaceProps) => {
   const { t } = useTranslation('user');
   const { trackEvent } = useTracking();
+  const { user } = useUser();
 
   return (
     <ProductsProvider>
