@@ -134,35 +134,38 @@ export const WorkspacesView = () => {
   );
 
   const handleImportArchive = useCallback(
-    async (file: File) => {
-      const workspace = await importArchive(file);
+    async (file: File, workspaceId?: string) => {
+      const workspace = await importArchive(file, workspaceId);
       if (!workspace) return;
       push(`/workspaces/${workspace.id}`);
     },
     [importArchive, push]
   );
 
-  const handlePickArchive = useCallback(async () => {
-    trackEvent({
-      name: 'Import Archive',
-      category: 'Workspaces',
-      action: 'click',
-    });
-    const filePickr = document.createElement('input');
-    filePickr.setAttribute('type', 'file');
-    filePickr.setAttribute('accept', '.zip');
-    document.body.appendChild(filePickr);
-    filePickr.addEventListener('change', async (e: any) => {
-      filePickr.parentNode?.removeChild(filePickr);
-      const { files } = e.target as HTMLInputElement;
-      if (!files) return;
-      handleImportArchive(files[0]);
-    });
-    filePickr.addEventListener('cancel', () => {
-      filePickr.parentNode?.removeChild(filePickr);
-    });
-    filePickr.click();
-  }, [handleImportArchive, trackEvent]);
+  const handlePickArchive = useCallback(
+    async (workspaceId?: string) => {
+      trackEvent({
+        name: 'Import Archive',
+        category: 'Workspaces',
+        action: 'click',
+      });
+      const filePickr = document.createElement('input');
+      filePickr.setAttribute('type', 'file');
+      filePickr.setAttribute('accept', '.zip');
+      document.body.appendChild(filePickr);
+      filePickr.addEventListener('change', async (e: any) => {
+        filePickr.parentNode?.removeChild(filePickr);
+        const { files } = e.target as HTMLInputElement;
+        if (!files) return;
+        handleImportArchive(files[0], workspaceId);
+      });
+      filePickr.addEventListener('cancel', () => {
+        filePickr.parentNode?.removeChild(filePickr);
+      });
+      filePickr.click();
+    },
+    [handleImportArchive, trackEvent]
+  );
 
   const handleDeleteWorkspace = useCallback(
     (workspaceId: string) => {
@@ -194,6 +197,23 @@ export const WorkspacesView = () => {
         ),
       },
       {
+        key: 'import',
+        label: (
+          <ConfirmButton
+            confirmLabel={t('workspace.import.confirm')}
+            onConfirm={() => handlePickArchive(workspaceId)}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="focus:outline-none flex items-center"
+            ButtonComponent="button"
+          >
+            {importing ? <LoadingOutlined /> : <ImportIcon />}
+            <span className="ml-3">{t('workspace.import.label')}</span>
+          </ConfirmButton>
+        ),
+      },
+      {
         key: 'delete',
         label: (
           <ConfirmButton
@@ -211,7 +231,14 @@ export const WorkspacesView = () => {
         ),
       },
     ],
-    [duplicating, handleDeleteWorkspace, handleDuplicateWorkspace, t]
+    [
+      duplicating,
+      handleDeleteWorkspace,
+      handleDuplicateWorkspace,
+      handlePickArchive,
+      importing,
+      t,
+    ]
   );
   const createMenu: ItemType[] = useMemo(
     () => [

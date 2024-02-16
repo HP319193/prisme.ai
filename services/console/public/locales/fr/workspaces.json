@@ -61,7 +61,8 @@
       "submit": "Créer l'espace de travail"
     },
     "import": {
-      "label": "Importer un Workspace depuis une archive"
+      "label": "Importer un Workspace depuis une archive",
+      "confirm": "Votre Workspace sera remplacé par le contenu de l'archive. Vous risquez de perdre tout ou une partie de votre Workspace actuel. Êtes vous sur ?"
     },
     "expandSidebar": "Agrandir",
     "collapseSidebar": "Réduire",

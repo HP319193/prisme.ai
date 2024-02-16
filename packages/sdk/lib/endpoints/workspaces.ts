@@ -53,13 +53,9 @@ export class WorkspacesEndpoint {
       formData.append('shareToken', `${opts?.shareToken}`);
     }
     try {
-      // @ts-ignore
-      return await this.api._fetch<PrismeaiAPI.UploadFile.Responses.$200>(
+      return await this.api.post<PrismeaiAPI.UploadFile.Responses.$200>(
         `/workspaces/${this.id}/files`,
-        {
-          method: 'POST',
-          body: formData,
-        }
+        formData
       );
     } catch (e) {
       console.error(e);
@@ -94,6 +90,26 @@ export class WorkspacesEndpoint {
     );
 
     return this.api.get(`/workspaces/${this.id}/usage?${params.toString()}`);
+  }
+
+  async importArchive(
+    archive: File
+  ): Promise<PrismeaiAPI.ImportNewWorkspace.Responses.$200> {
+    return new Promise((resolve) => {
+      const fileReader = new FileReader();
+      fileReader.addEventListener('load', async ({ target }) => {
+        const file = target?.result as string;
+        const formData = new FormData();
+        formData.append('archive', ...dataURItoBlob(file));
+        resolve(
+          await this.api.post<PrismeaiAPI.ImportNewWorkspace.Responses.$200>(
+            `/workspaces/${this.id}/import`,
+            formData
+          )
+        );
+      });
+      fileReader.readAsDataURL(archive);
+    });
   }
 }
 

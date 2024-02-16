@@ -23,7 +23,10 @@ export interface WorkspacesContext {
     version?: string
   ) => Promise<Workspace | null>;
   duplicating: Set<string>;
-  importArchive: (archive: File) => Promise<Prismeai.DSULReadOnly | undefined>;
+  importArchive: (
+    archive: File,
+    workspaceId?: string
+  ) => Promise<Prismeai.DSULReadOnly | undefined>;
   importing: boolean;
   refreshWorkspace: (workspace: Prismeai.DSUL, deleted?: true) => void;
   deleteWorkspace: (workspaceId: string) => void;
@@ -121,9 +124,11 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     }, []);
 
   const [importing, setImporting] = useState(false);
-  const importArchive = useCallback(async (file: File) => {
+  const importArchive = useCallback(async (file: File, target) => {
     setImporting(true);
-    const { workspace } = await api.importArchive(file);
+    const { workspace } = await (target
+      ? api.workspaces(target).importArchive(file)
+      : api.importArchive(file));
     setImporting(false);
     return workspace;
   }, []);

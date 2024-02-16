@@ -872,12 +872,9 @@ export class Api extends Fetcher {
         const formData = new FormData();
         formData.append('archive', ...dataURItoBlob(file));
         resolve(
-          await this._fetch<PrismeaiAPI.ImportNewWorkspace.Responses.$200>(
+          await this.post<PrismeaiAPI.ImportNewWorkspace.Responses.$200>(
             `/workspaces/import`,
-            {
-              method: 'POST',
-              body: formData,
-            }
+            formData
           )
         );
       });
