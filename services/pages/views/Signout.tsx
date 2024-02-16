@@ -13,4 +13,6 @@ export const Signout = () => {
   return null;
 };
 
+Signout.isPublic = true;
+
 export default Signout;
