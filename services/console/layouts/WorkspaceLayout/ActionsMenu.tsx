@@ -1,11 +1,5 @@
-import {
-  AppstoreAddOutlined,
-  CodeOutlined,
-  ExportOutlined,
-  LoadingOutlined,
-  TagOutlined,
-} from '@ant-design/icons';
-import { Popover, Dropdown } from '@prisme.ai/design-system';
+import { AppstoreAddOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Dropdown } from '@prisme.ai/design-system';
 import { Menu } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { useTranslation } from 'next-i18next';
@@ -16,6 +10,9 @@ import VersionModal from '../../components/VersionModal';
 import { useWorkspace } from '../../providers/Workspace';
 import api from '../../utils/api';
 import { DisplayedSourceType, useWorkspaceLayout } from './context';
+import CodeIcon from '/icons/code.svgr';
+import ExportIcon from '/icons/export.svgr';
+import TagIcon from '/icons/tag.svgr';
 
 interface ActionsMenuProps {
   children: ReactNode;
@@ -99,7 +96,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
             onClick={onDisplaySource}
             className="flex flex-row items-center"
           >
-            <CodeOutlined className="mr-2" />
+            <CodeIcon className="mr-2" />
             {t(`expert.show`)}
           </button>
         ),
@@ -111,7 +108,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
             onClick={onDisplayRoles}
             className="flex flex-row items-center"
           >
-            <CodeOutlined className="mr-2" />
+            <CodeIcon className="mr-2" />
             {t(`expert.security`)}
           </button>
         ),
@@ -133,7 +130,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         key: 'version',
         label: (
           <button onClick={onVersion} className="flex flex-row items-center">
-            <TagOutlined className="mr-2" />
+            <TagIcon className="mr-2" />
             {t(`workspace.versions.create.label`)}
           </button>
         ),
@@ -145,7 +142,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
             {exporting ? (
               <LoadingOutlined className="mr-2" />
             ) : (
-              <ExportOutlined className="mr-2" />
+              <ExportIcon className="mr-2" />
             )}
             {t(`workspace.versions.export.label`)}
           </button>
