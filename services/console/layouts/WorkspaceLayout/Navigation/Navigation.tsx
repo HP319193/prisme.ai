@@ -116,7 +116,14 @@ export const Navigation = () => {
         href,
         tooltip: (
           <>
-            <div className="font-bold">{localize(name)}</div>
+            <div className="font-bold">
+              <Highlight
+                highlight={searchQuery}
+                component={<span className="text-[#ecfd18] font-bold" />}
+              >
+                {localize(name)}
+              </Highlight>
+            </div>
             <div className="italic">
               <Highlight
                 highlight={searchQuery}
