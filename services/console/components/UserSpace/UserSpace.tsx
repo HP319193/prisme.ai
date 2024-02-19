@@ -42,6 +42,8 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
   const { trackEvent } = useTracking();
   const { user } = useUser();
 
+  if (!user) return children;
+
   return (
     <ProductsProvider>
       <div className="dark flex flex-col flex-1 min-h-full">
