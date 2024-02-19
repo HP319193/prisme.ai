@@ -386,6 +386,20 @@ export const Navigation = () => {
     workspace.pages,
   ]);
 
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => {
+      const { metaKey, ctrlKey, key } = e;
+      if ((metaKey || ctrlKey) && key === 'p') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', listener);
+    return () => {
+      window.removeEventListener('keydown', listener);
+    };
+  }, []);
+
   return (
     <navigationContext.Provider value={{ add, highlight: searchQuery }}>
       <div className="product-layout-sidebar__items">
