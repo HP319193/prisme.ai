@@ -13,6 +13,7 @@ import { DisplayedSourceType, useWorkspaceLayout } from './context';
 import CodeIcon from '/icons/code.svgr';
 import ExportIcon from '/icons/export.svgr';
 import TagIcon from '/icons/tag.svgr';
+import UsersIcon from '/icons/users.svgr';
 
 interface ActionsMenuProps {
   children: ReactNode;
@@ -108,7 +109,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
             onClick={onDisplayRoles}
             className="flex flex-row items-center"
           >
-            <CodeIcon className="mr-2" />
+            <UsersIcon className="mr-2" />
             {t(`expert.security`)}
           </button>
         ),
