@@ -47,7 +47,7 @@ const MenuInCard = ({ items }: { items: ItemType[]; color?: string }) => {
           onClick={(e) => e.preventDefault()}
           className="flex justify-end p-[30px]"
         >
-          <ThreeDotsIcon height={20} className="text-main-text" />
+          <ThreeDotsIcon height={20} className="text-main-element-text" />
         </button>
       </Dropdown>
     </div>
@@ -348,10 +348,10 @@ export const WorkspacesView = () => {
                     }}
                   >
                     {duplicating.has(id) ? (
-                      <LoadingOutlined className="!text-main-text [&>svg]:w-[24px] [&>svg]:h-[24px]" />
+                      <LoadingOutlined className="!text-main-element-text [&>svg]:w-[24px] [&>svg]:h-[24px]" />
                     ) : (
                       <CopyIcon
-                        className="text-main-text"
+                        className="text-main-element-text"
                         width={24}
                         height={24}
                       />
@@ -400,7 +400,7 @@ export const WorkspacesView = () => {
                   }
                 />
                 <MenuInCard items={getWorkspaceMenu(id)} />
-                <div className="absolute bottom-[30px] right-[30px] text-main-text underline">
+                <div className="absolute bottom-[30px] right-[30px] text-main-element-text underline">
                   {t('edit.label')}
                 </div>
               </a>
