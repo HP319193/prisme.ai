@@ -109,7 +109,7 @@ export const Products = () => {
                   setFound(null);
                 }}
               >
-                <CloseIcon className="text-main-text" />
+                <CloseIcon className="text-main-element-text" />
               </button>
             )}
           </form>
