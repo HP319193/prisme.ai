@@ -70,7 +70,7 @@ export const UserForm = () => {
       initialValues={user}
       buttons={[
         <SubmitButton key="submit" updating={updating}>
-          {t('edit.submit')}
+          {t('save', { ns: 'common' })}
         </SubmitButton>,
       ]}
       onSubmit={submit}

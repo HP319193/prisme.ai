@@ -431,12 +431,12 @@ export const UserProvider: FC<UserProviderProps> = ({
         const updated = await api.users(user.id).update(data);
         setUser(updated);
         notification.success({
-          message: t('edit.success'),
+          message: t('account.settings.user.success'),
           placement: 'bottomRight',
         });
       } catch (e: any) {
         notification.error({
-          message: t('edit.error'),
+          message: t('account.settings.user.error'),
           placement: 'bottomRight',
         });
       }

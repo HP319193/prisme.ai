@@ -16,7 +16,6 @@
         "photo": {
           "label": "Photo"
         },
-        "submit": "Enregistrer",
         "success": "Votre profil a bien été mis à jour",
         "error": "Une erreur esr survenue. Veuillez contacter un administrateur"
       },

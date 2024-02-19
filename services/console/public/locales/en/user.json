@@ -16,7 +16,6 @@
         "photo": {
           "label": "Photo"
         },
-        "submit": "Save",
         "success": "Your profile has been updated",
         "error": "An error has occurred. Please contact an administrator"
       },
