@@ -1,6 +1,11 @@
+import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import api from '../../utils/api';
+
+const {
+  publicRuntimeConfig: { PAGES_HOST = '' },
+} = getConfig();
 
 export const Product = memo(function Product() {
   const iframe = useRef<HTMLIFrameElement>(null);
@@ -12,7 +17,7 @@ export const Product = memo(function Product() {
   const [productSlug] = Array.isArray(slug) ? slug : [slug];
   const productUrl = useMemo(() => {
     const [, path] = window.location.pathname.split(`product/${productSlug}`);
-    return `http://${productSlug}.pages.local.prisme.ai:3100/${path}${window.location.search}${window.location.hash}`;
+    return `${window.location.protocol}//${productSlug}${PAGES_HOST}/${path}${window.location.search}${window.location.hash}`;
   }, [productSlug]);
 
   useEffect(() => {
