@@ -35,7 +35,13 @@ const DftWorkspaceIcon = ({ color = 'black' }: { color?: string }) => (
   </div>
 );
 
-const MenuInCard = ({ items }: { items: ItemType[]; color?: string }) => {
+const MenuInCard = ({
+  items,
+  color = 'text-main-element-text',
+}: {
+  items: ItemType[];
+  color?: string;
+}) => {
   return (
     <div onClick={(e) => e.stopPropagation()}>
       <Dropdown
@@ -47,7 +53,7 @@ const MenuInCard = ({ items }: { items: ItemType[]; color?: string }) => {
           onClick={(e) => e.preventDefault()}
           className="flex justify-end p-[30px]"
         >
-          <ThreeDotsIcon height={20} className="text-main-element-text" />
+          <ThreeDotsIcon height={20} className={color} />
         </button>
       </Dropdown>
     </div>
@@ -384,7 +390,7 @@ export const WorkspacesView = () => {
                 className="rounded border-dashed border-[1px] border-[1BFBFBF] !bg-transparent"
                 textColor="text-white"
               />
-              <MenuInCard items={createMenu} />
+              <MenuInCard items={createMenu} color="text-main-text" />
             </a>
           </Link>
           {filteredWorkspaces.map(({ id, description, name, photo }) => (
