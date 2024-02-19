@@ -6,7 +6,7 @@ import Avatar from './Avatar';
 
 export const MenuUser = () => {
   const { t } = useTranslation('user');
-  const { user } = useUser();
+  const { user, signout } = useUser();
   return (
     <Menu
       items={[
@@ -52,7 +52,11 @@ export const MenuUser = () => {
         },
         {
           key: '6',
-          label: <Link href="/signout">{t('header.user.signout.title')}</Link>,
+          label: (
+            <button onClick={() => signout()}>
+              {t('header.user.signout.title')}
+            </button>
+          ),
         },
       ]}
     />
