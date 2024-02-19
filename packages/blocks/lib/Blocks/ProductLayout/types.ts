@@ -28,6 +28,7 @@ export interface ContentProps {
     title: BlockContent;
     content: BlockContent;
     selected?: boolean;
+    columns?: number;
   } & ActionConfig)[];
   content?: BlockContent;
 }

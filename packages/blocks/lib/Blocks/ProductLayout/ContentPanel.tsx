@@ -75,6 +75,8 @@ export const ContentPanel = ({ tabs = EMPTY_ARRAY, content }: ContentProps) => {
 
   const panelContent = content || tabs[selectedIndex].content;
 
+  const columns = tabs[selectedIndex].columns || 1;
+
   return (
     <>
       <div className="product-layout-content-tabs">
@@ -86,7 +88,10 @@ export const ContentPanel = ({ tabs = EMPTY_ARRAY, content }: ContentProps) => {
           />
         ))}
       </div>
-      <Block className="product-layout-content-panel" content={panelContent} />
+      <Block
+        className={`product-layout-content-panel product-layout-content-panel--${columns}col`}
+        content={panelContent}
+      />
     </>
   );
 };
