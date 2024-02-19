@@ -8,4 +8,6 @@ export function removeEmpty<T>(v: T): v is Truthy<T> {
 
 export const search = (search: string) => (v: string) =>
   !search ||
-  removeAccents(v.toLowerCase()).includes(removeAccents(search.toLowerCase()));
+  removeAccents(v.toLowerCase()).match(
+    removeAccents(search.toLowerCase()).replace(/\s/g, '.*')
+  );

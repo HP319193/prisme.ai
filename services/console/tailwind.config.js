@@ -26,7 +26,26 @@ module.exports = {
       DEFAULT: '10px',
     },
     extend: {
+      fontSize: {
+        'products-sm': '12px',
+        'products-base': '14px',
+        'products-lg': '16px',
+        'products-xl': '24px',
+      },
       colors: {
+        // v2
+        'layout-surface': 'var(--layout-surface)',
+        'main-surface': 'var(--main-surface)',
+        'main-element': 'var(--main-element)',
+        'main-element-text': 'var(--main-element-text)',
+        'main-element': 'var(--main-element)',
+        'main-text': 'var(--main-text)',
+        'main-link': 'var(--main-link)',
+        primary: 'var(--primary)',
+        'primary-contrast': 'var(--primary-contrast)',
+        button: 'var(--button)',
+
+        // v1
         // Antdesign secondary text color
         gray: 'var(--gray-color)',
         'light-gray': 'var(--light-gray-color)',
@@ -56,6 +75,9 @@ module.exports = {
         'green-100': '#4c7072',
         'green-200': '#E7F6F6',
         'orange-500': '#FD6E6E',
+      },
+      animation: {
+        'add-product': 'bounce .2s',
       },
     },
   },

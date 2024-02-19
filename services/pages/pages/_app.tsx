@@ -2,7 +2,7 @@ import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import UserProvider from '../../console/components/UserProvider';
 import { NextPage } from 'next';
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactElement, ReactNode, useEffect } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -41,6 +41,7 @@ if (typeof window !== 'undefined') {
 function MyApp({
   Component,
   pageProps: { page, error, styles, initialConfig, clientId },
+  router,
 }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t, i18n } = useTranslation('common');
@@ -50,6 +51,13 @@ function MyApp({
     api.overwriteClientId = clientId;
     api.overwriteClientId = clientId;
   }
+
+  useEffect(() => {
+    window.parent?.postMessage(
+      { type: 'page.navigate', path: router.asPath },
+      '*'
+    );
+  }, [router.asPath]);
 
   if (typeof window !== 'undefined') {
     const currentURL = new URL(location.href);

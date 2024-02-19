@@ -14,16 +14,22 @@ export interface WorkspacesContext {
   workspaces: Workspace[];
   loading: boolean;
   fetchWorkspaces: () => void;
-  createWorkspace: (name: string) => Promise<Workspace>;
+  createWorkspace: (
+    values: Pick<Prismeai.Workspace, 'name' | 'description' | 'photo'>
+  ) => Promise<Workspace>;
   creating: boolean;
   duplicateWorkspace: (
     id: string,
     version?: string
   ) => Promise<Workspace | null>;
   duplicating: Set<string>;
-  importArchive: (archive: File) => Promise<Prismeai.DSULReadOnly | undefined>;
+  importArchive: (
+    archive: File,
+    workspaceId?: string
+  ) => Promise<Prismeai.DSULReadOnly | undefined>;
   importing: boolean;
   refreshWorkspace: (workspace: Prismeai.DSUL, deleted?: true) => void;
+  deleteWorkspace: (workspaceId: string) => void;
 }
 
 interface WorkspacesProviderProps {
@@ -72,9 +78,20 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     }, [user?.id]);
 
   const createWorkspace: WorkspacesContext['createWorkspace'] = useCallback(
-    async (name: string) => {
+    async ({ photo, ...newWorkspace }) => {
       setCreating(true);
-      const created = await api.createWorkspace(name);
+      const created = await api.createWorkspace(newWorkspace);
+      if (photo) {
+        const [{ url }] = await api
+          .workspaces(created.id)
+          .uploadFiles(photo, { public: true });
+        if (url) {
+          await api.workspaces(created.id).update({
+            photo: url,
+          });
+          created.photo = url;
+        }
+      }
       setCreating(false);
       setWorkspaces((prev) => [
         ...prev,
@@ -107,9 +124,11 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     }, []);
 
   const [importing, setImporting] = useState(false);
-  const importArchive = useCallback(async (file: File) => {
+  const importArchive = useCallback(async (file: File, target) => {
     setImporting(true);
-    const { workspace } = await api.importArchive(file);
+    const { workspace } = await (target
+      ? api.workspaces(target).importArchive(file)
+      : api.importArchive(file));
     setImporting(false);
     return workspace;
   }, []);
@@ -128,6 +147,11 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
     },
     []
   );
+
+  const deleteWorkspace = useCallback((workspaceId: string) => {
+    setWorkspaces((prev) => prev.filter(({ id }) => id !== workspaceId));
+    api.workspaces(workspaceId).delete();
+  }, []);
 
   const prevUserId = useRef<string>();
   useEffect(() => {
@@ -157,6 +181,7 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
         importArchive,
         importing,
         refreshWorkspace,
+        deleteWorkspace,
       }}
     >
       {children}

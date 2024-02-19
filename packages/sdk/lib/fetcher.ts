@@ -15,6 +15,10 @@ export type Fetched<T> = T & {
   headers?: Record<string, any>;
 };
 
+function isFormData(data: any): data is FormData {
+  return !!(data.append && typeof data.append === 'function');
+}
+
 export class Fetcher {
   public host: string;
   public token: string | null = null;
@@ -143,9 +147,7 @@ export class Fetcher {
     return this._fetch<T>(url, {
       method: 'POST',
       body:
-        body &&
-        !(body instanceof FormData) &&
-        !(body instanceof URLSearchParams)
+        body && !isFormData(body) && !(body instanceof URLSearchParams)
           ? JSON.stringify(body)
           : (body as BodyInit),
       ...opts,

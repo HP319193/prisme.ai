@@ -57,7 +57,7 @@ export default async function initRoutes(
     }),
     validationErrorMiddleware
   );
-  app.use('/v2/', initIdentityRoutes(oidc));
+  app.use('/v2/', initIdentityRoutes(oidc, gtwcfg));
 
   app.use(errorHandler);
 }

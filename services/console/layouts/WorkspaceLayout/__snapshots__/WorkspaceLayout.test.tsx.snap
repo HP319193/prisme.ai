@@ -3,18 +3,6 @@
 exports[`should get layout 1`] = `
 Array [
   <div
-    className="
-          absolute top-[72px] bottom-0 right-0 left-0
-          bg-white
-          flex flex-1
-          transition-transform
-          transition-duration-200
-          transition-ease-in
-          z-20
-          -translate-y-full
-        "
-  />,
-  <div
     className="flex flex-col h-[70vh] overflow-hidden"
   >
     <div
@@ -49,64 +37,41 @@ Array [
     </div>
   </div>,
   <div
-    className="h-full flex flex-row"
+    className="bg-white flex flex-1 flex-col max-h-full"
   >
     <div
-      className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden onboarding-step-4"
+      className="flex flex-row justify-between bg-ultra-light-accent pt-[0.55rem] -mb-[1px]"
     >
       <div
-        className="flex justify-end bg-white"
+        className="flex flex-row overflow-auto"
       >
-        <div
-          className="flex flex-1 items-center pl-4 whitespace-nowrap mr-5 text-[0.75rem] text-pr-grey"
+        <a
+          className="px-4 py-[0.75rem] pb-[0.75rem] mt-1 pr-1 flex flex-nowrap items-center group rounded-t   whitespace-nowrap hover:text-base !pr-4"
+          href="/workspaces/42"
+          onClick={[Function]}
         >
-          <a
-            href="https://prisme.ai"
-            rel="noreferrer"
-            target="_blank"
-          >
-            powered
-          </a>
-        </div>
-      </div>
-    </div>
-    <div
-      className="flex h-full flex-col flex-1 min-w-[1px] max-w-full onboarding-step-5"
-    >
-      <div
-        className="flex flex-row justify-between bg-ultra-light-accent pt-[0.55rem] -mb-[1px]"
-      >
-        <div
-          className="flex flex-row overflow-auto"
-        >
-          <a
-            className="px-4 py-[0.75rem] pb-[0.75rem] mt-1 pr-1 flex flex-nowrap items-center group rounded-t   whitespace-nowrap hover:text-base !pr-4"
-            href="/workspaces/42"
-            onClick={[Function]}
-          >
-            <div
-              className="border-l border-light-gray h-full mr-4 -ml-6"
-            />
-            <div>
-              <SvgrURL
-                className="mx-2"
-              />
-            </div>
-            <div
+          <div
+            className="border-l border-light-gray h-full mr-4 -ml-6"
+          />
+          <div>
+            <SvgrURL
               className="mx-2"
-            >
-              events.title
-            </div>
-          </a>
-        </div>
-        <button
-          className="p-4 rotate-90"
-        >
-          •••
-        </button>
+            />
+          </div>
+          <div
+            className="mx-2"
+          >
+            events.title
+          </div>
+        </a>
       </div>
-      <div />
+      <button
+        className="p-4 rotate-90"
+      >
+        •••
+      </button>
     </div>
+    <div />
   </div>,
 ]
 `;
@@ -114,18 +79,6 @@ Array [
 exports[`should render empty 1`] = `
 Array [
   <div
-    className="
-          absolute top-[72px] bottom-0 right-0 left-0
-          bg-white
-          flex flex-1
-          transition-transform
-          transition-duration-200
-          transition-ease-in
-          z-20
-          -translate-y-full
-        "
-  />,
-  <div
     className="flex flex-col h-[70vh] overflow-hidden"
   >
     <div
@@ -160,64 +113,41 @@ Array [
     </div>
   </div>,
   <div
-    className="h-full flex flex-row"
+    className="bg-white flex flex-1 flex-col max-h-full"
   >
     <div
-      className="flex w-full h-full border-r border-gray-200 border-solid flex-col justify-between overflow-hidden onboarding-step-4"
+      className="flex flex-row justify-between bg-ultra-light-accent pt-[0.55rem] -mb-[1px]"
     >
       <div
-        className="flex justify-end bg-white"
+        className="flex flex-row overflow-auto"
       >
-        <div
-          className="flex flex-1 items-center pl-4 whitespace-nowrap mr-5 text-[0.75rem] text-pr-grey"
+        <a
+          className="px-4 py-[0.75rem] pb-[0.75rem] mt-1 pr-1 flex flex-nowrap items-center group rounded-t   whitespace-nowrap hover:text-base !pr-4"
+          href="/workspaces/undefined"
+          onClick={[Function]}
         >
-          <a
-            href="https://prisme.ai"
-            rel="noreferrer"
-            target="_blank"
-          >
-            powered
-          </a>
-        </div>
-      </div>
-    </div>
-    <div
-      className="flex h-full flex-col flex-1 min-w-[1px] max-w-full onboarding-step-5"
-    >
-      <div
-        className="flex flex-row justify-between bg-ultra-light-accent pt-[0.55rem] -mb-[1px]"
-      >
-        <div
-          className="flex flex-row overflow-auto"
-        >
-          <a
-            className="px-4 py-[0.75rem] pb-[0.75rem] mt-1 pr-1 flex flex-nowrap items-center group rounded-t   whitespace-nowrap hover:text-base !pr-4"
-            href="/workspaces/undefined"
-            onClick={[Function]}
-          >
-            <div
-              className="border-l border-light-gray h-full mr-4 -ml-6"
-            />
-            <div>
-              <SvgrURL
-                className="mx-2"
-              />
-            </div>
-            <div
+          <div
+            className="border-l border-light-gray h-full mr-4 -ml-6"
+          />
+          <div>
+            <SvgrURL
               className="mx-2"
-            >
-              events.title
-            </div>
-          </a>
-        </div>
-        <button
-          className="p-4 rotate-90"
-        >
-          •••
-        </button>
+            />
+          </div>
+          <div
+            className="mx-2"
+          >
+            events.title
+          </div>
+        </a>
       </div>
-      Foo
+      <button
+        className="p-4 rotate-90"
+      >
+        •••
+      </button>
     </div>
+    Foo
   </div>,
 ]
 `;

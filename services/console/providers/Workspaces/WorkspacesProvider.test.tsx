@@ -106,7 +106,7 @@ it('should create a workspace', async () => {
   );
 
   act(() => {
-    createWorkspace('Foo');
+    createWorkspace({ name: 'Foo' });
   });
 
   expect(creating).toBe(true);
@@ -115,7 +115,7 @@ it('should create a workspace', async () => {
     await true;
   });
 
-  expect(api.createWorkspace).toHaveBeenCalledWith('Foo');
+  expect(api.createWorkspace).toHaveBeenCalledWith({ name: 'Foo' });
 
   expect(creating).toBe(false);
 });

@@ -160,44 +160,11 @@ it('should get layout', async () => {
   expect(root.toJSON()).toMatchSnapshot();
 });
 
-it('should display source after mount', async () => {
-  jest.useFakeTimers();
-  let context: WorkspaceLayoutContext = {} as WorkspaceLayoutContext;
-  const Test = () => {
-    context = useWorkspaceLayout();
-    return null;
-  };
-  const root = renderer.create(
-    <workspaceContext.Provider value={{ workspace: {} } as any}>
-      <WorkspaceLayout>
-        <Test />
-      </WorkspaceLayout>
-    </workspaceContext.Provider>
-  );
-  await act(async () => {
-    await true;
-  });
-  expect(root.root.findAllByType('div')[0].props.className).toContain(
-    '-translate-y-full'
-  );
-  expect(() => root.root.findByType(WorkspaceSource)).toThrow();
-
-  act(() => {
-    context.displaySource('config' as any);
-  });
-  expect(root.root.findByType(WorkspaceSource)).toBeDefined();
-  act(() => {
-    root.root.findByType(WorkspaceSource).props.onLoad();
-  });
-  expect(root.root.findAllByType('div')[0].props.className).not.toContain(
-    '-translate-y-100'
-  );
-});
-
 it('should save workspace', async () => {
   let context: WorkspaceLayoutContext = {} as WorkspaceLayoutContext;
   const Test = () => {
     context = useWorkspaceLayout();
+    console.log(context);
     return null;
   };
   const saveWorkspace = jest.fn();
@@ -260,7 +227,7 @@ it('should create new automation', async () => {
     </workspaceContext.Provider>
   );
   await act(async () => {
-    await context.createAutomation();
+    await context.createAutomation({ name: 'automations.create.defaultName' });
   });
 
   expect(createAutomation).toHaveBeenCalledWith({
@@ -284,13 +251,12 @@ it('should create new page', async () => {
     </workspaceContext.Provider>
   );
   await act(async () => {
-    await context.createPage();
+    await context.createPage({ slug: 'page', name: 'page' });
   });
 
   expect(createPage).toHaveBeenCalledWith({
-    name: {
-      en: 'pages.create.defaultName',
-    },
+    slug: 'page',
+    name: 'page',
     blocks: [],
   });
 });

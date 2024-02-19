@@ -2,6 +2,7 @@ import renderer, { act } from 'react-test-renderer';
 import api from '../../../console/utils/api';
 import Page from './Page';
 import { usePage } from './PageProvider';
+import userContext from '../../../console/components/UserProvider/context';
 
 window.Prisme = {
   ai: {
@@ -39,7 +40,11 @@ it('should render empty page', () => {
     slug: 'foo',
     appInstances: [],
   };
-  const root = renderer.create(<Page page={page} />);
+  const root = renderer.create(
+    <userContext.Provider value={{} as any}>
+      <Page page={page} />
+    </userContext.Provider>
+  );
   expect(root.toJSON()).toMatchSnapshot();
 });
 
@@ -58,7 +63,11 @@ it('should render blocks', () => {
       },
     ],
   };
-  const root = renderer.create(<Page page={page} />);
+  const root = renderer.create(
+    <userContext.Provider value={{} as any}>
+      <Page page={page} />
+    </userContext.Provider>
+  );
   expect(root.toJSON()).toMatchSnapshot();
 });
 
@@ -71,7 +80,11 @@ it('should add JS API in window object', () => {
     appInstances: [],
     blocks: [],
   };
-  const root = renderer.create(<Page page={page} />);
+  const root = renderer.create(
+    <userContext.Provider value={{} as any}>
+      <Page page={page} />
+    </userContext.Provider>
+  );
 
   act(() => {
     return;

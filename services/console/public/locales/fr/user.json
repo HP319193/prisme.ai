@@ -2,8 +2,31 @@
   "sign": {
     "out": "Déconnexion"
   },
-  "account": "Compte",
-  "account_my": "Mon compte",
+  "account": {
+    "label": "Mon compte",
+    "settings": {
+      "user": {
+        "label": "Informations personnelles",
+        "firstName": {
+          "label": "Prénom"
+        },
+        "lastName": {
+          "label": "Nom"
+        },
+        "photo": {
+          "label": "Photo"
+        },
+        "success": "Votre profil a bien été mis à jour",
+        "error": "Une erreur esr survenue. Veuillez contacter un administrateur"
+      },
+      "security": {
+        "label": "Sécurité"
+      },
+      "interface": {
+        "label": "Interface"
+      }
+    }
+  },
   "workspaces": "Espaces de travail",
   "billing": {
     "title": "Facturation",
@@ -30,5 +53,41 @@
   "title": {
     "myAccount": "Mon compte · Prisme.ai",
     "workspaceManagement": "{{workspaceName}} · Gestion · Prisme.ai"
+  },
+  "header": {
+    "notifications": {
+      "title": "Notifications"
+    },
+    "help": {
+      "title": "Aide"
+    },
+    "products": {
+      "title": "Produits",
+      "seeall": "Voir tous les produits"
+    },
+    "user": {
+      "profile": {
+        "title": "Voir le profil"
+      },
+      "settings": {
+        "title": "Paramètres du compte"
+      },
+      "shortcuts": {
+        "title": "Mes raccourcis"
+      },
+      "signout": {
+        "title": "Déconnexion"
+      }
+    }
+  },
+  "sidebar": {
+    "expand": "Étendre",
+    "expand_in": "Réduire",
+    "unpin": {
+      "tooltip": "Enlever le raccourci",
+      "confirm": "Voulez vous enlever ce raccourci de votre espace ? Vous pourrez toujours retrouver le produit depuis le catalogue.",
+      "yes": "Oui",
+      "no": "Non"
+    }
   }
 }

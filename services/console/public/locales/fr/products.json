@@ -1,0 +1,16 @@
+{
+  "news": {
+    "title": "Dernières actualités"
+  },
+  "welcome": {
+    "title": "Bienvenue {{user}},",
+    "subtitle": "Prêt à explorer les produits Prisme.ai ? Tout d’abord démarrer en exprimant votre besoin."
+  },
+  "search": {
+    "placeholder": "J'ai besoin de…"
+  },
+  "list": {
+    "title": "Les produits Prisme.ai",
+    "more": "Charger plus de produits"
+  }
+}

@@ -1,9 +1,11 @@
 import {
   Children,
   cloneElement,
+  HTMLAttributes,
   MutableRefObject,
   ReactElement,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
 } from 'react';
@@ -29,7 +31,8 @@ import FieldArrayUpload from './FieldArrayUpload';
 import { OnChange } from 'react-final-form-listeners';
 import { FormApi } from 'final-form';
 
-export interface SchemaFormProps {
+export interface SchemaFormProps
+  extends Omit<HTMLAttributes<HTMLFormElement>, 'onChange'> {
   schema: Schema;
   onSubmit?: (
     values: any
@@ -42,6 +45,7 @@ export interface SchemaFormProps {
   utils?: Partial<SchemaFormContext['utils']>;
   formRef?: MutableRefObject<FormApi<any, any>>;
   initialFieldObjectVisibility?: boolean;
+  autoFocus?: boolean;
 }
 
 const DefaultLocales = {};
@@ -57,9 +61,13 @@ export const SchemaForm = ({
   utils,
   formRef,
   initialFieldObjectVisibility = true,
+  className,
+  autoFocus,
+  ...props
 }: SchemaFormProps) => {
   if (!schema) return null;
   const values = useRef({ values: initialValues });
+  const formElRef = useRef<HTMLFormElement>(null);
 
   const onSubmitHandle = useCallback(
     async (values: any) => {
@@ -101,6 +109,11 @@ export const SchemaForm = ({
     [utils]
   );
 
+  useEffect(() => {
+    if (!autoFocus) return;
+    formElRef.current?.querySelector('input')?.focus();
+  }, []);
+
   return (
     <context.Provider
       value={{
@@ -118,10 +131,12 @@ export const SchemaForm = ({
           formRef && (formRef.current = form);
           return (
             <form
+              ref={formElRef}
               onSubmit={handleSubmit}
               className={`pr-form ${
                 hasValidationErrors ? 'pr-form--has-validation-errors' : ''
-              }`}
+              } ${className || ''}`}
+              {...props}
             >
               {onChange && (
                 <OnChange name="values">

@@ -87,3 +87,26 @@ it('should tokenize', () => {
     },
   ]);
 });
+it('should highlight parts', () => {
+  console.log(tokenize('Update on CRM', 'up crm'));
+  expect(tokenize('Update on CRM', 'up crm')).toEqual([
+    {
+      highlight: true,
+      text: 'Up',
+      start: 0,
+      end: 2,
+    },
+    {
+      highlight: false,
+      text: 'date on ',
+      start: 2,
+      end: 10,
+    },
+    {
+      highlight: true,
+      text: 'CRM',
+      start: 10,
+      end: 13,
+    },
+  ]);
+});

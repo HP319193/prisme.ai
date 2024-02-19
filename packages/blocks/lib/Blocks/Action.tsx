@@ -22,14 +22,13 @@ export interface ActionConfig extends BaseBlockConfig {
     noLabel?: string;
     placement?: TooltipProps['placement'];
   };
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 export interface ActionProps extends ActionConfig {
   events: BlockContext['events'];
   Link: BlocksDependenciesContext['components']['Link'];
   onClick?: () => void;
-  disabled: boolean;
 }
 
 export const ActionButton = ({

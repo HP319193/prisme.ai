@@ -1,5 +1,6 @@
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 import { ApiError } from '@prisme.ai/sdk';
+import { useContext } from '../../utils/useContext';
 
 export enum OperationSuccess {
   emailSent = 'emailSent',
@@ -36,21 +37,11 @@ export interface UserContext<
   passwordReset: (token: string, password: string) => Promise<any>;
   sendValidationMail: (email: string, language: string) => Promise<any>;
   validateMail: (token: string) => Promise<any>;
+  update: (data: Partial<Prismeai.User>) => void;
+  updateMeta: (meta: Record<string, any>) => void;
 }
 
-export const userContext = createContext<UserContext>({
-  user: null,
-  loading: false,
-  signin: async () => false,
-  initAuthentication: () => Promise.resolve('url'),
-  completeAuthentication: async () => {},
-  signup: async () => null,
-  signout() {},
-  sendPasswordResetMail: async () => null,
-  passwordReset: async () => null,
-  sendValidationMail: async () => null,
-  validateMail: async () => null,
-});
+export const userContext = createContext<UserContext | undefined>(undefined);
 
 export function useUser(throwIfNotExist?: boolean): UserContext;
 export function useUser(

@@ -1573,7 +1573,7 @@ declare namespace Prismeai {
                  */
                 output?: string;
                 /**
-                 * Instead of blocking until we can output the entire response, emit individual response parts through events
+                 * By default, SSE chunks are written to the output variable which can be read in real time using repeat instruction. Change this behaviour to emit chunks as individual events instead.
                  */
                 stream?: {
                     event: string;
@@ -1676,7 +1676,7 @@ declare namespace Prismeai {
              */
             output?: string;
             /**
-             * Instead of blocking until we can output the entire response, emit individual response parts through events
+             * By default, SSE chunks are written to the output variable which can be read in real time using repeat instruction. Change this behaviour to emit chunks as individual events instead.
              */
             stream?: {
                 event: string;
@@ -3764,6 +3764,19 @@ declare namespace PrismeaiAPI {
             export type $200 = Prismeai.User;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace PostUserPhoto {
+        export interface RequestBody {
+            /**
+             * Photo as binary
+             */
+            photo: string; // binary
+        }
+        namespace Responses {
+            export type $200 = Prismeai.User;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
         }
     }
     namespace PublishApp {

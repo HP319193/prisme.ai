@@ -1,3 +1,7 @@
+import _get from 'lodash/get';
+import _set from 'lodash/set';
+import _merge from 'lodash/merge';
+
 type Value = Record<string, any>;
 
 interface Next extends Value {
@@ -7,28 +11,32 @@ interface Next extends Value {
 export function merge(value: Value, _with: Value) {
   if (typeof _with !== 'object' || Array.isArray(_with)) return value;
   let newValue = { ...value };
-  Object.entries(_with).forEach(([k, v]) => {
-    switch (typeof v) {
+  Object.entries(_with).forEach(([path, v]) => {
+    const _v = typeof value === 'object' ? _get(value, path) : value;
+
+    switch (typeof _v) {
       case 'object':
-        if (Array.isArray(v)) {
-          newValue[k] = [...value[k], ...v];
+        if (Array.isArray(_v)) {
+          if (!Array.isArray(v)) break;
+          newValue = _set(newValue, path, [..._v, ...v]);
         } else {
-          newValue[k] = { ...value[k], ...v };
+          newValue = _set(newValue, path, { ..._v, ...v });
         }
         break;
       case 'string':
-        newValue[k] = `${newValue[k]}${v}`;
+        newValue = _set(newValue, path, `${_v}${v}`);
         break;
       case 'number':
-        newValue[k] = +newValue[k] + v;
+        newValue = _set(newValue, path, _v + v);
         break;
       case 'boolean':
-        newValue[k] = !!newValue[k] && v;
+        newValue = _set(newValue, path, !!_v && v);
         break;
       default:
-        newValue[k] = v;
+        newValue = v;
     }
   });
+
   return newValue;
 }
 

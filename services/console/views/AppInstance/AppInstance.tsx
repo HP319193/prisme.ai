@@ -1,5 +1,5 @@
 import { CodeOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-import { Button, Schema } from '@prisme.ai/design-system';
+import { Button } from '@prisme.ai/design-system';
 import { validateAppInstance } from '@prisme.ai/validation';
 import { notification, PageHeader, Segmented, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
@@ -19,7 +19,6 @@ import AppInstanceProvider, {
 } from '../../providers/AppInstanceProvider';
 import { useWorkspace } from '../../providers/Workspace';
 import { ApiError } from '../../utils/api';
-import { SLUG_VALIDATION_REGEXP } from '../../utils/regex';
 import { generatePageUrl, replaceSilently } from '../../utils/urls';
 import useDirtyWarning from '../../utils/useDirtyWarning';
 import useLocalizedText from '../../utils/useLocalizedText';

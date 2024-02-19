@@ -211,7 +211,8 @@ export async function fetch(
     const send = (payload: any) => {
       if (responseBody instanceof ReadableStream) {
         try {
-          payload = JSON.stringify(payload);
+          payload =
+            typeof payload === 'string' ? payload : JSON.stringify(payload);
         } catch {}
         responseBody.push(payload);
         return;

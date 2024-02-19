@@ -2,8 +2,31 @@
   "sign": {
     "out": "Sign out"
   },
-  "account": "Account",
-  "account_my": "My account",
+  "account": {
+    "label": "My account",
+    "settings": {
+      "user": {
+        "label": "Personal information",
+        "firstName": {
+          "label": "First name"
+        },
+        "lastName": {
+          "label": "Last name"
+        },
+        "photo": {
+          "label": "Photo"
+        },
+        "success": "Your profile has been updated",
+        "error": "An error has occurred. Please contact an administrator"
+      },
+      "security": {
+        "label": "Security"
+      },
+      "interface": {
+        "label": "Interface"
+      }
+    }
+  },
   "workspaces": "Workspaces",
   "billing": {
     "title": "Billing plan",
@@ -30,5 +53,41 @@
   "title": {
     "myAccount": "My account · Prisme.ai",
     "workspaceManagement": "{{workspaceName}} · Management · Prisme.ai"
+  },
+  "header": {
+    "notifications": {
+      "title": "Notifications"
+    },
+    "help": {
+      "title": "Help"
+    },
+    "products": {
+      "title": "Products",
+      "seeall": "See all products"
+    },
+    "user": {
+      "profile": {
+        "title": "View profile"
+      },
+      "settings": {
+        "title": "Account settings"
+      },
+      "shortcuts": {
+        "title": "My shortcuts"
+      },
+      "signout": {
+        "title": "Sign off"
+      }
+    }
+  },
+  "sidebar": {
+    "expand": "Expand",
+    "expand_in": "Reduce",
+    "unpin": {
+      "tooltip": "Remove shortcut",
+      "confirm": "Would you like to remove this shortcut from your space? You'll still be able to find the product from the catalog.",
+      "yes": "Yes",
+      "no": "No"
+    }
   }
 }
