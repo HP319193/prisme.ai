@@ -27,7 +27,6 @@ export const MenuUser = () => {
               </div>
             </div>
           ),
-          onClick: () => console.log('yo'),
           style: {
             pointerEvents: 'none',
           },
@@ -52,11 +51,8 @@ export const MenuUser = () => {
         },
         {
           key: '6',
-          label: (
-            <button onClick={() => signout()}>
-              {t('header.user.signout.title')}
-            </button>
-          ),
+          label: t('header.user.signout.title'),
+          onClick: () => signout(),
         },
       ]}
     />
