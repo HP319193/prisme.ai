@@ -400,13 +400,15 @@ export const Navigation = () => {
     };
   }, []);
 
+  const [searchFocusState, setSearchFocusState] = useState(false);
+
   return (
     <navigationContext.Provider value={{ add, highlight: searchQuery }}>
       <div className="product-layout-sidebar__items">
         <div
           className={`product-layout-sidebar__item ${
             searchQuery ? '!opacity-100' : ''
-          } mt-[4px]`}
+          } ${searchFocusState ? '!opacity-100' : ''} mt-[4px]`}
         >
           <div className="flex flex-1 text-left relative mt-[10px]">
             <button
@@ -440,6 +442,8 @@ export const Navigation = () => {
                   type="search"
                   value={searchQuery}
                   ref={searchInputRef}
+                  onFocus={() => setSearchFocusState(true)}
+                  onBlur={() => setSearchFocusState(false)}
                   className="outline-none ml-[13px] text-accent font-[14px] font-medium w-[calc(100%_-_50px)]"
                   onChange={({ target: { value } }) => setSearchQuery(value)}
                 />
