@@ -24,7 +24,6 @@ module.exports = {
     TRACKING: jsonParse(process.env.TRACKING),
     TRACKING_WEBHOOK: process.env.TRACKING_WEBHOOK || '',
     PRODUCTS_ENDPOINT: process.env.PRODUCTS_ENDPOINT || '',
-    PRODUCTS_SEARCH_ENDPOINT: process.env.PRODUCTS_SEARCH_ENDPOINT || '',
     OIDC_PROVIDER_URL:
       process.env.OIDC_PROVIDER_URL ||
       (process.env.API_URL && process.env.API_URL.replace('/v2', '')) ||

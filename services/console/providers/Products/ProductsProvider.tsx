@@ -12,10 +12,7 @@ import consoleIcon from '../../public/images/icon-console.svg';
 import getConfig from 'next/config';
 
 const {
-  publicRuntimeConfig: {
-    PRODUCTS_ENDPOINT = '',
-    PRODUCTS_SEARCH_ENDPOINT = '',
-  },
+  publicRuntimeConfig: { PRODUCTS_ENDPOINT = '' },
 } = getConfig();
 
 export interface Product {
@@ -84,11 +81,10 @@ export const ProductsProvider = ({
       async function fetchResults() {
         try {
           const results = await fetch(PRODUCTS_ENDPOINT, {
-            method: 'POST',
+            method: 'GET',
             headers: {
               'content-type': 'application/json',
             },
-            body: JSON.stringify(query),
           });
           if (!results.ok) {
             throw new Error(results.statusText);
@@ -100,7 +96,7 @@ export const ProductsProvider = ({
           return { list: [], total: 0, page: query?.page || 1 };
         }
       }
-      const { list, ...rest } = await fetchResults();
+      const { list = [], ...rest } = await fetchResults();
 
       const fetched: Map<string, Product> = new Map(
         list.map(({ slug, name, icon, description, highlighted }) => [
@@ -134,17 +130,11 @@ export const ProductsProvider = ({
 
   const searchProducts: ProductsContext['searchProducts'] = useCallback(
     async ({ query }) => {
-      const res = await fetch(PRODUCTS_SEARCH_ENDPOINT, {
-        method: 'POST',
+      const res = await fetch(`${PRODUCTS_ENDPOINT}?q=${query}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          query: 'test',
-          body: {
-            query,
-          },
-        }),
       });
       if (!res.ok) return null;
       return await res.json();
@@ -162,7 +152,7 @@ export const ProductsProvider = ({
         products,
         highlighted,
         fetchProducts,
-        canSearch: !!PRODUCTS_SEARCH_ENDPOINT,
+        canSearch: !!PRODUCTS_ENDPOINT,
         searchProducts,
       }}
     >

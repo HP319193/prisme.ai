@@ -56,7 +56,7 @@ export const Products = () => {
 
   const filteredProducts = useMemo(
     () =>
-      found
+      found && Array.isArray(found)
         ? found.map((item) => ({
             ...item,
             href: `/products/${item.slug}`,
