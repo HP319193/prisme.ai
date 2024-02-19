@@ -2,8 +2,32 @@
   "sign": {
     "out": "Déconnexion"
   },
-  "account": "Compte",
-  "account_my": "Mon compte",
+  "account": {
+    "label": "Mon compte",
+    "settings": {
+      "user": {
+        "label": "Informations personnelles",
+        "firstName": {
+          "label": "Prénom"
+        },
+        "lastName": {
+          "label": "Nom"
+        },
+        "photo": {
+          "label": "Photo"
+        },
+        "submit": "Enregistrer",
+        "success": "Votre profil a bien été mis à jour",
+        "error": "Une erreur esr survenue. Veuillez contacter un administrateur"
+      },
+      "security": {
+        "label": "Sécurité"
+      },
+      "interface": {
+        "label": "Interface"
+      }
+    }
+  },
   "workspaces": "Espaces de travail",
   "billing": {
     "title": "Facturation",
@@ -66,22 +90,5 @@
       "yes": "Oui",
       "no": "Non"
     }
-  },
-  "edit": {
-    "email": {
-      "label": "Email de connexion"
-    },
-    "firstName": {
-      "label": "Prénom"
-    },
-    "lastName": {
-      "label": "Nom"
-    },
-    "photo": {
-      "label": "Photo"
-    },
-    "submit": "Enregistrer",
-    "success": "Votre profil a bien été mis à jour",
-    "error": "Une erreur esr survenue. Veuillez contacter un administrateur"
   }
 }

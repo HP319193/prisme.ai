@@ -7,12 +7,14 @@ interface ProductCardProps {
   title: string;
   description: string;
   className?: string;
+  textColor?: string;
 }
 export const ProductCard = ({
   icon,
   title,
   description,
   className = '',
+  textColor = 'text-main-element-text',
 }: ProductCardProps) => {
   const titleRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
@@ -41,7 +43,7 @@ export const ProductCard = ({
         >
           <div
             ref={titleRef}
-            className={`${textClassName} !font-bold !text-main-text overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]`}
+            className={`${textClassName} !font-bold !${textColor} overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]`}
           >
             {title}
           </div>
@@ -52,7 +54,7 @@ export const ProductCard = ({
         >
           <div
             ref={textRef}
-            className={`${textClassName} !text-main-text opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]`}
+            className={`${textClassName} !${textColor} opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]`}
           >
             {description}
           </div>

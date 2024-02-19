@@ -382,6 +382,7 @@ export const WorkspacesView = () => {
                   </div>
                 }
                 className="rounded border-dashed border-[1px] border-[1BFBFBF] !bg-transparent"
+                textColor="text-white"
               />
               <MenuInCard items={createMenu} />
             </a>

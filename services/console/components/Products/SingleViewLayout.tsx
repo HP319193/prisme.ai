@@ -34,26 +34,6 @@ export const SingleViewLayout = ({
         </Text>
       </Title>
       <div className="bg-main-element text-main-text rounded flex flex-col items-center justify-center flex-1">
-        <style>{`
-        .pr-form {
-          display: flex;
-          justify-content: center;
-        }
-        .pr-form * {
-          font-size: 15px;
-        }
-        .pr-form-label {
-          margin-bottom: 10px;
-          color: var(--main-text);
-        }
-        input[disabled].pr-form-input,
-        input.pr-form-input,
-        .pr-form-input input,
-        .pr-form-input textarea {
-          background: var(--main-surface);
-          color: var(--main-text);
-        }
-        `}</style>
         {children}
       </div>
     </div>

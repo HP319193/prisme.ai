@@ -4,7 +4,7 @@ import {
   DetailedHTMLProps,
   InputHTMLAttributes,
 } from 'react';
-import searchIcon from '../../public/images/icon-search-dark.svg';
+import searchIcon from '../../public/images/icon-search.svg';
 
 interface InputProps
   extends DetailedHTMLProps<
@@ -32,7 +32,7 @@ export const Input = ({
   }, [search]);
   return (
     <As
-      className={`bg-main-element !text-main-text h-[50px] px-[50px] rounded-[5px] outline-none ${className}`}
+      className={`bg-main-element !text-main-element-text h-[50px] px-[50px] rounded-[5px] outline-none ${className}`}
       style={style}
       {...props}
     />

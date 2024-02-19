@@ -37,6 +37,8 @@ module.exports = {
         'layout-surface': 'var(--layout-surface)',
         'main-surface': 'var(--main-surface)',
         'main-element': 'var(--main-element)',
+        'main-element-text': 'var(--main-element-text)',
+        'main-element': 'var(--main-element)',
         'main-text': 'var(--main-text)',
         'main-link': 'var(--main-link)',
         primary: 'var(--primary)',

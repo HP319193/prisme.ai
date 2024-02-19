@@ -2,8 +2,11 @@
   /* v2 */
   --layout-surface: #020b1a;
   --main-surface: #171c24;
-  --main-element: #373737;
+  /* dark mode
+  --main-element: #373737;*/
   --main-text: #f8faff;
+  --main-element: white;
+  --main-element-text: #171c24;
   --main-link: #8eb7ff;
   --primary: #015dff;
   --primary-contrast: white;

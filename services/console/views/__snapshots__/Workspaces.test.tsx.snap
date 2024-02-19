@@ -32,7 +32,7 @@ exports[`should render empty 1`] = `
       className="flex flex-col mr-[15px] relative mt-11 mb-12"
     >
       <input
-        className="bg-main-element !text-main-text h-[50px] px-[50px] rounded-[5px] outline-none "
+        className="bg-main-element !text-main-element-text h-[50px] px-[50px] rounded-[5px] outline-none "
         onChange={[Function]}
         placeholder="workspaces.search"
         style={
@@ -109,12 +109,12 @@ exports[`should render empty 1`] = `
             className="flex flex-1 flex-col overflow-hidden"
           >
             <div
-              className="text-main-text font-normal mb-2 mt-1 !font-bold !text-main-text overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
+              className="text-main-text font-normal mb-2 mt-1 !font-bold !text-white overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
             >
               create.label
             </div>
             <div
-              className="text-main-text font-normal mb-2 mt-1 !text-main-text opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
+              className="text-main-text font-normal mb-2 mt-1 !text-white opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
             >
               create.description
             </div>
@@ -171,7 +171,7 @@ exports[`should render some workspaces 1`] = `
       className="flex flex-col mr-[15px] relative mt-11 mb-12"
     >
       <input
-        className="bg-main-element !text-main-text h-[50px] px-[50px] rounded-[5px] outline-none "
+        className="bg-main-element !text-main-element-text h-[50px] px-[50px] rounded-[5px] outline-none "
         onChange={[Function]}
         placeholder="workspaces.search"
         style={
@@ -248,12 +248,12 @@ exports[`should render some workspaces 1`] = `
             className="flex flex-1 flex-col overflow-hidden"
           >
             <div
-              className="text-main-text font-normal mb-2 mt-1 !font-bold !text-main-text overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
+              className="text-main-text font-normal mb-2 mt-1 !font-bold !text-white overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
             >
               create.label
             </div>
             <div
-              className="text-main-text font-normal mb-2 mt-1 !text-main-text opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
+              className="text-main-text font-normal mb-2 mt-1 !text-white opacity-60 overflow-ellipsis overflow-hidden whitespace-nowrap mr-[15px]"
             >
               create.description
             </div>

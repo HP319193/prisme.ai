@@ -19,7 +19,7 @@ export const ProductLayout = ({
   return (
     <ProductLayoutProvider opened={sidebar?.opened}>
       <div className={`product-layout ${className}`}>
-        <Sidebar {...sidebar} />
+        {sidebar && <Sidebar {...sidebar} />}
         <Content content={content} />
       </div>
     </ProductLayoutProvider>
@@ -226,7 +226,7 @@ const defaultStyles = `:block {
   opacity: 1;
 }
 .product-layout-content-panel {
-  color: var(--main-text);
+  color: var(--main-element-text);
   display: flex;
   flex: 1;
   flex-direction: column;
