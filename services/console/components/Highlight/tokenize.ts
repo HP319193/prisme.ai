@@ -16,16 +16,25 @@ export function tokenize(from: string, search: string) {
       },
     ];
   }
-  const matches = Array.from(
-    `${from}`.toLowerCase().matchAll(new RegExp(`${search.toLowerCase()}`, 'g'))
-  );
+  const matches = search
+    .split(/\s+/)
+    .filter(Boolean)
+    .flatMap((part) =>
+      Array.from(
+        `${from}`
+          .toLowerCase()
+          .matchAll(new RegExp(`${part.toLowerCase()}`, 'g'))
+      )
+    );
 
-  const len = search.length;
-  const highlights: Token[] = matches.map(({ index = 0 }) => ({
+  const highlights: Token[] = matches.map((match) => ({
     highlight: true,
-    text: from.substring(index, index + len),
-    start: index,
-    end: index + len,
+    text: from.substring(
+      match.index || 0,
+      (match.index || 0) + `${match}`.length
+    ),
+    start: match.index || 0,
+    end: (match.index || 0) + `${match}`.length,
   }));
 
   const output: Token[] = [];

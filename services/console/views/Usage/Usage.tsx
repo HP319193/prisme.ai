@@ -11,7 +11,7 @@ import BillingPlan from './BillingPlan';
 import Usages from './Usages';
 import { useWorkspaceUsage } from './useWorkspaceUsage';
 
-export const Stats = () => {
+export const Usage = () => {
   const { t } = useTranslation('user');
   const { t: workspaceT } = useTranslation('workspaces');
   const {
@@ -63,6 +63,6 @@ export const Stats = () => {
   );
 };
 
-Stats.getLayout = getLayout;
+Usage.getLayout = getLayout;
 
-export default Stats;
+export default Usage;

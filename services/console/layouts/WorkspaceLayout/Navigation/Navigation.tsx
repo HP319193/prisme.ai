@@ -24,6 +24,7 @@ import OpenStateProvider, { useOpenState } from './OpenStateProvider';
 import RootLinksGroup from './RootLinksGroup';
 import Highlight from '../../../components/Highlight';
 import Storage from '../../../utils/Storage';
+import { search } from '../../../utils/filterUtils';
 
 const {
   ProductLayout: { IconHome, IconCharts, useProductLayoutContext },
@@ -242,21 +243,6 @@ export const Navigation = () => {
       return items;
     }
 
-    function filterWithSearchQuery([slug, { name = '', description = '' }]: [
-      slug: string,
-      item: {
-        name?: Prismeai.LocalizedText;
-        description?: Prismeai.LocalizedText;
-      }
-    ]) {
-      const template = `${slug.toLocaleLowerCase()} ${(
-        localize(name) || ''
-      ).toLocaleLowerCase()} ${(
-        localize(description) || ''
-      ).toLocaleLowerCase()}`;
-      return !!template.match(searchQuery);
-    }
-
     return [
       {
         icon: <IconHome />,
@@ -275,7 +261,13 @@ export const Navigation = () => {
           setActive(
             generateNesting(
               Object.entries(workspace.pages || {})
-                .filter(filterWithSearchQuery)
+                .filter(([slug, { name = '', description = '' }]) =>
+                  search(searchQuery)(
+                    `${slug} ${localize(name) || ''} ${
+                      localize(description) || ''
+                    }`
+                  )
+                )
                 .map(([slug, page]) =>
                   processItems({ type: 'page', slug, name: page.name || slug })
                 )
@@ -295,7 +287,13 @@ export const Navigation = () => {
           setActive(
             generateNesting(
               Object.entries(workspace.automations || {})
-                .filter(filterWithSearchQuery)
+                .filter(([slug, { name = '', description = '' }]) =>
+                  search(searchQuery)(
+                    `${slug} ${localize(name) || ''} ${
+                      localize(description) || ''
+                    }`
+                  )
+                )
                 .map(([slug, automation]) =>
                   processItems({
                     type: 'automation',
@@ -319,7 +317,13 @@ export const Navigation = () => {
           setActive(
             generateNesting(
               Object.entries(workspace.blocks || {})
-                .filter(filterWithSearchQuery)
+                .filter(([slug, { name = '', description = '' }]) =>
+                  search(searchQuery)(
+                    `${slug} ${localize(name) || ''} ${
+                      localize(description) || ''
+                    }`
+                  )
+                )
                 .map(([slug, block]) =>
                   processItems({
                     type: 'block',
@@ -343,8 +347,8 @@ export const Navigation = () => {
           setActive(
             generateNesting(
               Object.entries(workspace.imports || {})
-                .filter(([slug, { appName }]) =>
-                  filterWithSearchQuery([slug, { name: appName }])
+                .filter(([slug, { appName = '' }]) =>
+                  search(searchQuery)(`${slug} ${localize(appName)}`)
                 )
                 .map(([slug, app]) =>
                   processItems({
@@ -362,10 +366,10 @@ export const Navigation = () => {
       },
       {
         icon: <IconCharts />,
-        title: t('workspace.sections.stats'),
-        href: `/workspaces/${workspace.id}/stats`,
+        title: t('workspace.sections.usage'),
+        href: `/workspaces/${workspace.id}/usage`,
         active: decodeURIComponent(asPath).match(
-          `^/workspaces/${workspace.id}/stats`
+          `^/workspaces/${workspace.id}/usage`
         ),
       },
     ];

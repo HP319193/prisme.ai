@@ -106,7 +106,7 @@
       "pages": "Pages",
       "apps": "Apps",
       "blocks": "Blocks",
-      "stats": "Usage"
+      "usage": "Usage"
     },
     "add": {
       "automation": "Créer une Automatisation",

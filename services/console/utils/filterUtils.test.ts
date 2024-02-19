@@ -13,6 +13,14 @@ it('should search', () => {
   ).toEqual(['Ipsum', 'foo ipsum bar', 'ipsum']);
 });
 
+it('should search with wildcards', () => {
+  expect(
+    ['lorem Ipsum', 'Ipsum', 'foo ipsum bar', 'ipsum', 'ip sum'].filter(
+      search('lo ip')
+    )
+  ).toEqual(['lorem Ipsum']);
+});
+
 it('should search in object', () => {
   expect(
     [
