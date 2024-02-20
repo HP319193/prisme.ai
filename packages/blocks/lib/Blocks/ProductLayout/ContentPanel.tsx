@@ -73,9 +73,9 @@ export const ContentPanel = ({ tabs = EMPTY_ARRAY, content }: ContentProps) => {
     isSelected === -1 ? hasContent : isSelected
   );
 
-  const panelContent = content || tabs[selectedIndex].content;
+  const panelContent = content || tabs[selectedIndex]?.content;
 
-  const columns = tabs[selectedIndex].columns || 1;
+  const columns = tabs[selectedIndex]?.columns || 1;
 
   return (
     <>
