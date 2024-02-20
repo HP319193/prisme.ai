@@ -406,29 +406,14 @@ export const WorkspaceLayout: FC = ({ children }) => {
               config={{
                 sidebar: {
                   header: {
-                    logo: (
-                      <WithProductLayoutContext>
-                        {({ toggleSidebar }) => (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              toggleSidebar();
-                            }}
-                          >
-                            {workspace.photo ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={workspace.photo}
-                                alt={localize(workspace.name)}
-                              />
-                            ) : (
-                              <WorkspaceIcon height={24} width={24} />
-                            )}
-                          </button>
-                        )}
-                      </WithProductLayoutContext>
+                    logo: workspace.photo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={workspace.photo}
+                        alt={localize(workspace.name)}
+                      />
+                    ) : (
+                      <WorkspaceIcon height={24} width={24} />
                     ),
                     title: localize(workspace.name),
                     tooltip: localize(workspace.name),
