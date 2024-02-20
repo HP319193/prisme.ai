@@ -184,6 +184,7 @@ const SidebarItems = ({
           <LinkOrNot
             href={['internal', 'external'].includes(type) ? value : undefined}
             className="product-layout-sidebar__item-link"
+            key={`${text}${icon}${type}${value}`}
           >
             <button
               className={`product-layout-sidebar__item ${
