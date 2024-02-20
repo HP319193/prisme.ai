@@ -461,7 +461,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
                   opened: true,
                 },
                 content: (
-                  <div className="bg-white flex flex-1 flex-col max-h-full">
+                  <div className="bg-white flex flex-1 flex-col max-h-full w-[1px]">
                     <Tabs />
                     {creatingAutomation || creatingPage ? (
                       <Loading />
