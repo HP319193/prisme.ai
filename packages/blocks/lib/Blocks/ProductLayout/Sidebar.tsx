@@ -13,6 +13,7 @@ import IconShare from './IconShare';
 import IconHome from './IconHome';
 import IconCharts from './IconCharts';
 import useLocalizedText from '../../useLocalizedText';
+import { isLocalizedObject } from '@prisme.ai/design-system';
 
 const LinkOrNot = ({
   children,
@@ -153,6 +154,7 @@ const SidebarItems = ({
   items: NonNullable<ProductLayoutProps['sidebar']>['items'];
 }) => {
   const { events } = useBlock();
+  const { localize } = useLocalizedText();
   if (!items) return null;
   if (isRenderProp(items)) {
     return items;
@@ -193,10 +195,16 @@ const SidebarItems = ({
                   {getIcon(icon)}
                 </span>
                 <span className="product-layout-sidebar__item-label product-layout-sidebar__item-label">
-                  {text}
+                  {isLocalizedObject(text) && localize(text)}
+                  {isRenderProp(text) && text}
+                  {isBlock(text) && <Block content={text} />}
                 </span>
               </div>
-              <div className="product-layout-sidebar__item-label">{text}</div>
+              <div className="product-layout-sidebar__item-label">
+                {isLocalizedObject(text) && localize(text)}
+                {isRenderProp(text) && text}
+                {isBlock(text) && <Block content={text} />}
+              </div>
             </button>
           </LinkOrNot>
         );

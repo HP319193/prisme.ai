@@ -4,7 +4,7 @@ import { BlocksListConfig } from '../BlocksList';
 
 export type BlockContent = string | ReactElement | BlocksListConfig['blocks'];
 
-export type Icons = string | 'gear' | 'share';
+export type Icons = string | 'gear' | 'share' | 'home' | 'charts';
 
 export interface SidebarHeaderProps {
   logo?: BlockContent;
