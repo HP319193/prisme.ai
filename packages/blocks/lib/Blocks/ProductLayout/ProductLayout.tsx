@@ -66,7 +66,8 @@ const defaultStyles = `:block {
 .product-layout-sidebar__header-link {
   display: flex;
   flex-direction: row;
-  margin-right: 16px;
+  margin-right: 0;
+  margin-left: 16px;
 }
 .product-layout-sidebar__logo {
   display: flex;

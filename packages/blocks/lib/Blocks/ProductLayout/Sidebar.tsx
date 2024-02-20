@@ -1,5 +1,5 @@
 import { Tooltip } from 'antd';
-import { ReactNode, useMemo } from 'react';
+import { HTMLAttributes, ReactNode, useMemo } from 'react';
 import { Block } from './Block';
 import { isBlock, isRenderProp, isString } from './getContentType';
 import { useProductLayoutContext } from './Provider';
@@ -13,26 +13,36 @@ import IconShare from './IconShare';
 import IconHome from './IconHome';
 import IconCharts from './IconCharts';
 import useLocalizedText from '../../useLocalizedText';
+import { isLocalizedObject } from '@prisme.ai/design-system';
 
 const LinkOrNot = ({
   children,
   href,
   className,
+  onClick,
 }: {
   children: ReactNode;
   href?: string;
   className?: string;
+  onClick?: HTMLAttributes<HTMLButtonElement>['onClick'];
 }) => {
   const {
     components: { Link },
   } = useBlocks();
-  return href ? (
-    <Link href={href} className={className}>
-      {children}
-    </Link>
-  ) : (
-    <>{children}</>
-  );
+  if (onClick) {
+    return (
+      <button onClick={onClick} type="button">
+        {children}
+      </button>
+    );
+  }
+  if (href)
+    return (
+      <Link href={href} className={className}>
+        {children}
+      </Link>
+    );
+  return <>{children}</>;
 };
 
 function getIcon(name: Icons) {
@@ -58,7 +68,7 @@ export const SidebarHeader = ({
   back,
   buttons,
 }: SidebarHeaderProps) => {
-  const { sidebarOpen } = useProductLayoutContext();
+  const { sidebarOpen, toggleSidebar } = useProductLayoutContext();
   const { events } = useBlock();
   const { localize } = useLocalizedText();
 
@@ -105,7 +115,11 @@ export const SidebarHeader = ({
         back ? 'product-layout-sidebar__header--has-back' : ''
       }`}
     >
-      <LinkOrNot href={href} className="product-layout-sidebar__header-link">
+      <LinkOrNot
+        href={href}
+        className="product-layout-sidebar__header-link"
+        onClick={back ? () => toggleSidebar() : undefined}
+      >
         {logo && (
           <Tooltip
             title={sidebarOpen ? undefined : localize(tooltip)}
@@ -125,7 +139,7 @@ export const SidebarHeader = ({
       {back && (
         <LinkOrNot href={back} className="product-layout-sidebar__header-link">
           <div className="product-layout-sidebar__logo">
-            <IconBack />
+            <IconBack height={20} width={20} />
           </div>
         </LinkOrNot>
       )}
@@ -153,6 +167,7 @@ const SidebarItems = ({
   items: NonNullable<ProductLayoutProps['sidebar']>['items'];
 }) => {
   const { events } = useBlock();
+  const { localize } = useLocalizedText();
   if (!items) return null;
   if (isRenderProp(items)) {
     return items;
@@ -193,10 +208,16 @@ const SidebarItems = ({
                   {getIcon(icon)}
                 </span>
                 <span className="product-layout-sidebar__item-label product-layout-sidebar__item-label">
-                  {text}
+                  {isLocalizedObject(text) && localize(text)}
+                  {isRenderProp(text) && text}
+                  {isBlock(text) && <Block content={text} />}
                 </span>
               </div>
-              <div className="product-layout-sidebar__item-label">{text}</div>
+              <div className="product-layout-sidebar__item-label">
+                {isLocalizedObject(text) && localize(text)}
+                {isRenderProp(text) && text}
+                {isBlock(text) && <Block content={text} />}
+              </div>
             </button>
           </LinkOrNot>
         );
