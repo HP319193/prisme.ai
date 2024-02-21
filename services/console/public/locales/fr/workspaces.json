@@ -980,6 +980,18 @@
                   "description": "Données à envoyer avec l'évènement."
                 }
               },
+              "upload": {
+                "label": "Téléverser un fichier",
+                "description": "L'utilisateur va téléveser un fichier qui sert envoyé avec un événement.",
+                "value": {
+                  "label": "Evénement",
+                  "description": "Spécifiez le nom de l'événement qui enverra le fichier."
+                },
+                "payload": {
+                  "label": "Données",
+                  "description": "Données à envoyer avec l'évènement."
+                }
+              },
               "text": {
                 "label": "Texte du bouton",
                 "description": "Texte affiché dans le bouton de navigation."

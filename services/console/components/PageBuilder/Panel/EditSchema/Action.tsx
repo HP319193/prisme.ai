@@ -99,6 +99,27 @@ export const schema: Schema = {
             },
           },
         },
+        {
+          title: 'pages.blocks.header.settings.nav.items.upload.label',
+          description:
+            'pages.blocks.header.settings.nav.items.upload.description',
+          value: 'upload',
+          properties: {
+            value: {
+              type: 'string',
+              title:
+                'pages.blocks.header.settings.nav.items.upload.value.label',
+              description:
+                'pages.blocks.header.settings.nav.items.upload.value.description',
+            },
+            payload: {
+              title:
+                'pages.blocks.header.settings.nav.items.upload.payload.label',
+              description:
+                'pages.blocks.header.settings.nav.items.upload.payload.description',
+            },
+          },
+        },
       ],
     },
     confirm: {

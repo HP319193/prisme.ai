@@ -1,4 +1,8 @@
-import { isLocalizedObject, Tooltip } from '@prisme.ai/design-system';
+import {
+  defaultUploadAccept,
+  isLocalizedObject,
+  Tooltip,
+} from '@prisme.ai/design-system';
 import { TooltipProps } from 'antd';
 import { ReactNode, useCallback, useRef } from 'react';
 import { BlockContext, useBlock } from '../Provider';
@@ -11,11 +15,12 @@ import { BaseBlock } from './BaseBlock';
 import { BaseBlockConfig } from './types';
 
 export interface ActionConfig extends BaseBlockConfig {
-  type: 'external' | 'internal' | 'inside' | 'event' | 'script';
+  type: 'external' | 'internal' | 'inside' | 'event' | 'script' | 'upload';
   value: string;
   text: ReactNode | Prismeai.LocalizedText | Prismeai.Block['blocks'];
   payload?: any;
   popup?: boolean;
+  accept: string;
   confirm?: {
     label?: string;
     yesLabel?: string;
@@ -28,8 +33,19 @@ export interface ActionConfig extends BaseBlockConfig {
 export interface ActionProps extends ActionConfig {
   events: BlockContext['events'];
   Link: BlocksDependenciesContext['components']['Link'];
-  onClick?: () => void;
+  onClick?: (value?: any) => void;
 }
+
+const isInputChangeEvent = (
+  value: any
+): value is React.ChangeEvent<HTMLInputElement> => {
+  return (
+    value &&
+    typeof value === 'object' &&
+    'target' in value &&
+    'value' in value.target
+  );
+};
 
 export const ActionButton = ({
   type,
@@ -40,6 +56,7 @@ export const ActionButton = ({
   onClick,
   popup,
   disabled,
+  accept,
   sectionId = '',
 }: ActionProps) => {
   const {
@@ -114,6 +131,27 @@ export const ActionButton = ({
           />
         </a>
       );
+    case 'upload':
+      return (
+        <div id={sectionId} className={`pr-block-action__upload ${className}`}>
+          <div className="pr-block-action__upload-btn">
+            <label
+              className="pr-block-action__upload-label"
+              htmlFor={`${className}-file-upload`}
+              dangerouslySetInnerHTML={html ? { __html: html } : undefined}
+            />
+            <input
+              type="file"
+              onChange={onClick}
+              accept={accept || defaultUploadAccept}
+              multiple={false}
+              id={`${className}-file-upload`}
+              hidden
+              disabled={disabled}
+            />
+          </div>
+        </div>
+      );
     default:
       return (
         <span
@@ -174,23 +212,60 @@ export const ConfirmAction = ({
 };
 
 export const Action = (props: ActionProps) => {
-  const onClick = useCallback(() => {
-    if (props.onClick) {
-      props.onClick();
-    }
-    if (!props.events || !props.value) return;
-    switch (props.type) {
-      case 'event':
-        return props.events.emit(props.value, props.payload);
-      case 'script':
-        try {
-          new Function(props.value)();
-        } catch (e) {
-          console.error(e);
-        }
-        return;
-    }
-  }, [props.type, props.events, props.value, props.payload, props.onClick]);
+  const {
+    utils: { uploadFile },
+  } = useBlocks();
+
+  const onClick = useCallback(
+    async (value?: any) => {
+      if (props.onClick) {
+        props.onClick();
+      }
+      if (!props.events || !props.value) return;
+      switch (props.type) {
+        case 'event':
+          return props.events.emit(props.value, props.payload);
+        case 'script':
+          try {
+            new Function(props.value)();
+          } catch (e) {
+            console.error(e);
+          }
+          return;
+        case 'upload':
+          if (!isInputChangeEvent(value)) return;
+          const file = value.target.files?.[0];
+          if (!file || !uploadFile) return;
+
+          const reader = new FileReader();
+          reader.onload = async ({ target }) => {
+            if (!target || typeof target.result !== 'string') return;
+
+            const url = await uploadFile(
+              target.result.replace(
+                /base64/,
+                `filename:${file.name.replace(/[;\s]/g, '-')}; base64`
+              )
+            );
+
+            props?.events?.emit(props.value, {
+              ...props.payload,
+              url: typeof url == 'string' ? url : url.value,
+            });
+          };
+          reader.readAsDataURL(file);
+          return;
+      }
+    },
+    [
+      props.type,
+      props.events,
+      props.value,
+      props.payload,
+      props.onClick,
+      uploadFile,
+    ]
+  );
 
   if (props.confirm) {
     return <ConfirmAction {...props} onClick={onClick} />;
@@ -215,6 +290,21 @@ const defaultStyles = `:block {
 }
 :root .pr-block-action__confirm-button {
   margin-left: 1rem;
+}
+:block .pr-block-action__upload-btn {
+  background: var(--accent-color);
+  color: var(--accent-contrast-color);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: inline-block;
+  font-family: inherit; /* Assuming you want to inherit the font from the parent */
+  font-size: inherit; /* Assuming you want to inherit the font-size from the parent */
+  text-align: center; /* Center the text inside the label */
+}
+
+:block .pr-block-action__upload-label {
+  cursor: pointer
 }`;
 export const ActionInContext = () => {
   const { config, events } = useBlock<ActionConfig>();
