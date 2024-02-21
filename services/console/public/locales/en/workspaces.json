@@ -980,6 +980,18 @@
                   "description": "Payload sent with event."
                 }
               },
+              "upload": {
+                "label": "Upload a file",
+                "description": "The user will upload a file which will be sent with an event.",
+                "value": {
+                  "label": "Event",
+                  "description": "Specify the name of the event to be send after upload complete."
+                },
+                "payload": {
+                  "label": "Payload",
+                  "description": "Payload sent with event."
+                }
+              },
               "text": {
                 "label": "Button text",
                 "description": "Text displayed in the navigation button."
@@ -1283,6 +1295,10 @@
         "values": {
           "label": "Initial values",
           "description": "Initial form values. Necessary when editing an existing resource."
+        },
+        "autoFocus": {
+          "label": "Auto focus",
+          "description": "Automatically focuses on the first field of the form."
         }
       },
       "richtext": {
