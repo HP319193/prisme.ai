@@ -1295,6 +1295,10 @@
         "values": {
           "label": "Initial values",
           "description": "Initial form values. Necessary when editing an existing resource."
+        },
+        "autoFocus": {
+          "label": "Auto focus",
+          "description": "Automatically focuses on the first field of the form."
         }
       },
       "richtext": {

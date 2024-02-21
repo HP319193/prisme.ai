@@ -1295,6 +1295,10 @@
         "values": {
           "label": "Valeurs initiales",
           "description": "Valeurs initiales du formulaire. Nécessaire en cas d'édition d'une ressource existante."
+        },
+        "autoFocus": {
+          "label": "Auto focus",
+          "description": "Met automatiquement le focus sur le premier champs du formulaire."
         }
       },
       "richtext": {

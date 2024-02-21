@@ -4,7 +4,6 @@ import { useField } from 'react-final-form';
 import { useTranslation } from 'next-i18next';
 import Properties from '../../../SchemaFormBuilder/Properties';
 import { Button } from 'antd';
-import { builtinBlocks } from '@prisme.ai/blocks';
 
 const SchemaEditor = ({ name }: FieldProps) => {
   const field = useField(name);
@@ -95,6 +94,11 @@ const schema: Schema = {
     values: {
       title: 'pages.blocks.form.values.label',
       description: 'pages.blocks.form.values.description',
+    },
+    autoFocus: {
+      type: 'boolean',
+      title: 'pages.blocks.form.autoFocus.label',
+      description: 'pages.blocks.form.autoFocus.description',
     },
   },
 };

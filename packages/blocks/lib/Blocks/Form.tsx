@@ -32,6 +32,7 @@ interface FormConfig extends BaseBlockConfig {
   values?: Record<string, any>;
   buttons?: ActionConfig[];
   collapsed?: boolean;
+  autoFocus?: boolean;
 }
 
 interface FormProps extends FormConfig {
@@ -55,6 +56,7 @@ export const Form = ({
   className,
   buttons,
   sectionId = '',
+  autoFocus,
   ...config
 }: FormProps) => {
   const { t } = useTranslation();
@@ -62,6 +64,7 @@ export const Form = ({
   const [initialValues] = useState(config.values || {});
   const canChange = useRef(true);
   const formRef: SchemaFormProps['formRef'] = useRef<any>();
+  const containerEl = useRef<HTMLDivElement>(null);
 
   const onChange = useCallback(
     (values: any) => {
@@ -135,12 +138,22 @@ export const Form = ({
     [buttons, events, Link]
   );
 
+  useEffect(() => {
+    if (!autoFocus || !formRef.current || !containerEl.current) return;
+    const form = containerEl.current.querySelector('form');
+    if (!form) return;
+    const firstField = formRef.current?.getRegisteredFields()[1];
+    const input: HTMLInputElement = form[firstField];
+    input?.focus();
+  }, []);
+
   if (!config.schema) return null;
 
   return (
     <div
       className={`pr-block-form ${className}          block-form`}
       id={sectionId}
+      ref={containerEl}
     >
       {config.title && (
         <div className="pr-block-form__title">{localize(config.title)}</div>
