@@ -1,6 +1,5 @@
 import '../../i18n';
 import { Table } from '@prisme.ai/design-system';
-import tw from '../../tw';
 import { useBlock } from '../../Provider';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useState } from 'react';
@@ -12,9 +11,11 @@ import { ColumnDefinition } from './types';
 import renderValue from './RenderValue';
 import useLocalizedText from '../../useLocalizedText';
 import { TableProps } from 'antd';
-import { BlockComponent } from '../../BlockLoader';
+import { BaseBlock } from '../BaseBlock';
+import { BaseBlockConfig } from '../types';
+import { Events } from '@prisme.ai/sdk';
 
-export interface DataTableConfig {
+export interface DataTableConfig extends BaseBlockConfig {
   title?: Prismeai.LocalizedText;
   data: Record<string, any>[];
   columns?: ColumnDefinition[];
@@ -26,6 +27,10 @@ export interface DataTableConfig {
     payload?: Record<string, any>;
   };
   customProps?: any;
+}
+
+interface DataTableProps extends DataTableConfig {
+  events?: Events;
 }
 
 const components = {
@@ -46,24 +51,26 @@ function initDataSource(data: DataTableConfig['data']) {
     : [];
 }
 
-export const DataTable: BlockComponent = () => {
+export const DataTable = ({
+  className = '',
+  data = emptyArray,
+  events,
+  ...config
+}: DataTableProps) => {
   const {
     t,
     i18n: { language },
   } = useTranslation();
   const { localize } = useLocalizedText();
-  const { config = { data: emptyArray }, events } = useBlock<DataTableConfig>();
 
-  const [dataSource, setDataSource] = useState<any>(
-    initDataSource(config.data)
-  );
+  const [dataSource, setDataSource] = useState<any>(initDataSource(data));
 
   useEffect(() => {
-    setDataSource(initDataSource(config.data));
-  }, [config.data]);
+    setDataSource(initDataSource(data));
+  }, [data]);
 
   const columns = useMemo(() => {
-    const rawData = config.data;
+    const rawData = data;
 
     if (!Array.isArray(rawData) || !rawData[0]) return [];
 
@@ -180,11 +187,11 @@ export const DataTable: BlockComponent = () => {
   }, [config.pagination]);
 
   return (
-    <div className={tw`block-data-table`}>
+    <div
+      className={`pr-block-data-table ${className}                  block-data-table`}
+    >
       {config.title && <BlockTitle value={localize(config.title)} />}
-      <div
-        className={tw`block-data-table__table-container table-container overflow-auto`}
-      >
+      <div className="pr-block-data-table__table-container                 block-data-table__table-container table-container">
         <Table
           dataSource={dataSource}
           columns={columns}
@@ -197,4 +204,22 @@ export const DataTable: BlockComponent = () => {
     </div>
   );
 };
-export default DataTable;
+
+const defaultStyles = `
+.pr-block-data-table__table-container {
+  overflow: auto;
+}
+`;
+
+export const DataTableInContext = () => {
+  const { config, events } = useBlock<DataTableConfig>();
+
+  return (
+    <BaseBlock defaultStyles={defaultStyles}>
+      <DataTable {...config} events={events} />
+    </BaseBlock>
+  );
+};
+DataTableInContext.styles = defaultStyles;
+
+export default DataTableInContext;
