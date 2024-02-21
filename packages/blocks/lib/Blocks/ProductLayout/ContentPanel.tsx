@@ -59,7 +59,8 @@ const Tab = ({
 const EMPTY_ARRAY: ContentProps['tabs'] = [];
 
 export const ContentPanel = ({ tabs = EMPTY_ARRAY, content }: ContentProps) => {
-  const { isSelected, hasContent } = tabs.reduce(
+  const _tabs = Array.isArray(tabs) ? tabs : EMPTY_ARRAY;
+  const { isSelected, hasContent } = _tabs.reduce(
     (prev, { content, selected }, index) => {
       if (selected && prev.isSelected === -1)
         return { ...prev, isSelected: index };
@@ -73,14 +74,14 @@ export const ContentPanel = ({ tabs = EMPTY_ARRAY, content }: ContentProps) => {
     isSelected === -1 ? hasContent : isSelected
   );
 
-  const panelContent = content || tabs[selectedIndex]?.content;
+  const panelContent = content || _tabs[selectedIndex]?.content;
 
-  const columns = tabs[selectedIndex]?.columns || 1;
+  const columns = _tabs[selectedIndex]?.columns || 1;
 
   return (
     <>
       <div className="product-layout-content-tabs">
-        {tabs.map((item, index) => (
+        {_tabs.map((item, index) => (
           <Tab
             {...item}
             onClick={() => setSelectedIndex(index)}
