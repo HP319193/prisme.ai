@@ -17,13 +17,18 @@ export interface Action {
 export type FormatDate = Intl.DateTimeFormatOptions;
 export type FormatNumber = Intl.NumberFormatOptions;
 
+export type OnEdit = {
+  event: string;
+  payload?: Record<string, any>;
+};
+
 export interface ColumnDefinition {
   label?: Prismeai.LocalizedText;
   key?: string;
   type?: DataType;
   format?: FormatDate | FormatNumber;
   actions?: Action[];
-  onEdit?: string;
+  onEdit?: string | OnEdit;
   validators?: Record<
     'required' | 'pattern' | 'min' | 'max' | 'tel' | 'email' | 'date',
     | {

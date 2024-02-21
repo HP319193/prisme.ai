@@ -7,7 +7,7 @@ import BlockTitle from '../Internal/BlockTitle';
 
 import EditableRow from './EditableRow';
 import EditableCell from './EditableCell';
-import { ColumnDefinition } from './types';
+import { ColumnDefinition, OnEdit } from './types';
 import renderValue from './RenderValue';
 import useLocalizedText from '../../useLocalizedText';
 import { TableProps } from 'antd';
@@ -85,19 +85,23 @@ export const DataTable = ({
         format: undefined,
       }));
 
-    const handleSave = (onEdit: string) => (row: Record<string, any>) => {
-      const { key, ...data } = row;
-      events?.emit(onEdit, { data, key });
+    const handleSave =
+      (onEdit: NonNullable<ColumnDefinition['onEdit']>) =>
+      (row: Record<string, any>) => {
+        const { key, ...data } = row;
+        const { event, payload = {} } =
+          typeof onEdit === 'string' ? ({ event: onEdit } as OnEdit) : onEdit;
+        events?.emit(event, { ...payload, data, key });
 
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.key === item.key);
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        ...row,
-      });
-      setDataSource(newData);
-    };
+        const newData = [...dataSource];
+        const index = newData.findIndex((item) => row.key === item.key);
+        const item = newData[index];
+        newData.splice(index, 1, {
+          ...item,
+          ...row,
+        });
+        setDataSource(newData);
+      };
 
     return columnsSpecification.map(
       ({
