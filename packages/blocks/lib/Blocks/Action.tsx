@@ -138,7 +138,7 @@ export const ConfirmAction = ({
   return (
     <Tooltip
       ref={tooltipRef}
-      overlayClassName="pr-block-action__confirm"
+      overlayClassName={`pr-block-action__confirm ${props.className}`}
       placement={placement}
       title={
         <>
