@@ -619,11 +619,12 @@ https://api.studio.prisme.ai/v2/login/callback
 ```
 
 Once created, note the following client informations :  
-* Client ID
-* Client Secret
-* Auth URL : the `authorization_endpoint` triggering authenticatin flow
+
+* Client ID  
+* Client Secret  
+* Auth URL : the `authorization_endpoint` triggering authentication flow  
 * Token URL : the `token_endpoint` to exchange authorization codes with an authentication token  
-* Certificate URL : the `jwks_uri` endpoint returning IdP public certificates
+* Certificate URL : the `jwks_uri` endpoint returning IdP public certificates  
 
 `jwks_uri` might not be showed with client details as it is generally global to the IdP (or at least to the customer tenant, like Auth0).  
 This URL can either return a [standard JWKS](https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-key-set-properties) or an object mapping `kid`s to PEM certificate strings like [Google](https://www.googleapis.com/oauth2/v1/certs).  
