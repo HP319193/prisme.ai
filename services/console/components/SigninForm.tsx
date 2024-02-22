@@ -16,6 +16,7 @@ interface AuthProvider {
   extends?: string;
   label?: Prismeai.LocalizedText;
   icon?: string;
+  url?: string;
 }
 
 const {
@@ -90,11 +91,21 @@ export const SigninForm = ({ show403 }: SigninFormProps) => {
       return null;
     }
     return ENABLED_AUTH_PROVIDERS.filter(({ name }) => name !== 'local').map(
-      ({ name, extends: provider = name, ...rest }) => ({
-        name,
-        ...getProviderDetails(provider),
-        ...rest,
-      })
+      ({ name, extends: provider = name, ...rest }) => {
+        const providerDetails = getProviderDetails(provider);
+        const url =
+          rest?.url && rest?.url.startsWith('/')
+            ? `${API_URL}${rest?.url}`
+            : rest?.url ||
+              providerDetails?.url ||
+              `${API_URL}/login/oauth?provider=${name}`;
+        return {
+          name,
+          ...providerDetails,
+          ...rest,
+          url,
+        };
+      }
     );
   }, [t]);
 

@@ -92,7 +92,11 @@ components:
           type: string
         firstName:
           type: string
+        lastName:
+          type: string
         email:
+          type: string
+        language:
           type: string
 
     User:
@@ -1820,12 +1824,12 @@ components:
             - gateway.login.failed
         payload:
           type: object
-          required:
-            - email
           properties:
             ip:
               type: string
             email:
+              type: string
+            provider:
               type: string
 
     SucceededLogin:
@@ -1851,6 +1855,8 @@ components:
             email:
               type: string
             id:
+              type: string
+            provider:
               type: string
             authData:
               additionalProperties:
@@ -3048,6 +3054,63 @@ paths:
                   success:
                     type: boolean
         '401': *AuthenticationError
+
+  /v2/login/oauth:
+    get:
+      description: Starts OAUth authentication
+      operationId: oauthInit
+      tags:
+        - API Gateway
+        - AuthProviders
+      parameters:
+        - name: 'provider'
+          in: 'query'
+          description: 'OAuth provider name as configured in api gateway environment variables'
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirection response
+
+  /v2/login/callback:
+    get:
+      description: End OAuth2 authentication
+      operationId: oauthCallback
+      tags:
+        - API Gateway
+        - AuthProviders
+      parameters:
+        - name: 'state'
+          in: 'query'
+          description: 'OAuth state param'
+          required: false
+          schema:
+            type: string
+        - name: 'code'
+          in: 'query'
+          description: 'OAuth authorization code'
+          required: false
+          schema:
+            type: string
+        - name: 'scope'
+          in: 'query'
+          allowReserved: true
+          description: 'OAuth requested scopes'
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: query
+          schema:
+            type: object
+            additionalProperties: true
+          style: form
+          explode: false
+          allowReserved: true
+      responses:
+        '302':
+          description: Redirection response
 
   /v2/login/azure:
     get:

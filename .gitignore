@@ -12,3 +12,4 @@ docker-compose-dev.yml
 services/console/.next
 test.js
 .vscode
+**/authProviders.config.yml
