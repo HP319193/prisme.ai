@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import initPipelines from '../pipelines';
-import { GatewayConfig, syscfg } from '../config';
+import { GatewayConfig, oidcCfg, syscfg } from '../config';
 import errorHandler from '../middlewares/errorHandler';
 import { requestDecorator } from '../middlewares/traceability';
 import httpLogger from '../middlewares/httpLogger';
@@ -23,7 +23,7 @@ export default async function initRoutes(
 ) {
   // Drop legacy session cookies on logout as they would otherwise prevent from signing out
   app.use(
-    '/oidc/session/end',
+    oidcCfg.SIGNOUT_PATH,
     (req: Request, res: Response, next: NextFunction) => {
       res.clearCookie('connect.sid', {
         sameSite: 'none',

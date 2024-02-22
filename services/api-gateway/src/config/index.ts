@@ -4,6 +4,6 @@ import storage from './storage';
 import eda from './eda';
 import mails from './mails';
 import oidcCfg from './oidc';
-import azureCfg from './azure';
+import authProviders from './authProviders';
 
-export { syscfg, GatewayConfig, storage, eda, mails, oidcCfg, azureCfg };
+export { syscfg, GatewayConfig, storage, eda, mails, oidcCfg, authProviders };

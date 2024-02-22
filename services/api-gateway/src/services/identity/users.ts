@@ -415,7 +415,7 @@ export const externalLoginOrSignup = (
             [provider]: authData,
           },
           status: UserStatus.Validated,
-          language: 'fr',
+          language: authData.language || 'fr',
         });
         newAccount = true;
       }

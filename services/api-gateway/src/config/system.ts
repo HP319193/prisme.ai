@@ -15,6 +15,10 @@ export default {
     process.env.GATEWAY_CONFIG_PATH ||
     path.join(__dirname, '../../gateway.config.yml'),
 
+  AUTH_PROVIDERS_CONFIG:
+    process.env.AUTH_PROVIDERS_CONFIG_PATH ||
+    path.join(__dirname, '../../authProviders.config.yml'),
+
   OPENAPI_FILEPATH:
     process.env.OPENAPI_FILEPATH ||
     path.resolve(__dirname, '../../specifications/swagger.yml'),

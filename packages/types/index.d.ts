@@ -930,7 +930,9 @@ declare namespace Prismeai {
         [name: string]: any;
         id: string;
         firstName?: string;
+        lastName?: string;
         email?: string;
+        language?: string;
     }
     export interface AuthenticationError {
         /**
@@ -1606,7 +1608,8 @@ declare namespace Prismeai {
         type: "gateway.login.failed";
         payload: {
             ip?: string;
-            email: string;
+            email?: string;
+            provider?: string;
         };
     }
     export interface FailedMFA {
@@ -2218,6 +2221,7 @@ declare namespace Prismeai {
             ip?: string;
             email?: string;
             id: string;
+            provider?: string;
             authData: {
                 [name: string]: AuthData;
             };
@@ -3727,6 +3731,38 @@ declare namespace PrismeaiAPI {
                 success: boolean;
             }
             export type $401 = Prismeai.AuthenticationError;
+        }
+    }
+    namespace OauthCallback {
+        namespace Parameters {
+            export type Code = string;
+            export interface Query {
+                [name: string]: any;
+            }
+            export type Scope = string;
+            export type State = string;
+        }
+        export interface QueryParameters {
+            state?: Parameters.State;
+            code?: Parameters.Code;
+            scope?: Parameters.Scope;
+            query?: Parameters.Query;
+        }
+        namespace Responses {
+            export interface $302 {
+            }
+        }
+    }
+    namespace OauthInit {
+        namespace Parameters {
+            export type Provider = string;
+        }
+        export interface QueryParameters {
+            provider: Parameters.Provider;
+        }
+        namespace Responses {
+            export interface $302 {
+            }
         }
     }
     namespace PatchMyUser {

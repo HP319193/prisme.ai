@@ -186,6 +186,12 @@ Then, for when you want to run this service directly from its docker image, you 
     <td>../../gateway.config.yml</td>
   </tr>  
   <tr>
+    <td>AUTH_PROVIDERS_CONFIG</td>
+    <td>api-gateway</td>
+    <td>authProviders.config.yml path</td>
+    <td>../../authProviders.config.yml</td>
+  </tr>    
+  <tr>
     <td>INTERNAL_API_KEY</td>
     <td>api-gateway, workspaces</td>
     <td>API Key allowing internal services fetching events /sys/cleanup API</td>
@@ -600,6 +606,63 @@ Then, for when you want to run this service directly from its docker image, you 
 </table>
 
 # SSO
+
+## Generic OIDC  
+
+Prismeai is compatible with any OIDC provider like Google.  
+
+**1. Register an app**  
+First access your OIDC IdP back-office in order to register a **Web** OAuth2 client/app.  
+Configure the following **authorized redirect URI** :  
+```
+https://api.studio.prisme.ai/v2/login/callback
+```
+
+Once created, note the following client informations :  
+* Client ID
+* Client Secret
+* Auth URL : the `authorization_endpoint` triggering authenticatin flow
+* Token URL : the `token_endpoint` to exchange authorization codes with an authentication token  
+* Certificate URL : the `jwks_uri` endpoint returning IdP public certificates
+
+`jwks_uri` might not be showed with client details as it is generally global to the IdP (or at least to the customer tenant, like Auth0).  
+This URL can either return a [standard JWKS](https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-key-set-properties) or an object mapping `kid`s to PEM certificate strings like [Google](https://www.googleapis.com/oauth2/v1/certs).  
+
+
+**2. Create & configure a `authProviders.config.yml` file**
+```yaml
+providers:
+  ProviderName:
+    type: oidc
+    config:
+      client_id: "your client id"
+      client_secret: "your client id"
+      authorization_endpoint: "idp authorization_endpoint"
+      token_endpoint: "idp token_endpoint"
+      jwks_uri: "idp public certificates endpoint"
+```
+
+Although the choice is yours, name your **ProviderName** with care, as this name will be passed to front-end services & injected within [user authData](../workspaces/security.md#auth-data) (along with user claims), making it potentially difficult to change afterwards.  
+
+An optional `config.scopes` field allow customizing requested scopes (& retrieved used claims by extension), which defaults to `openid email profile` and must at least include `openid` and `email`.  
+
+**3. Mount this configuration file to `prismeai-api-gateaway`**  
+Mount this file as a volume inside `prismeai-api-gateway` container at `/www/services/api-gateway/authProviders.config.yml`  
+You can customize this file location with `AUTH_PROVIDERS_CONFIG` environment variable  
+
+**4. Enable the provider within console & pages**  
+In order to display & customize sign in buttons connecting to our freshly configured OIDC provider, add the following environment variable to **prismeai-console** and **prismeai-pages** microsevices :  
+
+```
+ENABLED_AUTH_PROVIDERS='[{"name": "local"}, {"name": "google", "label": "Google", "icon": "https://cdn.iconscout.com/icon/free/png-256/free-google-1772223-1507807.png"}]'
+```
+
+Configure `name`, `label` and `icon` with the desired provider name, its display label & icon url.  
+
+If the `local` provider is omitted, the standard user / password sign in form will not appear.  
+If you do not want the sames IdP to be available between Prismai studio & workspaces pages, these 2 variables can also be differently configured between `prismeai-console` and `prismeai-pages`.  
+
+
 
 ## Configuring Microsoft SSO
 

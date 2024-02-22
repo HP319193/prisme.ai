@@ -4,17 +4,26 @@ import {
   Strategy as JWTStrategy,
   ExtractJwt as ExtractJWT,
 } from 'passport-jwt';
+import OAuth2Strategy from 'passport-oauth2';
 import { passportJwtSecret } from 'jwks-rsa';
 import cookieParser from 'cookie-parser';
 import { createClient } from '@redis/client';
 import expressSession from 'express-session';
 import connectRedis from 'connect-redis';
-import { storage, syscfg, eda, oidcCfg } from '../../config';
+import { storage, syscfg, eda, oidcCfg, authProviders } from '../../config';
 import { Strategy as CustomStrategy } from 'passport-custom';
 import services from '../../services';
-import { AuthenticationError, NotFoundError } from '../../types/errors';
+import {
+  AuthenticationError,
+  NotFoundError,
+  PrismeError,
+} from '../../types/errors';
 import { UserStatus } from '../../services/identity/users';
 import { ResourceServer } from '../../config/oidc';
+import { URL } from 'url';
+import { verifyToken } from '../../services/oidc/provider';
+import { AuthProviders } from '../../services/identity';
+import { EventType } from '../../eda';
 
 export async function init(app: Application) {
   app.use(cookieParser());
@@ -105,17 +114,35 @@ async function initPassportStrategies(
   users: ReturnType<typeof services.identity>
 ) {
   async function deserializeUser(
-    id: string,
+    id: string | { provider: string; authData: Prismeai.AuthData },
     done: (err: Error | undefined, user: Prismeai.User | null) => void
   ) {
     try {
       const users = services.identity();
-      const user = await users.get(<string>id);
+
+      let user: Prismeai.User;
+
+      // If id is an object, this means we come from an external provider
+      if (typeof id === 'object' && id.provider && id.authData?.id) {
+        user = await users.externalLoginOrSignup(
+          id.provider as AuthProviders,
+          id.authData
+        );
+      } else if (typeof id === 'string') {
+        user = await users.get(<string>id);
+      } else {
+        return done(
+          new PrismeError('Invalid id param to deserializeUser', { id }, 500),
+          null
+        );
+      }
+
       if (user.status && user.status !== UserStatus.Validated) {
         done(undefined, null);
         return;
       }
       done(undefined, user);
+      return user;
     } catch (err) {
       if (err instanceof NotFoundError) {
         done(undefined, null);
@@ -164,6 +191,79 @@ async function initPassportStrategies(
       }
     )
   );
+
+  /**
+   * Generic OAuth strategies
+   */
+  for (let [providerName, provider] of Object.entries(
+    authProviders.oauth || {}
+  )) {
+    passport.use(
+      providerName,
+      new OAuth2Strategy(
+        {
+          authorizationURL: provider.config.authorization_endpoint,
+          tokenURL: provider.config.token_endpoint,
+          clientID: provider.config.client_id,
+          clientSecret: provider.config.client_secret,
+          callbackURL: new URL('/v2/login/callback', syscfg.API_URL).toString(),
+          scope: (
+            provider.config?.scopes || ['openid', 'email', 'profile']
+          ).join(' '),
+          state:
+            typeof provider.config.state === 'undefined' ||
+            provider.config.state
+              ? true
+              : false,
+          passReqToCallback: true,
+        },
+        async function (
+          req: Request,
+          _: any, // Access token
+          __: any, // Refresh token
+          params: any,
+          ___: any, // Profile
+          done: any
+        ) {
+          if (!params.id_token) {
+            return done(
+              new AuthenticationError('JWT missing in token_endpoint response')
+            );
+          }
+          const claims = await verifyToken(
+            params.id_token,
+            providerName,
+            provider.config.jwks_uri
+          );
+          if (!claims) {
+            return done(new AuthenticationError('Invalid JWT'));
+          }
+          const user = await deserializeUser(
+            {
+              provider: providerName,
+              authData: {
+                ...claims,
+                id: claims.sub,
+                email: claims.email,
+                firstName: claims.given_name,
+                lastName: claims.family_name,
+                language: claims.locale,
+              },
+            },
+            done as any
+          );
+          if ((<any>user)?.newAccount) {
+            req.broker
+              .send(EventType.SucceededSignup, {
+                ip: req.context?.http?.ip,
+                user,
+              })
+              .catch((err) => req.logger.error({ err }));
+          }
+        }
+      )
+    );
+  }
 }
 
 export async function cleanIncomingRequest(req: Request) {

@@ -23,6 +23,26 @@ const STUDIO_URL = `${
 }`;
 const LOGIN_PATH = '/signin';
 
+const SIGNOUT_PATH = '/oidc/session/end';
+const SIGNOUT_URI = new URL(SIGNOUT_PATH, PROVIDER_URL).toString();
+function getSignoutUri(
+  clientId?: string | null,
+  pageLogoutUrl?: string | null
+) {
+  if (!pageLogoutUrl || !clientId) {
+    clientId = OIDC_STUDIO_CLIENT_ID;
+    pageLogoutUrl = new URL(LOGIN_PATH, STUDIO_URL).toString();
+  }
+  if (clientId && pageLogoutUrl) {
+    const signoutParams = new URLSearchParams({
+      client_id: clientId,
+      post_logout_redirect_uri: pageLogoutUrl,
+    });
+    return SIGNOUT_URI + '?' + signoutParams.toString();
+  }
+  return SIGNOUT_URI;
+}
+
 const cookiesDomain = findCommonParentDomain([
   PAGES_HOST,
   PROVIDER_URL,
@@ -74,6 +94,8 @@ export default {
   OIDC_CLIENT_REGISTRATION_TOKEN,
   OIDC_WELL_KNOWN_URL,
   JWKS_URL: process.env.JWKS_URL || `${PROVIDER_URL}/oidc/jwks`,
+  SIGNOUT_PATH,
+  getSignoutUri,
   CONFIGURATION: <Configuration>{
     // Claims per scope
     claims: {
@@ -276,12 +298,7 @@ export default {
         msg: `Failed OIDC authentication with an error : ${error.message}. Redirect user back to sign out.`,
         error,
       });
-
       // Build signout URI to  clear client cookies & restart a login attempt
-      let signoutParams = new URLSearchParams({
-        client_id: OIDC_STUDIO_CLIENT_ID,
-        post_logout_redirect_uri: new URL(LOGIN_PATH, STUDIO_URL).toString(),
-      });
       const sourceClientId = new URLSearchParams(ctx.request.url).get(
         'client_id'
       );
@@ -291,20 +308,21 @@ export default {
         sourceClientId &&
         sourceClientId !== OIDC_STUDIO_CLIENT_ID &&
         (await getOAuthClient(sourceClientId));
-      if (sourceWorkspaceClient) {
-        signoutParams = new URLSearchParams({
-          client_id: sourceClientId,
-          post_logout_redirect_uri: sourceWorkspaceClient.redirectUris[0],
-        });
-      }
-      const signoutURI = new URL(
-        '/oidc/session/end?'.concat(signoutParams.toString()),
-        PROVIDER_URL
-      ).toString();
+
+      const signoutURI = getSignoutUri(
+        sourceClientId,
+        sourceWorkspaceClient
+          ? sourceWorkspaceClient.redirectUris?.[0]
+          : undefined
+      );
 
       // Avoid an infinite loop if the signout itself is crashing
       if ((ctx.request.url || '').includes('/session/end/')) {
-        ctx.redirect(signoutParams.get('post_logout_redirect_uri')!);
+        ctx.redirect(
+          sourceWorkspaceClient && sourceWorkspaceClient.redirectUris?.length
+            ? sourceWorkspaceClient.redirectUris?.[0]
+            : new URL(LOGIN_PATH, STUDIO_URL).toString()
+        );
       } else {
         ctx.redirect(signoutURI);
       }
