@@ -52,7 +52,17 @@ export const FieldSelect = (
   const showSearch = !fieldOptions?.select?.hideSearch;
 
   return (
-    <FieldContainer {...props} className="pr-form-select">
+    <FieldContainer
+      {...props}
+      className={`pr-form-select ${
+        field.input.value !== undefined
+          ? `pr-form-select--selected-${`${field.input.value}`.replace(
+              /[^a-zA-Z0-9]/g,
+              '-'
+            )}`
+          : ''
+      }`}
+    >
       <Label
         field={field}
         schema={props.schema}
@@ -69,6 +79,7 @@ export const FieldSelect = (
         placeholder={props.schema.placeholder || ''}
         showSearch={showSearch}
         filterOption={filterOption}
+        disabled={props.schema.disabled}
       />
       <InfoBubble
         className="pr-form-select__description"

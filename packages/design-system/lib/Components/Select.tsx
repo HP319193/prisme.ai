@@ -1,8 +1,6 @@
 import { Select as AntdSelect, SelectProps as AntdSelectProps } from 'antd';
 import { ReactNode } from 'react';
 
-const { Option, OptGroup } = AntdSelect;
-
 export type SelectOption = {
   value: string;
   label: string | ReactNode;

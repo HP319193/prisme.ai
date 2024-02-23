@@ -331,7 +331,7 @@ exports[`should use ui:widgets 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-select"
+              className="pr-form-field pr-form-select pr-form-select--selected-"
             >
               <label
                 className="pr-form-select__label pr-form-label"
