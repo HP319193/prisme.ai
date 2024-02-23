@@ -23,8 +23,18 @@ const defaultSchema = {};
 interface FormConfig extends BaseBlockConfig {
   title?: Prismeai.LocalizedText;
   schema: Schema;
-  onChange?: string;
-  onSubmit?: string;
+  onChange?:
+    | string
+    | {
+        event: string;
+        payload?: Record<string, any>;
+      };
+  onSubmit?:
+    | string
+    | {
+        event: string;
+        payload?: Record<string, any>;
+      };
   submitLabel?: string;
   hideSubmit?: boolean;
   disabledSubmit?: boolean;
@@ -69,7 +79,11 @@ export const Form = ({
   const onChange = useCallback(
     (values: any) => {
       if (!config.onChange || !events) return;
-      events.emit(config.onChange, values);
+      const { event, payload = {} } =
+        typeof config.onChange === 'string'
+          ? { event: config.onChange }
+          : config.onChange;
+      events.emit(event, { ...payload, ...values });
     },
     [config.onChange, events]
   );
@@ -115,13 +129,17 @@ export const Form = ({
   const onSubmit = useCallback(
     (values: any) => {
       if (disabledSubmit.current || !config.onSubmit || !events) return;
+      const { event, payload = {} } =
+        typeof config.onSubmit === 'string'
+          ? { event: config.onSubmit }
+          : config.onSubmit;
       disabledSubmit.current = true;
       setTimeout(
         () => (disabledSubmit.current = false),
         +(config.disableSubmitDelay || 1000)
       );
 
-      events.emit(config.onSubmit, values);
+      events.emit(event, { ...payload, ...values });
     },
     [config.onSubmit, events]
   );
