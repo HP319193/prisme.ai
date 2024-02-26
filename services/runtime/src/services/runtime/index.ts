@@ -186,7 +186,7 @@ export default class Runtime {
         EventType.PagePermissionsDeleted,
         EventType.PublishedWorkspaceVersion,
         EventType.DeletedWorkspaceVersion,
-        EventType.RollbackWorkspaceVersion,
+        EventType.PulledWorkspaceVersion,
         EventType.DuplicatedWorkspace,
       ],
       async (event, broker, { logger }) => {

@@ -14,6 +14,7 @@ export const ActionType = {
   ...NativeActionType,
   GetAppSourceCode: 'read_app_dsul',
   ManageSecurity: 'manage_security',
+  ManageRepositories: 'manage_repositories',
   GetUsage: 'get_usage',
   AggregateSearch: 'aggregate_search',
   Execute: 'execute',

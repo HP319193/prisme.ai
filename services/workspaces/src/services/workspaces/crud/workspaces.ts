@@ -33,6 +33,7 @@ import {
   AlreadyUsedError,
   InvalidSlugError,
   InvalidVersionError,
+  ObjectNotFoundError,
   PrismeError,
 } from '../../../errors';
 import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
@@ -41,12 +42,17 @@ import {
   INIT_WORKSPACE_SECURITY,
   WORKSPACE_SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
-import { fetchUsers, NativeSubjectType } from '@prisme.ai/permissions';
+import {
+  fetchUsers,
+  ForbiddenError,
+  NativeSubjectType,
+} from '@prisme.ai/permissions';
 import { getArchiveEntries } from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
 import { Apps } from '../../apps';
 import { Security } from '../..';
 import archiver from 'archiver';
+import { simpleGit, SimpleGit, SimpleGitOptions } from 'simple-git';
 
 interface DSULDiff {
   type: DiffType;
@@ -186,6 +192,20 @@ class Workspaces {
             workspace.id!,
             { customDomains },
             { customDomains: oldCustomDomains }
+          );
+        },
+      },
+      {
+        path: 'repositories',
+        handler: async (allDiffs: DSULDiff[]) => {
+          const workspace = allDiffs[0].root;
+          if (!workspace?.id || !workspace?.slug) {
+            return;
+          }
+          await this.accessManager.throwUnlessCan(
+            ActionType.ManageRepositories,
+            SubjectType.Workspace,
+            workspace.id
           );
         },
       },
@@ -568,6 +588,50 @@ class Workspaces {
     return workspaceMetadata.versions || [];
   };
 
+  getWorkspaceRepositoryDriver = async (
+    workspace: Prismeai.Workspace,
+    repositoryId: string,
+    mode: 'write' | 'read'
+  ) => {
+    if (!(repositoryId in (workspace.repositories || {}))) {
+      throw new ObjectNotFoundError(
+        `Unknown workspce repository '${repositoryId}'`,
+        {
+          repositoryId,
+          availableRepositories: Object.keys(workspace.repositories || {}),
+        }
+      );
+    }
+    const repository: Prismeai.WorkspaceRepository =
+      workspace.repositories![repositoryId];
+    if (mode === 'write' && repository.mode === 'read-only') {
+      throw new ForbiddenError(
+        `Can't push to '${repositoryId}' repository as it is configured as read-only`,
+        {}
+      );
+    }
+
+    if ((repository.type || 'git') === 'git') {
+      const options: Partial<SimpleGitOptions> = {
+        baseDir: process.cwd(),
+        binary: 'git',
+        maxConcurrentProcesses: 6,
+        trimmed: false,
+      };
+
+      // when setting all options in a single object
+      const git: SimpleGit = simpleGit(options);
+      git;
+    } else {
+      throw new PrismeError(
+        `Unsupported configured repository type '${repository.type || 'git'}'`,
+        {}
+      );
+    }
+
+    return repository;
+  };
+
   publishWorkspaceVersion = async (
     workspaceId: string,
     versionRequest: Prismeai.WorkspaceVersion
@@ -582,14 +646,25 @@ class Workspaces {
       ...versionRequest,
       ...newVersion,
     };
-    await this.storage.copy(
-      { workspaceId, parentFolder: true, version: 'current' },
-      {
-        workspaceId,
-        version: version.name,
-        parentFolder: true,
-      }
-    );
+
+    if (!versionRequest.repository?.id) {
+      await this.storage.copy(
+        { workspaceId, parentFolder: true, version: 'current' },
+        {
+          workspaceId,
+          version: version.name,
+          parentFolder: true,
+        }
+      );
+    } else {
+      const workspaceMetadata = await this.storage.get({ workspaceId });
+      const repository = await this.getWorkspaceRepositoryDriver(
+        workspaceMetadata,
+        versionRequest.repository.id,
+        'write'
+      );
+      repository;
+    }
     await this.accessManager.update(SubjectType.Workspace, {
       id: workspaceId,
       versions: allVersions,
@@ -652,7 +727,11 @@ class Workspaces {
     return targetVersion;
   };
 
-  rollbackWorkspaceVersion = async (workspaceId: string, version: string) => {
+  pullWorkspaceVersion = async (
+    workspaceId: string,
+    version: string,
+    opts?: PrismeaiAPI.PullWorkspaceVersion.RequestBody
+  ) => {
     if (version == 'current') {
       throw new InvalidVersionError('Cannot rollback to current version');
     }
@@ -701,8 +780,8 @@ class Workspaces {
         parentFolder: true,
       }
     );
-    this.broker.send<Prismeai.RollbackWorkspaceVersion['payload']>(
-      EventType.RollbackWorkspaceVersion,
+    this.broker.send<Prismeai.PullWorkspaceVersion['payload']>(
+      EventType.PulledWorkspaceVersion,
       {
         version: targetVersion,
       },

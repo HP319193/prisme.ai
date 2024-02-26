@@ -222,21 +222,21 @@ export default function init(
     res.send({ id: versionId });
   }
 
-  async function rollbackWorkspaceVersionHandler(
+  async function pullWorkspaceVersionHandler(
     {
       accessManager,
       params: { workspaceId, versionId },
       context,
       broker,
-    }: Request<PrismeaiAPI.RollbackWorkspaceVersion.PathParameters>,
-    res: Response<PrismeaiAPI.RollbackWorkspaceVersion.Responses.$200>
+    }: Request<PrismeaiAPI.PullWorkspaceVersion.PathParameters>,
+    res: Response<PrismeaiAPI.PullWorkspaceVersion.Responses.$200>
   ) {
     const { workspaces } = getServices({
       context,
       accessManager,
       broker,
     });
-    const version = await workspaces.rollbackWorkspaceVersion(
+    const version = await workspaces.pullWorkspaceVersion(
       workspaceId,
       versionId
     );
@@ -360,7 +360,7 @@ export default function init(
   );
   app.post(
     `/:workspaceId/versions/:versionId/rollback`,
-    asyncRoute(rollbackWorkspaceVersionHandler)
+    asyncRoute(pullWorkspaceVersionHandler)
   );
   app.post(
     `/:workspaceId/versions/:versionId/duplicate`,

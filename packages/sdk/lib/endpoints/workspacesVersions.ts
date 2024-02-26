@@ -13,21 +13,21 @@ export class WorkspacesVersionsEndpoint {
     this.api.post(`/workspaces/${this.workspaceId}/versions`, version);
   }
   rollback(
-    versionId: PrismeaiAPI.RollbackWorkspaceVersion.PathParameters['versionId']
+    versionId: PrismeaiAPI.PullWorkspaceVersion.PathParameters['versionId']
   ) {
-    this.api.post(
-      `/workspaces/${this.workspaceId}/versions/${versionId}/rollback`
-    );
+    this.api.post(`/workspaces/${this.workspaceId}/versions/${versionId}/pull`);
   }
 
-  async export(version: PrismeaiAPI.ExportWorkspaceVersion.Parameters.VersionId = 'current') {
+  async export(
+    version: PrismeaiAPI.ExportWorkspaceVersion.Parameters.VersionId = 'current'
+  ) {
     const res = await this.api.prepareRequest(
-      `/workspaces/${this.workspaceId}/versions/${version}/export`, {
-        method: 'post'
+      `/workspaces/${this.workspaceId}/versions/${version}/export`,
+      {
+        method: 'post',
       }
-    )
+    );
     return new Blob([await res.arrayBuffer()], { type: 'application/zip' });
-    
   }
 }
 
