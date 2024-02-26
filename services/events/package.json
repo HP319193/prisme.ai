@@ -11,6 +11,7 @@
     "start": "node --abort-on-uncaught-exception dist/index.js"
   },
   "dependencies": {
+    "@aws-sdk/credential-provider-node": "^3.515.0",
     "@elastic/elasticsearch": "^7.16.0",
     "@opensearch-project/opensearch": "^2.4.0",
     "@prisme.ai/broker": "^0.1.2",

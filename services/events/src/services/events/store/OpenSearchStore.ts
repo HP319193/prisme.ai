@@ -2,13 +2,14 @@ import {
   Client as OpensearchClient,
   ApiResponse,
 } from '@opensearch-project/opensearch';
+import { AwsSigv4Signer } from '@opensearch-project/opensearch/aws';
+import { defaultProvider } from '@aws-sdk/credential-provider-node';
 import fetch from 'node-fetch';
 import { StoreDriverOptions } from '.';
 import {
   EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS,
   EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS,
   EVENTS_RETENTION_DAYS,
-  EVENTS_SCHEDULED_DELETION_DAYS,
   EVENTS_STORAGE_ES_BULK_REFRESH,
 } from '../../../../config';
 import { EventType } from '../../../eda';
@@ -73,19 +74,36 @@ export class Opensearchstore implements EventsStore {
   ) => Promise<any> | undefined;
 
   constructor(opts: StoreDriverOptions, namespace?: string) {
-    this.client = new OpensearchClient({
-      node: opts.host,
-      auth: opts.user
-        ? {
-            username: opts.user,
-            password: opts.password,
-          }
-        : undefined,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-      ...opts.driverOptions,
-    });
+    if (opts.driverOptions.aws) {
+      this.client = new OpensearchClient({
+        ...AwsSigv4Signer({
+          region: opts.driverOptions.aws.region,
+          service: opts.driverOptions.aws.service, // 'es' (Classic) or 'aoss' (OpenSearch Serverless)
+          getCredentials: () => {
+            const credentialsProvider = defaultProvider();
+            return credentialsProvider();
+          },
+        }),
+        node: opts.host, // OpenSearch domain URL
+        // node: 'https://search-xxx.region.es.amazonaws.com' (Classic)
+        // node: "https://xxx.region.aoss.amazonaws.com" (OpenSearch Serverless)
+      });
+    } else {
+      this.client = new OpensearchClient({
+        node: opts.host,
+        auth: opts.user
+          ? {
+              username: opts.user,
+              password: opts.password,
+            }
+          : undefined,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+        ...opts.driverOptions,
+      });
+    }
+
     this._fetch = async (path, { method, body, headers = {} }) => {
       const url = new URL(path, opts.host).toString();
       const response = await fetchProvider(url, {

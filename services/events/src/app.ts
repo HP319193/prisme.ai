@@ -46,10 +46,6 @@ process.on('uncaughtException', uncaughtExceptionHandler);
 
   const subscriptions = new Subscriptions(broker, accessManager, cache);
   subscriptions.start();
-  console.log(
-    '---------------------------- GOING TO BUILD EVENTSTORE -------------------------',
-    EVENTS_STORAGE_ES_OPTIONS
-  );
   const store = buildEventsStore(EVENTS_STORAGE_ES_OPTIONS);
 
   syncEventStoreWithEDA(store, broker);
