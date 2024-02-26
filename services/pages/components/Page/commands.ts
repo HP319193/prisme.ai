@@ -1,6 +1,7 @@
 import _get from 'lodash/get';
 import _set from 'lodash/set';
 import _merge from 'lodash/merge';
+import _cloneDeep from 'lodash/cloneDeep';
 
 type Value = Record<string, any>;
 
@@ -33,7 +34,7 @@ export function merge(value: Value, _with: Value) {
         newValue = _set(newValue, path, !!_v && v);
         break;
       default:
-        newValue = v;
+        newValue = _set(newValue, path, v);
     }
   });
 
@@ -41,7 +42,7 @@ export function merge(value: Value, _with: Value) {
 }
 
 export function applyCommands(prev: any, { $merge, ...next }: Next) {
-  let value = { ...prev, ...next };
+  let value = _cloneDeep({ ...prev, ...next });
   if ($merge) {
     value = merge(value, $merge);
   }
