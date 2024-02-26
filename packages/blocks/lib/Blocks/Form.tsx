@@ -76,6 +76,21 @@ export const Form = ({
   const formRef: SchemaFormProps['formRef'] = useRef<any>();
   const containerEl = useRef<HTMLDivElement>(null);
 
+  const mergeValuesWithPayload = useCallback(
+    (values: any = {}, payload?: any) => {
+      if (values && typeof values !== 'object') {
+        return values;
+      }
+      // This is to delete values in payload if the value in form with same key is unset
+      formRef.current.getRegisteredFields().forEach((field) => {
+        const realField = field.replace('values.', '');
+        payload[realField] = values[realField];
+      });
+      return { ...payload, ...values };
+    },
+    []
+  );
+
   const onChange = useCallback(
     (values: any) => {
       if (!config.onChange || !events) return;
@@ -83,12 +98,7 @@ export const Form = ({
         typeof config.onChange === 'string'
           ? { event: config.onChange }
           : config.onChange;
-      events.emit(
-        event,
-        values === undefined || typeof values === 'object'
-          ? { ...payload, ...values }
-          : values
-      );
+      events.emit(event, mergeValuesWithPayload(values, payload));
     },
     [config.onChange, events]
   );
@@ -143,12 +153,7 @@ export const Form = ({
         () => (disabledSubmit.current = false),
         +(config.disableSubmitDelay || 1000)
       );
-      events.emit(
-        event,
-        values === undefined || typeof values === 'object'
-          ? { ...payload, ...values }
-          : values
-      );
+      events.emit(event, mergeValuesWithPayload(values, payload));
     },
     [config.onSubmit, events]
   );
