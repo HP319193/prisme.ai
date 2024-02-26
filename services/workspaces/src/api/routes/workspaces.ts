@@ -10,6 +10,7 @@ import { DSULStorage } from '../../services/DSULStorage';
 import FileStorage from '../../services/FileStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
+import { WorkspaceExports } from '../../services/workspaces/crud/exports';
 
 export default function init(
   dsulStorage: DSULStorage,
@@ -29,10 +30,15 @@ export default function init(
     const workspaces = new Workspaces(
       accessManager,
       broker.child(context),
-      dsulStorage,
-      enableCache
+      dsulStorage
     );
-    return { workspaces };
+    const exports = new WorkspaceExports(
+      accessManager,
+      broker.child(context),
+      dsulStorage,
+      workspaces
+    );
+    return { workspaces, exports };
   };
 
   async function createWorkspaceHandler(
@@ -273,7 +279,7 @@ export default function init(
     }: Request<PrismeaiAPI.ExportWorkspaceVersion.PathParameters>,
     res: Response<PrismeaiAPI.ExportWorkspaceVersion.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { exports } = getServices({
       context,
       accessManager,
       broker,
@@ -285,7 +291,7 @@ export default function init(
       `attachment; filename=${workspaceId}-${versionId || 'current'}.${format}`
     );
     res.setHeader('Content-type', 'application/octet-stream');
-    await workspaces.exportWorkspace(workspaceId, versionId, format, res);
+    await exports.exportWorkspace(workspaceId, versionId, format, res);
   }
 
   async function exportMultipleWorkspacesHandler(
@@ -297,7 +303,7 @@ export default function init(
     }: Request<any, any, PrismeaiAPI.ExportMultipleWorkspaces.RequestBody>,
     res: Response<PrismeaiAPI.ExportMultipleWorkspaces.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { exports } = getServices({
       context,
       accessManager,
       broker,
@@ -309,7 +315,7 @@ export default function init(
       `attachment; filename=bulk-export.${format}`
     );
     res.setHeader('Content-type', 'application/octet-stream');
-    await workspaces.exportMultipleWorkspaces(body, res);
+    await exports.exportMultipleWorkspaces(body, res);
   }
 
   async function importWorkspaceHandler(
@@ -323,7 +329,7 @@ export default function init(
     }: Request<PrismeaiAPI.ImportExistingWorkspace.PathParameters, any>,
     res: Response<PrismeaiAPI.ImportExistingWorkspace.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { exports } = getServices({
       context,
       accessManager,
       broker,
@@ -334,7 +340,7 @@ export default function init(
       throw new MissingFieldError('Missing archive');
     }
 
-    const result = await workspaces.importArchive(file?.buffer, workspaceId);
+    const result = await exports.importArchive(file?.buffer, workspaceId);
     res.send(result);
   }
 

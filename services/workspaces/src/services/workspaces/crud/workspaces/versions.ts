@@ -8,7 +8,10 @@ import {
 import { ActionType, SubjectType } from '../../../../permissions';
 import { DsulCrud } from '../types';
 import { simpleGit, SimpleGit, SimpleGitOptions } from 'simple-git';
-import { prepareNewDSULVersion } from '../../../../utils/prepareNewDSULVersion';
+import {
+  ValidatedDSULVersion,
+  prepareNewDSULVersion,
+} from '../../../../utils/prepareNewDSULVersion';
 
 export class WorkspaceVersions extends DsulCrud {
   list = async (workspaceId: string) => {
@@ -52,6 +55,7 @@ export class WorkspaceVersions extends DsulCrud {
 
       // when setting all options in a single object
       const git: SimpleGit = simpleGit(options);
+      git;
     } else {
       throw new PrismeError(
         `Unsupported configured repository type '${repository.type || 'git'}'`,
@@ -65,14 +69,14 @@ export class WorkspaceVersions extends DsulCrud {
   publish = async (
     workspaceId: string,
     versionRequest: Prismeai.WorkspaceVersion
-  ): Promise<Required<Prismeai.WorkspaceVersion>> => {
+  ): Promise<ValidatedDSULVersion> => {
     const currentVersions = await this.list(workspaceId);
     const { newVersion, allVersions, expiredVersions } = prepareNewDSULVersion(
       currentVersions,
       versionRequest
     );
 
-    const version: Required<Prismeai.WorkspaceVersion> = {
+    const version: ValidatedDSULVersion = {
       ...versionRequest,
       ...newVersion,
     };
@@ -124,7 +128,7 @@ export class WorkspaceVersions extends DsulCrud {
   delete = async (
     workspaceId: string,
     version: string
-  ): Promise<Required<Prismeai.WorkspaceVersion>> => {
+  ): Promise<ValidatedDSULVersion> => {
     if (version == 'current') {
       throw new InvalidVersionError('Cannot delete current version');
     }

@@ -8,6 +8,7 @@ import { ActionType, SubjectType, Role, config } from './config';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../eda';
 import { APP_NAME } from '../../config';
+import { ValidatedDSULVersion } from '../utils/prepareNewDSULVersion';
 
 type ApiKey = GenericApiKey<SubjectType.Workspace>;
 export { SubjectType, Role, ActionType, ApiKey };
@@ -17,7 +18,7 @@ export interface WorkspaceMetadata {
   name: string;
   slug: string;
   photo?: string;
-  versions?: Required<Prismeai.WorkspaceVersion>[];
+  versions?: ValidatedDSULVersion[];
   description?: Prismeai.LocalizedText;
   labels?: string[];
   customDomains?: string[];

@@ -1,14 +1,20 @@
 import { MAXIMUM_WORKSPACE_VERSION } from '../../config';
 import { InvalidVersionError } from '../errors';
 
+export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
+export type ValidatedDSULVersion = RequiredFields<
+  Prismeai.WorkspaceVersion,
+  'name' | 'createdAt' | 'description'
+>;
+
 export function prepareNewDSULVersion(
-  currentVersions: Required<Prismeai.WorkspaceVersion>[],
+  currentVersions: ValidatedDSULVersion[],
   versionRequest: Prismeai.WorkspaceVersion,
   maximumVersions: number = MAXIMUM_WORKSPACE_VERSION
 ): {
-  newVersion: Required<Prismeai.WorkspaceVersion>;
-  allVersions: Required<Prismeai.WorkspaceVersion>[];
-  expiredVersions: Required<Prismeai.WorkspaceVersion>[];
+  newVersion: ValidatedDSULVersion;
+  allVersions: ValidatedDSULVersion[];
+  expiredVersions: ValidatedDSULVersion[];
 } {
   if (
     versionRequest.name &&

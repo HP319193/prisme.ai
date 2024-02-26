@@ -1,4 +1,4 @@
-export { default as Workspaces } from './crud/workspaces';
+export { Workspaces } from './crud/workspaces';
 export { default as Automations } from './crud/automations';
 export { default as Security } from './crud/security';
 export { default as Pages } from './crud/pages';
