@@ -192,6 +192,7 @@ const defaultStyles = `:block {
   background-color: var(--main-surface);
   min-width: 1px;
   padding: 42px 26px 26px 26px;
+  max-height: 100vh;
 }
 .product-layout-content-title {
   color: var(--main-text);
@@ -231,6 +232,10 @@ const defaultStyles = `:block {
   display: flex;
   flex: 1;
   flex-direction: column;
+  height: 1px;
+}
+.product-layout-content-panel > * {
+  overflow: auto;
 }
 .product-layout-content-panel--1col {
   display: flex;
