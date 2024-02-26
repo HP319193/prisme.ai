@@ -5,20 +5,21 @@ import nodeFetch, { RequestInit, Response, FetchError } from 'node-fetch';
 import { DebouncedFunc } from 'lodash';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
-import { ContextsManager } from '../../contexts';
+import { ContextsManager } from '../../../contexts';
 import {
   CORRELATION_ID_HEADER,
   FETCH_USER_AGENT_HEADER,
   API_URL,
   RUNTIME_EMITS_BROKER_TOPIC,
   API_KEY_HEADER,
-} from '../../../../../config';
+} from '../../../../../../config';
 import { Broker } from '@prisme.ai/broker';
-import { EventType } from '../../../../eda';
-import { Logger, logger } from '../../../../logger';
-import { getAccessToken } from '../../../../utils/jwks';
-import { InvalidInstructionError } from '../../../../errors';
-import { ReadableStream } from '../../../../utils';
+import { EventType } from '../../../../../eda';
+import { Logger } from '../../../../../logger';
+import { getAccessToken } from '../../../../../utils/jwks';
+import { InvalidInstructionError } from '../../../../../errors';
+import { ReadableStream } from '../../../../../utils';
+import { StreamChunk, parseSseStream } from './parseSseStream';
 
 const keepaliveAgent = new Agent({
   keepAlive: true,
@@ -37,14 +38,6 @@ const AUTHENTICATE_PRISMEAI_URLS = ['/workspaces', '/pages', '/files'].map(
 
 const base64Regex =
   /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-
-// https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#event_stream_format
-interface StreamChunk {
-  event?: string;
-  data: any[];
-  id?: string;
-  retry?: number;
-}
 
 export async function fetch(
   fetchParams: Prismeai.Fetch['fetch'],
@@ -230,7 +223,7 @@ export async function fetch(
       ? throttle(send, stream?.concatenate?.throttle)
       : send;
 
-    const processingPromise = streamResponse(
+    const processingPromise = parseSseStream(
       result.body,
       async (chunk: StreamChunk) => {
         try {
@@ -329,54 +322,4 @@ async function getResponseBody(response: Response) {
     return await response.buffer();
   }
   return await response.text();
-}
-
-async function streamResponse(
-  stream: NodeJS.ReadableStream,
-  callback: (chunk: StreamChunk) => Promise<void>,
-  broker: Broker
-) {
-  for await (const buffer of stream) {
-    const str = buffer.toString();
-    // No stream : entire json response is given at once
-    if (str[0] === '[' || str[0] === '{') {
-      try {
-        return callback({
-          data: [JSON.parse(str)],
-        });
-      } catch {
-        broker
-          .send(EventType.Error, {
-            error: 'FailedChunkParsing',
-            message: 'Could not parse JSON chunk from fetch streamed response',
-            chunk: str,
-          })
-          .catch(logger.error);
-      }
-    }
-    const chunk: StreamChunk = str.split('\n\n').reduce<StreamChunk>(
-      (chunk, line) => {
-        if (line.startsWith('data:')) {
-          let content = line.slice(5).trim();
-          if (content[0] == '[' || content[0] == '{') {
-            try {
-              content = JSON.parse(content);
-            } catch {}
-          }
-          chunk.data.push(content);
-        } else if (line.startsWith('event:')) {
-          chunk.event = line.slice(6);
-        } else if (line.startsWith('id:')) {
-          chunk.id = line.slice(3);
-        } else if (line.startsWith('retry:')) {
-          chunk.retry = parseInt(line.slice(6));
-        } else {
-          logger.warn({ msg: 'Invalid SSE chunk line', line });
-        }
-        return chunk;
-      },
-      { data: [] }
-    );
-    await callback(chunk);
-  }
 }

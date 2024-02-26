@@ -35,7 +35,17 @@ export function redact(payload: any, secretSet: Set<string>) {
     }
   }, JSON.stringify(payload));
 
-  return JSON.parse(redactedString);
+  try {
+    return JSON.parse(redactedString);
+  } catch (err) {
+    logger.warn({
+      msg: `Unexpected exception occured while readacting some payload. Given payload leaked unredacted !`,
+      err,
+      payload,
+      secrets: secretSet.size,
+    });
+    return payload;
+  }
 }
 
 function escapeRegex(str: string) {
