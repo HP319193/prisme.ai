@@ -176,7 +176,7 @@ export default function init(
       accessManager,
       broker,
     });
-    const versions = await workspaces.listWorkspaceVersions(workspaceId);
+    const versions = await workspaces.versions.list(workspaceId);
     res.send(versions);
   }
 
@@ -200,7 +200,7 @@ export default function init(
       accessManager,
       broker,
     });
-    const version = await workspaces.publishWorkspaceVersion(workspaceId, body);
+    const version = await workspaces.versions.publish(workspaceId, body);
     res.send(version);
   }
 
@@ -218,7 +218,7 @@ export default function init(
       accessManager,
       broker,
     });
-    await workspaces.deleteWorkspaceVersion(workspaceId, versionId);
+    await workspaces.versions.delete(workspaceId, versionId);
     res.send({ id: versionId });
   }
 
@@ -236,10 +236,7 @@ export default function init(
       accessManager,
       broker,
     });
-    const version = await workspaces.pullWorkspaceVersion(
-      workspaceId,
-      versionId
-    );
+    const version = await workspaces.versions.pull(workspaceId, versionId);
 
     res.send(version);
   }

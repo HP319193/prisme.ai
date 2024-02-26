@@ -444,6 +444,7 @@ components:
           $ref: '#/components/schemas/LocalizedText'
         repository:
           type: object
+          additionalProperties: false
           properties:
             id:
               type: string
