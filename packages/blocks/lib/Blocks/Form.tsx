@@ -83,7 +83,12 @@ export const Form = ({
         typeof config.onChange === 'string'
           ? { event: config.onChange }
           : config.onChange;
-      events.emit(event, { ...payload, ...values });
+      events.emit(
+        event,
+        values === undefined || typeof values === 'object'
+          ? { ...payload, ...values }
+          : values
+      );
     },
     [config.onChange, events]
   );
@@ -138,8 +143,12 @@ export const Form = ({
         () => (disabledSubmit.current = false),
         +(config.disableSubmitDelay || 1000)
       );
-
-      events.emit(event, { ...payload, ...values });
+      events.emit(
+        event,
+        values === undefined || typeof values === 'object'
+          ? { ...payload, ...values }
+          : values
+      );
     },
     [config.onSubmit, events]
   );
