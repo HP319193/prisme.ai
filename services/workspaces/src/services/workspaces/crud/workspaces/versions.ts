@@ -105,11 +105,14 @@ export class WorkspaceVersions extends DsulCrud {
         exportStream
       );
 
+      const prismeaiAuthor =
+        this.accessManager?.user?.authData?.prismeai?.email ||
+        this.accessManager?.user?.id;
       await Promise.all([
         destDriver.import(`${workspaceId}`, exportStream, {
           archive: true,
           removeAdditionalFiles: true,
-          description: version.description,
+          description: version.description + ` | Author : ${prismeaiAuthor}`,
           // We have to strip beginning current/ folder as we can only export the version folder itself & not its content
           fileCallback: (filepath: string) => {
             if (filepath.startsWith(`${publishedVersion}/`)) {
@@ -120,8 +123,6 @@ export class WorkspaceVersions extends DsulCrud {
         }),
         exportPromise,
       ]);
-
-      return version;
     }
     await this.accessManager.update(SubjectType.Workspace, {
       id: workspaceId,
