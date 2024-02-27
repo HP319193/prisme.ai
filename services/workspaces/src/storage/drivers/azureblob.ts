@@ -5,6 +5,7 @@ import {
   ExportOptions,
   GetOptions,
   IStorage,
+  ImportOptions,
   ObjectList,
   SaveOptions,
   Streamed,
@@ -207,5 +208,10 @@ export default class AzureBlob implements IStorage {
 
     archive.finalize();
     return completionPromise;
+  }
+
+  async import(subkey: string, zip: stream.Readable, opts?: ImportOptions) {
+    throw new Error('Not implemented');
+    return false;
   }
 }
