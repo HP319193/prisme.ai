@@ -248,7 +248,12 @@ const defaultStyles = `:block {
   padding-left: 2rem !important;
   padding-right: 2rem !important;
   height: 100%;
-}`;
+}
+
+.pr-form-autocomplete .ant-select-selector {
+  padding: 0 ! important;
+}
+`;
 export const FormInContext = () => {
   const {
     components: { SchemaForm, Link },
