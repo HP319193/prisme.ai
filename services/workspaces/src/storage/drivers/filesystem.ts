@@ -1,10 +1,12 @@
 import archiver from 'archiver';
 import stream from 'stream';
+import unzipper from 'unzipper';
 import {
   DriverType,
   ExportOptions,
   GetOptions,
   IStorage,
+  ImportOptions,
   ObjectList,
   SaveOptions,
   Streamed,
@@ -55,7 +57,7 @@ export default class Filesystem implements IStorage {
     return DriverType.FILESYSTEM;
   }
 
-  private getPath(key: string) {
+  protected getPath(key: string) {
     return join(this.options.dirpath || '', key);
   }
 
@@ -209,5 +211,49 @@ export default class Filesystem implements IStorage {
 
     archive.finalize();
     return completionPromise;
+  }
+
+  async import(subkey: string, zip: stream.Readable, opts?: ImportOptions) {
+    if (opts?.archive === false) {
+      throw new PrismeError(
+        `Storage import currently only supports archive input`,
+        {}
+      );
+    }
+    try {
+      // Prepare & pull local repository
+      const path = this.getPath(subkey);
+
+      // Write given stream to this directory
+      const zipParser = unzipper.Parse({ forceStream: true });
+      zip.pipe(zipParser);
+      for await (const entry of zipParser) {
+        let filepath = entry.path;
+        if (opts?.fileCallback) {
+          const result = opts.fileCallback(filepath, entry);
+          if (!result) {
+            entry.autodrain();
+            continue;
+          }
+          if (result.filepath) {
+            filepath = result.filepath;
+          }
+        }
+
+        if (entry.type === 'File') {
+          await promisesFs.mkdir(join(path, dirname(filepath)), {
+            recursive: true,
+          });
+          entry.pipe(fs.createWriteStream(join(path, filepath)));
+        } else {
+          entry.autodrain();
+        }
+      }
+
+      // Push
+      return true;
+    } catch (err) {
+      throw err;
+    }
   }
 }

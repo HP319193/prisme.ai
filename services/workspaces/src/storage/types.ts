@@ -18,6 +18,16 @@ export interface ExportOptions {
   exclude?: string[];
 }
 
+export interface ImportOptions {
+  archive?: boolean; // archive=true is the only mode supported
+  removeAdditionalFiles?: boolean; // If true, remove files that were not present in archive content
+  description?: any; // Optional, human readable note describing the import content that may or may not be saved by underlying storage driver (i.e git commits)
+  fileCallback?: (
+    filepath: string,
+    stream: stream.Readable
+  ) => { filepath: string } | false;
+}
+
 export const Streamed = Symbol('streamed');
 
 export interface IStorage {
@@ -37,10 +47,16 @@ export interface IStorage {
     outStream?: stream.Writable,
     opts?: ExportOptions
   ): Promise<Buffer | typeof Streamed>;
+  import(
+    subkey: string,
+    stream: stream.Readable,
+    opts?: ImportOptions
+  ): Promise<boolean>;
 }
 
 export enum DriverType {
   S3_LIKE = 'S3_LIKE',
   AZURE_BLOB = 'AZURE_BLOB',
   FILESYSTEM = 'FILESYSTEM',
+  GIT = 'GIT',
 }
