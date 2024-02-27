@@ -164,7 +164,6 @@ it('should save workspace', async () => {
   let context: WorkspaceLayoutContext = {} as WorkspaceLayoutContext;
   const Test = () => {
     context = useWorkspaceLayout();
-    console.log(context);
     return null;
   };
   const saveWorkspace = jest.fn();
