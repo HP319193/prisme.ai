@@ -1392,7 +1392,7 @@ export const WithDefault = () => (
   />
 );
 
-export const WithElmpty = () => (
+export const WithEmpty = () => (
   <Template
     schema={{
       type: 'object',
@@ -1401,6 +1401,24 @@ export const WithElmpty = () => (
         foo: null,
         bar: {
           type: 'string',
+        },
+      },
+    }}
+  />
+);
+
+export const WithNumberOptions = () => (
+  <Template
+    schema={{
+      type: 'object',
+      properties: {
+        bar: {
+          type: 'number',
+          'ui:options': {
+            number: {
+              step: 0.01,
+            },
+          },
         },
       },
     }}
