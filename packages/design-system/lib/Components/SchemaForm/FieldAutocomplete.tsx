@@ -49,14 +49,17 @@ export const FieldAutocomplete = ({
     ((uiOptions || {}) as UiOptionsAutocomplete)?.autocomplete?.minChars || 1
   );
   const [filteredOptions, setFilteredOptions] = useState<typeof options>([]);
-  const filterOptions = useCallback((v: string) => {
-    if (v.length < minChars) return setFilteredOptions([]);
-    setFilteredOptions(
-      options.filter(({ label, value }) =>
-        `${label} ${value}`.toLowerCase().includes(v.toLowerCase())
-      )
-    );
-  }, []);
+  const filterOptions = useCallback(
+    (v: string) => {
+      if (v.length < minChars) return setFilteredOptions([]);
+      setFilteredOptions(
+        options.filter(({ label, value }) =>
+          `${label} ${value}`.toLowerCase().includes(v.toLowerCase())
+        )
+      );
+    },
+    [options]
+  );
 
   return (
     <FieldContainer {...props} className="pr-form-autocomplete">
