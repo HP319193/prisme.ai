@@ -51,6 +51,12 @@ export type UiOptionsCommon = {
     updateValue?: false | 'blur';
   };
 };
+
+export type UIOptionsNumber = {
+  number: {
+    step?: number;
+  };
+};
 export type UiOptionsGrid = {
   grid: string[][][];
 };
@@ -186,6 +192,7 @@ export interface Schema extends Record<string, any> {
   // Options for UI components
   'ui:options'?:
     | UiOptionsCommon
+    | UIOptionsNumber
     | UiOptionsGrid
     | UiOptionsOneOf
     | UiOptionsArray

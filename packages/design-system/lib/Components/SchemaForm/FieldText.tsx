@@ -1,5 +1,5 @@
 import { Input, Tooltip } from 'antd';
-import { ChangeEvent, useCallback } from 'react';
+import { ChangeEvent, useCallback, useMemo } from 'react';
 import { useField } from 'react-final-form';
 import { SchemaFormContext, useSchemaForm } from './context';
 import FieldAutocomplete from './FieldAutocomplete';
@@ -10,6 +10,7 @@ import FieldTextUpload from './FieldTextUpload';
 import {
   FieldProps,
   UiOptionsCode,
+  UIOptionsNumber,
   UiOptionsSlider,
   UiOptionsTextArea,
   UiOptionsUpload,
@@ -82,6 +83,12 @@ export const FieldText = ({
 
   const inputMode = getInputMode(props.schema);
 
+  const inputProps = useMemo(() => {
+    if (props.schema.type === 'number') {
+      return (uiOptions as UIOptionsNumber)?.number;
+    }
+  }, [props, uiOptions]);
+
   return (
     <FieldContainer {...props} className="pr-form-text">
       <Label
@@ -107,6 +114,7 @@ export const FieldText = ({
           className="pr-form-text__input pr-form-input"
           id={field.input.name}
           inputMode={inputMode}
+          {...inputProps}
         />
       </Tooltip>
       <InfoBubble
