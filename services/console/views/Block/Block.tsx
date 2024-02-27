@@ -51,7 +51,7 @@ const Block = () => {
   const { localize } = useLocalizedText();
   const { block, saveBlock, deleteBlock } = useBlock();
   const {
-    workspace: { id: workspaceId, blocks = {} },
+    workspace: { name: workspaceName, id: workspaceId, blocks = {} },
     createBlock,
   } = useWorkspace();
   const { reload } = useBlockPreview();
@@ -219,6 +219,7 @@ const Block = () => {
     <>
       <Head>
         <title>
+          [{localize(workspaceName)}]
           {t('page_title', {
             elementName: localize(value.name),
           })}

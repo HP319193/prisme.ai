@@ -7,12 +7,14 @@ import ShareWorkspace from '../../components/Share/ShareWorkspace';
 import { useUser } from '../../components/UserProvider';
 import getLayout from '../../layouts/WorkspaceLayout';
 import { useWorkspace } from '../../providers/Workspace';
+import useLocalizedText from '../../utils/useLocalizedText';
 import BillingPlan from './BillingPlan';
 import Usages from './Usages';
 import { useWorkspaceUsage } from './useWorkspaceUsage';
 
 export const Usage = () => {
   const { t } = useTranslation('user');
+  const { localize } = useLocalizedText();
   const { t: workspaceT } = useTranslation('workspaces');
   const {
     user: { email },
@@ -36,6 +38,7 @@ export const Usage = () => {
     <>
       <Head>
         <title>
+          [{localize(workspace.name)}]
           {t('title.workspaceManagement', {
             workspaceName: workspace.name,
           })}

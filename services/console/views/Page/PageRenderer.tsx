@@ -26,6 +26,7 @@ import { defaultStyles } from './defaultStyles';
 import { useTracking } from '../../components/Tracking';
 import { getBackTemplateDots } from '../../utils/templatesInBlocks';
 import PagePreview, { usePagePreview } from './PagePreview';
+import { useWorkspace } from '../../providers/Workspace';
 
 interface PageRendererProps {
   value: Prismeai.Page;
@@ -53,6 +54,7 @@ export const PageRenderer = ({
 }: PageRendererProps) => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
+  const { workspace } = useWorkspace();
   const [displaySource, setDisplaySource] = useState(false);
 
   const { trackEvent } = useTracking();
@@ -124,6 +126,7 @@ export const PageRenderer = ({
     <>
       <Head>
         <title>
+          [{localize(workspace.name)}]
           {t('page_title', {
             elementName: localize(value.name),
           })}
