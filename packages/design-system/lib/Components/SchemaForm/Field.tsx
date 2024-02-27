@@ -23,7 +23,7 @@ export const Field = ({ components, ...props }: FieldComponentProps) => {
     }
   }, [_default, props.schema.default]);
   useEffect(() => {
-    if (!_default || !field.meta.pristine) {
+    if (!_default || !field.meta.pristine || field.input.value) {
       return;
     }
     field.input.onChange(_default);

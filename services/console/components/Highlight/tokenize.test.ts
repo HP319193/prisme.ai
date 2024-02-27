@@ -88,7 +88,6 @@ it('should tokenize', () => {
   ]);
 });
 it('should highlight parts', () => {
-  console.log(tokenize('Update on CRM', 'up crm'));
   expect(tokenize('Update on CRM', 'up crm')).toEqual([
     {
       highlight: true,
