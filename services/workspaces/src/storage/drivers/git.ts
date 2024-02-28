@@ -76,15 +76,7 @@ export default class Git extends Filesystem {
       // Write given stream to this directory
       return await super.export(subkey, outStream, opts);
     } catch (err) {
-      if (`${err}`.includes("couldn't find remote ref")) {
-        throw new ObjectNotFoundError(
-          `Unknown git branch '${this.gitOptions.branch}' at '${this.gitOptions.url}'`,
-          {
-            repository: this.gitOptions.url,
-            branch: this.gitOptions.branch,
-          }
-        );
-      } else if (opts?.commit && `${err}`.includes(opts?.commit)) {
+      if (opts?.commit && `${err}`.includes(opts?.commit)) {
         throw new ObjectNotFoundError(
           `Unknown commit or tag '${opts.commit}' at '${this.gitOptions.url}'`,
           {
@@ -93,6 +85,7 @@ export default class Git extends Filesystem {
           }
         );
       }
+      this.handleErrors(err as Error);
       throw err;
     }
   }
@@ -120,16 +113,28 @@ export default class Git extends Filesystem {
       await this.git.push(this.gitOptions.url!, this.gitOptions.branch);
       return true;
     } catch (err) {
-      if (`${err}`.includes("couldn't find remote ref")) {
-        throw new ObjectNotFoundError(
-          `Unknown git branch '${this.gitOptions.branch}' at '${this.gitOptions.url}'`,
-          {
-            repository: this.gitOptions.url,
-            branch: this.gitOptions.branch,
-          }
-        );
-      }
+      this.handleErrors(err as Error);
       throw err;
     }
+  }
+
+  private handleErrors(err: Error, opts?: any) {
+    if (`${err}`.includes("couldn't find remote ref")) {
+      throw new ObjectNotFoundError(
+        `Unknown git branch '${this.gitOptions.branch}' at '${this.gitOptions.url}'`,
+        {
+          repository: this.gitOptions.url,
+          branch: this.gitOptions.branch,
+        }
+      );
+    } else if (`${err}`.includes('Could not read from remote repository')) {
+      throw new ObjectNotFoundError(
+        `Repository ${this.gitOptions.url} is either unreachable or unauthenticated`,
+        {
+          repository: this.gitOptions.url,
+        }
+      );
+    }
+    throw err;
   }
 }
