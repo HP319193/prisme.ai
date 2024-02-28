@@ -12,9 +12,11 @@ import {
   ValidatedDSULVersion,
   prepareNewDSULVersion,
 } from '../../../../utils/prepareNewDSULVersion';
-import { DriverType, IStorage } from '../../../../storage/types';
+import { DriverType, ExportOptions, IStorage } from '../../../../storage/types';
 import buildStorage from '../../../../storage';
 import { WORKSPACES_STORAGE_GIT_OPTIONS } from '../../../../../config';
+import { DSULFolders, DSULRootFiles, DSULType } from '../../../DSULStorage';
+import { WorkspaceExports } from '../exports';
 
 export class WorkspaceVersions extends DsulCrud {
   list = async (workspaceId: string) => {
@@ -32,7 +34,7 @@ export class WorkspaceVersions extends DsulCrud {
   ) => {
     if (!(repositoryId in (workspace.repositories || {}))) {
       throw new ObjectNotFoundError(
-        `Unknown workspce repository '${repositoryId}'`,
+        `Unknown workspace repository '${repositoryId}'`,
         {
           repositoryId,
           availableRepositories: Object.keys(workspace.repositories || {}),
@@ -189,63 +191,108 @@ export class WorkspaceVersions extends DsulCrud {
   pull = async (
     workspaceId: string,
     version: string,
+    workspacesExports: WorkspaceExports,
     opts?: PrismeaiAPI.PullWorkspaceVersion.RequestBody
   ) => {
     if (version == 'current') {
       throw new InvalidVersionError('Cannot rollback to current version');
     }
-
-    // Retrieve full version details from database
-    const workspaceMetadata = await this.accessManager.get(
-      SubjectType.Workspace,
-      workspaceId
-    );
-    const targetVersion = (workspaceMetadata.versions || []).find(
-      (cur) => cur.name == version
-    );
-    if (!targetVersion) {
-      throw new InvalidVersionError(`Unknown version name '${version}'`);
-    }
-
-    // Check that target version is still available in storage
-    try {
-      await this.storage.get({
-        workspaceId,
-        version,
-      });
-    } catch {
-      throw new InvalidVersionError(
-        `Version '${version} not available anymore'`
-      );
-    }
-
     await this.accessManager.throwUnlessCan(
       ActionType.Update,
       SubjectType.Workspace,
       workspaceId
     );
 
-    // Rollback
-    await this.storage.delete({
-      workspaceId,
-      version: 'current',
-      parentFolder: true,
-    });
-    await this.storage.copy(
-      { workspaceId, parentFolder: true, version },
-      {
-        workspaceId,
-        version: 'current',
-        parentFolder: true,
+    let targetVersion: Prismeai.WorkspaceVersion = {
+      name: version,
+      description: '',
+      repository: opts?.repository,
+    };
+    // For native platform versioning only : check that requested version exists in db
+    if (!opts?.repository?.id) {
+      const workspaceMetadata = await this.accessManager.get(
+        SubjectType.Workspace,
+        workspaceId
+      );
+      const versionDetails =
+        version === 'latest' && workspaceMetadata?.versions?.length
+          ? workspaceMetadata.versions[workspaceMetadata.versions.length - 1]
+          : (workspaceMetadata.versions || []).find(
+              (cur) => cur.name == version
+            );
+      if (!versionDetails) {
+        throw new InvalidVersionError(`Unknown version name '${version}'`);
       }
+      targetVersion = versionDetails;
+    }
+
+    // Prepare the requested version archive
+    const whitelistFiles = DSULRootFiles.concat(
+      Object.values(DSULFolders) as any
     );
-    this.broker.send<Prismeai.PullWorkspaceVersion['payload']>(
-      EventType.PulledWorkspaceVersion,
-      {
-        version: targetVersion,
+    const exportOptions: ExportOptions = {
+      fileCallback: (filepath) => {
+        if (
+          filepath.startsWith(DSULType.RuntimeModel) ||
+          !whitelistFiles.find((whitelisted) =>
+            filepath.startsWith(whitelisted)
+          )
+        ) {
+          return false;
+        }
+
+        return { filepath };
       },
-      { workspaceId }
-    );
+    };
+
+    let versionArchiveStream = new stream.PassThrough(),
+      versionArchivePromise: Promise<any>;
+    if (!targetVersion.repository?.id) {
+      // Export archive from platform global repo
+      try {
+        await this.storage.get({
+          workspaceId,
+          version,
+        });
+      } catch {
+        throw new InvalidVersionError(
+          `Version '${version} not available anymore'`
+        );
+      }
+
+      versionArchivePromise = this.storage.export(
+        { workspaceId, parentFolder: true, version },
+        versionArchiveStream,
+        exportOptions
+      );
+    } else {
+      const workspaceMetadata = await this.storage.get({ workspaceId });
+      // Export archive from workspace's own repository
+      const sourceDriver = await this.getRepositoryDriver(
+        workspaceMetadata,
+        targetVersion.repository.id,
+        'read'
+      );
+      versionArchivePromise = sourceDriver.export(
+        `${workspaceId}/`,
+        versionArchiveStream,
+        exportOptions
+      );
+    }
+
+    // Finally import this version
+    await Promise.all([
+      workspacesExports.importDSUL(
+        workspaceId,
+        'current',
+        versionArchiveStream,
+        {
+          removeAdditionalFiles: true,
+          sourceVersion: targetVersion,
+        }
+      ),
+      versionArchivePromise,
+    ]);
     return targetVersion;
   };
 }

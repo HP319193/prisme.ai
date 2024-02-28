@@ -104,7 +104,6 @@ export class Workspaces extends Storage {
     const alwaysListenedEvents = [
       EventType.PublishedApp,
       EventType.SuspendedWorkspace,
-      EventType.PulledWorkspaceVersion,
       EventType.UpdatedRuntimeDSUL,
     ];
     this.broker.on(
@@ -141,9 +140,6 @@ export class Workspaces extends Storage {
           } else {
             logger.info(`Resumed workspace ${suspended.workspaceId} execution`);
           }
-        } else if (event.type === EventType.PulledWorkspaceVersion) {
-          const { workspaceId } = (event as any as Prismeai.PrismeEvent).source;
-          await this.fetchWorkspace(workspaceId!);
         } else if (event.type === EventType.PublishedApp) {
           const publishedPayload = (event as any as Prismeai.PublishedApp)
             .payload;

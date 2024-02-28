@@ -231,18 +231,28 @@ export default function init(
   async function pullWorkspaceVersionHandler(
     {
       accessManager,
+      body,
       params: { workspaceId, versionId },
       context,
       broker,
-    }: Request<PrismeaiAPI.PullWorkspaceVersion.PathParameters>,
+    }: Request<
+      PrismeaiAPI.PullWorkspaceVersion.PathParameters,
+      any,
+      PrismeaiAPI.PullWorkspaceVersion.RequestBody
+    >,
     res: Response<PrismeaiAPI.PullWorkspaceVersion.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { workspaces, exports } = getServices({
       context,
       accessManager,
       broker,
     });
-    const version = await workspaces.versions.pull(workspaceId, versionId);
+    const version = await workspaces.versions.pull(
+      workspaceId,
+      versionId,
+      exports,
+      body
+    );
 
     res.send(version);
   }
@@ -362,7 +372,7 @@ export default function init(
     asyncRoute(deleteWorkspaceVersionHandler)
   );
   app.post(
-    `/:workspaceId/versions/:versionId/rollback`,
+    `/:workspaceId/versions/:versionId/pull`,
     asyncRoute(pullWorkspaceVersionHandler)
   );
   app.post(

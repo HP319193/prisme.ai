@@ -1,4 +1,4 @@
-import archiver from 'archiver';
+import archiver, { EntryData } from 'archiver';
 import stream from 'stream';
 import unzipper from 'unzipper';
 import {
@@ -205,7 +205,17 @@ export default class Filesystem implements IStorage {
     }
 
     if (isDirectory) {
-      archive.directory(fullPath, basename(fullPath));
+      archive.directory(fullPath, basename(fullPath), (entry: EntryData) => {
+        if (opts?.fileCallback) {
+          const result = opts.fileCallback(entry.name);
+          if (typeof result === 'string') {
+            entry.name = result;
+          } else if (!result) {
+            return false;
+          }
+        }
+        return entry;
+      });
     } else {
       archive.append(fs.createReadStream(fullPath), {
         name: basename(fullPath),
@@ -234,7 +244,7 @@ export default class Filesystem implements IStorage {
       for await (const entry of zipParser) {
         let filepath = entry.path;
         if (opts?.fileCallback) {
-          const result = opts.fileCallback(filepath, entry);
+          const result = opts.fileCallback(filepath);
           if (!result) {
             entry.autodrain();
             continue;
@@ -255,7 +265,7 @@ export default class Filesystem implements IStorage {
         }
       }
 
-      if (opts.removeAdditionalFiles) {
+      if (opts?.removeAdditionalFiles) {
         const currentFiles = await this.find(subkey);
         const additionalFiles = currentFiles.filter(
           ({ key }) => !archiveFiles.has(key)

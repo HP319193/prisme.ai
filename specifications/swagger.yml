@@ -2184,6 +2184,8 @@ components:
               type: array
               items:
                 type: string
+            version:
+              $ref: "#/components/schemas/WorkspaceVersion"
 
     ConfiguredWorkspace:
       type: object
@@ -2254,25 +2256,6 @@ components:
           example: workspaces.versions.deleted
           enum:
             - workspaces.versions.deleted
-        payload:
-          type: object
-          required:
-            - version
-          properties:
-            version:
-              $ref: '#/components/schemas/WorkspaceVersion'
-
-    PullWorkspaceVersion:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.versions.pulled
-          enum:
-            - workspaces.versions.pulled
         payload:
           type: object
           required:
@@ -4874,6 +4857,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkspaceVersion'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
         '404':
           description: Object not found
           content:

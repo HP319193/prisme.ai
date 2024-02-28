@@ -277,11 +277,15 @@ export class WorkspaceExports extends DsulCrud {
     };
   };
 
-  private importDSUL = async (
+  public importDSUL = async (
     workspaceId: string,
     version: string,
-    zipBuffer: Buffer,
-    opts?: { overwriteWorkspaceSlug?: boolean }
+    zipBuffer: Buffer | stream.Readable,
+    opts?: {
+      overwriteWorkspaceSlug?: boolean;
+      removeAdditionalFiles?: boolean;
+      sourceVersion?: Prismeai.WorkspaceVersion;
+    }
   ) => {
     const workspace = await this.workspaces.getDetailedWorkspace(
       workspaceId,
@@ -445,6 +449,7 @@ export class WorkspaceExports extends DsulCrud {
           name: updatedDetailedWorkspace.name,
         },
         files: imported,
+        version: opts?.sourceVersion,
       },
       { workspaceId }
     );
@@ -505,6 +510,7 @@ export class WorkspaceExports extends DsulCrud {
           slug: workspace.slug,
           id: workspace.id,
           customDomains: [],
+          repositories: workspace.repositories,
         });
         break;
 

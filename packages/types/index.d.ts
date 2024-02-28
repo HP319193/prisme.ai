@@ -6,7 +6,7 @@ declare namespace Prismeai {
         userId?: string;
         id?: string;
     }
-    export type ActionTypes = "manage" | "create" | "read" | "update" | "delete" | "manage_permissions" | "manage_security" | "read_app_dsul" | "get_usage" | "aggregate_search" | "execute" | "test";
+    export type ActionTypes = "manage" | "create" | "read" | "update" | "delete" | "manage_permissions" | "manage_security" | "manage_repositories" | "read_app_dsul" | "get_usage" | "aggregate_search" | "execute" | "test";
     export interface All {
         /**
          * Execute each instruction in parallel. Pause current automation execution until all instructions are processed.
@@ -1794,6 +1794,7 @@ declare namespace Prismeai {
         payload: {
             workspace: Workspace;
             files: string[];
+            version?: WorkspaceVersion;
         };
     }
     export interface InstalledAppInstance {
@@ -2127,16 +2128,6 @@ declare namespace Prismeai {
          * workspaces.versions.published
          */
         type: "workspaces.versions.published";
-        payload: {
-            version: WorkspaceVersion;
-        };
-    }
-    export interface PullWorkspaceVersion {
-        /**
-         * example:
-         * workspaces.versions.pulled
-         */
-        type: "workspaces.versions.pulled";
         payload: {
             version: WorkspaceVersion;
         };
@@ -2710,12 +2701,12 @@ declare namespace Prismeai {
         };
     }
     export interface WorkspaceRepository {
-        name?: string;
+        name: string;
         type?: "git";
         mode?: "read-write" | "read-only";
-        config?: {
-            url?: string;
-            branch?: string;
+        config: {
+            url: string;
+            branch: string;
             auth?: {
                 user?: string;
                 password?: string;
@@ -3896,6 +3887,7 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
     namespace PullWorkspaceVersion {
@@ -3914,6 +3906,7 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.WorkspaceVersion;
+            export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;

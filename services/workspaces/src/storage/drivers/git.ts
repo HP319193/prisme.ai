@@ -5,7 +5,7 @@ import {
   SimpleGitOptions,
   CleanOptions,
 } from 'simple-git';
-import { DriverType, ImportOptions } from '../types';
+import { DriverType, ExportOptions, ImportOptions } from '../types';
 import { join } from 'path';
 import Filesystem, { FilesystemOptions } from './filesystem';
 import { promises as promisesFs } from 'fs';
@@ -49,6 +49,35 @@ export default class Git extends Filesystem {
 
   protected getPath(key: string) {
     return join(this.gitOptions.dirpath || '', key);
+  }
+
+  async export(
+    subkey: string,
+    outStream?: stream.Writable,
+    opts?: ExportOptions
+  ) {
+    try {
+      // Prepare & pull local repository
+      const path = this.getPath(subkey);
+      await promisesFs.mkdir(path, { recursive: true });
+      await this.git.cwd(path);
+      await this.git.init();
+      await this.git.pull(this.gitOptions.url!, this.gitOptions.branch);
+
+      // Write given stream to this directory
+      return await super.export(subkey, outStream, opts);
+    } catch (err) {
+      if (`${err}`.includes("couldn't find remote ref")) {
+        throw new ObjectNotFoundError(
+          `Unknown git branch '${this.gitOptions.branch}' at '${this.gitOptions.url}'`,
+          {
+            repository: this.gitOptions.url,
+            branch: this.gitOptions.branch,
+          }
+        );
+      }
+      throw err;
+    }
   }
 
   async import(subkey: string, zip: stream.Readable, opts?: ImportOptions) {

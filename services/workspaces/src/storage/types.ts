@@ -16,16 +16,14 @@ export interface SaveOptions {
 export interface ExportOptions {
   format?: string;
   exclude?: string[];
+  fileCallback?: (filepath: string) => { filepath: string } | false;
 }
 
 export interface ImportOptions {
   archive?: boolean; // archive=true is the only mode supported
   removeAdditionalFiles?: boolean; // If true, remove files that were not present in archive content
   description?: any; // Optional, human readable note describing the import content that may or may not be saved by underlying storage driver (i.e git commits)
-  fileCallback?: (
-    filepath: string,
-    stream: stream.Readable
-  ) => { filepath: string } | false;
+  fileCallback?: (filepath: string) => { filepath: string } | false;
 }
 
 export const Streamed = Symbol('streamed');

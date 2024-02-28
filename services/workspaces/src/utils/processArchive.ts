@@ -1,7 +1,30 @@
 import stream from 'stream';
 import yauzl from 'yauzl';
+import unzipper from 'unzipper';
 
 export async function processArchive(
+  archive: Buffer | stream.Readable,
+  fileCallback: (filepath: string, stream: stream.Readable) => void
+): Promise<string[]> {
+  if (archive instanceof Buffer) {
+    return await processArchiveFromBuffer(archive, fileCallback);
+  }
+
+  const zipParser = unzipper.Parse({ forceStream: true });
+  archive.pipe(zipParser);
+  const files: string[] = [];
+  for await (const entry of zipParser) {
+    if (entry.type === 'File') {
+      files.push(entry.path);
+      fileCallback(entry.path, entry);
+    } else {
+      entry.autodrain();
+    }
+  }
+  return files;
+}
+
+export async function processArchiveFromBuffer(
   archive: Buffer,
   fileCallback: (filepath: string, stream: stream.Readable) => void
 ): Promise<string[]> {
@@ -38,7 +61,7 @@ export async function processArchive(
   });
 }
 
-export async function getArchiveEntries(archive: Buffer) {
+export async function getArchiveEntries(archive: Buffer | stream.Readable) {
   let entries: { filename: string; stream: stream.Readable }[] = [];
   await processArchive(archive, (filename, stream) => {
     entries.push({ filename, stream });
