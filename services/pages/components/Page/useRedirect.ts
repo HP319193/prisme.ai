@@ -9,6 +9,8 @@ interface RedirectGetAttributes {
     body?: Record<string, any>;
     locale?: string;
     push?: string;
+    // Temp. Need to be replace by a openOn page action
+    popup?: boolean;
   };
 }
 
@@ -49,7 +51,11 @@ export function useRedirect() {
           body = {},
           locale,
           push,
+          popup,
         } = redirect;
+        if (popup) {
+          return window.open(url);
+        }
         if (push) {
           return window.history.pushState({}, '', url);
         }

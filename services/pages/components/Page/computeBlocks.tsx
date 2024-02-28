@@ -106,6 +106,12 @@ export function applyFilter(filter: string, value: string, values: any) {
         console.error(e);
         return [];
       }
+    case 'replace':
+      if (typeof value !== 'string') return value;
+      const [pattern = '', by = '', options = ''] = attrs
+        .split(/,/)
+        .map(cleanAttribute(values));
+      return value.replace(new RegExp(pattern, options), by);
     default:
       return value;
   }
@@ -170,8 +176,8 @@ export function testCondition(condition: string = '', values: any) {
   if (result === 'false' || result === 'undefined') {
     return invert ? true : false;
   }
-
-  return invert ? !result : result;
+  const cleanedResult = result && !Number.isNaN(+result) ? +result : result;
+  return invert ? !cleanedResult : cleanedResult;
 }
 
 export function repeatBlock(block: Config, values: any) {
