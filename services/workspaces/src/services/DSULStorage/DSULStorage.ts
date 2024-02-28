@@ -19,6 +19,7 @@ import {
   FolderIndexSuffix,
   getFolderIndexType,
 } from './types';
+import { join } from 'path';
 
 export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
   private driver: IStorage;
@@ -386,5 +387,9 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
     opts?: ExportOptions
   ) {
     return await this.driver.export(this.getPath(query), outStream, opts);
+  }
+
+  async find(query: DSULQuery) {
+    return await this.driver.find(this.getPath(query));
   }
 }

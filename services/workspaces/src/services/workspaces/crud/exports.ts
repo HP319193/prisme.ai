@@ -13,6 +13,7 @@ import { Apps } from '../../apps';
 import archiver from 'archiver';
 import {
   DSULFolders,
+  DSULRootFiles,
   DSULStorage,
   DSULType,
   FolderIndex,
@@ -399,7 +400,7 @@ export class WorkspaceExports extends DsulCrud {
             security
           );
           if (applied) {
-            imported.push(filepath);
+            imported.push(splittedPath.join('/'));
           }
         } catch (err) {
           errors.push({
@@ -420,6 +421,42 @@ export class WorkspaceExports extends DsulCrud {
       batch = [];
     }
     await Promise.all(batch);
+
+    // If deleteAdditionalFiles, find & delete from workspace storage any files that was present in given archive
+    let deletedFiles: string[] | undefined;
+    if (opts?.removeAdditionalFiles) {
+      const workspaceFiles = await this.storage.find({
+        workspaceId,
+        version: 'current',
+        parentFolder: true,
+      });
+      const archiveFiles = new Set(imported);
+      deletedFiles = workspaceFiles
+        .filter(
+          ({ key }) =>
+            // Never delete root files (index.yml or security.yml)
+            !DSULRootFiles.find((cur) => key.startsWith(cur)) &&
+            // Do not delete either folders indexes
+            !key.endsWith(`${FolderIndex}.yml`) &&
+            !archiveFiles.has(key)
+        )
+        .map(({ key }) => key);
+
+      if (deletedFiles.length) {
+        await Promise.all(
+          deletedFiles.map(async (cur) => {
+            return await this.applyDSULFile(
+              cur.split('/'),
+              workspace,
+              null,
+              automations,
+              imports,
+              security
+            );
+          })
+        );
+      }
+    }
 
     // Update automations, pages & import indexes
     try {
@@ -449,6 +486,7 @@ export class WorkspaceExports extends DsulCrud {
           name: updatedDetailedWorkspace.name,
         },
         files: imported,
+        deleted: deletedFiles,
         version: opts?.sourceVersion,
       },
       { workspaceId }
@@ -456,6 +494,7 @@ export class WorkspaceExports extends DsulCrud {
     return {
       imported,
       errors,
+      deleted: deletedFiles,
       workspace: updatedDetailedWorkspace,
     };
   };
@@ -463,7 +502,7 @@ export class WorkspaceExports extends DsulCrud {
   private async applyDSULFile(
     path: string[],
     workspace: Prismeai.DSULReadOnly,
-    content: any,
+    content: any | null, // Can be set to null to delete the file
     automations: Automations,
     appInstances: AppInstances,
     security: Security
@@ -515,49 +554,68 @@ export class WorkspaceExports extends DsulCrud {
         break;
 
       case DSULType.Security:
-        await security.updateSecurity(workspace.id!, content);
+        if (security) {
+          // We do not let deleting this file
+          await security.updateSecurity(workspace.id!, content);
+        }
         break;
 
       case DSULFolders.Pages:
-        const oldSlug =
-          Object.entries(workspace.pages || {}).find(
-            ([key, pageMeta]) => pageMeta.id === content.id
-          )?.[0] || '';
-        if (!content.slug) {
-          content.slug = subfileSlug;
-        }
-        // Use upsert method as we would otherwise reject MongoDB duplicate key error in case of unsynchronization between db & dsul
-        await this.workspaces.pages.updatePage(
-          workspace.id!,
-          oldSlug || content.slug || subfileSlug,
-          content,
-          {
-            upsert: true,
+        if (content == null) {
+          await this.workspaces.pages.deletePage(workspace.id!, subfileSlug);
+        } else {
+          const oldSlug =
+            Object.entries(workspace.pages || {}).find(
+              ([key, pageMeta]) => pageMeta.id === content.id
+            )?.[0] || '';
+          if (!content.slug) {
+            content.slug = subfileSlug;
           }
-        );
+          // Use upsert method as we would otherwise reject MongoDB duplicate key error in case of unsynchronization between db & dsul
+          await this.workspaces.pages.updatePage(
+            workspace.id!,
+            oldSlug || content.slug || subfileSlug,
+            content,
+            {
+              upsert: true,
+            }
+          );
+        }
         break;
 
       case DSULFolders.Automations:
-        if (!content.slug) {
-          content.slug = subfileSlug;
-        }
-        await automations.updateAutomation(
-          workspace.id!,
-          content.slug || subfileSlug,
-          content,
-          {
-            // avoid any update error in case of corrupted dsul
-            upsert: true,
+        if (content == null) {
+          await automations.deleteAutomation(workspace.id!, subfileSlug);
+        } else {
+          if (!content.slug) {
+            content.slug = subfileSlug;
           }
-        );
+          await automations.updateAutomation(
+            workspace.id!,
+            content.slug || subfileSlug,
+            content,
+            {
+              // avoid any update error in case of corrupted dsul
+              upsert: true,
+            }
+          );
+        }
         break;
 
       case DSULFolders.Imports:
-        if (content.slug in (workspace.imports || {})) {
-          await appInstances.configureApp(workspace.id!, content.slug, content);
+        if (content == null) {
+          await appInstances.uninstallApp(workspace.id!, subfileSlug);
         } else {
-          content.slug = subfileSlug;
-          await appInstances.installApp(workspace.id!, content, true); // Ignore unknown app errors as it might be imported later on
+          if (content.slug in (workspace.imports || {})) {
+            await appInstances.configureApp(
+              workspace.id!,
+              content.slug,
+              content
+            );
+          } else {
+            content.slug = subfileSlug;
+            await appInstances.installApp(workspace.id!, content, true); // Ignore unknown app errors as it might be imported later on
+          }
         }
         break;
 

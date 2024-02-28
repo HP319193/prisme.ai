@@ -2184,6 +2184,10 @@ components:
               type: array
               items:
                 type: string
+            deleted:
+              type: array
+              items:
+                type: string
             version:
               $ref: "#/components/schemas/WorkspaceVersion"
 
@@ -4640,6 +4644,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/App'
+                  deleted:
+                    type: array
+                    items:
+                      type: string
         '401':
           description: AuthenticationError
           content:
@@ -4856,7 +4864,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspaceVersion'
+                type: object
+                properties:
+                  imported:
+                    type: array
+                    items:
+                      type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                  workspace:
+                    type: object
+                  deleted:
+                    type: array
+                    items:
+                      type: string
         '400':
           description: Bad parameters
           content:

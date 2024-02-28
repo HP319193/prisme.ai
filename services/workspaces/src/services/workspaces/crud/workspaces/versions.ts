@@ -281,7 +281,7 @@ export class WorkspaceVersions extends DsulCrud {
     }
 
     // Finally import this version
-    await Promise.all([
+    const [importResult] = await Promise.all([
       workspacesExports.importDSUL(
         workspaceId,
         'current',
@@ -293,6 +293,6 @@ export class WorkspaceVersions extends DsulCrud {
       ),
       versionArchivePromise,
     ]);
-    return targetVersion;
+    return importResult;
   };
 }
