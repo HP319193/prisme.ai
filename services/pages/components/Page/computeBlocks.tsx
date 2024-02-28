@@ -176,8 +176,8 @@ export function testCondition(condition: string = '', values: any) {
   if (result === 'false' || result === 'undefined') {
     return invert ? true : false;
   }
-
-  return invert ? !result : result;
+  const cleanedResult = result && !Number.isNaN(+result) ? +result : result;
+  return invert ? !cleanedResult : cleanedResult;
 }
 
 export function repeatBlock(block: Config, values: any) {

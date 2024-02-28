@@ -792,3 +792,7 @@ it('should apply replace filter', () => {
     })
   ).toBe('foo foo foo');
 });
+
+it('should be a number', () => {
+  expect(testCondition('!{{arr.length}}', { arr: [] })).toBe(true);
+});
