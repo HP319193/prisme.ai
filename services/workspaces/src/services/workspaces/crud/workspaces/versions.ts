@@ -17,6 +17,7 @@ import buildStorage from '../../../../storage';
 import { WORKSPACES_STORAGE_GIT_OPTIONS } from '../../../../../config';
 import { DSULFolders, DSULRootFiles, DSULType } from '../../../DSULStorage';
 import { WorkspaceExports } from '../exports';
+import { join } from 'path';
 
 export class WorkspaceVersions extends DsulCrud {
   list = async (workspaceId: string) => {
@@ -55,6 +56,7 @@ export class WorkspaceVersions extends DsulCrud {
       driver = buildStorage(DriverType.GIT, {
         ...repository.config,
         ...WORKSPACES_STORAGE_GIT_OPTIONS,
+        dirpath: join(WORKSPACES_STORAGE_GIT_OPTIONS.dirpath!, workspace.id!),
       });
     } else {
       throw new PrismeError(
@@ -111,7 +113,7 @@ export class WorkspaceVersions extends DsulCrud {
         this.accessManager?.user?.authData?.prismeai?.email ||
         this.accessManager?.user?.id;
       await Promise.all([
-        destDriver.import(`${workspaceId}`, exportStream, {
+        destDriver.import(`${versionRequest.repository.id}`, exportStream, {
           archive: true,
           removeAdditionalFiles: true,
           description: version.description + ` | Author : ${prismeaiAuthor}`,
@@ -274,7 +276,7 @@ export class WorkspaceVersions extends DsulCrud {
         'read'
       );
       versionArchivePromise = sourceDriver.export(
-        `${workspaceId}/`,
+        `${targetVersion.repository.id}/`,
         versionArchiveStream,
         exportOptions
       );
