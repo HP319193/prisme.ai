@@ -18,6 +18,7 @@ import { WORKSPACES_STORAGE_GIT_OPTIONS } from '../../../../../config';
 import { DSULFolders, DSULRootFiles, DSULType } from '../../../DSULStorage';
 import { WorkspaceExports } from '../exports';
 import { join } from 'path';
+import { GitExportOptions } from '../../../../storage/drivers/git';
 
 export class WorkspaceVersions extends DsulCrud {
   list = async (workspaceId: string) => {
@@ -232,7 +233,8 @@ export class WorkspaceVersions extends DsulCrud {
     const whitelistFiles = DSULRootFiles.concat(
       Object.values(DSULFolders) as any
     );
-    const exportOptions: ExportOptions = {
+    const exportOptions: GitExportOptions = {
+      commit: version !== 'latest' ? version : undefined,
       fileCallback: (filepath) => {
         if (
           filepath.startsWith(DSULType.RuntimeModel) ||

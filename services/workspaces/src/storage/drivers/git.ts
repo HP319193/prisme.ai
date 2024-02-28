@@ -14,6 +14,10 @@ import { ObjectNotFoundError, PrismeError } from '../../errors';
 export type GitOptions = FilesystemOptions &
   Prismeai.WorkspaceRepository['config'];
 
+export type GitExportOptions = ExportOptions & {
+  commit?: string; // Speciic commit to export from
+};
+
 export default class Git extends Filesystem {
   private git: SimpleGit;
   private gitOptions: Required<GitOptions>;
@@ -54,7 +58,7 @@ export default class Git extends Filesystem {
   async export(
     subkey: string,
     outStream?: stream.Writable,
-    opts?: ExportOptions
+    opts?: GitExportOptions
   ) {
     try {
       // Prepare & pull local repository
@@ -63,6 +67,11 @@ export default class Git extends Filesystem {
       await this.git.cwd(path);
       await this.git.init();
       await this.git.pull(this.gitOptions.url!, this.gitOptions.branch);
+      if (opts?.commit) {
+        await this.git.checkout(opts?.commit);
+      } else {
+        await this.git.checkout(this.gitOptions.branch);
+      }
 
       // Write given stream to this directory
       return await super.export(subkey, outStream, opts);
@@ -73,6 +82,14 @@ export default class Git extends Filesystem {
           {
             repository: this.gitOptions.url,
             branch: this.gitOptions.branch,
+          }
+        );
+      } else if (opts?.commit && `${err}`.includes(opts?.commit)) {
+        throw new ObjectNotFoundError(
+          `Unknown commit or tag '${opts.commit}' at '${this.gitOptions.url}'`,
+          {
+            repository: this.gitOptions.url,
+            commit: opts.commit,
           }
         );
       }
