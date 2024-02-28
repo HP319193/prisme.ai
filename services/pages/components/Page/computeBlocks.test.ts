@@ -779,3 +779,16 @@ it('should apply filter filter with custom var name', () => {
     [original]: block,
   });
 });
+
+it('should apply replace filter', () => {
+  expect(
+    interpolateExpression("{{foo|replace:'bar','foo'}}", {
+      foo: 'foo bar bar',
+    })
+  ).toBe('foo foo bar');
+  expect(
+    interpolateExpression("{{foo|replace:'bar','foo', 'g'}}", {
+      foo: 'foo bar bar',
+    })
+  ).toBe('foo foo foo');
+});

@@ -106,6 +106,12 @@ export function applyFilter(filter: string, value: string, values: any) {
         console.error(e);
         return [];
       }
+    case 'replace':
+      if (typeof value !== 'string') return value;
+      const [pattern = '', by = '', options = ''] = attrs
+        .split(/,/)
+        .map(cleanAttribute(values));
+      return value.replace(new RegExp(pattern, options), by);
     default:
       return value;
   }
