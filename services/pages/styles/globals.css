@@ -22,6 +22,8 @@
   --pr-form-accent-color: var(--accent-color);
   --pr-form-error-color: var(--error-color);
   --pr-form-margin-size: 1rem;
+  --pr-form-padding: 2rem;
+  --pr-page-x-margin: 0px;
   font-family: Montserrat, sans-serif;
 }
 

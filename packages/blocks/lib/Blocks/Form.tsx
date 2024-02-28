@@ -232,7 +232,7 @@ const defaultStyles = `:block {
   display: flex;
   flex: 1 1 0%;
   flex-direction: column;
-  padding: 2rem;
+  padding: var(--pr-form-padding);
 }
 
 :block .pr-block-form__buttons-container {

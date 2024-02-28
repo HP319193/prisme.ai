@@ -70,7 +70,7 @@ const Actions = ({
                 return (
                   <div
                     key={index}
-                    className={tw`cards-container__card-container card-container snap-start`}
+                    className={tw`cards-container__card-container card-container`}
                   >
                     <div
                       className={tw`flex flex-col

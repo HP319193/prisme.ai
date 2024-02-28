@@ -38,7 +38,7 @@ const Blocks = ({
             {(cards as CardBlocks[]).map(({ content }, index) => (
               <div
                 key={index}
-                className={tw`pr-block-cards__card cards-container__card-container card-container snap-start`}
+                className={tw`pr-block-cards__card cards-container__card-container card-container`}
               >
                 <BlocksList {...content} />
               </div>

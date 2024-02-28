@@ -58,7 +58,7 @@ const Short = ({
               ) => (
                 <ActionOrLink action={action} key={index}>
                   <div
-                    className={tw`cards-container__card-container card-container snap-start`}
+                    className={tw`cards-container__card-container card-container`}
                   >
                     <div
                       className={tw`flex flex-col
