@@ -198,9 +198,18 @@ export default class AzureBlob implements IStorage {
         if (exclude.some((cur) => key.endsWith(cur))) {
           return;
         }
+        let name = key.slice(path.dirname(prefix).length);
+        if (opts?.fileCallback) {
+          const result = opts.fileCallback(name);
+          if (typeof result === 'string') {
+            name = result;
+          } else if (!result) {
+            return;
+          }
+        }
         return await this.get(key).then((body) => {
           archive.append(body as Buffer, {
-            name: key.slice(path.dirname(prefix).length),
+            name,
           });
         });
       })

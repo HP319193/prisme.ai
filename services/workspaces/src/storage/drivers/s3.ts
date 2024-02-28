@@ -303,8 +303,18 @@ export default class S3Like implements IStorage {
           return;
         }
         return await this.get(key).then((body) => {
+          let name = key.slice(path.dirname(prefix).length);
+
+          if (opts?.fileCallback) {
+            const result = opts.fileCallback(name);
+            if (typeof result === 'string') {
+              name = result;
+            } else if (!result) {
+              return;
+            }
+          }
           archive.append(body, {
-            name: key.slice(path.dirname(prefix).length),
+            name,
           });
         });
       })
