@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { Action } from '..';
+import { BlocksListConfig } from '../../../dist/lib/Blocks/BlocksList';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
 import { Block } from './Block';
-import { ContentProps } from './types';
+import { BlockContent, ContentProps } from './types';
 
 const Tab = ({
   title,
@@ -58,7 +60,11 @@ const Tab = ({
 
 const EMPTY_ARRAY: ContentProps['tabs'] = [];
 
-export const ContentPanel = ({ tabs = EMPTY_ARRAY, content }: ContentProps) => {
+export const ContentPanel = ({
+  tabs = EMPTY_ARRAY,
+  content,
+  additionalButtons,
+}: ContentProps) => {
   const _tabs = Array.isArray(tabs) ? tabs : EMPTY_ARRAY;
   const { isSelected, hasContent } = _tabs.reduce(
     (prev, { content, selected }, index) => {
@@ -80,14 +86,23 @@ export const ContentPanel = ({ tabs = EMPTY_ARRAY, content }: ContentProps) => {
 
   return (
     <>
-      <div className="product-layout-content-tabs">
-        {_tabs.map((item, index) => (
-          <Tab
-            {...item}
-            onClick={() => setSelectedIndex(index)}
-            active={index === selectedIndex}
-          />
-        ))}
+      <div className="product-layout-content-nav">
+        <div className="product-layout-content-tabs">
+          {_tabs.map((item, index) => (
+            <Tab
+              {...item}
+              onClick={() => setSelectedIndex(index)}
+              active={index === selectedIndex}
+            />
+          ))}
+        </div>
+        {additionalButtons && (
+          <div className="product-layout-content-additional-buttons">
+            {additionalButtons.map((button, key) => (
+              <Block key={key} content={[{ slug: 'Action', ...button }]} />
+            ))}
+          </div>
+        )}
       </div>
       <Block
         className={`product-layout-content-panel product-layout-content-panel--${columns}col`}

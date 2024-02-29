@@ -30,6 +30,7 @@ export interface ContentProps {
     selected?: boolean;
     columns?: number;
   } & ActionConfig)[];
+  additionalButtons?: ActionConfig[];
   content?: BlockContent;
 }
 

@@ -133,8 +133,11 @@ export const ActionButton = ({
       );
     case 'upload':
       return (
-        <div id={sectionId} className={`pr-block-action__upload ${className}`}>
-          <div className="pr-block-action__upload-btn">
+        <div
+          id={sectionId}
+          className={`pr-block-action pr-block-action--upload ${className}`}
+        >
+          <div className="pr-block-action__button">
             <label
               className="pr-block-action__upload-label"
               htmlFor={`${className}-file-upload`}
@@ -277,10 +280,7 @@ export const Action = (props: ActionProps) => {
 const defaultStyles = `:block {
   padding: 1rem;
 }
-:block .pr-block-action__button{
-  padding: 0.5rem 1rem;
-}
-:block .pr-block-action-wrapper__disabled {
+.pr-block-action-wrapper__disabled {
   pointer-events: none;
 }
 :block.pr-block-action--event .pr-block-action__button {
@@ -291,7 +291,7 @@ const defaultStyles = `:block {
 :root .pr-block-action__confirm-button {
   margin-left: 1rem;
 }
-:block .pr-block-action__upload-btn {
+.pr-block-action__button {
   background: var(--accent-color);
   color: var(--accent-contrast-color);
   border-radius: 0.5rem;
@@ -303,8 +303,13 @@ const defaultStyles = `:block {
   text-align: center; /* Center the text inside the label */
 }
 
-:block .pr-block-action__upload-label {
-  cursor: pointer
+:block.pr-block-action--upload .pr-block-action__button {
+  padding: 0;
+}
+:block.pr-block-action--upload .pr-block-action__upload-label {
+  display: flex;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
 }`;
 export const ActionInContext = () => {
   const { config, events } = useBlock<ActionConfig>();

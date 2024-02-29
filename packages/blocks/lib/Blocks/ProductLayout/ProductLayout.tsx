@@ -210,6 +210,11 @@ const defaultStyles = `:block {
   line-height: 16px;
   margin-bottom: 40px;
 }
+.product-layout-content-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 .product-layout-content-tabs {
   color: var(--main-text);
   margin-bottom: 22px;
@@ -226,6 +231,9 @@ const defaultStyles = `:block {
 }
 .product-layout-content-tab--active {
   opacity: 1;
+}
+.product-layout-content-additional-buttons {
+  margin-right: -14px;
 }
 .product-layout-content-panel {
   color: var(--main-element-text);
