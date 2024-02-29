@@ -404,62 +404,62 @@ export const Navigation = () => {
 
   return (
     <navigationContext.Provider value={{ add, highlight: searchQuery }}>
-      <div className="product-layout-sidebar__items">
-        <div
-          className={`product-layout-sidebar__item ${
-            searchQuery ? '!opacity-100' : ''
-          } ${searchFocusState ? '!opacity-100' : ''} mt-[4px]`}
-        >
-          <div className="flex flex-1 text-left relative mt-[10px]">
-            <button
-              className="product-layout-sidebar__item-button"
-              onClick={() => {
-                toggleSidebar();
-                setTimeout(() => searchInputRef.current?.focus(), 200);
-              }}
-            >
-              <span className="product-layout-sidebar__item-icon">
-                <SearchIcon width={23} height={23} />
-              </span>
-              <span className="product-layout-sidebar__item-label">
-                {t('search', { ns: 'common' })}
-              </span>
-            </button>
-            <div
-              className={`flex flex-1 absolute top-0 left-0 right-0 transition-opacity opacity-0 ${
-                sidebarOpen
-                  ? '!opacity-100 pointer-events-all'
-                  : 'pointer-events-none'
-              }`}
-            >
-              <form className="flex flex-row flex-1 bg-white py-[10px] pl-[19px] mx-[10px] mt-[-10px] rounded">
-                <SearchIcon
-                  width={23}
-                  height={23}
-                  className={opened ? 'text-accent' : ''}
-                />
-                <input
-                  type="search"
-                  value={searchQuery}
-                  ref={searchInputRef}
-                  onFocus={() => setSearchFocusState(true)}
-                  onBlur={() => setSearchFocusState(false)}
-                  className="outline-none ml-[13px] text-accent font-[14px] font-medium w-[calc(100%_-_50px)]"
-                  onChange={({ target: { value } }) => setSearchQuery(value)}
-                />
-                <button
-                  type="button"
-                  className={`absolute top-[5px] right-[15px] text-accent transition-opacity ${
-                    searchQuery ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  onClick={() => setSearchQuery('')}
-                >
-                  <CloseIcon width={17} />
-                </button>
-              </form>
-            </div>
+      <div
+        className={`product-layout-sidebar__item mb-[-20px] ${
+          searchQuery ? '!opacity-100' : ''
+        } ${searchFocusState ? '!opacity-100' : ''} mt-[4px]`}
+      >
+        <div className="flex flex-1 text-left relative mt-[10px]">
+          <button
+            className="product-layout-sidebar__item-button"
+            onClick={() => {
+              toggleSidebar();
+              setTimeout(() => searchInputRef.current?.focus(), 200);
+            }}
+          >
+            <span className="product-layout-sidebar__item-icon">
+              <SearchIcon width={23} height={23} />
+            </span>
+            <span className="product-layout-sidebar__item-label">
+              {t('search', { ns: 'common' })}
+            </span>
+          </button>
+          <div
+            className={`flex flex-1 absolute top-0 left-0 right-0 transition-opacity opacity-0 ${
+              sidebarOpen
+                ? '!opacity-100 pointer-events-all'
+                : 'pointer-events-none'
+            }`}
+          >
+            <form className="flex flex-row flex-1 bg-white py-[10px] pl-[19px] mx-[10px] mt-[-10px] rounded">
+              <SearchIcon
+                width={23}
+                height={23}
+                className={opened ? 'text-accent' : ''}
+              />
+              <input
+                type="search"
+                value={searchQuery}
+                ref={searchInputRef}
+                onFocus={() => setSearchFocusState(true)}
+                onBlur={() => setSearchFocusState(false)}
+                className="outline-none ml-[13px] text-accent font-[14px] font-medium w-[calc(100%_-_50px)]"
+                onChange={({ target: { value } }) => setSearchQuery(value)}
+              />
+              <button
+                type="button"
+                className={`absolute top-[5px] right-[15px] text-accent transition-opacity ${
+                  searchQuery ? 'opacity-100' : 'opacity-0'
+                }`}
+                onClick={() => setSearchQuery('')}
+              >
+                <CloseIcon width={17} />
+              </button>
+            </form>
           </div>
         </div>
+      </div>
+      <div className="product-layout-sidebar__items">
         {navigations.map(({ type, icon, title, href, active, items, opened }) =>
           items ? (
             <RootLinksGroup
