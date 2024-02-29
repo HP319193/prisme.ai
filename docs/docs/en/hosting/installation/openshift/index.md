@@ -8,9 +8,6 @@ This hosting guide shows you how to self-host Prisme.ai on OpenShift.
 
 This guide assumes that you have a basic understanding of Kubernetes, Helm, and the various external services required by Prisme.ai.
 
-## Prerequisites
-
-
 ## Prepare the external services
 
 Deploy the required external services either within your Kubernetes cluster or make sure they are accessible to the cluster if hosted externally.
