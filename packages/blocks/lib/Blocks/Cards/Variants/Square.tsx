@@ -54,7 +54,7 @@ const Square = ({
               ({ title, description, action }, index) => (
                 <ActionOrLink action={action} key={index}>
                   <div
-                    className={tw`cards-container__card-container card-container snap-start flex-card`}
+                    className={tw`cards-container__card-container card-container flex-card`}
                   >
                     <div
                       className={tw`flex flex-col m-[0.625rem] group max-w-[12.625rem] w-[12.625rem] h-[12.625rem] transition-transform hover:translate-y-1 hover:scale-105 shadow-sm hover:shadow-lg`}

@@ -42,7 +42,7 @@ const Classic = ({
               ({ title, description, cover, content = [] }, index) => (
                 <div
                   key={index}
-                  className={`${tw`cards-container__card-container card-container flex flex-col snap-start my-6 pl-[10px] group w-[15rem] min-h-[23rem] flex-card`}`}
+                  className={`${tw`cards-container__card-container card-container flex flex-col my-6 pl-[10px] group w-[15rem] min-h-[23rem] flex-card`}`}
                 >
                   <div
                     className={`${tw`card-container__card card relative flex flex-1 flex-col mx-2 rounded-[20px] `}`}

@@ -239,10 +239,20 @@ Cards.Preview = ({ config }: { config: CardsConfig }) => {
   );
 };
 
+const defaultStyles = `
+.pr-block-data-table__table-container {
+  overflow: auto;
+}
+
+:block .cards-container {
+  scroll-snap-align: start;
+}
+`;
+
 export const CardsInContext = () => {
   const { config } = useBlock<CardsConfig>();
   return (
-    <BaseBlock>
+    <BaseBlock defaultStyles={defaultStyles}>
       <Cards {...config} />
     </BaseBlock>
   );
