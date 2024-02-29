@@ -6,8 +6,7 @@ site_description: i18n.site_description
 start: i18n.start
 docs_dir: docs/en
 site_dir: public/fr
-# Copyright
-copyright: Prisme.ai &copy; 2016 - 2022 Gogowego SAS
+copyright: Prisme.ai &copy; 2016 - 2024 Gogowego SAS
 extra_css:
   - stylesheets/extra.css
 extra_javascript:
@@ -21,6 +20,7 @@ theme:
     text: Montserrat
   features:
     - navigation.tabs
+    - content.code.copy
 languages:
   - title: Français (FR)
     code: fr
@@ -38,10 +38,20 @@ extra:
 
 nav:
   - i18n.home: index.md
-  - i18n.getstarted:
-      - i18n.index: getstarted/index.md
-      - i18n.configuration: getstarted/configuration.md
-      - i18n.testing: getstarted/operational-test.md
+  - i18n.hosting:
+      - i18n.index: hosting/index.md
+      - i18n.installation: 
+          - i18n.index: hosting/installation/index.md
+          - i18n.local: hosting/installation/local/index.md
+          - i18n.providers:
+            #   - i18n.amazon_web_services: hosting/installation/aws/index.md
+            #   - i18n.azure: hosting/installation/azure/index.md
+            #   - i18n.google_cloud: hosting/installation/gcp/index.md
+              - i18n.openshift: hosting/installation/openshift/index.md
+      - i18n.configuration:
+          - i18n.index: hosting/configuration/index.md
+          - i18n.environment_variables: hosting/configuration/environment-variables.md
+      - i18n.testing: hosting/installation/operational-test.md
   - Workspaces:
       - i18n.index: workspaces/index.md
       - Apps: workspaces/apps.md

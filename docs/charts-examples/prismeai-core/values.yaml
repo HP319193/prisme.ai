@@ -1,0 +1,317 @@
+# Configuration shared by all services
+global:
+  repository:
+    host: registry.gitlab.com
+    username: ""
+    token: ""
+    create: false # Configure the above and set this to true if you want to save the secrets in a repository
+
+  broker:
+    driver: redis # Driver used
+    url: redis://localhost:6379/1 # URL to the broker
+    password: "" # Broker password
+
+  apiUrl: "" # Public API URL, example : https://api.prisme.ai/v2
+  consoleUrl: "" # Public Console URL, example : https://studio.prisme.ai
+  pagesHost: "" # Pages host, example : .pages.prisme.ai
+
+  internalApiKey: &INTERNAL_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: internal-security
+        key: apiKey
+
+  storage:
+    workspaces:
+      # Configure where the workspaces models will be saved
+      driver: S3_LIKE # Driver used (check the documentation for all the availalbe drivers and their configuration)
+
+      s3_like_accessKey: ''
+      s3_like_secretKey: ''
+      s3_like_baseUrl: '' # Base public URL
+      s3_like_bucketName: 'prismeai-models'
+      s3_like_endpoint: ''
+
+    uploads:
+      # Configure where the user uploads will be saved
+      driver: S3_LIKE # Driver used (check the documentation for all the availalbe drivers and their configuration)
+
+      s3_like_accessKey: ''
+      s3_like_secretKey: ''
+      s3_like_baseUrl: '' # Base public URL
+      s3_like_bucketName: 'prismeai-uploads'
+      s3_like_endpoint: ''
+
+    permissions:
+      driver: mongoose # Driver used
+      url: mongodb+srv://prisme:password@mongodbcluster.example/?tls=true # Your MongoDB URI
+
+    events:
+      url: http://core-es:9200 # Data lake URL
+      user: elastic
+      password:
+        valueFrom:
+          secretKeyRef:
+            name: core-es-elastic-user
+            key: elastic
+
+########################################
+# Service-specific configs
+prismeai-workspaces:
+  enabled: true
+
+  image:
+    tag: prod
+  replicaCount: 1
+  namespace: core
+  resources:
+    requests:
+      memory: '300Mi'
+      cpu: '0.5'
+    limits:
+      memory: '500Mi'
+      cpu: '1'
+  serviceAccount:
+    create: true
+
+  volumes: []
+
+  volumeMounts: []
+
+  env:
+    - name: NODE_OPTIONS
+      value: '--max-old-space-size=200'
+    - name: CUSTOM_DOMAINS_CNAME
+      value: ""
+    - name: UPLOADS_MAX_SIZE
+      value: '100000000' # 100MB
+
+  hpa: &CORE_CPU_HPA
+    create: true
+    minReplicas: 2
+    maxReplicas: 8
+    metrics:
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageValue: '0.70'
+
+prismeai-runtime:
+  enabled: true
+
+  image:
+    tag: prod
+  replicaCount: 1
+  namespace: core
+  resources: &resources
+    requests:
+      memory: '500Mi'
+      cpu: '0.5'
+    limits:
+      memory: '800Mi'
+      # cpu: '2'
+  serviceAccount:
+    create: true
+
+  cache:
+    contexts:
+      driver: redis
+      url: redis://localhost:6379
+      password: ""
+
+  volumes: []
+  volumeMounts: []
+
+  env:
+    - name: NODE_OPTIONS
+      value: '--max-old-space-size=500'
+    - &BROKER_EMIT_MAXLEN
+      name: BROKER_EMIT_MAXLEN
+      value: '1000000'
+    - name: UPLOADS_MAX_SIZE
+      value: '100000000' # 100MB
+
+    ## App configs:
+    ## Those are examples and not necessary to run prismeai-core.
+    # - name: WORKSPACE_CONFIG_collection_mongoURI
+    #   value: 'mongodb+srv://prisme:password@mongodbcluster.example/collections?tls=true'
+    # - name: APP_CONFIG_CustomCode_apiUrl
+    #   value: 'http://apps-prismeai-functions.apps.svc.cluster.local'
+    # - name: APP_CONFIG_NLU_apiUrl
+    #   value: 'http://apps-prismeai-nlu.apps.svc'
+    # - name: APP_CONFIG_Crawler_apiUrl
+    #   value: 'http://apps-prismeai-searchengine.apps.svc'
+    # - name: WORKSPACE_CONFIG_crawler_apiUrl
+    #   value: 'http://apps-prismeai-searchengine.apps.svc'
+
+  hpa: *CORE_CPU_HPA
+
+prismeai-events:
+  enabled: true
+
+  image:
+    tag: prod
+  replicaCount: 1
+  namespace: core
+  resources: &resources
+    requests:
+      memory: '200Mi'
+      cpu: '0.5'
+    limits:
+      memory: '600Mi'
+      # cpu: '2'
+  serviceAccount:
+    create: true
+
+  volumes: []
+  volumeMounts: []
+
+  env:
+    - name: NODE_OPTIONS
+      value: '--max-old-space-size=400'
+    - *BROKER_EMIT_MAXLEN
+    - name: SOCKETIO_COOKIE_MAX_AGE
+      value: '1200'
+    - name: EVENTS_BUFFER_FLUSH_EVERY
+      value: '100'
+    - name: ELASTIC_SEARCH_TIMEOUT
+      value: '10000ms' # Default 2sec too short for some requests which can easily exceeds 2sec anyway.
+    - name: EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS
+      value: "50"
+    - name: 'EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS'
+      value: '30'
+
+  hpa: *CORE_CPU_HPA
+
+  events:
+    retention: 1080 # 3 years
+
+prismeai-console:
+  enabled: true
+
+  image:
+    tag: prod
+  replicaCount: 1
+  namespace: core
+  resources:
+    requests:
+      memory: '300Mi'
+      cpu: '0.1'
+    limits:
+      memory: '1024Mi'
+      # cpu: '1'
+  serviceAccount:
+    create: true
+
+  # Custom config (Optional)
+  suggestions: '' # Webhook to display suggestions
+  billingHome: ""
+  billingUsage: ""
+  hpa: *CORE_CPU_HPA
+  tracking: ''
+
+  env:
+    - name: ENABLED_AUTH_PROVIDERS
+      value: '[{"name":"local"}]'
+
+prismeai-pages:
+  enabled: true
+
+  image:
+    tag: prod
+  replicaCount: 1
+  namespace: core
+  resources:
+    requests:
+      memory: '512Mi'
+      cpu: '0.1'
+    limits:
+      memory: '1024Mi'
+      # cpu: '1'
+  serviceAccount:
+    create: true
+  hpa: *CORE_CPU_HPA
+
+  env:
+    - name: ENABLED_AUTH_PROVIDERS
+      value: '[{"name":"local"}]'
+
+prismeai-api-gateway:
+  enabled: true
+
+  image:
+    tag: prod
+  namespace: core
+  resources:
+    requests:
+      memory: '100Mi'
+      cpu: '0.5'
+    limits:
+      memory: '500Mi'
+      # cpu: '2'
+  serviceAccount:
+    create: true
+
+  storage:
+    users:
+      driver: mongodb
+      url: mongodb+srv://prisme:password@mongodbcluster.example/collections?tls=true
+
+    sessions:
+      driver: redis
+      url: redis://localhost:6379
+      password: ""
+
+  config:
+    admins: '' # List of emails which shall be considered as admin of the platform, they have read access to all the workspaces.
+    services:
+      functions:
+        url: http://apps-prismeai-functions.apps.svc
+
+  providers:
+    mailgun:
+      apiKey: '' # In order for the platform to send emails, please fill-in your mailgun API key.
+
+  volumes: []
+  volumeMounts: []
+
+  env:
+    - name: NODE_OPTIONS
+      value: '--max-old-space-size=200'
+    - name: UPLOADS_MAX_SIZE
+      value: '100000000' # 100MB
+
+  hpa: *CORE_CPU_HPA
+
+########################################
+# External/infra services configs
+
+# Default rbac rules
+rbac:
+  create: false
+
+# Proxying, balancing, TLS
+ingresses: []
+
+# cert-manager
+clusterissuer:
+  enabled: false # Set this to true and configure below if you want certificates to be managed
+  email: ''
+  solvers:
+    - dns01:
+        webhook:
+          groupName: ""
+          solverName: solver
+          config:
+            apiKeySecretRef:
+              key: api-token
+              name: solver-credentials
+
+# Secrets
+generateSecrets:
+  - name: internal-security
+    data:
+      apiKey:
+        generate: true

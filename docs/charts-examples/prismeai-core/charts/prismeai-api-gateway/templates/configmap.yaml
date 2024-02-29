@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "name" . }}-config
+  labels:
+    {{- include "labels" . | nindent 4 }}
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+data:
+  gateway.config.yml: >-
+    endpoints:
+      webhooks:
+        path: "/v2/workspaces/*/webhooks/*"
+      test:
+        path: '/v2/workspaces/*/test/*'
+
+      workspaces:
+        path: "/v2/workspaces*"
+
+      files:
+        path: '/v2/files/*'
+        methods:
+          - get
+
+      pages:
+        path: '/v2/pages*'
+
+      apps:
+        path: "/v2/apps*"
+
+      socket.io:
+        path: "/socket.io*"
+
+      events:
+        paths:
+          - "/v2/workspaces/*/events"
+          - "/v2/workspaces/*/usage"
+          - '/v2/workspaces/*/search'
+          - '/v2/search'
+
+      console:
+        path: "*"
+        hosts:
+          - console.eda.prisme.ai
+          - console.studio.prisme.ai
+
+    services:
+      workspaces:
+        url: ${WORKSPACES_API_URL}
+      runtime:
+        url: ${RUNTIME_API_URL}
+      events:
+        url: ${EVENTS_API_URL}
+      console:
+        url: ${CONSOLE_API_URL}
+
+    pipelines:
+      - name: runtime
+        endpoints:
+          - webhooks
+          - test
+        policies:
+          - proxy:
+              service: runtime
+
+      - name: sockets
+        endpoints:
+          - socket.io
+        policies:
+          - authentication: {}
+          - proxy:
+              service: events
+              websockets: true
+
+      - name: events
+        endpoints:
+          - events
+        policies:
+          - proxy:
+              service: events
+
+      - name: files
+        endpoints:
+          - files
+        policies:
+          - proxy:
+              service: workspaces
+
+      - name: workspaces
+        endpoints:
+          - workspaces
+          - apps
+        policies:
+          - authentication:
+              allowApiKeyOnly: true
+          - proxy:
+              service: workspaces
+
+      - name: pages
+        endpoints:
+          - pages
+        policies:
+          - authentication:
+              optional: true
+          - proxy:
+              service: workspaces
+
+      - name: console
+        endpoints:
+          - console
+        policies:
+          - proxy:
+              service: console
+

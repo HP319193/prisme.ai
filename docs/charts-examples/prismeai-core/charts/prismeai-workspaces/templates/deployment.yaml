@@ -1,0 +1,186 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "name" . }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+
+spec:
+  {{ if not .Values.hpa.create }}
+  replicas: {{ .Values.replicaCount }}
+  {{ end }}
+  selector:
+    matchLabels:
+      {{- include "selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+
+  template:
+    metadata:
+      annotations:
+        kiali.io/runtimes: nodejs
+      labels:
+        {{- include "selectorLabels" . | nindent 8 }}
+        version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
+    spec:
+      imagePullSecrets:
+        - name: {{ include "imagePullSecretName" . }}
+      restartPolicy: {{ .Values.image.pullPolicy }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+
+      serviceAccountName: {{ include "serviceAccountName" . }}
+
+      volumes: {{- toYaml .Values.volumes | nindent 9 }}
+
+      containers:
+        - name: {{ include "name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - containerPort: {{ .Values.service.port }}
+            name: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /sys/healthcheck
+              port: http
+            failureThreshold: 3
+            periodSeconds: 10
+            initialDelaySeconds: 120
+
+          readinessProbe:
+            httpGet:
+              path: /sys/healthcheck
+              port: http
+              scheme: HTTP
+            failureThreshold: 1
+            initialDelaySeconds: 1
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+
+          volumeMounts: {{- toYaml .Values.volumeMounts | nindent 13 }}
+
+          env:
+            - name: PORT
+              value: '{{ .Values.service.port }}'
+
+            - name: APP_NAME
+              value: {{ include "name" . }}
+            - name: NODE_ENV
+              value: {{ .Values.nodeEnv | default "production" }}
+
+            - name: BROKER_DRIVER
+              value: {{ .Values.global.broker.driver }}
+            - name: BROKER_HOST
+              value: {{ .Values.global.broker.url }}
+            - name: BROKER_PASSWORD
+              value: {{ .Values.global.broker.password }}
+            - name: BROKER_NAMESPACE
+              value: {{ .Values.global.broker.namespace }}
+
+            - name: MIGRATION_TOKEN
+              value: {{ .Values.migration.token }}
+
+            # Permissions
+            - name: PERMISSIONS_STORAGE_HOST
+              value: {{ .Values.storage.permissions.url | default .Values.global.storage.permissions.url }}
+
+            - name: GATEWAY_API_HOST
+              value: {{ .Values.global.apiUrl }}
+
+            - name: INTERNAL_API_KEY
+              {{- if kindIs "map" .Values.global.internalApiKey }}
+              {{- toYaml .Values.global.internalApiKey | nindent 14 }}
+              {{ else }}
+              value: {{ .Values.global.internalApiKey }}
+              {{- end }}
+
+            # Workspaces storage
+            - name: WORKSPACES_STORAGE_TYPE
+              value: {{ .Values.global.storage.workspaces.driver }}
+            - name: WORKSPACES_STORAGE_S3_LIKE_ACCESS_KEY
+              value: {{ .Values.global.storage.workspaces.s3_like_accessKey }}
+            - name: WORKSPACES_STORAGE_S3_LIKE_SECRET_KEY
+              value: {{ .Values.global.storage.workspaces.s3_like_secretKey }}
+            - name: WORKSPACES_STORAGE_S3_LIKE_BASE_URL
+              value: {{ .Values.global.storage.workspaces.s3_like_baseUrl }}
+            - name: WORKSPACES_STORAGE_S3_LIKE_BUCKET_NAME
+              value: {{ .Values.global.storage.workspaces.s3_like_bucketName }}
+            - name: WORKSPACES_STORAGE_S3_LIKE_ENDPOINT
+              value: {{ .Values.global.storage.workspaces.s3_like_endpoint }}
+
+              # Uploads storage
+            - name: UPLOADS_STORAGE_TYPE
+              value: {{ .Values.global.storage.uploads.driver }}
+            - name: UPLOADS_STORAGE_S3_LIKE_ACCESS_KEY
+              value: {{ .Values.global.storage.uploads.s3_like_accessKey }}
+            - name: UPLOADS_STORAGE_S3_LIKE_SECRET_KEY
+              value: {{ .Values.global.storage.uploads.s3_like_secretKey }}
+            - name: UPLOADS_STORAGE_S3_LIKE_BASE_URL
+              value: {{ .Values.global.storage.uploads.s3_like_baseUrl }}
+            - name: UPLOADS_STORAGE_S3_LIKE_BUCKET_NAME
+              value: {{ .Values.global.storage.uploads.s3_like_bucketName }}
+            - name: UPLOADS_STORAGE_S3_LIKE_ENDPOINT
+              value: {{ .Values.global.storage.uploads.s3_like_endpoint }}
+
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+{{ if .Values.hpa.create }}
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "name" . }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "name" . }}
+  minReplicas: {{ .Values.hpa.minReplicas }}
+  maxReplicas:  {{ .Values.hpa.maxReplicas }}
+  metrics:
+    {{- toYaml .Values.hpa.metrics | nindent 4 }}
+
+{{ end }}
+
+{{ if .Values.autorestart.enabled }}
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "name" . }}-autorestart
+  namespace: kube-system
+spec:
+  schedule: {{ .Values.autorestart.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: autorestart-sa
+          containers:
+            - name: autorestart
+              image: lachlanevenson/k8s-kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - kubectl -n {{ .Values.namespace | default .Release.Namespace }} rollout restart deploy/{{ include "name" . }}
+          restartPolicy: OnFailure
+
+
+{{ end }}

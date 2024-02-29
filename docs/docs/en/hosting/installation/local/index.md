@@ -1,12 +1,11 @@
-# Getting Started
+# Hosting locally for development
 
-Prismeai can be started in two ways :  
+For development purposes, Prisme.ai can be started in two ways:  
 
 1. With docker only, including databases images (Elasticsearch, Redis, MongoDB)  
 2. With a mix of Docker & NodeJS for a developer localhost environment
 
-Both ways are meant for testing only and **not for a production setup**.  
-In order to deploy Prismeai to a production ready environment, more robust tools like container orchestrators (i.e Kubernetes) must be used, enforcing horizontal scaling, monitoring, HTTPS, data encryption, ...
+Both ways are meant for testing only and **not for a production setup**. 
 
 ## Docker
 
@@ -31,7 +30,7 @@ In order to deploy Prismeai to a production ready environment, more robust tools
 By default, the docker-compose.yml & .env files are configured to run on a local setup, served through 3 localhost DNS which we define in our /etc/hosts file.  
 In order for the platform to be available from whatever online network, these domains would have to be reconfigured as described below.  
 Databases-wise, this default local setup is also configured to use databases from the docker-compose.yml, using Docker network links and persisting data in the `data/` root directory.    
-All available environment variables are [described here](https://docs.eda.prisme.ai/en/getstarted/configuration/).  
+All available environment variables are [described here](../../configuration/environment-variables.md).  
 
 2. Open & edit the root .env file, configuring a few shared environment variables used by `docker-compose.yml`  :  
 
@@ -56,7 +55,7 @@ Other environment variables which might be tuned from the start :
 * **EMAIL_VALIDATION_ENABLED** : defaults to 'true', set it to 'false' if you don't have any mailgun api key available (api-gateway)
 * **UPLOADS_MAX_SIZE** : defaults to '10mb', can be set to '100mb' or bigger to allow processing bigger files (api-gateway, workspaces, runtime)
 
-See full description of available environements variable [here](https://docs.eda.prisme.ai/en/getstarted/configuration/).  
+See full description of available environments variable [here](../../configuration/environment-variables.md).  
 
 
 ### Start
@@ -86,7 +85,7 @@ Studio will be available at the defined **CONSOLE_URL**, by default http://studi
 
 ### Start
 
-If willing to change any part of this codebase, we recommand testing your updates live using our `npm start` script, which starts the services you want to change with NodeJS, and everything else with Docker :  
+If willing to change any part of this codebase, we recommend testing your updates live using our `npm start` script, which starts the services you want to change with NodeJS, and everything else with Docker :  
 ```
 git clone https://gitlab.com/prisme.ai/prisme.ai.git  
 npm install  

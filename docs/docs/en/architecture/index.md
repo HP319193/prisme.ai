@@ -1,4 +1,4 @@
-# Micro services
+# Microservices
 
 ## Architecture
 

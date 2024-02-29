@@ -1,5 +1,5 @@
 home: Home
-index: Index
+index: Overview
 start: Documentation
 site_name: Prisme.ai
 site_description: Everything you need to know about Prisme.ai
@@ -9,7 +9,6 @@ definitions: Definitions
 configuration: Configuration
 testing: Installation Testing
 contributing: Contributing
-functionnalRequirements: Functionnal Requirements
 architecture: Architecture
 console: Console
 runtime: Runtime
@@ -25,3 +24,12 @@ instructions: Instructions
 conditions: Conditions
 examples: Examples
 security: Security
+hosting: Self-hosting
+installation: Installation
+environment_variables: Environment variables
+local: Locally
+providers: Cloud
+amazon_web_services: Amazon Web Services
+azure: Azure
+google_cloud: Google Cloud
+openshift: OpenShift

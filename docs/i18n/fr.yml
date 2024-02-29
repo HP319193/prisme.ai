@@ -1,5 +1,5 @@
 home: Home
-index: Index
+index: Introduction
 start: Documentation
 site_name: Prisme.ai
 site_description: Everything you need to know about Prisme.ai
@@ -8,7 +8,6 @@ getstarted: Getting Started
 definitions: Definitions
 configuration: Configuration
 contributing: Contributing
-functionnalRequirements: Functionnal Requirements
 architecture: Architecture
 console: Console
 runtime: Runtime
@@ -24,3 +23,12 @@ instructions: Instructions
 conditions: Conditions
 examples: Exemples
 security: Sécurité
+hosting: Hébergement
+installation: Installation
+environment_variables: Variables d'environnement
+local: Développement
+providers: Production
+amazon_web_services: Amazon Web Services
+azure: Azure
+google_cloud: Google Cloud
+openshift: OpenShift

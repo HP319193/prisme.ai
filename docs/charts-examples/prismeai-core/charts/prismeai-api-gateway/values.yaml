@@ -1,0 +1,149 @@
+enabled: true
+
+# Additional envs
+env:
+  - name: PORT
+    value: "80"
+
+config:
+  path: /gateway.config.yml
+  admins:
+  services:
+    workspaces:
+      url:
+    runtime:
+      url:
+    events:
+      url:
+    console:
+      url:
+    functions:
+      url:
+
+providers:
+  mailgun:
+    apiKey:
+
+######################################
+#### Infrastructure configuration ####
+######################################
+global:
+  repository:
+    host:
+    username:
+    token:
+
+  broker:
+    driver: ""
+    url: ""
+    password: ""
+
+  storage:
+    permissions:
+      driver:
+      url:
+
+  internalApiKey: ""
+
+  oidc:
+    clientRegistrationToken: 'oidc-client-registration'
+    studioClientId: 'local-client-id'
+    studioClientSecret: 'some-secret'
+    cookiesSignSecret: ''
+
+storage:
+  users:
+    driver: "mongo"
+    url: ""
+
+  sessions:
+    driver: "redis"
+    url: "redis://127.0.0.1:6379"
+    password: ""
+
+  permissions:
+    driver:
+    url:
+
+image:
+  repository: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-api-gateway
+  tag: latest
+  pullPolicy: Always
+
+replicaCount: 1
+
+autorestart:
+  enabled: true
+  schedule: "0 4 * * *"
+
+hpa:
+  create: false
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageValue: "0.70"
+          # examples :
+          # With a 50% CPU avg, will increase to 6 replicas if 4 replicas are using 70% cpu ( (70 / 50) * 4 = 5.6)
+          # With a 50% CPU avg, will increase to 10 replicas if 7 replicas are using 70% cpu ( (70 / 50) * 7 = 9.8)
+
+service:
+  type: NodePort
+  port: 80
+
+serviceAccount:
+  create: false
+  name:
+  annotations: {}
+
+# ingress:
+#   enabled: false
+#   annotations: {}
+#     # kubernetes.io/ingress.class: nginx
+#     # kubernetes.io/tls-acme: "true"
+#   hosts:
+#     - host: chart-example.local
+#       paths: []
+#   tls: []
+#   #  - secretName: chart-example-tls
+#   #    hosts:
+#   #      - chart-example.local
+
+resources:
+  requests:
+  limits:
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  {}
+
+  # Only set the MONGODB_CA_FILE env variable if the files is provided
+prometheus:
+  serviceMonitor:
+    enabled: false
+    metricRelabelings: []
+    relabelings: []
+
+ingressRoute:
+  enabled: false
+  host: ""
+  hosts: []
+
+virtualService:
+  enabled: false
+  hosts: []
+  gateways: []
+
+networkPolicy:
+  enabled: false
+  from: []
+
+volumes: []
+volumeMounts: []

@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "name" . }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+
+spec:
+  {{ if not .Values.hpa.create }}
+  replicas: {{ .Values.replicaCount }}
+  {{ end }}
+  selector:
+    matchLabels:
+      {{- include "selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+
+  template:
+    metadata:
+      annotations:
+        kiali.io/runtimes: nodejs
+      labels:
+        {{- include "selectorLabels" . | nindent 8 }}
+        version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
+    spec:
+      imagePullSecrets:
+        - name: {{ include "imagePullSecretName" . }}
+      restartPolicy: {{ .Values.image.pullPolicy }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+
+      serviceAccountName: {{ include "serviceAccountName" . }}
+
+      containers:
+        - name: {{ include "name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - containerPort: {{ .Values.service.port }}
+            name: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          env:
+            - name: PORT
+              value: '{{ .Values.service.port }}'
+
+            - name: API_URL
+              value: {{ .Values.global.apiUrl }}
+            - name: CONSOLE_URL
+              value: {{ .Values.global.consoleUrl }}
+
+            - name: NODE_ENV
+              value: {{ .Values.nodeEnv | default "production" }}
+            - name: PAGES_HOST
+              {{ if .Values.pagesHost }}
+              value: {{ printf "https://%s%s" .Values.pagesHost "/pages" }}
+              {{ else if .Values.global.pagesHost }}
+              value: {{ .Values.global.pagesHost }}
+              {{ else }}
+              value: {{ printf "https://%s%s" (.Values.pagesHost | default (first .Values.virtualService.hosts) | default (first .Values.ingressRoute.hosts) | default .Values.ingressRoute.host) "/pages" }}
+              {{ end }}
+            - name: HEADER_POPOVERS
+              value: {{ .Values.headerPopovers | toJson }}
+
+            - name: SUGGESTIONS_ENDPOINT
+              value: {{ .Values.suggestions }}
+
+            - name: BILLING_HOME
+              value: {{ .Values.billingHome }}
+
+            - name: BILLING_USAGE
+              value: {{ .Values.billingUsage }}
+            - name: TRACKING
+              value: {{ .Values.tracking | toJson }}
+            - name: TRACKING_WEBHOOK
+              value: {{ .Values.tracking_webhook }}
+
+            # - name: DEV_USER
+            #   value: {{ .Values.devUser }}
+
+            - name: OIDC_STUDIO_CLIENT_ID
+              {{- if kindIs "map" .Values.global.oidc.studioClientId }}
+              {{- toYaml .Values.global.oidc.studioClientId | nindent 14 }}
+              {{ else }}
+              value: {{ .Values.global.oidc.studioClientId }}
+              {{- end }}
+
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+{{ if .Values.hpa.create }}
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "name" . }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "name" . }}
+  minReplicas: {{ .Values.hpa.minReplicas }}
+  maxReplicas:  {{ .Values.hpa.maxReplicas }}
+  metrics:
+    {{- toYaml .Values.hpa.metrics | nindent 4 }}
+
+{{ end }}
