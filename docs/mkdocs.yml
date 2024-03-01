@@ -51,6 +51,7 @@ nav:
       - i18n.configuration:
           - i18n.index: hosting/configuration/index.md
           - i18n.environment_variables: hosting/configuration/environment-variables.md
+      - i18n.authentication: hosting/authentication/index.md
       - i18n.testing: hosting/installation/operational-test.md
   - Workspaces:
       - i18n.index: workspaces/index.md

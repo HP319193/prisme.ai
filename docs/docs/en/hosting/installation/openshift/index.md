@@ -22,39 +22,45 @@ Deploy the required external services either within your Kubernetes cluster or m
 Create a new Kubernetes cluster.  
 Make sure you have access to it using `kubectl` from your device.  
 
-## Install Prisme.ai with Helm
-Clone the Prisme.ai Helm chart repository or add it as a Helm repo.  
 
-### Option 1: Cloning the charts
+## Retrieve the Helm charts
+Clone the Prisme.ai Helm chart repository or add it as a Helm repo.
+
+#### Option 1: Cloning the charts
 
 Clone the example Helm chart from the following address : https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/docs/charts-examples/prismeai-core.  
 
-On your device, modify the `values.yaml` to include the connection details and credentials for the external services prepared in Step 1.  
-It is important that each database are correctly configured, report to the [environment variables table](../../configuration/environment-variables.md) if you have any doubt.   
-
-Once you are ready: using a terminal, place yourself in the folder containing the main `values.yaml`.  
-Create a namespace for Prisme.ai and install the platform using the Helm chart:  
-
-```sh
-kubectl create namespace core
-helm install --namespace core -f values.yaml .
-```
-
-### Option 2: Adding as a Helm repo
+#### Option 2: Adding as a Helm repo
 
 !!! warning
 
     This option is not available yet.
-
-Customize the values.yaml file to include the connection details and credentials for the external services prepared in Step 1.  
 
 ```sh
 helm repo add prismeai https://charts.prisme.ai
 helm repo update
 ```
 
-Create a namespace for Prisme.ai and install the platform using the Helm chart:
+## Configure values.yaml
 
+On your device, modify the `values.yaml` to include the connection details and credentials for the external services prepared in Step 1.  
+It is important that each database are correctly configured, report to the [environment variables table](../../configuration/environment-variables.md) if you have any doubt.   
+
+A few things that you might want to check out while deploying on OpenShift: 
+- Your services might not have the right to be exposed on port 80, you might have to override them
+- You might not have the rights to deploy in `kube-system`, it is OK to change the namespace
+
+## Deploy using Helm
+Once you are ready: using a terminal, place yourself in the folder containing the main `values.yaml`.  
+Create a namespace for Prisme.ai and install the platform using the Helm chart:  
+
+#### Option 1 : Charts cloned
+```sh
+kubectl create namespace core
+helm install . --namespace core -f values.yaml 
+```
+
+#### Option 2 : Added as a repo
 ```sh
 kubectl create namespace core
 helm install core prismeai/prismeai-chart --namespace core -f values.yaml

@@ -4,16 +4,16 @@ global:
     host: registry.gitlab.com
     username: ""
     token: ""
-    create: false # Configure the above and set this to true if you want to save the secrets in a repository
+    create: false # Configure the above and set this to true if you need access to a private repository
 
   broker:
     driver: redis # Driver used
     url: redis://localhost:6379/1 # URL to the broker
     password: "" # Broker password
 
-  apiUrl: "" # Public API URL, example : https://api.prisme.ai/v2
+  apiUrl: "" # Public API URL, should contain the "/v2", example : https://api.prisme.ai/v2
   consoleUrl: "" # Public Console URL, example : https://studio.prisme.ai
-  pagesHost: "" # Pages host, example : .pages.prisme.ai
+  pagesHost: "" # Public Pages host, every single pages built on the platform will be served this way "page-slug.<pagesHost>", example : .pages.prisme.ai
 
   internalApiKey: &INTERNAL_API_KEY
     valueFrom:
@@ -88,8 +88,8 @@ prismeai-workspaces:
 
   hpa: &CORE_CPU_HPA
     create: true
-    minReplicas: 2
-    maxReplicas: 8
+    minReplicas: 1
+    maxReplicas: 2
     metrics:
       - type: Resource
         resource:
@@ -212,10 +212,6 @@ prismeai-console:
   hpa: *CORE_CPU_HPA
   tracking: ''
 
-  env:
-    - name: ENABLED_AUTH_PROVIDERS
-      value: '[{"name":"local"}]'
-
 prismeai-pages:
   enabled: true
 
@@ -233,10 +229,6 @@ prismeai-pages:
   serviceAccount:
     create: true
   hpa: *CORE_CPU_HPA
-
-  env:
-    - name: ENABLED_AUTH_PROVIDERS
-      value: '[{"name":"local"}]'
 
 prismeai-api-gateway:
   enabled: true
