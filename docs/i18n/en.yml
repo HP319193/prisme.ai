@@ -27,8 +27,8 @@ security: Security
 hosting: Self-hosting
 installation: Installation
 environment_variables: Environment variables
-local: Locally
-providers: Cloud
+local: Docker
+providers: Kubernetes
 amazon_web_services: Amazon Web Services
 azure: Azure
 google_cloud: Google Cloud
