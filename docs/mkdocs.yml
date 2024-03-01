@@ -44,9 +44,10 @@ nav:
           - i18n.index: hosting/installation/index.md
           - i18n.local: hosting/installation/local/index.md
           - i18n.providers:
-            #   - i18n.amazon_web_services: hosting/installation/aws/index.md
-            #   - i18n.azure: hosting/installation/azure/index.md
-            #   - i18n.google_cloud: hosting/installation/gcp/index.md
+              - i18n.generic: hosting/installation/kubernetes/index.md
+              - i18n.amazon_web_services: hosting/installation/aws/index.md
+              - i18n.azure: hosting/installation/azure/index.md
+              - i18n.google_cloud: hosting/installation/gcp/index.md
               - i18n.openshift: hosting/installation/openshift/index.md
       - i18n.configuration:
           - i18n.index: hosting/configuration/index.md

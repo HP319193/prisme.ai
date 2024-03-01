@@ -2,22 +2,14 @@
 
 This hosting guide shows you how to self-host Prisme.ai on Amazon Web Services (AWS).  
 
-!!! warning
-    
-    This guide is currently in construction, you can expect inaccuracies and missing parts. If you find some, please do not hesitate to [reach out to support@prisme.ai](mailto:support@prisme.ai). 
+We recommend using the [**Amazon Elastic Kubernetes Service (EKS)**](https://aws.amazon.com/eks/) to deploy Prisme.ai.  
 
-This guide assumes that you have a basic understanding of Kubernetes, Helm, and the various external services required by Prisme.ai.
+## Follow the generic guide
 
-While AWS provides different suitable ways to host Prisme.ai, in this guide we will be using [EKS](https://aws.amazon.com/eks/).  
+You can follow the [**generic Kubernetes guide**](../kubernetes/index.md) and use this page as a reference for specific configuration regarding Amazon Web Services.  
 
-## Create a cluster  
+## Credentials on AWS
 
-Use the eksctl tool to create a cluster specifying a name and a region with the following command:
+!!! note
 
-```sh
-eksctl create cluster --name prismeai --region <your-aws-region>
-```
-
-This can take a while to create the cluster.
-
-Once the cluster is created, eksctl automatically sets the kubectl context to the cluster.
+    Note that while deploying on AWS a few external service might not need a credentials configuration, such as : S3. This can be done using IAM, which will automatically expose the correct environment variables.

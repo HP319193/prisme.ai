@@ -161,7 +161,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ include "name" . }}-autorestart
-  namespace: kube-system
+  namespace: core
 spec:
   schedule: {{ .Values.autorestart.schedule }}
   jobTemplate:

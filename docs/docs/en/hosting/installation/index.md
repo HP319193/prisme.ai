@@ -21,18 +21,13 @@ The architecture can be reviewed [here](../../architecture/index.md).
   - S3 compatible object storage  
   - Azure Blob storage  
   
-### Configuration of values.yml
-
-- If default release name 'core' will be changed, update accordingly every names including "core-"  
-- The core ingresses should be annotated with your cloud provider ingress controller annotations  
-- All DNS, databases urls/credentials & PVC manifests should also be updated 
-
 ## Available guides
 
 Currently available guides :  
 
-- [Local deployment (Docker & npm)](./local/index.md)  
-<!-- - [Amazon Web Services](./aws/index.md)  
-- [Azure](./azure/index.md)  
-- [Google Cloud](./gcp/index.md)   -->
-- [OpenShift](./openshift/index.md)
+- [Docker or npm (locally oriented))](./local/index.md) 
+- [Kubernetes & Helm (Generic)](./kubernetes/index.md)
+    - [Amazon Web Services](./aws/index.md)  
+    - [Azure](./azure/index.md)  
+    - [Google Cloud](./gcp/index.md)  
+    - [OpenShift](./openshift/index.md)
