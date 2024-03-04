@@ -7,5 +7,6 @@
   "openapi_should NOT have additional properties": "{{path}} is invalid",
   "openapi_should be object": "{{path}} should be an object",
   "alreadyUsed": "This slug already exists. Please choose another.",
-  "PayloadTooLarge": "File too large"
+  "PayloadTooLarge": "File too large",
+  "InvalidSlugError": "Only alphanumeric characters and spaces are allowed."
 }

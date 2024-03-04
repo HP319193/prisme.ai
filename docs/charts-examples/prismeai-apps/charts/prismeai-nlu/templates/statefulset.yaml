@@ -1,0 +1,148 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "name" . }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+  namespace: {{ .Values.namespace | default .Release.Namespace }}
+
+spec:
+  {{ if not .Values.hpa.create }}
+  replicas: {{ .Values.replicaCount }}
+  {{ end }}
+  selector:
+    matchLabels:
+      {{- include "selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "name" . }}
+  updateStrategy:
+    type: RollingUpdate
+
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: ggwg-nlu-bots-volume
+      labels:
+        {{- include "selectorLabels" . | nindent 8 }}
+        version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
+    spec:
+      imagePullSecrets:
+        - name: {{ include "imagePullSecretName" . }}
+      restartPolicy: {{ .Values.image.pullPolicy }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+
+      serviceAccountName: {{ include "serviceAccountName" . }}
+
+      containers:
+        - name: {{ include "name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - containerPort: {{ .Values.service.port }}
+            name: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          volumeMounts:
+            - name: ggwg-nlu-bots-volume
+              mountPath: /app/bots/datas
+
+          # livenessProbe:
+          #   httpGet:
+          #     scheme: HTTP
+          #     path: /sys/healthcheck
+          #     port: http
+
+          env:
+            - name: PORT
+              value: '{{ .Values.service.port }}'
+            - name: STORAGE_DRIVER
+              value: FILESYSTEM
+            - name: DUCKLING_HTTP_URI
+              value: {{ printf "http://%s-duckling.%s.svc:8000" (.Release.Name) ( .Values.namespace | default .Release.Namespace ) }}
+            - name: CLUSTERING_STORAGE_DRIVER
+              value: FILESYSTEM
+            - name: CLUSTERING_FILESYSTEM_LOCATION
+              value: /app/bots/datas/clustering-models
+            - name: TRAIN_ON_TALK_TIMEOUT
+              value: "10"
+            - name: GUNICORN_ACCESS_LOGFILE
+              value: /var/log/httpd-access.log
+            - name: DEBUG
+              value: "false"
+
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+  volumeClaimTemplates:
+  - metadata:
+      name: ggwg-nlu-bots-volume
+      annotations:
+        {{- toYaml .Values.persistence.annotations | nindent 8 }}
+    spec:
+      accessModes:
+        {{- toYaml .Values.persistence.accessModes | nindent 8 }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size | quote }}
+      storageClassName: {{ .Values.persistence.storageClassName }}
+      {{- if .Values.persistence.selector }}
+      selector:
+        {{- toYaml .Values.persistence.selector | nindent 8 }}
+      {{- end }}
+
+
+
+
+{{ if .Values.hpa.create }}
+
+---
+
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "name" . }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: {{ include "name" . }}
+  minReplicas: {{ .Values.hpa.minReplicas }}
+  maxReplicas:  {{ .Values.hpa.maxReplicas }}
+  metrics:
+    {{- toYaml .Values.hpa.metrics | nindent 4 }}
+
+{{ end }}
+
+{{ if .Values.autorestart.enabled }}
+
+---
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "name" . }}-autorestart
+  namespace: kube-system
+spec:
+  schedule: {{ .Values.autorestart.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: autorestart-sa
+          containers:
+            - name: autorestart
+              image: lachlanevenson/k8s-kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - kubectl -n {{ .Values.namespace | default .Release.Namespace }} rollout restart sts/{{ include "name" . }}
+          restartPolicy: OnFailure
+
+
+{{ end }}

@@ -1,0 +1,193 @@
+global:
+  repository:
+    host: registry.gitlab.com
+    username: ""
+    token: ""
+    create: true
+
+prismeai-functions:
+  enabled: true
+  replicaCount: 1
+  namespace: apps
+  runTimeout: 20000
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "1"
+    limits:
+      memory: "3Gi"
+      # cpu: "1"
+  serviceAccount:
+    create: true
+
+  persistence:
+    existingClaim: apps-prismeai-functions-sfsturbo
+    type: pvc
+
+  env:
+    - &NODE_OPTIONS
+      name: NODE_OPTIONS
+      value: "--max-old-space-size=2200"
+    - name: REQUEST_MAX_SIZE
+      value: 10mb
+    - name: KERNEL_POOL_SIZE
+      value: '2'
+
+  hpa:
+    create: true
+    minReplicas: 2
+    maxReplicas: 6
+
+prismeai-nlu:
+  enabled: false # Enable or disable the service
+  namespace: apps
+
+  env:
+    - name: ELASTICSEARCH_URL
+      valueFrom:
+        secretKeyRef:
+          name: elasticsearch
+          key: url
+
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "0.4"
+    limits:
+      memory: "2Gi"
+      cpu: "1"
+  serviceAccount:
+    create: true
+
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteMany
+    size: 50Gi
+    storageClassName: "" # Specify your storageClassName
+    annotations:
+      "helm.sh/resource-policy": "keep"
+
+  hpa:
+    create: true
+    minReplicas: 1
+    maxReplicas: 4
+
+duckling:
+  enabled: false # Enable or disable duckling. Only used by the prismeai-nlu service to enhance the entities.
+  requests:
+    memory: "100Mi"
+    cpu: "100m"
+  limits:
+    memory: "500Mi"
+    cpu: "200m"
+  serviceAccount:
+    create: true
+
+prismeai-crawler:
+  enabled: true # Enable or disable the service
+  splash:
+    enabled: false
+  autorestart:
+    enabled: true
+    schedule: "0 */3 * * *"
+
+  resources:
+    requests:
+      memory: "1512Mi"
+      cpu: "150m"
+    limits:
+      memory: "2512Mi"
+      cpu: "1"
+  serviceAccount:
+    create: true
+
+  storage: &CRAWLER_STORAGE
+    cache:
+      driver: redis
+      url:
+        valueFrom:
+          secretKeyRef:
+            name: redis-crawler
+            key: url
+
+    documents:
+      url:
+        valueFrom:
+          secretKeyRef:
+            name: elasticsearch
+            key: url
+
+prismeai-searchengine:
+  enabled: true # Enable or disable the service
+
+  resources:
+    requests:
+      memory: "200Mi"
+      cpu: "100m"
+    limits:
+      memory: "500Mi"
+      cpu: "500m"
+  serviceAccount:
+    create: true
+
+  storage: *CRAWLER_STORAGE
+
+prismeai-llm:
+  enabled: true # Enable or disable the service
+  replicaCount: 1
+  namespace: apps
+  resources:
+    requests:
+      memory: "32Gi"
+      cpu: "8"
+    limits:
+      # memory: "1512Mi"
+      # cpu: "1"
+  serviceAccount:
+    create: true
+
+  persistence:
+    existingClaim: apps-prismeai-functions-sfsturbo
+    type: pvc
+
+  env: []
+
+  hpa:
+    create: false
+    minReplicas: 1
+    maxReplicas: 1
+
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: llm
+      effect: NoSchedule
+
+generateSecrets:
+  - name: elasticsearch
+    data:
+      url: http://elastic:password@core-es-http.core.svc:9200 # URL with credentials to your Elasticsearch
+
+  - name: redis-crawler
+    data:
+      url: redis://user:password@redis:6379/4 # URL with credentials to your Redis, specify a dedicated database such as "/4" in the example.
+
+extraObjects:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      annotations:
+        helm.sh/resource-policy: keep
+      finalizers:
+        - kubernetes.io/pvc-protection
+      name: apps-prismeai-functions-sfsturbo
+      namespace: apps
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 500Gi
+      storageClassName: '' # Secify your storageClassName
+

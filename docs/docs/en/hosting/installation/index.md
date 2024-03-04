@@ -17,9 +17,10 @@ The architecture can be reviewed [here](../../architecture/index.md).
 - A minimal Kubernetes cluster for Prisme.ai should have at least **3 nodes 4vCPU / 16GB**
 - External services such as Elasticsearch, Redis or MongoDB can either be self-hosted or managed. We recommend using a managed solution, if you want to self-host those services, please check their official documentation.
 - Services workspaces and runtime requires one of these document/object storage :  
-  - Filesystem (either through a local directory or a Kubernetes PVC)  
-  - S3 compatible object storage  
-  - Azure Blob storage  
+    - Filesystem (either through a local directory or a Kubernetes PVC)  
+    - S3 compatible object storage  
+    - Azure Blob storage  
+    <!-- - Google Storage -->
   
 ## Available guides
 

@@ -2,7 +2,7 @@
 
 This hosting guide shows you how to self-host Prisme.ai on any platform using Kubernetes and Helm.  
 
-???+ warning
+???+ warning "Under construction"
     
     This guide is currently in construction, you can expect inaccuracies and missing parts. If you find some, please do not hesitate to [reach out to support@prisme.ai](mailto:support@prisme.ai). 
 
@@ -24,15 +24,16 @@ Make sure you have access to it using `kubectl` from your device.
 
 
 ## Retrieve the Helm charts
-Clone the Prisme.ai Helm chart repository or add it as a Helm repo.
+Download the Prisme.ai Helm charts repository or add it as a Helm repo.
 
-#### Option 1: Cloning the charts
+#### Option 1: Downloading the charts
 
-Clone the example Helm chart from the following address : https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/docs/charts-examples/prismeai-core.  
+Download the example Helm charts from the following address : https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/docs/charts-examples/prismeai-core.   
+You should download the entire content of the linked file.
 
 #### Option 2: Adding as a Helm repo
 
-!!! warning
+!!! warning "Not available yet"
 
     This option is not available yet.
 
@@ -56,7 +57,7 @@ Here is some general recommendations while editing `values.yaml`:
 Once you are ready: using a terminal, place yourself in the folder containing the main `values.yaml`.  
 Create a namespace for Prisme.ai and install the platform using the Helm chart:  
 
-#### Option 1 : Charts cloned
+#### Option 1 : Charts downloaded
 ```sh
 kubectl create namespace core
 helm install . --namespace core -f values.yaml 
@@ -87,3 +88,65 @@ Regularly back up your MongoDB and Elasticsearch data. Monitor the health of the
 You have now successfully self-hosted the Prisme.ai platform on your Kubernetes cluster. Ensure that you follow best practices for security, backups, and monitoring to maintain a stable and secure environment for your applications.
 
 Remember that this guide provides a high-level overview, and you may need to adjust the steps based on your specific environment and requirements.
+
+## Hosting Apps (Enterprise deployment)
+
+Depending on your subscribed licence you might have access to additional micro services which are used by specific Apps (Custom Code, Crawler, AI-Knowledge...).  
+We will cover their deployment in this section.  
+
+!!! info "Access"
+
+    You will need a valid Gitlab user and access key in order to follow the next steps and be able to fetch the Docker images.  
+    If you don't have them yet, please reach out to the support in order to retrieve them ([support@prisme.ai](mailto:support@prisme.ai)).   
+
+We will deploy the apps microservices in the same cluster as the core microservices. Although, we recommend using a different namespace name.
+
+### Prerequisites
+
+Depending on the microservices you wish to install you might have different prerequisites to fulfill, here is a list depending on selected microservices:
+
+#### prismeai-functions
+
+This microservice is capable of running custom user functions (NodeJS or Python).   
+
+Here is a few thing that should be considered:   
+- The service should have access to a npm registry. A ``.npmrc`` can be loaded if you have your own registry.  
+- The service needs a volume, we recommend using volumes with a high I/O speed as it might be highly sollicited when installing dependencies for example.  
+
+#### prismeai-searchengine and prismeai-crawler
+
+Those two services works together, if you wish to use one of them, you have to install the second one.   
+
+They need access to:  
+- An ElasticSearch, it can be the same as the one used for the core deployment  
+- A Redis, the instance can be the same as the one used for the core deployment, however we recommending targeting a dedicated database  
+
+#### prismeai-llm
+
+This service need access to:  
+- A volume on which you can load the models to use  
+
+You can learn more about [this service and the configuration of the models here](../../configuration/apps/prismeai-llm/index.md).
+
+### Retrieve the Helm charts
+
+Download the example Helm charts from the following address : https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/docs/charts-examples/prismeai-apps.   
+You should download the entire content of the linked file.
+
+### Configure values.yaml
+
+On your device, modify the `values.yaml` to include the connection details and credentials for the required external services depending on the services you wish to deploy.  
+It is important that each database are correctly configured.
+
+### Deploy using Helm
+We recommend deploying the microservices in a different namespace than the core microservices. We will create a new namespace named `apps`. 
+
+```sh
+kubectl create namespace apps
+```
+
+From the root of the directory (`./prismeai-apps`) execute the installation command :
+
+```sh
+helm install . --namespace apps -f values.yaml 
+```
