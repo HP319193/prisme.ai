@@ -73,17 +73,6 @@ prismeai-nlu:
     minReplicas: 1
     maxReplicas: 4
 
-duckling:
-  enabled: false # Enable or disable duckling. Only used by the prismeai-nlu service to enhance the entities.
-  requests:
-    memory: "100Mi"
-    cpu: "100m"
-  limits:
-    memory: "500Mi"
-    cpu: "200m"
-  serviceAccount:
-    create: true
-
 prismeai-crawler:
   enabled: true # Enable or disable the service
   splash:

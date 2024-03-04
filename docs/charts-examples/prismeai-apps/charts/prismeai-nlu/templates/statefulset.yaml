@@ -62,8 +62,6 @@ spec:
               value: '{{ .Values.service.port }}'
             - name: STORAGE_DRIVER
               value: FILESYSTEM
-            - name: DUCKLING_HTTP_URI
-              value: {{ printf "http://%s-duckling.%s.svc:8000" (.Release.Name) ( .Values.namespace | default .Release.Namespace ) }}
             - name: CLUSTERING_STORAGE_DRIVER
               value: FILESYSTEM
             - name: CLUSTERING_FILESYSTEM_LOCATION
