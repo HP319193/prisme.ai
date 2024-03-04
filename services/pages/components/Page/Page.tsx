@@ -7,6 +7,7 @@ import { usePage } from './PageProvider';
 import PoweredBy from '../../../console/components/PoweredBy';
 import dynamic from 'next/dynamic';
 import { useUser } from '../../../console/components/UserProvider';
+import { defaultStyles } from '@prisme.ai/console/views/Page/defaultStyles';
 
 const Debug = dynamic(() => import('../Debug'), { ssr: false });
 
@@ -47,11 +48,12 @@ export const Page = ({ page }: PageProps) => {
       name,
       public: _public,
       slug,
-      styles,
+      styles = defaultStyles,
       workspaceId,
       workspaceSlug,
       ...pageConfig
     } = page;
+
     return {
       ...pageConfig,
       blocks,
@@ -60,6 +62,8 @@ export const Page = ({ page }: PageProps) => {
       },
     };
   }, [isSignedIn, page]);
+
+  const { styles = defaultStyles } = page;
 
   return (
     <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full">
@@ -74,9 +78,8 @@ export const Page = ({ page }: PageProps) => {
           <link rel="icon" href={page.favicon || '/favicon.png'} />
         )}
       </Head>
-      {page.styles && (
-        <style dangerouslySetInnerHTML={{ __html: page.styles }} />
-      )}
+      {console.log('s4', styles)}
+      {styles && <style dangerouslySetInnerHTML={{ __html: styles }} />}
 
       <div
         className="flex flex-1 flex-col page-blocks w-full"
