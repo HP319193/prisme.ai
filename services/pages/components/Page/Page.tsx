@@ -7,7 +7,7 @@ import { usePage } from './PageProvider';
 import PoweredBy from '../../../console/components/PoweredBy';
 import dynamic from 'next/dynamic';
 import { useUser } from '../../../console/components/UserProvider';
-import { defaultStyles } from '@prisme.ai/console/views/Page/defaultStyles';
+import { defaultStyles } from '../../../console/views/Page/defaultStyles';
 
 const Debug = dynamic(() => import('../Debug'), { ssr: false });
 
@@ -78,7 +78,6 @@ export const Page = ({ page }: PageProps) => {
           <link rel="icon" href={page.favicon || '/favicon.png'} />
         )}
       </Head>
-      {console.log('s4', styles)}
       {styles && <style dangerouslySetInnerHTML={{ __html: styles }} />}
 
       <div
