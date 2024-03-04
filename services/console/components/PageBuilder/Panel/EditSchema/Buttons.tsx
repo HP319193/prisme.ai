@@ -7,11 +7,6 @@ import eventOrLink from './eventOrLink';
 const schema: Schema = {
   type: 'object',
   properties: {
-    title: {
-      type: 'localized:string',
-      title: 'pages.blocks.settings.blockTitle.label',
-      description: 'pages.blocks.settings.blockTitle.description',
-    },
     buttons: {
       type: 'array',
       title: 'pages.blocks.buttons.settings.label',

@@ -9,11 +9,6 @@ import blocks from './CardsVariant/blocks';
 const schema: Schema = {
   type: 'object',
   properties: {
-    title: {
-      type: 'localized:string',
-      title: 'pages.blocks.settings.blockTitle.label',
-      description: 'pages.blocks.settings.blockTitle.description',
-    },
     variant: {
       title: 'pages.blocks.cards.settings.variant.label',
       oneOf: [classic, short, article, square, actions, blocks],
