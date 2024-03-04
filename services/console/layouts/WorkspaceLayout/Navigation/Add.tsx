@@ -5,6 +5,7 @@ import { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import SchemaForm from '../../../components/SchemaForm/SchemaForm';
 import { useTracking } from '../../../components/Tracking';
 import { useWorkspace, Workspace } from '../../../providers/Workspace';
+import { SLUG_VALIDATION_REGEXP } from '../../../utils/regex';
 import { useWorkspaceLayout } from '../context';
 import { PAGE_TEMPLATES } from '../PageTemplates';
 
@@ -66,7 +67,7 @@ export const Add = ({ children, type, path = '' }: AppProps) => {
     [workspace.pages]
   );
 
-  const schema = useMemo(
+  const schema: Schema = useMemo(
     () =>
       type === 'page' && availablePageTemplates.length > 0
         ? ({
@@ -78,12 +79,22 @@ export const Add = ({ children, type, path = '' }: AppProps) => {
                   slug: {
                     type: 'string',
                     title: t(`${type}s.details.slug.label`),
+                    validators: {
+                      required: true,
+                      pattern: {
+                        value: SLUG_VALIDATION_REGEXP.source,
+                        message: t('InvalidSlugError', { ns: 'errors' }),
+                      },
+                    },
                   },
                   name: {
                     type: 'localized:string',
                     title: t(`${type}s.details.name.label`),
+                    validators: {
+                      required: true,
+                    },
                   },
-                },
+                } as Schema,
               },
               {
                 title: t('pages.create.template.title'),
@@ -95,25 +106,38 @@ export const Add = ({ children, type, path = '' }: AppProps) => {
                     enumNames: availablePageTemplates.map(({ slug }) =>
                       t(`pages.create.template.${slug}`)
                     ),
+                    validators: {
+                      required: true,
+                    },
                   },
                 },
               },
             ],
           } as Schema)
-        : ({
+        : {
             type: 'object',
             properties: {
               slug: {
                 type: 'string',
                 title: t(`${type}s.details.slug.label`),
+                validators: {
+                  required: true,
+                  pattern: {
+                    value: SLUG_VALIDATION_REGEXP.source,
+                    message: t('InvalidSlugError', { ns: 'errors' }),
+                  },
+                },
               },
               name: {
                 type: 'localized:string',
                 title: t(`${type}s.details.name.label`),
+                validators: {
+                  required: true,
+                },
               },
-            },
-          } as Schema),
-    [t, type]
+            } as Schema,
+          },
+    [availablePageTemplates, t, type]
   );
 
   return (
