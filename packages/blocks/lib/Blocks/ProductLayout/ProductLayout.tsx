@@ -267,6 +267,11 @@ const defaultStyles = `:block {
   padding: 14px;
   border-radius: 10px;
 }
+.product-layout-content-panel--2col > .pr-block-blocks-list__block:nth-child(1),
+.product-layout-content-panel--3col > .pr-block-blocks-list__block:nth-child(1),
+.product-layout-content-panel--3col > .pr-block-blocks-list__block:nth-child(3) {
+  max-width: 33%;
+}
 .product-layout-content-panel--2col > .pr-block-blocks-list__block:nth-child(2),
 .product-layout-content-panel--3col > .pr-block-blocks-list__block:nth-child(2) {
   flex: 1;

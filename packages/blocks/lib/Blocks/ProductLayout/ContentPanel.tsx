@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { Action } from '..';
-import { BlocksListConfig } from '../../../dist/lib/Blocks/BlocksList';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
 import { Block } from './Block';
-import { BlockContent, ContentProps } from './types';
+import { ContentProps } from './types';
 
 const Tab = ({
   title,
