@@ -54,4 +54,6 @@ export const SignIn = () => {
   );
 };
 
+SignIn.isPublic = true;
+
 export default SignIn;

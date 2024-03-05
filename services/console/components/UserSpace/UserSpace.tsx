@@ -42,7 +42,7 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
   const { trackEvent } = useTracking();
   const { user } = useUser();
 
-  if (!user) return <>{children}</>;
+  if (!user) return null;
 
   return (
     <ProductsProvider>

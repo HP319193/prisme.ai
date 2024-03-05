@@ -8,7 +8,7 @@ import { useUser } from '../../components/UserProvider';
 import { SignLayout, SignType } from '../../components/SignLayout';
 import ValidateForm from '../../components/ValidateForm';
 
-export const Forgot = () => {
+export const Validate = () => {
   const { t } = useTranslation('sign');
   const router = useRouter();
   const { email, sent } = router.query;
@@ -38,4 +38,6 @@ export const Forgot = () => {
   );
 };
 
-export default Forgot;
+Validate.isPublic = true;
+
+export default Validate;
