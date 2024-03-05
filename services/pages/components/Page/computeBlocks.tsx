@@ -169,7 +169,6 @@ export function testCondition(condition: string = '', values: any) {
     typeof interpolated === 'string'
       ? interpolated.match(/(^!?)(.+$)?/m) || []
       : [, condition.match(/^!/), interpolated];
-
   if (result === 'true') {
     return invert ? false : true;
   }
@@ -177,6 +176,7 @@ export function testCondition(condition: string = '', values: any) {
     return invert ? true : false;
   }
   const cleanedResult = result && !Number.isNaN(+result) ? +result : result;
+
   return invert ? !cleanedResult : cleanedResult;
 }
 
@@ -246,7 +246,14 @@ export function interpolateValue(value: any, values: any): any {
     return output;
   }
   if (typeof value === 'string') {
-    return interpolateExpression(value, values);
+    const interpolated = interpolateExpression(value, values);
+    if (['!true', 'false'].includes(interpolated)) {
+      return false;
+    }
+    if (['!false', 'true'].includes(interpolated)) {
+      return true;
+    }
+    return interpolated;
   }
   return value;
 }
