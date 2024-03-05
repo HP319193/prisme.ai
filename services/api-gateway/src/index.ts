@@ -23,7 +23,7 @@ app.use(
       useDefaults: false,
       directives: {
         'default-src':
-          'helmet.contentSecurityPolicy.dangerouslyDisableDefaultSrc',
+          helmet.contentSecurityPolicy.dangerouslyDisableDefaultSrc,
         'frame-ancestors': ['self', CONSOLE_URL, `*${PAGES_HOST}`],
       },
     },
