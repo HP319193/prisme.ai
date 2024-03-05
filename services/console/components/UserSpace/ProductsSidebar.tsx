@@ -43,7 +43,8 @@ export const ProductsSidebar = () => {
   }, []);
 
   const selected = useMemo(() => {
-    return products.findIndex(({ href }) => router.asPath.match(href));
+    const productSlug = getProductSlug(router.asPath);
+    return products.findIndex(({ slug }) => slug === productSlug);
   }, [products, router.asPath]);
 
   const updateUserMeta = useRef((product: Product) => {});

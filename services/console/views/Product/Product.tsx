@@ -38,10 +38,7 @@ export const Product = memo(function Product() {
       const { host: hostOrigin } = new URL(origin);
       const { host: hostProduct } = new URL(productUrl);
       if (hostOrigin != hostProduct) {
-        //const [] = hostOrigin.match(/prisme\.ai/);
-        const [productSlug] = new URL(origin).hostname.split(
-          '.pages.prisme.ai'
-        );
+        const [productSlug] = new URL(origin).hostname.split(PAGES_HOST);
         if (!productSlug) {
           throw new Error('invalid origin');
         }
