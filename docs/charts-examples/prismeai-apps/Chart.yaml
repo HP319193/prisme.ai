@@ -23,10 +23,6 @@ dependencies:
     version: 0.1.0
     condition: prismeai-nlu.enabled
 
-  - name: duckling
-    version: 0.1.0
-    condition: duckling.enabled
-
   - name: prismeai-crawler
     version: 0.1.0
     condition: prismeai-crawler.enabled

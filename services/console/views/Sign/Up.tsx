@@ -2,7 +2,7 @@ import { SignLayout, SignType } from '../../components/SignLayout';
 import SignupForm from '../../components/SignupForm';
 import { useTracking } from '../../components/Tracking';
 
-export const SignIn = () => {
+export const SignUp = () => {
   const { trackEvent } = useTracking();
   return (
     <SignLayout type={SignType.Up} link="signin">
@@ -22,4 +22,6 @@ export const SignIn = () => {
   );
 };
 
-export default SignIn;
+SignUp.isPublic = true;
+
+export default SignUp;

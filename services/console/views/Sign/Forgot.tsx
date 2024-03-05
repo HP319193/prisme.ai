@@ -47,4 +47,6 @@ export const Forgot = () => {
   );
 };
 
+Forgot.isPublic = true;
+
 export default Forgot;

@@ -54,6 +54,12 @@ nav:
           - i18n.environment_variables: hosting/configuration/environment-variables.md
       - i18n.authentication: hosting/authentication/index.md
       - i18n.testing: hosting/installation/operational-test.md
+      - i18n.enterprise_features:
+            - i18n.installation: hosting/enterprise-features/installation/index.md
+            - i18n.entreprise_services:
+                - i18n.prismeai-functions: hosting/enterprise-features/configuration/prismeai-functions/index.md
+                - i18n.prismeai-llm: hosting/enterprise-features/configuration/prismeai-llm/index.md
+                - i18n.prismeai-crawler: hosting/enterprise-features/configuration/prismeai-crawler/index.md
   - Workspaces:
       - i18n.index: workspaces/index.md
       - Apps: workspaces/apps.md
