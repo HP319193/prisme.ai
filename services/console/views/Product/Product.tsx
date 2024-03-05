@@ -12,6 +12,7 @@ export const Product = memo(function Product() {
   const {
     query: { slug = [] },
     replace,
+    push,
   } = useRouter();
 
   const [productSlug] = Array.isArray(slug) ? slug : [slug];
@@ -29,15 +30,26 @@ export const Product = memo(function Product() {
 
     const listener = ({
       origin,
+      data,
       data: { type = '', path = '' } = {},
     }: MessageEvent) => {
+      if (type !== 'page.navigate' || !path) return;
+
       const { host: hostOrigin } = new URL(origin);
       const { host: hostProduct } = new URL(productUrl);
       if (hostOrigin != hostProduct) {
-        throw new Error('invalid origin');
+        //const [] = hostOrigin.match(/prisme\.ai/);
+        const [productSlug] = new URL(origin).hostname.split(
+          '.pages.prisme.ai'
+        );
+        if (!productSlug) {
+          throw new Error('invalid origin');
+        }
+        // Changing product!
+        push(`/product/${productSlug}/${data.path}`);
+        return;
       }
 
-      if (type !== 'page.navigate' || !path) return;
       const [prefix] = window.location.pathname.split(`product/${productSlug}`);
       const rootPath = `${prefix}product/${productSlug}`;
       replace(`${rootPath}${path}`);
@@ -46,7 +58,7 @@ export const Product = memo(function Product() {
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, [productSlug, productUrl, replace]);
+  }, [productSlug, productUrl, push, replace]);
 
   if (!productUrl) return null;
   return <iframe ref={iframe} src={productUrl} className="h-full" allow="*" />;
