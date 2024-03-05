@@ -22,7 +22,8 @@ app.use(
     contentSecurityPolicy: {
       useDefaults: false,
       directives: {
-        'default-src': 'contentSecurityPolicy.dangerouslyDisableDefaultSrc',
+        'default-src':
+          'helmet.contentSecurityPolicy.dangerouslyDisableDefaultSrc',
         'frame-ancestors': ['self', CONSOLE_URL, `*${PAGES_HOST}`],
       },
     },
