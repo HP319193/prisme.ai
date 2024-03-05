@@ -510,20 +510,28 @@ it('should interpolate booleans', () => {
   const from = {
     boolean: '{{bool}}',
   };
-  const to = computeBlock(from, { bool: true });
 
   expect(computeBlock(from, { bool: true }).boolean).toBe(true);
   expect(computeBlock(from, { bool: false }).boolean).toBe(false);
+  expect(computeBlock(from, { bool: 'true' }).boolean).toBe(true);
+  expect(computeBlock(from, { bool: 'false' }).boolean).toBe(false);
+  expect(computeBlock(from, { bool: {} }).boolean).toEqual({});
+  expect(computeBlock(from, { bool: '' }).boolean).toBe('');
+  expect(computeBlock(from, { bool: '0' }).boolean).toBe('0');
 });
 
 it('should interpolate ! booleans', () => {
   const from = {
     boolean: '!{{bool}}',
   };
-  const to = computeBlock(from, { bool: true });
 
   expect(computeBlock(from, { bool: true }).boolean).toBe(false);
+  expect(computeBlock(from, { bool: {} }).boolean).toBe(false);
   expect(computeBlock(from, { bool: false }).boolean).toBe(true);
+  expect(computeBlock(from, { bool: undefined }).boolean).toBe(true);
+  expect(computeBlock(from, { bool: null }).boolean).toBe(true);
+  expect(computeBlock(from, { bool: 0 }).boolean).toBe(true);
+  expect(computeBlock(from, { bool: '' }).boolean).toBe(true);
 });
 
 it('should interpolate a blocks expression', () => {
