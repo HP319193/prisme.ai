@@ -516,6 +516,16 @@ it('should interpolate booleans', () => {
   expect(computeBlock(from, { bool: false }).boolean).toBe(false);
 });
 
+it('should interpolate ! booleans', () => {
+  const from = {
+    boolean: '!{{bool}}',
+  };
+  const to = computeBlock(from, { bool: true });
+
+  expect(computeBlock(from, { bool: true }).boolean).toBe(false);
+  expect(computeBlock(from, { bool: false }).boolean).toBe(true);
+});
+
 it('should interpolate a blocks expression', () => {
   const block = {
     blocks: '{{blocks}}',
