@@ -13,11 +13,19 @@ import { initOidcProvider } from './services/oidc/provider';
 import startWorkspacesClientSync from './services/oidc/client';
 import { cleanIncomingRequest } from './middlewares';
 
+const { CONSOLE_URL = '', PAGES_HOST = '' } = process.env;
+
 const app = express();
 app.set('trust proxy', true);
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      useDefaults: false,
+      directives: {
+        'default-src': 'contentSecurityPolicy.dangerouslyDisableDefaultSrc',
+        'frame-ancestors': ['self', CONSOLE_URL, `*${PAGES_HOST}`],
+      },
+    },
     crossOriginEmbedderPolicy: false,
     crossOriginResourcePolicy: false,
   })
