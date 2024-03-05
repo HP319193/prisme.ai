@@ -129,7 +129,7 @@ export function interpolateExpression(expression: string, values: any) {
     const [_key, ...filters] = expr.split(/\|/);
     const key = _key.trim();
 
-    let interpolation = '';
+    let interpolation: any = '';
     try {
       interpolation =
         key === '$index' ? values[$index] : jsonpath.value(values, key);
@@ -145,19 +145,27 @@ export function interpolateExpression(expression: string, values: any) {
           interpolation
         );
     }
-    if ((interpolation && typeof interpolation === 'object') || uniqueMatch) {
+    if (uniqueMatch) {
       newValue = interpolation;
       return;
     }
 
-    newValue =
-      typeof newValue === 'string'
-        ? newValue.replace(
-            match,
-            interpolation === undefined ? '' : interpolation
-          )
-        : newValue;
+    newValue = `${newValue}`.replace(
+      match,
+      interpolation === undefined ? '' : interpolation
+    );
   });
+
+  if (typeof newValue != 'string') return newValue;
+  // Start a very very quicky'n dirty expression engine (only manage ! car)
+  const [hasNegation, asBoolean] = newValue.match(/^!(.*)$/) || [];
+  if (hasNegation) {
+    if (['false', 'null', '0'].includes(asBoolean)) return true;
+    return !asBoolean;
+  }
+
+  if (newValue === 'false') return false;
+  if (newValue === 'true') return true;
 
   return newValue;
 }
@@ -165,19 +173,8 @@ export function interpolateExpression(expression: string, values: any) {
 export function testCondition(condition: string = '', values: any) {
   if (!condition) return true;
   const interpolated = interpolateExpression(condition, values);
-  const [, invert, result] =
-    typeof interpolated === 'string'
-      ? interpolated.match(/(^!?)(.+$)?/m) || []
-      : [, condition.match(/^!/), interpolated];
-  if (result === 'true') {
-    return invert ? false : true;
-  }
-  if (result === 'false' || result === 'undefined') {
-    return invert ? true : false;
-  }
-  const cleanedResult = result && !Number.isNaN(+result) ? +result : result;
 
-  return invert ? !cleanedResult : cleanedResult;
+  return !!interpolated;
 }
 
 export function repeatBlock(block: Config, values: any) {
@@ -246,14 +243,7 @@ export function interpolateValue(value: any, values: any): any {
     return output;
   }
   if (typeof value === 'string') {
-    const interpolated = interpolateExpression(value, values);
-    if (['!true', 'false'].includes(interpolated)) {
-      return false;
-    }
-    if (['!false', 'true'].includes(interpolated)) {
-      return true;
-    }
-    return interpolated;
+    return interpolateExpression(value, values);
   }
   return value;
 }
