@@ -33,7 +33,7 @@ export const SingleViewLayout = ({
           {title}
         </Text>
       </Title>
-      <div className="bg-main-element text-main-text rounded flex flex-col items-center justify-center flex-1">
+      <div className="bg-main-element rounded flex flex-col items-center justify-center flex-1">
         {children}
       </div>
     </div>
