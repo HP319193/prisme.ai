@@ -86,7 +86,7 @@ spec:
 
 ---
 
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "name" . }}
@@ -106,11 +106,11 @@ spec:
 
 ---
 
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ include "name" . }}-autorestart
-  namespace: kube-system
+  namespace: apps
 spec:
   schedule: {{ .Values.autorestart.schedule }}
   jobTemplate:
