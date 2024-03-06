@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useMemo, useRef } from 'react';
@@ -8,6 +9,9 @@ const {
 } = getConfig();
 
 export const Product = memo(function Product() {
+  const {
+    i18n: { language },
+  } = useTranslation();
   const iframe = useRef<HTMLIFrameElement>(null);
   const {
     query: { slug = [] },
@@ -18,8 +22,8 @@ export const Product = memo(function Product() {
   const [productSlug] = Array.isArray(slug) ? slug : [slug];
   const productUrl = useMemo(() => {
     const [, path] = window.location.pathname.split(`product/${productSlug}`);
-    return `${window.location.protocol}//${productSlug}${PAGES_HOST}/${path}${window.location.search}${window.location.hash}`;
-  }, [productSlug]);
+    return `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}${window.location.search}${window.location.hash}`;
+  }, [language, productSlug]);
 
   useEffect(() => {
     if (!iframe.current) return;
