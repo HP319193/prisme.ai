@@ -38,7 +38,7 @@ export const Usage = () => {
     <>
       <Head>
         <title>
-          [{localize(workspace.name)}]
+          [{localize(workspace.name)}]{' '}
           {t('title.workspaceManagement', {
             workspaceName: workspace.name,
           })}

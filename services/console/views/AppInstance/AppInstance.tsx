@@ -278,7 +278,7 @@ export const AppInstance = () => {
       />
       <Head>
         <title>
-          [{localize(workspace.name)}]
+          [{localize(workspace.name)}]{' '}
           {t('page_title', {
             elementName: localize(appInstance.slug),
           })}

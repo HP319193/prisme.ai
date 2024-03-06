@@ -446,7 +446,7 @@ export const Automation = () => {
       />
       <Head>
         <title>
-          [{localize(workspace.name)}]
+          [{localize(workspace.name)}]{' '}
           {t('page_title', {
             elementName: localize((automation || { name: '' }).name),
           })}
