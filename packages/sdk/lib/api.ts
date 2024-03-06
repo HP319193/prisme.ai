@@ -598,7 +598,6 @@ export class Api extends Fetcher {
           {
             error: 'CollaboratorNotFound',
             message: 'This user does not exist',
-            details: { email },
           },
           404
         );
