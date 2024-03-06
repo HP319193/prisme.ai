@@ -283,24 +283,15 @@ const defaultStyles = `:block {
 .pr-block-action-wrapper__disabled {
   pointer-events: none;
 }
-:block.pr-block-action--event .pr-block-action__button {
-  background: var(--accent-color);
-  color: var(--accent-contrast-color);
-  border-radius: 0.5rem;
-}
-:root .pr-block-action__confirm-button {
-  margin-left: 1rem;
-}
-.pr-block-action__button {
+:block.pr-block-action--event .pr-block-action__button,
+:block.pr-block-action--upload .pr-block-action__button {
   background: var(--accent-color);
   color: var(--accent-contrast-color);
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
-  cursor: pointer;
-  display: inline-block;
-  font-family: inherit; /* Assuming you want to inherit the font from the parent */
-  font-size: inherit; /* Assuming you want to inherit the font-size from the parent */
-  text-align: center; /* Center the text inside the label */
+}
+:root .pr-block-action__confirm-button {
+  margin-left: 1rem;
 }
 
 :block.pr-block-action--upload .pr-block-action__button {
