@@ -142,7 +142,7 @@
   },
   "create": {
     "label": "Create a workspace",
-    "description": "Start your project from scratch",
+    "description": "Create your project from A to Z.",
     "defaultName": "Workspace"
   },
   "edit": {
