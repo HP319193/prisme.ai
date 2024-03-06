@@ -91,7 +91,7 @@
     <td>OIDC_PROVIDER_URL</td>
     <td>api-gateway, pages, console, runtime</td>
     <td>OIDC Authorization server URL</td>
-    <td>API_URL env var, without any base path</td>
+    <td>API_URL env var, without any base path. You don't need to define this OIDC variable if you intend to <a href="../../authentication/">add another provider</a> </td>
   </tr>  
    <tr>
     <td>OIDC_STUDIO_CLIENT_ID</td>
