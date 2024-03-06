@@ -29,19 +29,34 @@ This URL can either return a [standard JWKS](https://auth0.com/docs/secure/token
 **2. Create & configure a `authProviders.config.yml` file**
 ```yaml
 providers:
-  ProviderName:
+  <ProviderName>:
     type: oidc
     config:
       client_id: "your client id"
-      client_secret: "your client id"
+      client_secret: "your client secret"
       authorization_endpoint: "idp authorization_endpoint"
       token_endpoint: "idp token_endpoint"
       jwks_uri: "idp public certificates endpoint"
 ```
 
-Although the choice is yours, name your **ProviderName** with care, as this name will be passed to front-end services & injected within [user authData](../workspaces/security.md#auth-data) (along with user claims), making it potentially difficult to change afterwards.  
+Although the choice is yours, name your **ProviderName** with care, as this name will be passed to front-end services & injected within [user authData](../workspaces/security.md#auth-data) (along with user claims), making it potentially difficult to change afterwards.   
+
+You must replace `<ProviderName>` by the actual name of your provider.
 
 An optional `config.scopes` field allow customizing requested scopes (& retrieved used claims by extension), which defaults to `openid email profile` and must at least include `openid` and `email`.  
+
+```yaml hl_lines="10"
+providers:
+  myprovider:
+    type: oidc
+    config:
+      client_id: "my_client_id"
+      client_secret: "my_client_secret"
+      authorization_endpoint: "https://authorization_endpoint"
+      token_endpoint: "https://token_endpoint"
+      jwks_uri: "https://public_certificates_endpoint"
+      scopes: "openid email"
+```
 
 **3. Mount this configuration file to `prismeai-api-gateaway`**  
 Mount this file as a volume inside `prismeai-api-gateway` container at `/www/services/api-gateway/authProviders.config.yml`  

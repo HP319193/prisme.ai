@@ -41,10 +41,22 @@ export function merge(value: Value, _with: Value) {
   return newValue;
 }
 
-export function applyCommands(prev: any, { $merge, ...next }: Next) {
+export function replace(value: Value, _with: Value) {
+  if (typeof _with !== 'object' || Array.isArray(_with)) return value;
+  let newValue = { ...value };
+  Object.entries(_with).forEach(([path, v]) => {
+    newValue = _set(newValue, path, v);
+  });
+  return value;
+}
+
+export function applyCommands(prev: any, { $merge, $replace, ...next }: Next) {
   let value = _cloneDeep({ ...prev, ...next });
   if ($merge) {
     value = merge(value, $merge);
+  }
+  if ($replace) {
+    value = replace(value, $replace);
   }
   return value;
 }
