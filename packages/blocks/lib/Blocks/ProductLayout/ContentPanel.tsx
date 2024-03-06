@@ -24,7 +24,7 @@ const Tab = ({
   if (['external', 'internal'].includes(type)) {
     return (
       <Link href={value} className={className}>
-        <button onClick={onClick}>
+        <button>
           <Block
             content={title}
             ifString={({ className, content }) => (
