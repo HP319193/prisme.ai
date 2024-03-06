@@ -219,7 +219,7 @@ const Block = () => {
     <>
       <Head>
         <title>
-          [{localize(workspaceName)}]
+          [{localize(workspaceName)}]{' '}
           {t('page_title', {
             elementName: localize(value.name),
           })}

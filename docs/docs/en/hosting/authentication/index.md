@@ -22,6 +22,9 @@ Once created, note the following client informations :
 `jwks_uri` might not be showed with client details as it is generally global to the IdP (or at least to the customer tenant, like Auth0).  
 This URL can either return a [standard JWKS](https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-key-set-properties) or an object mapping `kid`s to PEM certificate strings like [Google](https://www.googleapis.com/oauth2/v1/certs).  
 
+!!! warning "Algorithm"
+
+    For the moment, the only supported algorithm is **RS256**.
 
 **2. Create & configure a `authProviders.config.yml` file**
 ```yaml
