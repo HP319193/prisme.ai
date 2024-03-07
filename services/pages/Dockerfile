@@ -24,6 +24,10 @@ RUN npm run build:packages && \
 
 FROM node:16-alpine as runtime
 
+RUN adduser --disabled-password --gecos '' prismeai
+USER prismeai
+RUN chown prismeai:prismeai /www
+
 WORKDIR /www
 COPY --from=build /www/packages /www/packages
 COPY --from=build /www/services/pages/  /www/services/pages/
@@ -42,6 +46,5 @@ ENV NODE_ENV production
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry.
 # ENV NEXT_TELEMETRY_DISABLED 1
-
 
 CMD ["/www/services/pages/docker/start.sh"]
