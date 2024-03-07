@@ -45,6 +45,7 @@ ENV NODE_ENV production
 
 RUN adduser --disabled-password --gecos '' prismeai
 RUN chown prismeai:prismeai .
+RUN chmod -R u+rw .
 
 USER prismeai
 CMD ["/www/services/pages/docker/start.sh"]
