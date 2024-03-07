@@ -47,7 +47,7 @@ This documentation can be summarized to :
 - Then find the appropriate template to use here https://github.com/go-skynet/model-gallery and copy it in the /models folder along the model.  
 - Restart the service to be able to use it  
 
-## Testing the service
+## Microservice testing
 You can call your API with the following query to test. You can use "orca" or "airoboros" if using
 the provided examples.
 
@@ -66,7 +66,7 @@ curl http://localhost:8080/v1/chat/completions -X POST -H "Content-Type: applica
 
 To test the embeddings, you can call the following:  
 ```bash
-curl http://localhost:8080/v1/embeddings -H "Content-Type: application/json" -d '{                                                                                                                                                 ─╯
+curl http://localhost:8080/v1/embeddings -H "Content-Type: application/json" -d '{                                                                                                                                                 
      "model": "bert",
      "input": "A long time ago in a galaxy far, far away"
    }'

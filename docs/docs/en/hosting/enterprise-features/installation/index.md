@@ -5,8 +5,9 @@ We will cover their deployment in this section.
 
 !!! info "Access"
 
-    You will need a valid Gitlab user and access key in order to follow the next steps and be able to fetch the Docker images.  
+    You will need a valid Gitlab username and token in order to follow the next steps and be able to fetch the Docker images.  
     If you don't have them yet, please reach out to the support in order to retrieve them ([support@prisme.ai](mailto:support@prisme.ai)).   
+    <!-- It should be a Gitlab Deploy Token -->
 
 We will deploy the apps microservices in the same cluster as the core microservices. Although, we recommend using a different namespace name.
 
@@ -37,3 +38,6 @@ From the root of the directory (`./prismeai-apps`) execute the installation comm
 ```sh
 helm install . --namespace apps -f values.yaml 
 ```
+
+### Test the microservices
+Once up and running you should test the different microservices by following their specific documentation ([prismeai-crawler and prismeai-searchengine](../configuration/prismeai-crawler/index.md#microservice-testing), [prismeai-functions](../configuration/prismeai-functions/index.md#microservice-testing), [prismeai-llm](../configuration/prismeai-llm/index.md#microservice-testing)).
