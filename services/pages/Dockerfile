@@ -26,6 +26,8 @@ FROM node:16-alpine as runtime
 
 RUN adduser --disabled-password --gecos '' prismeai
 USER prismeai
+
+RUN mkdir /www
 RUN chown prismeai:prismeai /www
 
 WORKDIR /www
