@@ -186,6 +186,9 @@ it('should apply merge', () => {
 });
 
 it('should apply replace commands', () => {
+  expect(applyCommands({ foo: 1 }, { $replace: { foo: 2 } })).toEqual({
+    foo: 2,
+  });
   expect(
     applyCommands(
       { foo: { bar: 1, other: true } },
