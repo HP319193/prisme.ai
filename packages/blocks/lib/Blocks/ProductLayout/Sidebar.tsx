@@ -243,7 +243,8 @@ export const Sidebar = ({
   header,
   items,
 }: ProductLayoutProps['sidebar'] = {}) => {
-  const { sidebarOpen, toggleSidebar } = useProductLayoutContext();
+  const { sidebarOpen, toggleSidebar, canToggleSidebar } =
+    useProductLayoutContext();
   const { localize } = useLocalizedText();
   return (
     <div
@@ -254,16 +255,18 @@ export const Sidebar = ({
       {isRenderProp(header) ? header : <SidebarHeader {...header} />}
 
       <SidebarItems items={items} />
-      <div className="product-layout-sidebar__toggle">
-        <Tooltip
-          title={localize(sidebarOpen ? locales.collapse : locales.expand)}
-          placement="right"
-        >
-          <button onClick={() => toggleSidebar()} type="button">
-            <IconExpand />
-          </button>
-        </Tooltip>
-      </div>
+      {canToggleSidebar && (
+        <div className="product-layout-sidebar__toggle">
+          <Tooltip
+            title={localize(sidebarOpen ? locales.collapse : locales.expand)}
+            placement="right"
+          >
+            <button onClick={() => toggleSidebar()} type="button">
+              <IconExpand />
+            </button>
+          </Tooltip>
+        </div>
+      )}
     </div>
   );
 };
