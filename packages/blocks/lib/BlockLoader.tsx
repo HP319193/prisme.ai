@@ -16,11 +16,6 @@ import { Schema } from '@prisme.ai/design-system';
 import useExternalModule from './utils/useExternalModule';
 import i18n from './i18n';
 import { Events } from '@prisme.ai/sdk';
-import getConfig from 'next/config';
-
-const {
-  publicRuntimeConfig: { PAGES_HOST = '' },
-} = getConfig();
 
 class BlockErrorBoundary extends Component<{
   children: ReactElement;
@@ -124,7 +119,7 @@ export const IFrameBlock = ({ url, token }: BlockLoaderProps) => {
           source: 'prisme.ai',
           token,
         },
-        `*${PAGES_HOST}`
+        '*'
       );
     },
     [token]
