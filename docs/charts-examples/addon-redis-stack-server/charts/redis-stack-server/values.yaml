@@ -1,21 +1,20 @@
-enabled: true
+enabled: false
 
-runTimeout: 5000
+redis:
+  maxmemory: '4000mb'
 
 # Additional envs
-env:
-  - name: PORT
-    value: "80"
+env: []
 
 image:
-  repository: registry.gitlab.com/gogowego-devsecops/dev/apps/prisme.ai-functions
-  tag: latest
+  repository: redis/redis-stack-server
+  tag: 7.0.6-RC9
   pullPolicy: Always
 
 replicaCount: 1
 
 autorestart:
-  enabled: true
+  enabled: false
   schedule: "0 3 * * *"
 
 hpa:
@@ -35,27 +34,15 @@ hpa:
 
 service:
   type: NodePort
-  port: 80
+  port: 6379
 
 serviceAccount:
   create: false
   name:
 
-# ingress:
-#   enabled: false
-#   annotations: {}
-#     # kubernetes.io/ingress.class: nginx
-#     # kubernetes.io/tls-acme: "true"
-#   hosts:
-#     - host: chart-example.local
-#       paths: []
-#   tls: []
-#   #  - secretName: chart-example-tls
-#   #    hosts:
-#   #      - chart-example.local
-
 resources:
   requests:
+    memory: '4000mi'
   limits:
 
 nodeSelector: {}
@@ -63,16 +50,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-prometheus:
-  serviceMonitor:
-    enabled: false
-    metricRelabelings: []
-    relabelings: []
-
-ingressRoute:
-  enabled: false
-  host: ""
 
 virtualService:
   enabled: false

@@ -1,0 +1,10 @@
+redis-stack-server:
+  enabled: true
+  persistence:
+    existingClaim: apps-prismeai-functions-sfsturbo
+    type: pvc
+  resources:
+    requests:
+      memory: "6000Mi"
+  redis:
+    maxmemory: '6000mb'

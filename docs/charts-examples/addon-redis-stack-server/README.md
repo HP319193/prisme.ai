@@ -1,0 +1,1 @@
+This folder is not really useful on its own, it is only a demo of how you can add a redis-stack-server to the prismeai-apps Charts.

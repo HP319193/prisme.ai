@@ -1,10 +1,7 @@
 # Configuration shared by all services
 global:
   repository:
-    host: registry.gitlab.com
-    username: ""
-    token: ""
-    create: false # Configure the above and set this to true if you need access to a private repository
+    create: false
 
   broker:
     driver: redis # Driver used

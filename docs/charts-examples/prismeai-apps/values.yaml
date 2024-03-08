@@ -1,8 +1,8 @@
 global:
   repository:
     host: registry.gitlab.com
-    username: ""
-    token: ""
+    username: "" # Username provided by prisme.ai depending on your licence, mandatory for these charts
+    token: "" # Token provided by prisme.ai depending on your licence, mandatory for these charts
     create: true
 
 prismeai-functions:
@@ -35,7 +35,7 @@ prismeai-functions:
 
   hpa:
     create: true
-    minReplicas: 2
+    minReplicas: 1
     maxReplicas: 6
 
 prismeai-nlu:

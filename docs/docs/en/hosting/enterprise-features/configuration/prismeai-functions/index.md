@@ -91,13 +91,59 @@ Here is a few thing that should be considered:
   </tr>           
 </table>
 
+## Microservice testing
+
+1. Create a function "workspace" (named `test` and containing a `hello` function):
+
+```bash
+curl --location 'http://localhost:4000/v2/functions/test' \
+--header 'Content-Type: application/json' \
+--data '{
+    "functions": {
+        "hello": {
+            "code": "return \"Hello \" + name;",
+            "parameters": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}'
+```
+
+If successful, the same body should be returned in response.  
+
+2. Run the function:  
+
+```bash
+curl --location 'http://localhost:4000/v2/functions/test/run/hello' \
+--header 'Content-Type: application/json' \
+--data '{
+    "parameters": {
+        "name": "world"
+    }
+}'
+```
+
+If successful, the answer should be similar to this:   
+```json
+{
+    "result": "Hello world",
+    "logs": [],
+    "duration": 38
+}
+```
+
+Congratulations, you service is up and running!
+
 ## Features
 
-## Async functions  
+### Async functions  
 Even if they do not use any async call, every functions are always annotated as "async".  
 As such, calling a function from the same workspace must be done with **await** keyword. See **Shared execution context** for a full example.
 
-## Shared execution context  
+### Shared execution context  
 Functions from the same workspace are executed within a generated JS file gathering these functions together. This allows functions to call each others :  
 
 **funcA** :  
