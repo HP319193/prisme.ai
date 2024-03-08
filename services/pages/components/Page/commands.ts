@@ -47,7 +47,7 @@ export function replace(value: Value, _with: Value) {
   Object.entries(_with).forEach(([path, v]) => {
     newValue = _set(newValue, path, v);
   });
-  return value;
+  return newValue;
 }
 
 export function applyCommands(prev: any, { $merge, $replace, ...next }: Next) {
