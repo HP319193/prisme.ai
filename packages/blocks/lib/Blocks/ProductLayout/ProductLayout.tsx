@@ -69,6 +69,9 @@ const defaultStyles = `:block {
   margin-right: 0;
   margin-left: 16px;
 }
+.product-layout-sidebar__header-link--button {
+  margin-left: 1rem;
+}
 .product-layout-sidebar__logo {
   display: flex;
   flex: none;
