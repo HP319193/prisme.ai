@@ -84,7 +84,7 @@ export const SidebarHeader = ({
       return (
         <LinkOrNot
           href={['internal', 'external'].includes(type) ? value : undefined}
-          className="product-layout-sidebar__header-link"
+          className="product-layout-sidebar__header-link product-layout-sidebar__header-link--button"
         >
           <button
             type="button"
