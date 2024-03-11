@@ -5,11 +5,11 @@ import {
   useContext,
   useState,
 } from 'react';
+import { ProductLayoutProps, SidebarHeaderProps } from './types';
 
 export interface ProductLayoutContext {
   sidebarOpen: boolean;
   toggleSidebar: (state?: 'open' | 'close') => void;
-  canToggleSidebar: boolean;
 }
 export const productLayoutContext = createContext<
   ProductLayoutContext | undefined
@@ -38,11 +38,8 @@ export const ProductLayoutProvider = (props: ProductLayoutProviderProps) => {
     },
     []
   );
-  const canToggleSidebar = props.opened === undefined;
   return (
-    <productLayoutContext.Provider
-      value={{ sidebarOpen, toggleSidebar, canToggleSidebar }}
-    >
+    <productLayoutContext.Provider value={{ sidebarOpen, toggleSidebar }}>
       {props.children}
     </productLayoutContext.Provider>
   );
