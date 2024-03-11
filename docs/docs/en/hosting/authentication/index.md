@@ -64,6 +64,14 @@ If the `local` provider is omitted, the standard user / password sign in form wi
 If you do not want the same IdP to be available between Prismai studio & workspaces pages, these 2 variables can also be differently configured between `prismeai-console` and `prismeai-pages`.  
 
 
+!!! note "Authenticating from workspaces pages"
+
+    Bear in mind that each workspace register itself as an OIDC client of your providers in order to allow users to connect from your workspaces pages. 
+    These registrations happen on creation and update of a workspace, when they are made they register a `redirect_uri` which contains the current `PAGES_HOST` value.  
+
+    While installing your platform you might change the value of `PAGES_HOST` multiple time.  
+    So, whenever you change your `PAGES_HOST`, make sure to trigger a workspace update (example: change the description of the workspace and save) in order to trigger a new registration as client with the new `PAGES_HOST` value.   
+
 
 ## Configuring Microsoft SSO
 
