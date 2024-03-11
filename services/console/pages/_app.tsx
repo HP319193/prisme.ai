@@ -65,6 +65,7 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
                 content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
               />
               <link rel="icon" href="/favicon.png" />
+              <link rel="manifest" href="/manifest.webmanifest" />
             </Head>
             <Sentry />
             {getLayout(<Component {...pageProps} />)}
@@ -77,6 +78,14 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
   return (
     <QueryStringProvider>
       <UserProvider redirectTo="/">
+        <Head>
+          <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+          />
+          <link rel="icon" href="/favicon.png" />
+          <link rel="manifest" href="/manifest.webmanifest" />
+        </Head>
         <UserSpace>{getLayout(<Component {...pageProps} />)}</UserSpace>
       </UserProvider>
     </QueryStringProvider>
