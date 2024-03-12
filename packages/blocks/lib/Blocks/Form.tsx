@@ -75,6 +75,15 @@ export const Form = ({
   const canChange = useRef(true);
   const formRef: SchemaFormProps['formRef'] = useRef<any>();
   const containerEl = useRef<HTMLDivElement>(null);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(
+    () =>
+      setHasError(
+        Object.keys(formRef?.current?.getState().errors || {}).length > 0
+      ),
+    []
+  );
 
   const mergeValuesWithPayload = useCallback(
     (values: any = {}, payload?: any) => {
@@ -197,6 +206,10 @@ export const Form = ({
         }}
         initialValues={initialValues}
         onChange={(v: any) => {
+          setHasError(
+            Object.keys(formRef?.current?.getState().errors || {}).length > 0
+          );
+
           if (!canChange.current) return;
           onChange(v);
         }}
@@ -214,7 +227,7 @@ export const Form = ({
                     type="submit"
                     variant="primary"
                     className="pr-block-form__button        buttons-container__button button"
-                    disabled={!!config.disabledSubmit}
+                    disabled={!!config.disabledSubmit || hasError}
                   >
                     {localize(config.submitLabel) || t('form.submit')}
                   </Button>
