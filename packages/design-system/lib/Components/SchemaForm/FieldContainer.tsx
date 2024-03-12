@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useField } from 'react-final-form';
 import { useSchemaForm } from './context';
 import { FieldProps } from './types';
 
@@ -13,7 +14,15 @@ export const FieldContainer: FC<FieldProps> = (props) => {
   const {
     components: { FieldContainer: C = DefaultFieldContainer },
   } = useSchemaForm();
-  return <C {...props} />;
+  const field = useField(props.name);
+  return (
+    <C
+      {...props}
+      className={`${props.className} ${
+        field.meta.dirty && field.meta.error ? 'pr-form-field--error' : ''
+      }`}
+    />
+  );
 };
 
 export default FieldContainer;
