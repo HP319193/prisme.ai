@@ -284,6 +284,7 @@ export class WorkspaceExports extends DsulCrud {
     zipBuffer: Buffer | stream.Readable,
     opts?: {
       overwriteWorkspaceSlug?: boolean;
+      overwriteWorkspaceSlugIfAvailable?: boolean;
       removeAdditionalFiles?: boolean;
       sourceVersion?: Prismeai.WorkspaceVersion;
     }
@@ -348,7 +349,37 @@ export class WorkspaceExports extends DsulCrud {
         const buffer = await streamToBuffer(dsulStreams[DSULType.DSULIndex]);
         delete dsulStreams[DSULType.DSULIndex];
         const index: any = yaml.load(buffer.toString());
-        if (opts?.overwriteWorkspaceSlug && index.slug) {
+        if (
+          opts?.overwriteWorkspaceSlugIfAvailable &&
+          index.slug &&
+          index.slug != workspace.slug
+        ) {
+          const superAdmin = await getSuperAdmin(
+            this.accessManager as AccessManager
+          );
+          const conflictingWorkspace = await superAdmin.findAll(
+            SubjectType.Workspace,
+            {
+              slug: index.slug,
+            }
+          );
+
+          if (
+            conflictingWorkspace.length > 0 &&
+            conflictingWorkspace.some(
+              (cur) => cur.slug === index.slug && cur.id !== workspaceId
+            )
+          ) {
+            // If some other workspace already uses this slug, keep our current slug
+            delete index.slug;
+          }
+        }
+
+        if (
+          (opts?.overwriteWorkspaceSlug ||
+            opts?.overwriteWorkspaceSlugIfAvailable) &&
+          index.slug
+        ) {
           workspace.slug = index.slug;
         }
         await this.applyDSULFile(

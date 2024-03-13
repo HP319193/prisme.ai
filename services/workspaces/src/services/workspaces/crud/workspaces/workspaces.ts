@@ -266,7 +266,7 @@ export class Workspaces extends DsulCrud {
   findWorkspaces = async (
     query?: PrismeaiAPI.GetWorkspaces.QueryParameters
   ) => {
-    const { limit, page, labels, email, name, sort, ids } = query || {};
+    const { limit, page, labels, email, name, sort, ids, slug } = query || {};
     let mongoQuery: any = {};
     if (email) {
       const users = await fetchUsers({
@@ -294,6 +294,9 @@ export class Workspaces extends DsulCrud {
       mongoQuery.id = {
         $in: ids.split(','),
       };
+    }
+    if (slug) {
+      mongoQuery.slug = slug;
     }
 
     return await this.accessManager.findAll(SubjectType.Workspace, mongoQuery, {

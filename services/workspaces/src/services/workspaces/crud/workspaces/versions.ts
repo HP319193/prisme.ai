@@ -293,6 +293,7 @@ export class WorkspaceVersions extends DsulCrud {
         {
           removeAdditionalFiles: true,
           sourceVersion: targetVersion,
+          overwriteWorkspaceSlugIfAvailable: true,
         }
       ),
       versionArchivePromise,

@@ -3520,6 +3520,7 @@ declare namespace PrismeaiAPI {
             export type Limit = number;
             export type Name = string;
             export type Page = number;
+            export type Slug = string;
             export type Sort = string;
         }
         export interface QueryParameters {
@@ -3527,6 +3528,7 @@ declare namespace PrismeaiAPI {
             limit?: Parameters.Limit;
             labels?: Parameters.Labels;
             name?: Parameters.Name;
+            slug?: Parameters.Slug;
             email?: Parameters.Email;
             sort?: Parameters.Sort;
             ids?: Parameters.Ids;
