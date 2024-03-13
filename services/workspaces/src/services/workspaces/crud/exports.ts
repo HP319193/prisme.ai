@@ -17,6 +17,7 @@ import {
   DSULStorage,
   DSULType,
   FolderIndex,
+  ImportConfig,
 } from '../../DSULStorage';
 import { getArchiveEntries } from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
@@ -151,6 +152,23 @@ export class WorkspaceExports extends DsulCrud {
     outStream?: stream.Writable
   ) => {
     await this.getWorkspace(workspaceId, version);
+
+    // Prepare import config (i.e with published app details & any other information that might be needed during import)
+    const existingApps = await this.accessManager.findAll(SubjectType.App, {
+      workspaceId: workspaceId,
+    });
+    let importConfig: ImportConfig = {};
+    if (existingApps?.length) {
+      importConfig.app = {
+        slug: existingApps[0].slug,
+        name: existingApps[0].name,
+        description: existingApps[0].description,
+      };
+    }
+    await this.storage.save(
+      { workspaceId, dsulType: DSULType.ImportConfig },
+      importConfig
+    );
 
     const archive = await this.storage.export(
       {
@@ -287,6 +305,7 @@ export class WorkspaceExports extends DsulCrud {
       overwriteWorkspaceSlugIfAvailable?: boolean;
       removeAdditionalFiles?: boolean;
       sourceVersion?: Prismeai.WorkspaceVersion;
+      publishApp?: boolean; // If  given archive has a .import.yml indicating app settings, this is true by default
     }
   ) => {
     const workspace = await this.workspaces.getDetailedWorkspace(
@@ -332,6 +351,8 @@ export class WorkspaceExports extends DsulCrud {
       const splittedPath = filename.split('/').slice(1);
       if (parse(splittedPath[0] || '').name === DSULType.DSULIndex) {
         filename = DSULType.DSULIndex;
+      } else if (parse(splittedPath[0] || '').name === DSULType.ImportConfig) {
+        filename = DSULType.ImportConfig;
       }
       return { ...entries, [filename]: stream };
     }, {});
@@ -342,7 +363,15 @@ export class WorkspaceExports extends DsulCrud {
       );
     }
 
+    let importConfig: ImportConfig = {};
+    if (dsulStreams[DSULType.ImportConfig]) {
+      const buffer = await streamToBuffer(dsulStreams[DSULType.ImportConfig]);
+      importConfig = yaml.load(buffer.toString()) as ImportConfig;
+      delete dsulStreams[DSULType.ImportConfig];
+    }
+
     let imported: string[] = [];
+    let errors: any[] = [];
     // First load index before other files
     if (dsulStreams[DSULType.DSULIndex]) {
       try {
@@ -357,20 +386,24 @@ export class WorkspaceExports extends DsulCrud {
           const superAdmin = await getSuperAdmin(
             this.accessManager as AccessManager
           );
-          const conflictingWorkspace = await superAdmin.findAll(
+          const conflictingWorkspaces = await superAdmin.findAll(
             SubjectType.Workspace,
             {
               slug: index.slug,
             }
           );
 
-          if (
-            conflictingWorkspace.length > 0 &&
-            conflictingWorkspace.some(
-              (cur) => cur.slug === index.slug && cur.id !== workspaceId
-            )
-          ) {
+          const conflictingWorkspace = conflictingWorkspaces.find(
+            (cur) => cur.slug === index.slug && cur.id !== workspaceId
+          );
+          if (conflictingWorkspace) {
             // If some other workspace already uses this slug, keep our current slug
+            errors.push({
+              msg: `Could not rename workspace slug from ${workspace.slug} to ${index.slug} as it is already used by workspaceId ${conflictingWorkspace.id}`,
+              err: 'SlugAlreadyInUse',
+              slug: index.slug,
+              conflictingWorkspaceId: conflictingWorkspace.id,
+            });
             delete index.slug;
           }
         }
@@ -407,7 +440,6 @@ export class WorkspaceExports extends DsulCrud {
     }
 
     // Import all other files
-    let errors: any[] = [];
     let batch: Promise<void>[] = [];
     for (let [filepath, stream] of Object.entries(dsulStreams)) {
       const splittedPath = filepath.split('/').slice(1);
@@ -501,6 +533,32 @@ export class WorkspaceExports extends DsulCrud {
         msg: 'Could not refresh some dsul index. Some pages or automations might not appear in studio menus',
         err,
       });
+    }
+
+    // Finally, publish the app if it is an app
+    if (
+      opts?.publishApp === true ||
+      (importConfig?.app?.slug && opts?.publishApp !== false)
+    ) {
+      try {
+        await apps.publishApp(
+          {
+            workspaceId: workspaceId,
+            slug: importConfig?.app?.slug || workspace.slug,
+            description: importConfig?.app?.description,
+            name: importConfig?.app?.name,
+          },
+          {
+            description: 'Imported app release',
+          },
+          true
+        );
+      } catch (err) {
+        errors.push({
+          msg: 'Could not publish app',
+          err,
+        });
+      }
     }
 
     const updatedDetailedWorkspace = await this.workspaces.getDetailedWorkspace(
@@ -712,6 +770,7 @@ export class WorkspaceExports extends DsulCrud {
           archive,
           {
             overwriteWorkspaceSlug: true,
+            publishApp: false, // We will publish ourselves just after this
           }
         );
         allImported = allImported.concat(

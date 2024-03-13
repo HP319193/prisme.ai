@@ -201,12 +201,16 @@ export default function init(
     >,
     res: Response<PrismeaiAPI.PublishWorkspaceVersion.Responses.$200>
   ) {
-    const { workspaces } = getServices({
+    const { workspaces, exports } = getServices({
       context,
       accessManager,
       broker,
     });
-    const version = await workspaces.versions.publish(workspaceId, body);
+    const version = await workspaces.versions.publish(
+      workspaceId,
+      body,
+      exports
+    );
     res.send(version);
   }
 

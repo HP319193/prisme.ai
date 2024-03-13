@@ -12,7 +12,7 @@ import {
   ValidatedDSULVersion,
   prepareNewDSULVersion,
 } from '../../../../utils/prepareNewDSULVersion';
-import { DriverType, ExportOptions, IStorage } from '../../../../storage/types';
+import { DriverType, IStorage } from '../../../../storage/types';
 import buildStorage from '../../../../storage';
 import { WORKSPACES_STORAGE_GIT_OPTIONS } from '../../../../../config';
 import { DSULFolders, DSULRootFiles, DSULType } from '../../../DSULStorage';
@@ -71,7 +71,8 @@ export class WorkspaceVersions extends DsulCrud {
 
   publish = async (
     workspaceId: string,
-    versionRequest: Prismeai.WorkspaceVersion
+    versionRequest: Prismeai.WorkspaceVersion,
+    workspacesExports: WorkspaceExports
   ): Promise<ValidatedDSULVersion> => {
     const currentVersions = await this.list(workspaceId);
     const { newVersion, allVersions, expiredVersions } = prepareNewDSULVersion(
@@ -105,8 +106,10 @@ export class WorkspaceVersions extends DsulCrud {
         'write'
       );
       const publishedVersion = 'current';
-      const exportPromise = this.storage.export(
-        { workspaceId, parentFolder: true, version: publishedVersion },
+      const exportPromise = workspacesExports.exportWorkspace(
+        workspaceId,
+        'current',
+        'zip',
         exportStream
       );
 

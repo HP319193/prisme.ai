@@ -14,9 +14,6 @@ import { URL } from 'url';
 import { ForbiddenError } from '@prisme.ai/permissions';
 import { token } from '../../utils';
 
-const debug = require('debug');
-debug.enable('simple-git,simple-git:*');
-
 export type GitOptions = FilesystemOptions &
   Prismeai.WorkspaceRepository['config'];
 
