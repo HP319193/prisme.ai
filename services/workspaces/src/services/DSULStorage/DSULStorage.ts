@@ -19,7 +19,6 @@ import {
   FolderIndexSuffix,
   getFolderIndexType,
 } from './types';
-import { join } from 'path';
 
 export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
   private driver: IStorage;

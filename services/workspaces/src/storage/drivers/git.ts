@@ -10,6 +10,12 @@ import { join } from 'path';
 import Filesystem, { FilesystemOptions } from './filesystem';
 import { promises as promisesFs } from 'fs';
 import { ObjectNotFoundError, PrismeError } from '../../errors';
+import { URL } from 'url';
+import { ForbiddenError } from '@prisme.ai/permissions';
+import { token } from '../../utils';
+
+const debug = require('debug');
+debug.enable('simple-git,simple-git:*');
 
 export type GitOptions = FilesystemOptions &
   Prismeai.WorkspaceRepository['config'];
@@ -43,8 +49,10 @@ export default class Git extends Filesystem {
       trimmed: false,
     };
 
-    // when setting all options in a single object
-    this.git = simpleGit(gitOptions).clean(CleanOptions.FORCE);
+    // Init authentication
+    this.git = simpleGit(gitOptions)
+      .clean(CleanOptions.FORCE)
+      .env({ GIT_TERMINAL_PROMPT: '0' });
   }
 
   type() {
@@ -55,22 +63,68 @@ export default class Git extends Filesystem {
     return join(this.gitOptions.dirpath || '', key);
   }
 
+  async pull(repoId: string) {
+    const path = this.getPath(repoId);
+    await promisesFs.mkdir(path, { recursive: true });
+    await this.git.cwd(path);
+    this.git.addConfig('credential.helper', 'cache --timeout=60', false);
+    try {
+      // This throw on 2nd exec
+      await this.git.addRemote('origin', this.gitOptions.url!);
+    } catch {}
+    try {
+      await this.git.init();
+
+      // Password authentication
+      let origin = this.gitOptions.url;
+      if (
+        this.gitOptions?.auth?.user &&
+        this.gitOptions?.auth?.password &&
+        origin.startsWith('https://')
+      ) {
+        const url = new URL(origin);
+        url.username = this.gitOptions.auth.user;
+        url.password = this.gitOptions.auth.password;
+        origin = url.toString();
+      }
+
+      // SSH Key auth
+      if (this.gitOptions?.auth?.sshkey) {
+        const filepath = `/tmp/${token()}`;
+        // Delete the key after 20 seconds
+        setTimeout(() => {
+          promisesFs.unlink(filepath);
+        }, 20000);
+        await promisesFs.writeFile(
+          filepath,
+          this.gitOptions?.auth?.sshkey.trim() + '\n',
+          {
+            mode: 0o600,
+          }
+        );
+        this.git.addConfig(
+          'core.sshCommand',
+          `ssh -i ${filepath} -o IdentitiesOnly=yes`
+        );
+      }
+
+      await this.git.pull(origin, this.gitOptions.branch);
+      await this.git.checkout(this.gitOptions.branch);
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async export(
     subkey: string,
     outStream?: stream.Writable,
     opts?: GitExportOptions
   ) {
     try {
-      // Prepare & pull local repository
-      const path = this.getPath(subkey);
-      await promisesFs.mkdir(path, { recursive: true });
-      await this.git.cwd(path);
-      await this.git.init();
-      await this.git.pull(this.gitOptions.url!, this.gitOptions.branch);
+      await this.pull(subkey);
+
       if (opts?.commit) {
         await this.git.checkout(opts?.commit);
-      } else {
-        await this.git.checkout(this.gitOptions.branch);
       }
 
       // Write given stream to this directory
@@ -92,16 +146,7 @@ export default class Git extends Filesystem {
 
   async import(subkey: string, zip: stream.Readable, opts?: ImportOptions) {
     try {
-      // Prepare & pull local repository
-      const path = this.getPath(subkey);
-      await promisesFs.mkdir(path, { recursive: true });
-      await this.git.cwd(path);
-      try {
-        // This throw on 2nd exec
-        await this.git.addRemote('origin', this.gitOptions.url!);
-      } catch {}
-      await this.git.init();
-      await this.git.pull(this.gitOptions.url!, this.gitOptions.branch);
+      await this.pull(subkey);
 
       // Write given stream to this directory
       await super.import(subkey, zip, opts);
@@ -130,6 +175,13 @@ export default class Git extends Filesystem {
     } else if (`${err}`.includes('Could not read from remote repository')) {
       throw new ObjectNotFoundError(
         `Repository ${this.gitOptions.url} is either unreachable or unauthenticated`,
+        {
+          repository: this.gitOptions.url,
+        }
+      );
+    } else if (`${err}`.includes('Authentication failed')) {
+      throw new ForbiddenError(
+        `Authentication failed for repository ${this.gitOptions.url}`,
         {
           repository: this.gitOptions.url,
         }

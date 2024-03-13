@@ -5,8 +5,8 @@ export function uniqueId() {
   return crypto.randomBytes(16).toString('hex');
 }
 
-export function token() {
-  return crypto.randomBytes(64).toString('hex');
+export function token(size = 64) {
+  return crypto.randomBytes(size).toString('hex');
 }
 
 export async function temporaryToken(
