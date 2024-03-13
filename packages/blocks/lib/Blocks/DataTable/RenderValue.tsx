@@ -6,6 +6,7 @@ import { interpolate } from '../../interpolate';
 import { useBlock } from '../../Provider';
 import { RichText } from '../RichText';
 import { useBlocks } from '../../Provider/blocksContext';
+import _get from 'lodash.get';
 
 const generateColor = (str: string) => {
   const cyrb53 = function (str = '', seed = 0) {
@@ -36,7 +37,7 @@ interface RenderValueAttributes extends ColumnDefinition {
 export const renderValue =
   ({ key, type, language, format, onEdit, actions }: RenderValueAttributes) =>
   (_: any, item: any) => {
-    const value = key ? item[key] : undefined;
+    const value = key ? _get(item, key) : undefined;
     const { events } = useBlock();
     const {
       components: { Link },
