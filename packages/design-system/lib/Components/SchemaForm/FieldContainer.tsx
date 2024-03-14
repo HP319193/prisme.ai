@@ -15,11 +15,14 @@ export const FieldContainer: FC<FieldProps> = (props) => {
     components: { FieldContainer: C = DefaultFieldContainer },
   } = useSchemaForm();
   const field = useField(props.name);
+
   return (
     <C
       {...props}
       className={`${props.className} ${
-        field.meta.dirty && field.meta.error ? 'pr-form-field--error' : ''
+        props.name !== 'values' && field.meta.dirty && field.meta.error
+          ? 'pr-form-field--error'
+          : ''
       }`}
     />
   );
