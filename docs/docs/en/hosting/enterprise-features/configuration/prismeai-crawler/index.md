@@ -6,13 +6,6 @@ They need access to:
 - An **ElasticSearch**, it can be the same as the one used for the core deployment  
 - A **Redis**, the instance can be the same as the one used for the core deployment, however we recommending targeting a dedicated database  
 
-### Activate notifications on redis  
-Notifications should be enabled on the Redis instance, this can be done in different ways, here is an example using the redis-cli:
-
-```sh
-redis-cli config set notify-keyspace-events KEA
-```
-
 ## Environment variables
 * REDIS_URL=redis://localhost:6379
 * ELASTIC_SEARCH_URL=localhost  
