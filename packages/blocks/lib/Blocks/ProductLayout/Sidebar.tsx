@@ -1,5 +1,11 @@
 import { Tooltip } from 'antd';
-import { HTMLAttributes, ReactNode, useMemo } from 'react';
+import {
+  cloneElement,
+  HTMLAttributes,
+  ReactElement,
+  ReactNode,
+  useMemo,
+} from 'react';
 import { Block } from './Block';
 import { isBlock, isRenderProp, isString } from './getContentType';
 import { useProductLayoutContext } from './Provider';
@@ -20,11 +26,13 @@ const LinkOrNot = ({
   href,
   className,
   onClick,
+  ifNot,
 }: {
   children: ReactNode;
   href?: string;
   className?: string;
   onClick?: HTMLAttributes<HTMLButtonElement>['onClick'];
+  ifNot?: ReactElement;
 }) => {
   const {
     components: { Link },
@@ -42,6 +50,10 @@ const LinkOrNot = ({
         {children}
       </Link>
     );
+  if (ifNot)
+    return cloneElement(ifNot, {
+      children,
+    });
   return <>{children}</>;
 };
 
@@ -79,12 +91,15 @@ export const SidebarHeader = ({
     if (isBlock(buttons)) {
       return <Block content={buttons} />;
     }
-    return buttons?.map(({ icon, type, value, payload }) => {
+    return buttons?.map(({ icon, type, value, payload, className }) => {
       if (!icon) return null;
       return (
         <LinkOrNot
           href={['internal', 'external'].includes(type) ? value : undefined}
-          className="product-layout-sidebar__header-link product-layout-sidebar__header-link--button"
+          className={`product-layout-sidebar__header-link product-layout-sidebar__header-link--button ${
+            className || ''
+          }`}
+          ifNot={<span className={className}></span>}
         >
           <button
             type="button"

@@ -6,7 +6,7 @@ exports[`should render a single input 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="pr-form-field pr-form-text"
+    className="pr-form-field pr-form-text "
   />
 </form>
 `;
@@ -17,7 +17,7 @@ exports[`should render buttons 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="pr-form-field pr-form-any"
+    className="pr-form-field pr-form-any "
   />
   <button>
     foo
@@ -34,7 +34,7 @@ exports[`should render empty form 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="pr-form-field pr-form-any"
+    className="pr-form-field pr-form-any "
   />
   Submit
 </form>
@@ -46,7 +46,7 @@ exports[`should render no button 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="pr-form-field pr-form-any"
+    className="pr-form-field pr-form-any "
   />
 </form>
 `;
@@ -57,7 +57,7 @@ exports[`should render single all types 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="pr-form-field pr-form-object"
+    className="pr-form-field pr-form-object "
   >
     
     <div
@@ -71,7 +71,7 @@ exports[`should render single all types 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-text"
+              className="pr-form-field pr-form-text "
             >
               <label
                 className="pr-form-text__label pr-form-label"
@@ -88,7 +88,7 @@ exports[`should render single all types 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-text"
+              className="pr-form-field pr-form-text "
             >
               <label
                 className="pr-form-text__label pr-form-label"
@@ -105,7 +105,7 @@ exports[`should render single all types 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-boolean"
+              className="pr-form-field pr-form-boolean "
             >
               <label
                 className="pr-form-boolean__label pr-form-label"
@@ -122,7 +122,7 @@ exports[`should render single all types 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-array"
+              className="pr-form-field pr-form-array "
             >
               <label
                 className="pr-form-array__label pr-form-label"
@@ -142,7 +142,7 @@ exports[`should render single all types 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-object"
+              className="pr-form-field pr-form-object "
             >
               <button
                 className="pr-form-object__label pr-form-label pr-form-object__label--visible"
@@ -161,7 +161,7 @@ exports[`should render single all types 1`] = `
                     className="pr-form-object__properties"
                   >
                     <div
-                      className="pr-form-field pr-form-additional-properties pr-form-additional-properties--free"
+                      className="pr-form-field pr-form-additional-properties pr-form-additional-properties--free "
                     >
                       <div
                         className="flex flex-1 flex-col justify-between "
@@ -176,7 +176,7 @@ exports[`should render single all types 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-object"
+              className="pr-form-field pr-form-object "
             >
               <button
                 className="pr-form-object__label pr-form-label pr-form-object__label--visible"
@@ -195,7 +195,7 @@ exports[`should render single all types 1`] = `
                     className="pr-form-object__properties"
                   >
                     <div
-                      className="pr-form-field pr-form-additional-properties"
+                      className="pr-form-field pr-form-additional-properties "
                     >
                       Add a property
                     </div>
@@ -229,7 +229,7 @@ exports[`should set locales 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="pr-form-field pr-form-text"
+    className="pr-form-field pr-form-text "
   />
   SUBMIT
 </form>
@@ -241,7 +241,7 @@ exports[`should use ui:widgets 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="pr-form-field pr-form-object"
+    className="pr-form-field pr-form-object "
   >
     
     <div
@@ -255,7 +255,7 @@ exports[`should use ui:widgets 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-array"
+              className="pr-form-field pr-form-array "
             >
               <label
                 className="pr-form-array__label pr-form-label"
@@ -275,7 +275,7 @@ exports[`should use ui:widgets 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-upload"
+              className="pr-form-field pr-form-upload "
             >
               <label
                 className="pr-form-upload__label pr-form-label"
@@ -311,7 +311,7 @@ exports[`should use ui:widgets 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-text pr-form-text--textarea"
+              className="pr-form-field pr-form-text pr-form-text--textarea "
             >
               <label
                 className="pr-form-text__label pr-form-label"
@@ -331,7 +331,7 @@ exports[`should use ui:widgets 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-select pr-form-select--selected-"
+              className="pr-form-field pr-form-select pr-form-select--selected- "
             >
               <label
                 className="pr-form-select__label pr-form-label"
@@ -348,7 +348,7 @@ exports[`should use ui:widgets 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-text"
+              className="pr-form-field pr-form-text "
             >
               <label
                 className="pr-form-text__label pr-form-label"
@@ -365,7 +365,7 @@ exports[`should use ui:widgets 1`] = `
             className="pr-form-object__property"
           >
             <div
-              className="pr-form-field pr-form-date"
+              className="pr-form-field pr-form-date "
             >
               <label
                 className="pr-form-date__label pr-form-label"

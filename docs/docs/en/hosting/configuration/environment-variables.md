@@ -90,8 +90,8 @@
    <tr>
     <td>OIDC_PROVIDER_URL</td>
     <td>api-gateway, pages, console, runtime</td>
-    <td>OIDC Authorization server URL</td>
-    <td>API_URL env var, without any base path. You don't need to define this OIDC variable if you intend to <a href="../../authentication/">add another provider</a> </td>
+    <td>OIDC Authorization server URL. You don't need to define this OIDC variable if you intend to <a href="../../authentication/">add another provider</a></td>
+    <td>API_URL env var, without any base path.</td>
   </tr>  
    <tr>
     <td>OIDC_STUDIO_CLIENT_ID</td>
@@ -134,6 +134,13 @@
     <td>api-gateway, runtime</td>
     <td>JWKS file path for access token JWT signing. Also used for runtime fetch instruction with current user session</td>
     <td>root jwks.json file</td>
+  </tr>       
+  <tr>
+    <td>JWKS_URL</td>
+    <td>api-gateway</td>
+    <td>Defines the endpoint to call in order to retrieve the JWKS as part of our JWKS strategy.<br/>
+    You might want to change this value using an internal api-gateway hostname if your are using our local provider (example: <code>http://api-gateway/oidc/jwks</code>).</td>
+    <td>OIDC_PROVIDER_URL/oidc/jwks</td>
   </tr> 
   <tr>
     <td>SESSION_COOKIES_SIGN_SECRET</td>

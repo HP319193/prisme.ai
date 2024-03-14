@@ -479,6 +479,7 @@ export class Api extends Fetcher {
     if (filters && filters['source.sessionId'] === true) {
       if (this.sessionId) {
         filters['source.sessionId'] = this.sessionId;
+        filters['target.userTopic'] = ''; // We do not want to receive userTopics emitted by ourself for this session listener
       } else {
         delete filters['source.sessionId'];
       }
