@@ -76,7 +76,7 @@ export const SectionContent = ({
     return {
       automation: localize(automationName ? automationName : automationSlug),
       page: event?.payload?.page?.name && localize(event.payload.page.name),
-      event: event?.payload?.event?.type,
+      eventType: event?.payload?.event?.type,
       waits: getWaits(),
       appSlug: event?.payload?.appInstance?.appSlug,
       appName:

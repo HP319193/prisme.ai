@@ -1698,7 +1698,7 @@
     "type_runtime.waits.pending_oneOf_one": "dari kegiatan tersebut <event>{{events}}</event>",
     "type_runtime.waits.pending_oneOf_other": "dari kegiatan <event>{{events}}</event>",
     "type_runtime.waits.pending_timeout": "untuk {{timeout}}s",
-    "type_runtime.waits.fulfilled": "Otomatisasi <automation>{{automation}}</automation> memungkinkan orang lain melanjutkan kegiatan tersebut <event>{{event}}</event>",
+    "type_runtime.waits.fulfilled": "Otomatisasi <automation>{{automation}}</automation> memungkinkan orang lain melanjutkan kegiatan tersebut <event>{{eventType}}</event>",
     "type_runtime.fetch.failed": "Permintaan HTTP gaggle",
     "type_runtime.contexts.updated": "Konteks yang diperbarui",
     "type_apikeys.updated": "Sebuah kunci API telah diperbarui",

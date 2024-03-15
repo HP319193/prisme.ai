@@ -1712,7 +1712,7 @@
     "type_runtime.waits.pending_oneOf_one": "of the event <event>{{events}}</event>",
     "type_runtime.waits.pending_oneOf_other": "of events <event>{{events}}</event>",
     "type_runtime.waits.pending_timeout": "for {{timeout}}s",
-    "type_runtime.waits.fulfilled": "The automation <automation>{{automation}}</automation> allowed another to resume following the event <event>{{event}}</event>",
+    "type_runtime.waits.fulfilled": "The automation <automation>{{automation}}</automation> allowed another to resume following the event <event>{{eventType}}</event>",
     "type_runtime.fetch.failed": "HTTP request failed",
     "type_runtime.contexts.updated": "Updated context",
     "type_apikeys.updated": "An API key has been updated",
