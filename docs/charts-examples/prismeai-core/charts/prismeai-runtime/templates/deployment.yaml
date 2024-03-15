@@ -116,9 +116,10 @@ spec:
 
             - name: API_URL
               value: {{ .Values.global.apiUrl }}
-            # legacy var, to remove
-            - name: PUBLIC_API_URL
-              value: {{ .Values.global.apiUrl }}
+            - name: CONSOLE_URL
+              value: {{ .Values.global.consoleUrl }}
+            - name: PAGES_HOST
+              value: {{ .Values.global.pagesHost }}
 
 
             {{- with .Values.env }}

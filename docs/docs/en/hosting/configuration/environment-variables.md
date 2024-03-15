@@ -212,34 +212,36 @@
     <td>Enable email validation on signup</td>
     <td>true</td>    
   </tr>
-
   <tr>
     <td>WORKSPACES_API_URL</td>
     <td>api-gateway</td>
     <td>prismeai-workspaces internal URL</td>
     <td>http://workspaces:3002</td>
   </tr>      
-
   <tr>
     <td>EVENTS_API_URL</td>
     <td>api-gateway</td>
     <td>prismeai-events internal URL</td>
     <td>http://events:3004</td>
   </tr>      
-
   <tr>
     <td>RUNTIME_API_URL</td>
     <td>api-gateway</td>
     <td>prismeai-runtime internal URL</td>
     <td>http://runtime:3003</td>
   </tr>          
-
   <tr>
     <td>X_FORWARDED_HEADERS</td>
     <td>api-gateway</td>
     <td>Add X-Forwarded-* headers on proxied requests</td>
     <td>yes</td>
-  </tr>            
+  </tr>
+  <tr>
+    <td>SUPER_ADMIN_EMAILS</td>
+    <td>api-gateway</td>
+    <td>List of users emails which should have access to every workspaces. Each email should be separated with a comma. Example: <code>john.doe@foo.com,admin@bar.ai</code></td>
+    <td>None</td>
+  </tr> 
 
   <!-- Events -->
   <tr>
@@ -511,7 +513,24 @@
     <td>runtime</td>
     <td>Additional variables that will be available from global context (ADDITIONAL_GLOBAL_VARS_apiUrl will be available as {{global.apiUrl}}).</td>
     <td>None</td>
-  </tr>         
+  </tr> 
+
+  <tr>
+    <td>WORKSPACE_CONFIG_{{workspaceSlug}}_{{variableName}} </td>
+    <td>runtime</td>
+    <td>Additional variables that will be available for a specific workspace. (<code>WORKSPACE_CONFIG_knowledge-manager_secretApiKey</code> will be available at <code>{{config.secretApiKey}}</code> within the automations of the knowledge-manager workspace).</td>
+    <td>None</td>
+  </tr> 
+
+  <tr>
+    <td>APP_CONFIG_{{appSlug}}_{{variableName}} </td>
+    <td>runtime</td>
+    <td>Additional variables that will be available for a specific app. 
+    (<code>APP_CONFIG_MailSender_mailApiKey</code> will be available as <code>{{config.mailApiKey}}</code> within the automations of an instance of the MailSender app). Useful if you want to publish your app without compromising a secret.</td>
+    <td>None</td>
+  </tr> 
+
+         
 
   <!-- Workspaces -->          
   <tr>
