@@ -46,7 +46,7 @@ export const Add = ({ children, type, path = '' }: AppProps) => {
             ({ slug }) => slug === values.template
           );
           if (template) {
-            values = { ...template };
+            values = { ...template, public: true };
           }
           ok = await createPage(values);
           break;
