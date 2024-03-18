@@ -499,10 +499,9 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
         mongoQuery.status = status;
       }
 
-      authProvider = authProvider || 'prismeai';
       if (authProvider === 'prismeai') {
         mongoQuery['password'] = { $exists: true };
-      } else {
+      } else if (authProvider) {
         mongoQuery['authData.' + authProvider] = { $exists: true };
       }
 
