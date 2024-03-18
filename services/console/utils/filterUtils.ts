@@ -11,3 +11,7 @@ export const search = (search: string) => (v: string) =>
   removeAccents(v.toLowerCase()).match(
     removeAccents(search.toLowerCase()).replace(/\s/g, '.*')
   );
+
+export function cleanSearch(search: string) {
+  return search.replace(/([\?\[\]\(\)\+])/g, '\\$1');
+}

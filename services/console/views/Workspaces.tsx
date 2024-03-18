@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspaces } from '../providers/Workspaces';
-import { removeEmpty, search } from '../utils/filterUtils';
+import { cleanSearch, removeEmpty, search } from '../utils/filterUtils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Workspace } from '../utils/api';
 import getConfig from 'next/config';
@@ -90,7 +90,7 @@ export const WorkspacesView = () => {
             +new Date(B) - +new Date(A)
         )
         .filter(({ name, description }) =>
-          search(searchValue)(`${name} ${description}`)
+          search(cleanSearch(searchValue))(`${name} ${description}`)
         ),
     [searchValue, workspaces]
   );
@@ -117,7 +117,7 @@ export const WorkspacesView = () => {
   const filteredSuggestions = useMemo(
     () =>
       suggestions.filter(({ name, description }) =>
-        search(searchValue)(`${name} ${description}`)
+        search(cleanSearch(searchValue))(`${name} ${description}`)
       ),
     [searchValue, suggestions]
   );

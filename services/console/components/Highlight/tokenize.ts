@@ -1,3 +1,5 @@
+import { cleanSearch } from '../../utils/filterUtils';
+
 interface Token {
   highlight: boolean;
   text: string;
@@ -23,7 +25,7 @@ export function tokenize(from: string, search: string) {
       Array.from(
         `${from}`
           .toLowerCase()
-          .matchAll(new RegExp(`${part.toLowerCase()}`, 'g'))
+          .matchAll(new RegExp(`${cleanSearch(part.toLowerCase())}`, 'g'))
       )
     );
 
