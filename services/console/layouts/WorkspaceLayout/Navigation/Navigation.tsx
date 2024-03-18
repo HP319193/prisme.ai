@@ -24,7 +24,7 @@ import OpenStateProvider, { useOpenState } from './OpenStateProvider';
 import RootLinksGroup from './RootLinksGroup';
 import Highlight from '../../../components/Highlight';
 import Storage from '../../../utils/Storage';
-import { search } from '../../../utils/filterUtils';
+import { cleanSearch, search } from '../../../utils/filterUtils';
 
 const {
   ProductLayout: { IconHome, IconCharts, useProductLayoutContext },
@@ -262,7 +262,7 @@ export const Navigation = () => {
             generateNesting(
               Object.entries(workspace.pages || {})
                 .filter(([slug, { name = '', description = '' }]) =>
-                  search(searchQuery)(
+                  search(cleanSearch(searchQuery))(
                     `${slug} ${localize(name) || ''} ${
                       localize(description) || ''
                     }`
@@ -288,7 +288,7 @@ export const Navigation = () => {
             generateNesting(
               Object.entries(workspace.automations || {})
                 .filter(([slug, { name = '', description = '' }]) =>
-                  search(searchQuery)(
+                  search(cleanSearch(searchQuery))(
                     `${slug} ${localize(name) || ''} ${
                       localize(description) || ''
                     }`
@@ -318,7 +318,7 @@ export const Navigation = () => {
             generateNesting(
               Object.entries(workspace.blocks || {})
                 .filter(([slug, { name = '', description = '' }]) =>
-                  search(searchQuery)(
+                  search(cleanSearch(searchQuery))(
                     `${slug} ${localize(name) || ''} ${
                       localize(description) || ''
                     }`
@@ -348,7 +348,9 @@ export const Navigation = () => {
             generateNesting(
               Object.entries(workspace.imports || {})
                 .filter(([slug, { appName = '' }]) =>
-                  search(searchQuery)(`${slug} ${localize(appName)}`)
+                  search(cleanSearch(searchQuery))(
+                    `${slug} ${localize(appName)}`
+                  )
                 )
                 .map(([slug, app]) =>
                   processItems({
