@@ -378,7 +378,7 @@ export default function init(
       fileSize: UPLOADS_MAX_SIZE,
     },
     fileFilter: (req, file, callback) => {
-      const allowedExts = ['.zip'];
+      const allowedExts = ['.zip', '.x-zip-compressed'];
       const ext = path.extname(file.originalname);
       if (!allowedExts.includes(ext)) {
         return callback(
