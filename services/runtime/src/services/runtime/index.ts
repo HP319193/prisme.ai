@@ -383,7 +383,9 @@ export default class Runtime {
   }
 
   getContexts(source: PrismeEvent['source']) {
-    return source?.correlationId ? this.contexts[source.correlationId] : [];
+    return source?.correlationId
+      ? this.contexts[source.correlationId] || []
+      : [];
   }
 
   async processEvent(
