@@ -9,7 +9,11 @@ import { DriverType, ExportOptions, ImportOptions } from '../types';
 import { join } from 'path';
 import Filesystem, { FilesystemOptions } from './filesystem';
 import { promises as promisesFs } from 'fs';
-import { ObjectNotFoundError, PrismeError } from '../../errors';
+import {
+  AlreadyUsedError,
+  ObjectNotFoundError,
+  PrismeError,
+} from '../../errors';
 import { URL } from 'url';
 import { ForbiddenError } from '@prisme.ai/permissions';
 import { token } from '../../utils';
@@ -153,8 +157,26 @@ export default class Git extends Filesystem {
         .add('--all')
         .commit(opts?.description || `Prismeai Import`);
       await this.git.push(this.gitOptions.url!, this.gitOptions.branch);
+
+      // Push tags
+      if (opts?.versionId) {
+        await this.git.addTag(opts?.versionId).pushTags(this.gitOptions.url!);
+      }
       return true;
     } catch (err) {
+      if (
+        opts?.versionId &&
+        `${err}`.includes(`fatal: tag '${opts?.versionId}' already exists`)
+      ) {
+        throw new AlreadyUsedError(
+          `Given version tag '${opts?.versionId}' already exists at '${this.gitOptions.url}'`,
+          {
+            repository: this.gitOptions.url,
+            branch: this.gitOptions.branch,
+            tag: opts.versionId,
+          }
+        );
+      }
       this.handleErrors(err as Error);
       throw err;
     }

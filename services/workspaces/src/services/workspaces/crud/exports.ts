@@ -109,7 +109,7 @@ export class WorkspaceExports extends DsulCrud {
     const parentArchive = archiver('zip', {
       zlib: { level: 9 }, // Sets the compression level.
     });
-    parentArchive.pipe(outStream);
+    parentArchive.pipe(outStream as any as NodeJS.WritableStream);
 
     parentArchive.append(JSON.stringify(bulkExport), {
       name: 'bulkExport.json',

@@ -16,9 +16,9 @@ import { DriverType, IStorage } from '../../../../storage/types';
 import buildStorage from '../../../../storage';
 import { WORKSPACES_STORAGE_GIT_OPTIONS } from '../../../../../config';
 import { DSULFolders, DSULRootFiles, DSULType } from '../../../DSULStorage';
-import { WorkspaceExports } from '../exports';
 import { join } from 'path';
 import { GitExportOptions } from '../../../../storage/drivers/git';
+import { WorkspaceExports } from '../exports';
 
 export class WorkspaceVersions extends DsulCrud {
   list = async (workspaceId: string) => {
@@ -121,6 +121,7 @@ export class WorkspaceVersions extends DsulCrud {
           archive: true,
           removeAdditionalFiles: true,
           description: version.description + ` | Author : ${prismeaiAuthor}`,
+          versionId: version.name,
           // We have to strip beginning current/ folder as we can only export the version folder itself & not its content
           fileCallback: (filepath: string) => {
             if (filepath.startsWith(`${publishedVersion}/`)) {

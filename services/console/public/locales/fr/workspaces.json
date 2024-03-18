@@ -120,7 +120,7 @@
     "notFound": "Le Workspace n'existe pas.",
     "versions": {
       "create": {
-        "label": "Créer une version",
+        "label": "Push",
         "description": "Créez une nouvelle version vers laquelle vous pourrez revenir à tout instant même après avoir enregistré des modification sur votre Workspace.",
         "name": "Décrivez votre version si vous le désirez",
         "success": "Nouvelle version crée. Vous pourrez la retrouver dans l'Activité de votre Workspace."
@@ -134,6 +134,9 @@
       },
       "export": {
         "label": "Exporter"
+      },
+      "pull": {
+        "label": "Pull"
       }
     },
     "tabs": {

@@ -120,7 +120,7 @@
     "notFound": "Workspace not found.",
     "versions": {
       "create": {
-        "label": "Create a version",
+        "label": "Push",
         "description": "Create a new version to which you can return at any time even after saving changes to your Workspace.",
         "name": "Describe your version if you wish",
         "success": "New version created. You will be able to find it in the Activity of your Workspace."
@@ -134,6 +134,9 @@
       },
       "export": {
         "label": "Export"
+      },
+      "pull": {
+        "label": "Pull"
       }
     },
     "tabs": {

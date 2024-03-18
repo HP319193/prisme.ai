@@ -128,11 +128,20 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         ),
       },
       {
-        key: 'version',
+        key: 'versionPush',
         label: (
           <button onClick={onVersion} className="flex flex-row items-center">
             <TagIcon className="mr-2" />
             {t(`workspace.versions.create.label`)}
+          </button>
+        ),
+      },
+      {
+        key: 'versionPull',
+        label: (
+          <button onClick={onVersion} className="flex flex-row items-center">
+            <TagIcon className="mr-2" />
+            {t(`workspace.versions.pull.label`)}
           </button>
         ),
       },
