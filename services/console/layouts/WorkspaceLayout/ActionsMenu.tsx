@@ -28,7 +28,9 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
   const { displaySource, sourceDisplayed } = useWorkspaceLayout();
   const [exporting, setExporting] = useState(false);
   const [publishVisible, setPublishVisible] = useState(false);
-  const [versionVisible, setVersionVisible] = useState(false);
+  const [versionVisible, setVersionVisible] = useState<false | 'push' | 'pull'>(
+    false
+  );
 
   const onDisplaySource = useCallback(() => {
     trackEvent({
@@ -62,13 +64,16 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
     setPublishVisible(true);
   }, [trackEvent]);
 
-  const onVersion = useCallback(() => {
-    trackEvent({
-      name: 'Display Versionning Modal',
-      action: 'click',
-    });
-    setVersionVisible(true);
-  }, [trackEvent]);
+  const onVersion = useCallback(
+    (action: 'push' | 'pull') => {
+      trackEvent({
+        name: 'Display ' + action + ' Versionning Modal',
+        action: 'click',
+      });
+      setVersionVisible(action);
+    },
+    [trackEvent]
+  );
 
   const onExport = useCallback(async () => {
     trackEvent({
@@ -130,7 +135,10 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
       {
         key: 'versionPush',
         label: (
-          <button onClick={onVersion} className="flex flex-row items-center">
+          <button
+            onClick={() => onVersion('push')}
+            className="flex flex-row items-center"
+          >
             <TagIcon className="mr-2" />
             {t(`workspace.versions.create.label`)}
           </button>
@@ -139,7 +147,10 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
       {
         key: 'versionPull',
         label: (
-          <button onClick={onVersion} className="flex flex-row items-center">
+          <button
+            onClick={() => onVersion('pull')}
+            className="flex flex-row items-center"
+          >
             <TagIcon className="mr-2" />
             {t(`workspace.versions.pull.label`)}
           </button>

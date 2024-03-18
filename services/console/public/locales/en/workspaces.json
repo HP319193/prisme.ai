@@ -119,6 +119,7 @@
     "sidebar_minimize": "Minimize navigation",
     "notFound": "Workspace not found.",
     "versions": {
+      "repository": "Repository",
       "create": {
         "label": "Push",
         "description": "Create a new version to which you can return at any time even after saving changes to your Workspace.",
@@ -136,7 +137,10 @@
         "label": "Export"
       },
       "pull": {
-        "label": "Pull"
+        "label": "Pull",
+        "description": "Update current workspace from a remote repository. Any update not synced with that repository will be lost.",
+        "confirm_ok": "Update",
+        "success": "Workspace succesfully updated."
       }
     },
     "tabs": {

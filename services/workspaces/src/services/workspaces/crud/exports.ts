@@ -577,6 +577,7 @@ export class WorkspaceExports extends DsulCrud {
         files: imported,
         deleted: deletedFiles,
         version: opts?.sourceVersion,
+        errors,
       },
       { workspaceId }
     );

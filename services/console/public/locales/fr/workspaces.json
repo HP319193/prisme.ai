@@ -119,6 +119,7 @@
     "sidebar_minimize": "Réduire la navigation",
     "notFound": "Le Workspace n'existe pas.",
     "versions": {
+      "repository": "Dépôt",
       "create": {
         "label": "Push",
         "description": "Créez une nouvelle version vers laquelle vous pourrez revenir à tout instant même après avoir enregistré des modification sur votre Workspace.",
@@ -136,7 +137,10 @@
         "label": "Exporter"
       },
       "pull": {
-        "label": "Pull"
+        "label": "Pull",
+        "description": "Mettre à jour le workpsace depuis la dernière version d'un dépôt distant. Toute modification qui n'a pas été sauvegardée sur ce même dépôt sera perdue.",
+        "confirm_ok": "Mettre à jour",
+        "success": "Workspace mis à jour avec succès"
       }
     },
     "tabs": {

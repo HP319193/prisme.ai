@@ -13,9 +13,13 @@ export class WorkspacesVersionsEndpoint {
     this.api.post(`/workspaces/${this.workspaceId}/versions`, version);
   }
   rollback(
-    versionId: PrismeaiAPI.PullWorkspaceVersion.PathParameters['versionId']
+    versionId: PrismeaiAPI.PullWorkspaceVersion.PathParameters['versionId'],
+    opts?: PrismeaiAPI.PullWorkspaceVersion.RequestBody
   ) {
-    this.api.post(`/workspaces/${this.workspaceId}/versions/${versionId}/pull`);
+    this.api.post(
+      `/workspaces/${this.workspaceId}/versions/${versionId}/pull`,
+      opts
+    );
   }
 
   async export(

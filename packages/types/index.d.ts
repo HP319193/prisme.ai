@@ -1796,6 +1796,9 @@ declare namespace Prismeai {
             files: string[];
             deleted?: string[];
             version?: WorkspaceVersion;
+            errors?: {
+                [name: string]: any;
+            }[];
         };
     }
     export interface InstalledAppInstance {

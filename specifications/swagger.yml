@@ -2190,6 +2190,11 @@ components:
                 type: string
             version:
               $ref: "#/components/schemas/WorkspaceVersion"
+            errors:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
 
     ConfiguredWorkspace:
       type: object
