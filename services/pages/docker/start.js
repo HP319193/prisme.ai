@@ -13,19 +13,21 @@ const ENVS = [
 const path = '/www/services/pages/.next/server/pages/';
 
 function rewriteConfig(lang) {
-  const errorFile = fs.readFileSync(`${path}/${lang}/404.html`);
+  try {
+    const errorFile = fs.readFileSync(`${path}/${lang}/404.html`);
 
-  fs.writeFileSync(
-    `${path}/${lang}/404.html`,
-    ENVS.reduce(
-      (prev, env) =>
-        prev.replace(
-          new RegExp(`"${env}":"[^\"]*"`),
-          `"${env}":"${process.env[env] || 'changed'}"`
-        ),
-      `${errorFile}`
-    )
-  );
+    fs.writeFileSync(
+      `${path}/${lang}/404.html`,
+      ENVS.reduce(
+        (prev, env) =>
+          prev.replace(
+            new RegExp(`"${env}":"[^\"]*"`),
+            `"${env}":"${process.env[env] || 'changed'}"`
+          ),
+        `${errorFile}`
+      )
+    );
+  } catch {}
 }
 
 const langs = fs
