@@ -26,7 +26,8 @@ function t(key: string) {
 }
 
 export const FourHundredOne = () => {
-  const { i18n, t } = useTranslation();
+  console.log('dynamic 404');
+  const { i18n } = useTranslation('errors');
   useEffect(() => {
     const [, language] = window.location.pathname.match(/\/([a-z]{2})/) || [
       ,
@@ -39,9 +40,11 @@ export const FourHundredOne = () => {
 
   useEffect(() => {
     async function fetch() {
+      console.log('dynamic 404 loading page');
       const slug = getSubmodain(window.location.host);
       try {
         const customPage = await api.getPageBySlug(slug, '_404');
+        console.log('dynamic 404', customPage);
         setPage(customPage);
       } catch {}
       setLoadingCustomPage(false);
@@ -52,7 +55,7 @@ export const FourHundredOne = () => {
   if (loadingCustomPage) {
     return null;
   }
-
+  console.log('dynamic 404', page);
   if (page) {
     return (
       <PageProvider page={page}>
