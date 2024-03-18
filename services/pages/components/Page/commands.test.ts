@@ -196,3 +196,12 @@ it('should apply replace commands', () => {
     )
   ).toEqual({ foo: { bar: 2, other: true } });
 });
+
+it('should remove items', () => {
+  expect(
+    applyCommands(
+      { list: [{ id: 1 }, { id: 2 }, { id: 3 }] },
+      { $remove: { list: { id: 2 } } }
+    )
+  ).toEqual({ list: [{ id: 1 }, { id: 3 }] });
+});

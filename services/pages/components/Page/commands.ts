@@ -50,13 +50,36 @@ export function replace(value: Value, _with: Value) {
   return newValue;
 }
 
-export function applyCommands(prev: any, { $merge, $replace, ...next }: Next) {
+export function remove(value: Value, _with: Value) {
+  if (typeof _with !== 'object' || Array.isArray(_with)) return value;
+  let newValue = { ...value };
+  Object.entries(_with).forEach(([path, v]) => {
+    const _v = _get(newValue, path);
+    if (typeof _v !== 'object') return;
+    newValue = _set(
+      newValue,
+      path,
+      _v.filter(
+        (item: any) => !Object.entries(v).every(([k, v]) => item[k] === v)
+      )
+    );
+  });
+  return newValue;
+}
+
+export function applyCommands(
+  prev: any,
+  { $merge, $replace, $remove, ...next }: Next
+) {
   let value = _cloneDeep({ ...prev, ...next });
   if ($merge) {
     value = merge(value, $merge);
   }
   if ($replace) {
     value = replace(value, $replace);
+  }
+  if ($remove) {
+    value = remove(value, $remove);
   }
   return value;
 }
