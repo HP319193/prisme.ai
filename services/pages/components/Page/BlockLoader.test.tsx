@@ -51,7 +51,7 @@ jest.mock('../../../console/components/UserProvider', () => {
   };
 });
 
-jest.mock('../../utils/isServerSide', () => () => {
+jest.mock('../../../console/utils/isServerSide', () => () => {
   return true;
 });
 

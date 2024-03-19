@@ -15,7 +15,7 @@ import { computeBlock, original } from './computeBlocks';
 import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
 import fastDeepEqual from 'fast-deep-equal';
-import isServerSide from '../../utils/isServerSide';
+import isServerSide from '../../../console/utils/isServerSide';
 import { useRedirect } from './useRedirect';
 import { applyCommands } from './commands';
 import { useRouter } from 'next/router';
