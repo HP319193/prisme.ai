@@ -235,7 +235,7 @@ export function interpolateValue(value: any, values: any): any {
   if (typeof value === 'object') {
     const hidden =
       value[TEMPLATE_IF] && !testCondition(value[TEMPLATE_IF], values);
-    let output = value.slug ? value : computeBlock(value, values);
+    let output = value.slug ? value : computeBlock(value, values, true);
     if (hidden && typeof output === 'object' && !Array.isArray(output)) {
       output = { ...output, hidden };
     }
