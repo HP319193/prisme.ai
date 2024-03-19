@@ -22,8 +22,12 @@ export interface ExportOptions {
 export interface ImportOptions {
   archive?: boolean; // archive=true is the only mode supported
   removeAdditionalFiles?: boolean; // If true, remove files that were not present in archive content
-  description?: any; // Optional, human readable note describing the import content that may or may not be saved by underlying storage driver (i.e git commits)
-  versionId?: string; // Optional, versionId that might be used by driver to annotate or create an import record (i.e git tags)
+  meta: {
+    description?: any; // Optional, human readable note describing the import content that may or may not be saved by underlying storage driver (i.e git commits)
+    versionId?: string; // Optional, versionId that might be used by driver to annotate or create an import record (i.e git tags)
+    email?: string;
+    [k: string]: any; // Driver specific meta options
+  };
   fileCallback?: (filepath: string) => { filepath: string } | false;
 }
 

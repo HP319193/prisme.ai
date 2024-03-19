@@ -1,10 +1,5 @@
 import stream from 'stream';
-import {
-  simpleGit,
-  SimpleGit,
-  SimpleGitOptions,
-  CleanOptions,
-} from 'simple-git';
+import { simpleGit, SimpleGit, SimpleGitOptions } from 'simple-git';
 import { DriverType, ExportOptions, ImportOptions } from '../types';
 import { join } from 'path';
 import Filesystem, { FilesystemOptions } from './filesystem';
@@ -22,7 +17,8 @@ export type GitOptions = FilesystemOptions &
   Prismeai.WorkspaceRepository['config'];
 
 export type GitExportOptions = ExportOptions & {
-  commit?: string; // Speciic commit to export from
+  commit?: string; // Speciific commit to export from
+  email?: string; // Author email
 };
 
 export default class Git extends Filesystem {
@@ -43,17 +39,7 @@ export default class Git extends Filesystem {
       );
     }
     this.gitOptions = options as Required<GitOptions>;
-    const gitOptions: Partial<SimpleGitOptions> = {
-      baseDir: options.dirpath,
-      binary: 'git',
-      maxConcurrentProcesses: 6,
-      trimmed: false,
-    };
-
-    // Init authentication
-    this.git = simpleGit(gitOptions)
-      .clean(CleanOptions.FORCE)
-      .env({ GIT_TERMINAL_PROMPT: '0' });
+    this.git = simpleGit();
   }
 
   type() {
@@ -64,56 +50,75 @@ export default class Git extends Filesystem {
     return join(this.gitOptions.dirpath || '', key);
   }
 
-  async pull(repoId: string) {
+  private async initGit(repoId: string) {
     const path = this.getPath(repoId);
     await promisesFs.mkdir(path, { recursive: true });
-    await this.git.cwd(path);
-    this.git.addConfig('credential.helper', 'cache --timeout=60', false);
+    const gitOptions: Partial<SimpleGitOptions> = {
+      baseDir: path,
+      binary: 'git',
+      maxConcurrentProcesses: 6,
+      trimmed: false,
+    };
+
+    this.git = simpleGit(gitOptions).env({ GIT_TERMINAL_PROMPT: '0' });
+    await this.git.init();
+
+    // This block will throw on 2nd execution if local directory still exists
     try {
-      // This throw on 2nd exec
       await this.git.addRemote('origin', this.gitOptions.url!);
-    } catch {}
-    try {
-      await this.git.init();
-
-      // Password authentication
-      let origin = this.gitOptions.url;
-      if (
-        this.gitOptions?.auth?.user &&
-        this.gitOptions?.auth?.password &&
-        origin.startsWith('https://')
-      ) {
-        const url = new URL(origin);
-        url.username = this.gitOptions.auth.user;
-        url.password = this.gitOptions.auth.password;
-        origin = url.toString();
-      }
-
-      // SSH Key auth
-      if (this.gitOptions?.auth?.sshkey) {
-        const filepath = `/tmp/${token()}`;
-        // Delete the key after 20 seconds
-        setTimeout(() => {
-          promisesFs.unlink(filepath);
-        }, 20000);
-        await promisesFs.writeFile(
-          filepath,
-          this.gitOptions?.auth?.sshkey.trim() + '\n',
-          {
-            mode: 0o600,
-          }
-        );
-        this.git.addConfig(
-          'core.sshCommand',
-          `ssh -i ${filepath} -o IdentitiesOnly=yes`
-        );
-      }
-
-      await this.git.pull(origin, this.gitOptions.branch);
-      await this.git.checkout(this.gitOptions.branch);
+      await this.git.checkout(['-b', this.gitOptions.branch]);
+      await this.git.branch([
+        '-u',
+        `origin/${this.gitOptions.branch}`,
+        this.gitOptions.branch,
+      ]);
     } catch (err) {
-      throw err;
+      // Always keep url updated as a change of auth method to ssh won't work if current origin url starts with https:// instead of git@
+      await this.git.remote(['set-url', 'origin', this.gitOptions.url]);
     }
+  }
+
+  async pull(repoId: string) {
+    await this.initGit(repoId);
+    // Password authentication
+    let origin = this.gitOptions.url;
+    if (
+      this.gitOptions?.auth?.user &&
+      this.gitOptions?.auth?.password &&
+      origin.startsWith('https://')
+    ) {
+      const url = new URL(origin);
+      url.username = this.gitOptions.auth.user;
+      url.password = this.gitOptions.auth.password;
+      origin = url.toString();
+    }
+
+    // SSH Key auth
+    if (this.gitOptions?.auth?.sshkey) {
+      const filepath = `/tmp/${token()}`;
+      // Delete the key after 20 seconds
+      setTimeout(() => {
+        promisesFs.unlink(filepath);
+      }, 20000);
+      await promisesFs.writeFile(
+        filepath,
+        this.gitOptions?.auth?.sshkey.trim() + '\n',
+        {
+          mode: 0o600,
+        }
+      );
+      this.git.addConfig(
+        'core.sshCommand',
+        `ssh -i ${filepath} -o IdentitiesOnly=yes`
+      );
+    }
+
+    await this.git.pull(origin, this.gitOptions.branch);
+    await this.git.checkout(this.gitOptions.branch);
+
+    return {
+      authenticatedOrigin: origin,
+    };
   }
 
   async export(
@@ -147,7 +152,13 @@ export default class Git extends Filesystem {
 
   async import(subkey: string, zip: stream.Readable, opts?: ImportOptions) {
     try {
-      await this.pull(subkey);
+      // This origin might include password & must not be logged or transmitted
+      const { authenticatedOrigin } = await this.pull(subkey);
+
+      this.git.addConfig('user.email', opts?.meta?.email || 'hello@prisme.ai');
+      if (opts?.meta?.username) {
+        this.git.addConfig('user.name', opts.meta.username);
+      }
 
       // Write given stream to this directory
       await super.import(subkey, zip, opts);
@@ -155,25 +166,30 @@ export default class Git extends Filesystem {
       // Push
       await this.git
         .add('--all')
-        .commit(opts?.description || `Prismeai Import`);
-      await this.git.push(this.gitOptions.url!, this.gitOptions.branch);
+        .commit(opts?.meta?.description || `Prismeai Import`);
+      await this.git.push(authenticatedOrigin, this.gitOptions.branch);
 
       // Push tags
-      if (opts?.versionId) {
-        await this.git.addTag(opts?.versionId).pushTags(this.gitOptions.url!);
+      if (opts?.meta?.versionId) {
+        await this.git
+          .addTag(opts?.meta?.versionId)
+          .pushTags(authenticatedOrigin);
       }
       return true;
     } catch (err) {
       if (
-        opts?.versionId &&
-        `${err}`.includes(`fatal: tag '${opts?.versionId}' already exists`)
+        opts?.meta?.versionId &&
+        (`${err}`.includes(
+          `fatal: tag '${opts?.meta?.versionId}' already exists`
+        ) ||
+          `${err}`.includes(`tag already exists`))
       ) {
         throw new AlreadyUsedError(
-          `Given version tag '${opts?.versionId}' already exists at '${this.gitOptions.url}'`,
+          `Given version tag '${opts?.meta?.versionId}' already exists at '${this.gitOptions.url}'`,
           {
             repository: this.gitOptions.url,
             branch: this.gitOptions.branch,
-            tag: opts.versionId,
+            tag: opts.meta?.versionId,
           }
         );
       }

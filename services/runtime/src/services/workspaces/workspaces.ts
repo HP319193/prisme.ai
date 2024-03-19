@@ -260,7 +260,7 @@ export class Workspaces extends Storage {
                 );
                 resolve(rebuilt);
               } catch (err) {
-                console.error({
+                logger.error({
                   msg: 'Could not rebuild workspace DSUL after an import. This workspace might not function correctly.',
                   err,
                 });

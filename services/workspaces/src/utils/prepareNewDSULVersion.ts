@@ -45,7 +45,8 @@ export function prepareNewDSULVersion(
       idx++;
       curName = `${curDate}.${idx}`;
     }
-    return curName;
+    // Here we add a timestamp to ensure tag unicity accross environments (git synchronization)
+    return curName + `-${Date.now()}`;
   };
   const newVersion = {
     createdAt: `${new Date().toISOString()}`,

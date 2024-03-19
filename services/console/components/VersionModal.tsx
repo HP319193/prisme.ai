@@ -86,7 +86,12 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
             );
           },
         });
-      } catch (e) {}
+      } catch (err) {
+        notification.error({
+          message: `${err}`,
+          placement: 'bottomRight',
+        });
+      }
     },
     [description, push, t, trackEvent, workspace.id, repository]
   );

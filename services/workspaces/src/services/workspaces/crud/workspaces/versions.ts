@@ -15,8 +15,8 @@ import {
 import { DriverType, IStorage } from '../../../../storage/types';
 import buildStorage from '../../../../storage';
 import { WORKSPACES_STORAGE_GIT_OPTIONS } from '../../../../../config';
-import { DSULFolders, DSULRootFiles, DSULType } from '../../../DSULStorage';
-import { join } from 'path';
+import { DSULFolders, DSULRootFiles } from '../../../DSULStorage';
+import { join, parse } from 'path';
 import { GitExportOptions } from '../../../../storage/drivers/git';
 import { WorkspaceExports } from '../exports';
 
@@ -113,15 +113,25 @@ export class WorkspaceVersions extends DsulCrud {
         exportStream
       );
 
-      const prismeaiAuthor =
-        this.accessManager?.user?.authData?.prismeai?.email ||
-        this.accessManager?.user?.id;
+      const authData = Object.values(
+        this.accessManager?.user?.authData || {}
+      )[0];
+
       await Promise.all([
         destDriver.import(`${versionRequest.repository.id}`, exportStream, {
           archive: true,
           removeAdditionalFiles: true,
-          description: version.description + ` | Author : ${prismeaiAuthor}`,
-          versionId: version.name,
+          meta: {
+            description:
+              version.description +
+              ` | Author : ${authData?.email || this.accessManager?.user?.id}`,
+            versionId: version.name,
+            email: authData?.email,
+            username:
+              authData?.firstName || authData?.lastName
+                ? `${authData?.firstName || ''} ${authData?.lastName || ''}`
+                : undefined,
+          },
           // We have to strip beginning current/ folder as we can only export the version folder itself & not its content
           fileCallback: (filepath: string) => {
             if (filepath.startsWith(`${publishedVersion}/`)) {
@@ -234,22 +244,25 @@ export class WorkspaceVersions extends DsulCrud {
     }
 
     // Prepare the requested version archive
-    const whitelistFiles = DSULRootFiles.concat(
-      Object.values(DSULFolders) as any
-    );
     const exportOptions: GitExportOptions = {
       commit: version !== 'latest' ? version : undefined,
+      // Ignore beginning folders as they can vary depending on the extract source (native repository, archive, git versioning ?)
       fileCallback: (filepath) => {
+        const parsed = parse(filepath);
+
         if (
-          filepath.startsWith(DSULType.RuntimeModel) ||
-          !whitelistFiles.find((whitelisted) =>
-            filepath.startsWith(whitelisted)
-          )
+          DSULRootFiles.some((whitelisted) =>
+            parsed.name.endsWith(whitelisted)
+          ) ||
+          (parsed.dir &&
+            Object.values(DSULFolders).some((whitelisted) =>
+              parsed.dir.endsWith(whitelisted)
+            ))
         ) {
-          return false;
+          return { filepath };
         }
 
-        return { filepath };
+        return false;
       },
     };
 
