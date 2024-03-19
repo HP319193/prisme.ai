@@ -74,6 +74,7 @@ nav:
           - Update commands: blocks/commands.md
       - Schema Form: workspaces/schemaform.md
       - i18n.security: workspaces/security.md
+      - i18n.versioning: workspaces/versioning.md
   - API: /api
   - i18n.architecture:
       - i18n.index: architecture/index.md

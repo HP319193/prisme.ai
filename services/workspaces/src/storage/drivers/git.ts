@@ -109,7 +109,7 @@ export default class Git extends Filesystem {
       );
       this.git.addConfig(
         'core.sshCommand',
-        `ssh -i ${filepath} -o IdentitiesOnly=yes`
+        `ssh -i ${filepath} -o IdentitiesOnly=yes -o StrictHostKeyChecking=no`
       );
     }
 
