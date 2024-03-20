@@ -834,6 +834,7 @@
       "name_Image": "Image",
       "name_Signin": "Signin button",
       "name_Head": "HTML Head",
+      "name_Toast": "Toast",
       "description": "",
       "description_Header": "Display page header",
       "description_Hero": "Display a Hero of page",
@@ -854,6 +855,7 @@
       "description_Image": "Display a picture",
       "description_Signin": "Display a login or registration button",
       "description_Head": "HTML content to be placed in the page's <head> tag",
+      "description_Toast": "Displays messages stacked in a bubble.",
       "panelTitle_adding": "Add a Block",
       "panelTitle_editing": "Edit Block {{blockName}}",
       "action": {
@@ -1503,6 +1505,14 @@
           "content": {
             "label": "Content",
             "description": "HTML page header tags"
+          }
+        }
+      },
+      "toast": {
+        "settings": {
+          "toastOn": {
+            "label": "Event to display a new message",
+            "description": "To display a message, send an event of the same name as specified here along with a data object containing text in `content` and optionally a `type` (success, error or warning) and a `duration` (duration of appearance in seconds, by default 5 seconds)."
           }
         }
       }

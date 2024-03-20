@@ -834,6 +834,7 @@
       "name_Image": "Image",
       "name_Signin": "Bouton de connexion",
       "name_Head": "Entête HTML",
+      "name_Toast": "Toast",
       "description": "",
       "description_Header": "Afficher une entête de page",
       "description_Hero": "Afficher un Hero de page",
@@ -854,6 +855,7 @@
       "description_Image": "Afficher une image",
       "description_Signin": "Afficher un bouton pour se connecter ou s'inscrire",
       "description_Head": "Contenu HTML à placer dans la balise <head> de la page",
+      "description_Toast": "Affiche des messages empilés dans une bulle.",
       "panelTitle_adding": "Ajouter un Block",
       "panelTitle_editing": "Éditer le Block {{blockName}}",
       "action": {
@@ -1503,6 +1505,14 @@
           "content": {
             "label": "Contenu",
             "description": "Balises HTML d'entête de page"
+          }
+        }
+      },
+      "toast": {
+        "settings": {
+          "toastOn": {
+            "label": "Évènement pour afficher un nouveau message",
+            "description": "Pour afficher un message, envoyez un évènement du même nom que spécifié ici accompagné d'un objet de données contenant du texte dans `content` et optionnellement un `type` (success, error ou warning) et une `duration` (durée d'apparition en seconde, par défaut, 5 secondes)."
           }
         }
       }

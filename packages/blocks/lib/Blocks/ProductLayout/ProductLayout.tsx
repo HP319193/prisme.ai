@@ -10,17 +10,25 @@ import IconHome from './IconHome';
 import IconShare from './IconShare';
 import IconCharts from './IconCharts';
 import Content from './Content';
+import { Block } from './Block';
+import { useMemo } from 'react';
 
 export const ProductLayout = ({
   sidebar,
   content,
   className,
+  toastOn,
 }: ProductLayoutProps & BaseBlockConfig) => {
+  const toastBlocks = useMemo(
+    () => toastOn && [{ slug: 'Toast', toastOn }],
+    []
+  );
   return (
     <ProductLayoutProvider opened={sidebar?.opened}>
       <div className={`product-layout ${className}`}>
         {sidebar && <Sidebar {...sidebar} />}
         <Content content={content} />
+        {toastBlocks && <Block content={toastBlocks} />}
       </div>
     </ProductLayoutProvider>
   );
