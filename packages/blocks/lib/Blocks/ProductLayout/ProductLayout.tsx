@@ -225,6 +225,7 @@ const defaultStyles = `:block {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: baseline;
 }
 .product-layout-content-tabs {
   color: var(--main-text);
