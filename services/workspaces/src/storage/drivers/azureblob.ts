@@ -5,6 +5,7 @@ import {
   ExportOptions,
   GetOptions,
   IStorage,
+  ImportOptions,
   ObjectList,
   SaveOptions,
   Streamed,
@@ -197,9 +198,18 @@ export default class AzureBlob implements IStorage {
         if (exclude.some((cur) => key.endsWith(cur))) {
           return;
         }
+        let name = key.slice(path.dirname(prefix).length);
+        if (opts?.fileCallback) {
+          const result = opts.fileCallback(name);
+          if (typeof result === 'string') {
+            name = result;
+          } else if (!result) {
+            return;
+          }
+        }
         return await this.get(key).then((body) => {
           archive.append(body as Buffer, {
-            name: key.slice(path.dirname(prefix).length),
+            name,
           });
         });
       })
@@ -207,5 +217,10 @@ export default class AzureBlob implements IStorage {
 
     archive.finalize();
     return completionPromise;
+  }
+
+  async import(subkey: string, zip: stream.Readable, opts?: ImportOptions) {
+    throw new Error('Not implemented');
+    return false;
   }
 }

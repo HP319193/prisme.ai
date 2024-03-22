@@ -36,7 +36,6 @@ export enum EventType {
   DeletedAutomation = 'workspaces.automations.deleted',
   PublishedWorkspaceVersion = 'workspaces.versions.published',
   DeletedWorkspaceVersion = 'workspaces.versions.deleted',
-  RollbackWorkspaceVersion = 'workspaces.versions.rollback',
 
   InstalledApp = 'workspaces.apps.installed',
   UninstalledApp = 'workspaces.apps.uninstalled',

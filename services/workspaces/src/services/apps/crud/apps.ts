@@ -14,7 +14,10 @@ import {
   MAXIMUM_APP_VERSION,
   SLUG_VALIDATION_REGEXP,
 } from '../../../../config';
-import { prepareNewDSULVersion } from '../../../utils/prepareNewDSULVersion';
+import {
+  ValidatedDSULVersion,
+  prepareNewDSULVersion,
+} from '../../../utils/prepareNewDSULVersion';
 import { logger } from '../../../logger';
 
 export interface ListAppsQuery {
@@ -185,18 +188,17 @@ class Apps {
     // Old app version conversion
     if (typeof oldVersions[0] !== 'object') {
       const createdAt = `${new Date().toISOString()}`;
-      existingVersions = oldVersions.map<Required<Prismeai.WorkspaceVersion>>(
-        (cur) =>
-          typeof cur == 'object'
-            ? (cur as Required<Prismeai.WorkspaceVersion>)
-            : {
-                name: cur,
-                description: `Version ${cur}`,
-                createdAt,
-              }
+      existingVersions = oldVersions.map<ValidatedDSULVersion>((cur) =>
+        typeof cur == 'object'
+          ? (cur as ValidatedDSULVersion)
+          : {
+              name: cur,
+              description: `Version ${cur}`,
+              createdAt,
+            }
       );
     } else {
-      existingVersions = oldVersions as Required<Prismeai.WorkspaceVersion>[];
+      existingVersions = oldVersions as ValidatedDSULVersion[];
     }
     const { newVersion, allVersions } = prepareNewDSULVersion(
       existingVersions,

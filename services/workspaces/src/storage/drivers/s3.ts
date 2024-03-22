@@ -4,6 +4,7 @@ import {
   ExportOptions,
   GetOptions,
   IStorage,
+  ImportOptions,
   ObjectList,
   SaveOptions,
   Streamed,
@@ -302,8 +303,18 @@ export default class S3Like implements IStorage {
           return;
         }
         return await this.get(key).then((body) => {
+          let name = key.slice(path.dirname(prefix).length);
+
+          if (opts?.fileCallback) {
+            const result = opts.fileCallback(name);
+            if (typeof result === 'string') {
+              name = result;
+            } else if (!result) {
+              return;
+            }
+          }
           archive.append(body, {
-            name: key.slice(path.dirname(prefix).length),
+            name,
           });
         });
       })
@@ -311,5 +322,10 @@ export default class S3Like implements IStorage {
 
     archive.finalize();
     return completionPromise;
+  }
+
+  async import(subkey: string, zip: stream.Readable, opts?: ImportOptions) {
+    throw new Error('Not implemented');
+    return false;
   }
 }

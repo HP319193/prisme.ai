@@ -4,6 +4,7 @@ import { DriverType } from '../src/storage/types';
 import { AccessManagerOptions } from '@prisme.ai/permissions';
 import { StorageOptions } from '../src/storage';
 import { AzureBlobOptions } from '../src/storage/drivers/azureblob';
+import { GitOptions } from '../src/storage/drivers/git';
 
 export const WORKSPACES_STORAGE_TYPE: DriverType =
   (process.env.WORKSPACES_STORAGE_TYPE as DriverType) || DriverType.FILESYSTEM;
@@ -138,6 +139,16 @@ export const UPLOADS_STORAGE_AZURE_BLOB_OPTIONS: AzureBlobOptions = {
   baseUrl: UPLOADS_STORAGE_AZURE_BLOB_BASE_URL,
 };
 
+/**
+ * Git
+ */
+export const WORKSPACES_STORAGE_GIT_DIRPATH =
+  process.env.WORKSPACES_STORAGE_GIT_DIRPATH || '../../data/versioning/';
+
+export const WORKSPACES_STORAGE_GIT_OPTIONS: Partial<GitOptions> = {
+  dirpath: WORKSPACES_STORAGE_GIT_DIRPATH,
+};
+
 /*
  * All drivers config mapping
  */
@@ -146,12 +157,14 @@ export const WORKSPACES_STORAGE_OPTIONS: StorageOptions = {
   [DriverType.FILESYSTEM]: WORKSPACES_STORAGE_FILESYSTEM_OPTIONS,
   [DriverType.S3_LIKE]: WORKSPACES_STORAGE_S3_OPTIONS,
   [DriverType.AZURE_BLOB]: WORKSPACES_STORAGE_AZURE_BLOB_OPTIONS,
+  [DriverType.GIT]: WORKSPACES_STORAGE_GIT_OPTIONS as any,
 };
 
 export const UPLOADS_STORAGE_OPTIONS: StorageOptions = {
   [DriverType.FILESYSTEM]: UPLOADS_STORAGE_FILESYSTEM_OPTIONS,
   [DriverType.S3_LIKE]: UPLOADS_STORAGE_S3_OPTIONS,
   [DriverType.AZURE_BLOB]: UPLOADS_STORAGE_AZURE_BLOB_OPTIONS,
+  [DriverType.GIT]: null as any,
 };
 
 /**

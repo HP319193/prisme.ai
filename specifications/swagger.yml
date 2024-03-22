@@ -386,6 +386,7 @@ components:
         - delete
         - manage_permissions
         - manage_security
+        - manage_repositories
         - read_app_dsul
         - get_usage
         - aggregate_search
@@ -441,6 +442,50 @@ components:
           type: string
         description:
           $ref: '#/components/schemas/LocalizedText'
+        repository:
+          type: object
+          additionalProperties: false
+          properties:
+            id:
+              type: string
+              description: "Source or dest repository id as described in workspace configuration"
+
+    WorkspaceRepository:
+      type: object
+      required:
+        - name
+        - config
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - 'git'
+        mode:
+          type: string
+          enum:
+            - 'read-write'
+            - 'read-only'
+        config:
+          type: object
+          required:
+            - url
+            - branch
+          properties:
+            url:
+              type: string
+            branch:
+              type: string
+            auth:
+              type: object
+              properties:
+                user:
+                  type: string
+                password:
+                  type: string
+                sshkey:
+                  type: string
 
     DSUL:
       type: object
@@ -475,6 +520,11 @@ components:
         registerWorkspace:
           type: boolean
           description: 'If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}'
+        repositories:
+          type: object
+          description: "Remote versioning repositories"
+          additionalProperties:
+            $ref: "#/components/schemas/WorkspaceRepository"
 
     RuntimeModel:
       allOf:
@@ -2134,6 +2184,17 @@ components:
               type: array
               items:
                 type: string
+            deleted:
+              type: array
+              items:
+                type: string
+            version:
+              $ref: "#/components/schemas/WorkspaceVersion"
+            errors:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
 
     ConfiguredWorkspace:
       type: object
@@ -2204,25 +2265,6 @@ components:
           example: workspaces.versions.deleted
           enum:
             - workspaces.versions.deleted
-        payload:
-          type: object
-          required:
-            - version
-          properties:
-            version:
-              $ref: '#/components/schemas/WorkspaceVersion'
-
-    RollbackWorkspaceVersion:
-      type: object
-      required:
-        - type
-        - payload
-      properties:
-        type:
-          type: string
-          example: workspaces.versions.rollback
-          enum:
-            - workspaces.versions.rollback
         payload:
           type: object
           required:
@@ -4332,6 +4374,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: 'slug'
+          in: 'query'
+          description: 'Search by workspace slug'
+          required: false
+          schema:
+            type: string
         - name: 'email'
           in: 'query'
           description: 'Some admin email to filter on'
@@ -4607,6 +4655,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/App'
+                  deleted:
+                    type: array
+                    items:
+                      type: string
         '401':
           description: AuthenticationError
           content:
@@ -4715,6 +4767,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticationError'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
         '403':
           description: Bad permissions
           content:
@@ -4778,10 +4836,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
 
-  /v2/workspaces/{workspaceId}/versions/{versionId}/rollback:
+  /v2/workspaces/{workspaceId}/versions/{versionId}/pull:
     post:
-      description: Rollback to a workspace version
-      operationId: rollbackWorkspaceVersion
+      description: Pull a workspace version from a remote repository or rollback from current repository
+      operationId: PullWorkspaceVersion
       tags:
         - 'Prisme.ai Workspaces'
       parameters:
@@ -4797,13 +4855,49 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                repository:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+
       responses:
         '200':
           description: Success Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WorkspaceVersion'
+                type: object
+                properties:
+                  imported:
+                    type: array
+                    items:
+                      type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                  workspace:
+                    type: object
+                  deleted:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
         '404':
           description: Object not found
           content:

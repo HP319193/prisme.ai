@@ -15,6 +15,7 @@ module.exports = {
   publicRuntimeConfig: {
     API_URL: process.env.API_URL || process.env.API_HOST || '', // API_HOST deprecated, to remove once deployments updated
     CONSOLE_URL: process.env.CONSOLE_URL || process.env.CONSOLE_HOST || '', // CONSOLE_HOST deprecated, to remove once deployments updated
+    INTERNAL_API_URL: process.env.INTERNAL_API_URL || '', // Optional. Useful to ensure prismeai-pages makes server-side calls using this url
     PAGES_HOST: process.env.PAGES_HOST || '',
     SENTRY_DSN: process.env.SENTRY_DSN || '',
     HEADER_POPOVERS: process.env.HEADER_POPOVERS || '{}',

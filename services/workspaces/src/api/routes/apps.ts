@@ -39,9 +39,7 @@ export default function init(dsulStorage: DSULStorage) {
       accessManager,
       broker,
     });
-    const workspaceVersions = await workspaces.listWorkspaceVersions(
-      body.workspaceId
-    );
+    const workspaceVersions = await workspaces.versions.list(body.workspaceId);
 
     const versionRequest = {
       description: 'App release',

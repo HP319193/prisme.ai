@@ -82,7 +82,9 @@ export const RollbackVersion: FC<Event<Date>> = ({
       onConfirm={async (e) => {
         e?.stopPropagation();
         if (!workspaceId || !version) return;
-        await api.workspaces(workspaceId).versions.rollback(version.name);
+        await api.workspaces(workspaceId).versions.rollback(version.name, {
+          repository: version.repository,
+        });
         fetchWorkspace();
         notification.success({
           message: t('workspace.versions.rollback.success'),

@@ -78,18 +78,8 @@ prismeai-workspaces:
   env:
     - name: NODE_OPTIONS
       value: '--max-old-space-size=200'
-    - name: CUSTOM_DOMAINS_CNAME
-      value: ""
     - name: UPLOADS_MAX_SIZE
       value: '100000000' # 100MB
-    - name: WORKSPACES_API_URL
-      value: "" # Private internal hostname url, example : http://core-prismeai-workspaces.svc
-    - name: RUNTIME_API_URL
-      value: "" # Private internal hostname url, example : http://core-prismeai-runtime.svc
-    - name: EVENTS_API_URL
-      value: "" # Private internal hostname url, example : http://core-prismeai-events.svc
-    - name: CONSOLE_API_URL
-      value: "" # Private internal hostname url, example : http://core-prismeai-console.svc
 
   hpa: &CORE_CPU_HPA
     create: true
@@ -279,6 +269,14 @@ prismeai-api-gateway:
       value: '--max-old-space-size=200'
     - name: UPLOADS_MAX_SIZE
       value: '100000000' # 100MB
+    - name: WORKSPACES_API_URL
+      value: "" # Private internal hostname url, example : http://core-prismeai-workspaces.svc
+    - name: RUNTIME_API_URL
+      value: "" # Private internal hostname url, example : http://core-prismeai-runtime.svc
+    - name: EVENTS_API_URL
+      value: "" # Private internal hostname url, example : http://core-prismeai-events.svc
+    - name: CONSOLE_API_URL
+      value: "" # Private internal hostname url, example : http://core-prismeai-console.svc
 
   hpa: *CORE_CPU_HPA
 
@@ -290,7 +288,49 @@ rbac:
   create: false
 
 # Proxying, balancing, TLS
-ingresses: []
+ingresses: [] # Comment this line and uncomment below if you want to use our ingress example
+# ingresses:    
+#   - name: core-ingress
+#     annotations: 
+#       kubernetes.io/elb.id: "..."
+#       kubernetes.io/elb.ip: "..."
+#       cert-manager.io/cluster-issuer: "core-issuer"
+
+#     tls:
+#       - hosts:
+#           - "studio.prisme.ai"
+#           - "*.studio.prisme.ai"
+#           - "pages.prisme.ai"
+#           - "*.pages.prisme.ai"
+#         secretName: prismeai-tls
+#     rules:
+#       - host: api.studio.prisme.ai # Backend URL (api-gateway)
+#         http: &API_SERVICE
+#           paths:
+#             - path: "/"
+#               backend:
+#                 serviceName: core-prismeai-api-gateway
+#                 servicePort: 80
+
+
+#       - host: studio.prisme.ai # Studio URL
+#         http: &CONSOLE_SERVICE
+#           paths:
+#             - path: "/"
+#               backend:
+#                 serviceName: core-prismeai-console
+#                 servicePort: 80
+
+#       - host: pages.prisme.ai
+#         http: &PAGES_SERVICE
+#           paths:
+#             - path: "/"
+#               backend:
+#                 serviceName: core-prismeai-pages
+#                 servicePort: 80        
+
+#       - host: '*.pages.prisme.ai' # This wildcard allows acces to workspaces pages
+#         http: *PAGES_SERVICE
 
 # cert-manager
 clusterissuer:

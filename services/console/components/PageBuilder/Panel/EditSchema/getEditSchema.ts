@@ -18,6 +18,7 @@ import BlocksGrid from './BlocksGrid';
 import BlocksSplit from './BlocksSplit';
 import Signin from './Signin';
 import Head from './Head';
+import Toast from './Toast';
 
 const Schemas = {
   Cards,
@@ -38,6 +39,7 @@ const Schemas = {
   BlocksGrid,
   BlocksSplit,
   Head,
+  Toast,
 };
 
 const getEditSchema = (blockName: string): Schema | null =>

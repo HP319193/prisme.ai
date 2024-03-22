@@ -20,6 +20,8 @@ export enum DSULType {
   Imports = 'imports',
 
   RuntimeModel = 'runtime',
+
+  ImportConfig = '.import',
 }
 
 // These dsul types will be fetched at the root app/workspace directory with {{enumValue}}.yml
@@ -27,6 +29,7 @@ export const DSULRootFiles = [
   DSULType.DSULIndex,
   DSULType.Security,
   DSULType.RuntimeModel,
+  DSULType.ImportConfig,
 ];
 
 // Types ending like this will be automatically updated as FolderIndex :
@@ -45,6 +48,14 @@ export type DSULQuery<t extends DSULType = any> = {
   folderIndex?: boolean; // Automatically deduce proper dsulType given the current one
 };
 
+export interface ImportConfig {
+  app?: {
+    slug: string;
+    description?: Prismeai.LocalizedText;
+    name?: string;
+  };
+}
+
 export type DSULInterfaces = {
   [DSULType.DSULIndex]: Prismeai.Workspace;
   [DSULType.Security]: Prismeai.WorkspaceSecurity;
@@ -60,6 +71,8 @@ export type DSULInterfaces = {
   [DSULType.Imports]: Prismeai.AppInstance;
 
   [DSULType.RuntimeModel]: Prismeai.RuntimeModel;
+
+  [DSULType.ImportConfig]: ImportConfig;
 };
 
 export type FolderIndex = Record<

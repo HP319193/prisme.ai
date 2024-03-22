@@ -1,6 +1,7 @@
 import getConfig from 'next/config';
 import { Api } from '@prisme.ai/sdk';
 import Storage from './Storage';
+import isServerSide from './isServerSide';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -14,8 +15,15 @@ function getRedirectURI() {
     return '';
   }
 }
+
+// Optional : If INTERNAL_API_URL is specified we can use it on server side calls. Useful for on-premise deployments.
+const host =
+  isServerSide() && publicRuntimeConfig.INTERNAL_API_URL
+    ? publicRuntimeConfig.INTERNAL_API_URL
+    : publicRuntimeConfig.API_URL;
+
 const api = new Api({
-  host: publicRuntimeConfig.API_URL,
+  host: host,
   oidc: {
     url: publicRuntimeConfig.OIDC_PROVIDER_URL,
     clientId: publicRuntimeConfig.OIDC_STUDIO_CLIENT_ID,

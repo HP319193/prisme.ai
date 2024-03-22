@@ -1,68 +1,147 @@
-import { Modal, notification, TextArea } from '@prisme.ai/design-system';
+import {
+  Modal,
+  notification,
+  TextArea,
+  Select,
+} from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../providers/Workspace';
 import api from '../utils/api';
 import { useTracking } from './Tracking';
 
 interface VersionModalProps {
-  visible: boolean;
+  visible: false | 'push' | 'pull';
   close: () => void;
 }
 
 const VersionModal = ({ visible, close }: VersionModalProps) => {
   const [description, setDescription] = useState('');
+  const [repository, setRepository] = useState('__local__');
 
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
   const { push } = useRouter();
   const { trackEvent } = useTracking();
+  const { readRepositories, writeRepositories } = useMemo(() => {
+    const repositories = [
+      {
+        label: 'Prisme.ai',
+        value: '__local__',
+        mode: 'read-write' as string,
+      },
+    ].concat(
+      Object.entries(workspace?.repositories || {}).map(([key, repo]) => ({
+        label: repo?.name,
+        value: key,
+        mode: repo.mode || 'read-write',
+      }))
+    );
 
-  const onConfirm = useCallback(async () => {
-    trackEvent({
-      name: 'Create a new Version',
-      action: 'click',
-    });
-    try {
-      await api.workspaces(workspace.id).versions.create({ description });
-      notification.success({
-        message: (
-          <button className="text-left">
-            {t('workspace.versions.create.success')}
-          </button>
-        ),
-        placement: 'bottomRight',
-        onClick: () => {
-          push(
-            `/workspaces/${workspace.id}?type=workspaces.versions.published`
-          );
-        },
+    return {
+      readRepositories: repositories.filter((cur) => cur.mode.includes('read')),
+      writeRepositories: repositories.filter((cur) =>
+        cur.mode.includes('write')
+      ),
+    };
+  }, [workspace?.repositories]);
+
+  const onConfirm = useCallback(
+    async (mode: 'pull' | 'push') => {
+      trackEvent({
+        name: mode === 'push' ? 'Create a new Version' : 'Pull a version',
+        action: 'click',
       });
-    } catch (e) {}
-  }, [description, push, t, trackEvent, workspace.id]);
+      try {
+        const remoteRepository =
+          repository === '__local__'
+            ? undefined
+            : {
+                id: repository,
+              };
+        if (mode === 'push') {
+          await api
+            .workspaces(workspace.id)
+            .versions.create({ description, repository: remoteRepository });
+        } else if (mode === 'pull') {
+          await api
+            .workspaces(workspace.id)
+            .versions.rollback('latest', { repository: remoteRepository });
+        }
+        notification.success({
+          message: (
+            <button className="text-left">
+              {mode === 'push'
+                ? t('workspace.versions.create.success')
+                : t('workspace.versions.pull.success')}
+            </button>
+          ),
+          placement: 'bottomRight',
+          onClick: () => {
+            push(
+              mode === 'push'
+                ? `/workspaces/${workspace.id}?type=workspaces.versions.published`
+                : `/workspaces/${workspace.id}?type=workspaces.imported`
+            );
+          },
+        });
+      } catch (err) {
+        notification.error({
+          message: `${err}`,
+          placement: 'bottomRight',
+        });
+      }
+    },
+    [description, push, t, trackEvent, workspace.id, repository]
+  );
 
   return (
     <Modal
-      open={visible}
-      title={t('workspace.versions.create.label')}
+      open={!!visible}
+      title={
+        visible === 'push'
+          ? t('workspace.versions.create.label')
+          : t('workspace.versions.pull.label')
+      }
       onOk={() => {
-        onConfirm();
+        if (visible) {
+          onConfirm(visible);
+        }
         close();
       }}
-      okText={t('apps.publish.confirm.ok')}
+      okText={
+        visible === 'push'
+          ? t('apps.publish.confirm.ok')
+          : t('workspace.versions.pull.confirm_ok')
+      }
       cancelText={t('cancel', { ns: 'common' })}
       onCancel={close}
     >
       <div className="p-10">
         <div className="mb-10">
-          {t('workspace.versions.create.description')}
+          {visible === 'push'
+            ? t('workspace.versions.create.description')
+            : t('workspace.versions.pull.description')}
         </div>
-
-        <TextArea
-          label={t('workspace.versions.create.name')}
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
+        {visible == 'push' ? (
+          <>
+            <TextArea
+              label={t('workspace.versions.create.name')}
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+            />
+            <br />
+          </>
+        ) : null}
+        {t('workspace.versions.repository')}
+        <br />
+        <Select
+          value={repository}
+          selectOptions={
+            visible === 'push' ? writeRepositories : readRepositories
+          }
+          onChange={(value) => setRepository(value)}
         />
       </div>
     </Modal>

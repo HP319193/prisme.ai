@@ -5,6 +5,8 @@ FROM $DEPENDENCIES_IMAGE:$DEPENDENCIES_TAG as build
 
 WORKDIR /www
 
+RUN apk add git openssh
+
 COPY services/workspaces/ /www/services/workspaces
 # If we do not move node_modules @prisme.ai/ as ./packages, npm prune --production broke them trying to recreate usual symlinks
 RUN npm run build:workspaces && mv node_modules/@prisme.ai packages/ && npm prune --production

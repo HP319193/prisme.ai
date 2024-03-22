@@ -6,7 +6,7 @@ declare namespace Prismeai {
         userId?: string;
         id?: string;
     }
-    export type ActionTypes = "manage" | "create" | "read" | "update" | "delete" | "manage_permissions" | "manage_security" | "read_app_dsul" | "get_usage" | "aggregate_search" | "execute" | "test";
+    export type ActionTypes = "manage" | "create" | "read" | "update" | "delete" | "manage_permissions" | "manage_security" | "manage_repositories" | "read_app_dsul" | "get_usage" | "aggregate_search" | "execute" | "test";
     export interface All {
         /**
          * Execute each instruction in parallel. Pause current automation execution until all instructions are processed.
@@ -1260,6 +1260,12 @@ declare namespace Prismeai {
          * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
          */
         registerWorkspace?: boolean;
+        /**
+         * Remote versioning repositories
+         */
+        repositories?: {
+            [name: string]: WorkspaceRepository;
+        };
     }
     export interface DSULPatch {
         name?: string;
@@ -1277,6 +1283,12 @@ declare namespace Prismeai {
          * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
          */
         registerWorkspace?: boolean;
+        /**
+         * Remote versioning repositories
+         */
+        repositories?: {
+            [name: string]: WorkspaceRepository;
+        };
     }
     export interface DSULReadOnly {
         name: string;
@@ -1294,6 +1306,12 @@ declare namespace Prismeai {
          * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
          */
         registerWorkspace?: boolean;
+        /**
+         * Remote versioning repositories
+         */
+        repositories?: {
+            [name: string]: WorkspaceRepository;
+        };
         automations?: {
             [name: string]: AutomationMeta;
         };
@@ -1776,6 +1794,11 @@ declare namespace Prismeai {
         payload: {
             workspace: Workspace;
             files: string[];
+            deleted?: string[];
+            version?: WorkspaceVersion;
+            errors?: {
+                [name: string]: any;
+            }[];
         };
     }
     export interface InstalledAppInstance {
@@ -2127,16 +2150,6 @@ declare namespace Prismeai {
         };
     }
     export type Role = string;
-    export interface RollbackWorkspaceVersion {
-        /**
-         * example:
-         * workspaces.versions.rollback
-         */
-        type: "workspaces.versions.rollback";
-        payload: {
-            version: WorkspaceVersion;
-        };
-    }
     export interface RuntimeModel {
         name: string;
         description?: LocalizedText;
@@ -2153,6 +2166,12 @@ declare namespace Prismeai {
          * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
          */
         registerWorkspace?: boolean;
+        /**
+         * Remote versioning repositories
+         */
+        repositories?: {
+            [name: string]: WorkspaceRepository;
+        };
         automations?: {
             [name: string]: Automation;
         };
@@ -2685,6 +2704,20 @@ declare namespace Prismeai {
             };
         };
     }
+    export interface WorkspaceRepository {
+        name: string;
+        type?: "git";
+        mode?: "read-write" | "read-only";
+        config: {
+            url: string;
+            branch: string;
+            auth?: {
+                user?: string;
+                password?: string;
+                sshkey?: string;
+            };
+        };
+    }
     export interface WorkspaceRole {
         description?: string;
         auth?: {
@@ -2733,6 +2766,12 @@ declare namespace Prismeai {
         name?: string;
         createdAt?: string;
         description: LocalizedText;
+        repository?: {
+            /**
+             * Source or dest repository id as described in workspace configuration
+             */
+            id?: string;
+        };
     }
 }
 declare namespace PrismeaiAPI {
@@ -3484,6 +3523,7 @@ declare namespace PrismeaiAPI {
             export type Limit = number;
             export type Name = string;
             export type Page = number;
+            export type Slug = string;
             export type Sort = string;
         }
         export interface QueryParameters {
@@ -3491,6 +3531,7 @@ declare namespace PrismeaiAPI {
             limit?: Parameters.Limit;
             labels?: Parameters.Labels;
             name?: Parameters.Name;
+            slug?: Parameters.Slug;
             email?: Parameters.Email;
             sort?: Parameters.Sort;
             ids?: Parameters.Ids;
@@ -3585,6 +3626,7 @@ declare namespace PrismeaiAPI {
                 }[];
                 workspace?: Prismeai.DSULReadOnly;
                 publishedApps?: Prismeai.App[];
+                deleted?: string[];
             }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
@@ -3609,6 +3651,7 @@ declare namespace PrismeaiAPI {
                 }[];
                 workspace?: Prismeai.DSULReadOnly;
                 publishedApps?: Prismeai.App[];
+                deleted?: string[];
             }
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
@@ -3852,6 +3895,38 @@ declare namespace PrismeaiAPI {
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace PullWorkspaceVersion {
+        namespace Parameters {
+            export type VersionId = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            versionId: Parameters.VersionId;
+        }
+        export interface RequestBody {
+            repository?: {
+                id?: string;
+            };
+        }
+        namespace Responses {
+            export interface $200 {
+                imported?: string[];
+                errors?: {
+                    [name: string]: any;
+                }[];
+                workspace?: {
+                    [key: string]: any;
+                };
+                deleted?: string[];
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
     namespace ResetPassword {
@@ -3888,22 +3963,6 @@ declare namespace PrismeaiAPI {
                 id: string;
             }
             export type $400 = Prismeai.BadParametersError;
-            export type $401 = Prismeai.AuthenticationError;
-            export type $403 = Prismeai.ForbiddenError;
-            export type $404 = Prismeai.ObjectNotFoundError;
-        }
-    }
-    namespace RollbackWorkspaceVersion {
-        namespace Parameters {
-            export type VersionId = string;
-            export type WorkspaceId = string;
-        }
-        export interface PathParameters {
-            workspaceId: Parameters.WorkspaceId;
-            versionId: Parameters.VersionId;
-        }
-        namespace Responses {
-            export type $200 = Prismeai.WorkspaceVersion;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;

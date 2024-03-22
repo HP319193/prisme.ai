@@ -1,4 +1,4 @@
-import Workspaces from './workspaces';
+import { Workspaces } from './workspaces';
 import '@prisme.ai/types';
 import { SubjectType } from '../../../permissions';
 import { DSULType } from '../../DSULStorage';

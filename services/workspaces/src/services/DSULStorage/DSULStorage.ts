@@ -387,4 +387,8 @@ export class DSULStorage<t extends keyof DSULInterfaces = DSULType.DSULIndex> {
   ) {
     return await this.driver.export(this.getPath(query), outStream, opts);
   }
+
+  async find(query: DSULQuery) {
+    return await this.driver.find(this.getPath(query));
+  }
 }

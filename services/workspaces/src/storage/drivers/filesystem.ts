@@ -1,10 +1,12 @@
-import archiver from 'archiver';
+import archiver, { EntryData } from 'archiver';
 import stream from 'stream';
+import unzipper from 'unzipper';
 import {
   DriverType,
   ExportOptions,
   GetOptions,
   IStorage,
+  ImportOptions,
   ObjectList,
   SaveOptions,
   Streamed,
@@ -55,7 +57,7 @@ export default class Filesystem implements IStorage {
     return DriverType.FILESYSTEM;
   }
 
-  private getPath(key: string) {
+  protected getPath(key: string) {
     return join(this.options.dirpath || '', key);
   }
 
@@ -89,15 +91,18 @@ export default class Filesystem implements IStorage {
       withFileTypes: true,
     });
     const paths = await Promise.all(
-      dirents.map((dirent) =>
-        dirent.isDirectory()
+      dirents.map((dirent) => {
+        if (dirent.name === '.git') {
+          return false;
+        }
+        return dirent.isDirectory()
           ? this.find(join(path, dirent.name)).then((keys) =>
               keys.map(({ key }) => ({ key: join(dirent.name, key) }))
             )
-          : { key: dirent.name }
-      )
+          : { key: dirent.name };
+      })
     );
-    return paths.flat();
+    return paths.flat().filter<{ key: string }>(Boolean as any);
   }
 
   async save(key: string, data: any, opts?: SaveOptions) {
@@ -200,7 +205,17 @@ export default class Filesystem implements IStorage {
     }
 
     if (isDirectory) {
-      archive.directory(fullPath, basename(fullPath));
+      archive.directory(fullPath, basename(fullPath), (entry: EntryData) => {
+        if (opts?.fileCallback) {
+          const result = opts.fileCallback(entry.name);
+          if (typeof result === 'string') {
+            entry.name = result;
+          } else if (!result) {
+            return false;
+          }
+        }
+        return entry;
+      });
     } else {
       archive.append(fs.createReadStream(fullPath), {
         name: basename(fullPath),
@@ -209,5 +224,63 @@ export default class Filesystem implements IStorage {
 
     archive.finalize();
     return completionPromise;
+  }
+
+  async import(subkey: string, zip: stream.Readable, opts?: ImportOptions) {
+    if (opts?.archive === false) {
+      throw new PrismeError(
+        `Storage import currently only supports archive input`,
+        {}
+      );
+    }
+    try {
+      // Prepare & pull local repository
+      const path = this.getPath(subkey);
+
+      // Write given stream to this directory
+      const zipParser = unzipper.Parse({ forceStream: true });
+      zip.pipe(zipParser);
+      const archiveFiles = new Set();
+      for await (const entry of zipParser) {
+        let filepath = entry.path;
+        if (opts?.fileCallback) {
+          const result = opts.fileCallback(filepath);
+          if (!result) {
+            entry.autodrain();
+            continue;
+          }
+          if (result.filepath) {
+            filepath = result.filepath;
+          }
+        }
+
+        if (entry.type === 'File') {
+          archiveFiles.add(filepath);
+          await promisesFs.mkdir(join(path, dirname(filepath)), {
+            recursive: true,
+          });
+          entry.pipe(fs.createWriteStream(join(path, filepath)));
+        } else {
+          entry.autodrain();
+        }
+      }
+
+      if (opts?.removeAdditionalFiles) {
+        const currentFiles = await this.find(subkey);
+        const additionalFiles = currentFiles.filter(
+          ({ key }) => !archiveFiles.has(key)
+        );
+        if (additionalFiles?.length) {
+          await this.deleteMany(
+            additionalFiles.map(({ key }) => join(subkey, key))
+          );
+        }
+      }
+
+      // Push
+      return true;
+    } catch (err) {
+      throw err;
+    }
   }
 }

@@ -10,24 +10,28 @@ export class WorkspacesVersionsEndpoint {
   }
 
   create(version?: PrismeaiAPI.PublishWorkspaceVersion.RequestBody) {
-    this.api.post(`/workspaces/${this.workspaceId}/versions`, version);
+    return this.api.post(`/workspaces/${this.workspaceId}/versions`, version);
   }
   rollback(
-    versionId: PrismeaiAPI.RollbackWorkspaceVersion.PathParameters['versionId']
+    versionId: PrismeaiAPI.PullWorkspaceVersion.PathParameters['versionId'],
+    opts?: PrismeaiAPI.PullWorkspaceVersion.RequestBody
   ) {
-    this.api.post(
-      `/workspaces/${this.workspaceId}/versions/${versionId}/rollback`
+    return this.api.post(
+      `/workspaces/${this.workspaceId}/versions/${versionId}/pull`,
+      opts
     );
   }
 
-  async export(version: PrismeaiAPI.ExportWorkspaceVersion.Parameters.VersionId = 'current') {
+  async export(
+    version: PrismeaiAPI.ExportWorkspaceVersion.Parameters.VersionId = 'current'
+  ) {
     const res = await this.api.prepareRequest(
-      `/workspaces/${this.workspaceId}/versions/${version}/export`, {
-        method: 'post'
+      `/workspaces/${this.workspaceId}/versions/${version}/export`,
+      {
+        method: 'post',
       }
-    )
+    );
     return new Blob([await res.arrayBuffer()], { type: 'application/zip' });
-    
   }
 }
 

@@ -46,4 +46,5 @@ export interface ProductLayoutProps {
     opened?: boolean;
   };
   content?: ReactElement | ContentProps;
+  toastOn?: string;
 }
