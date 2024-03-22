@@ -1,7 +1,7 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useBlock } from '../Provider';
+import useLocalizedText from '../useLocalizedText';
 import { BaseBlock } from './BaseBlock';
-import { BlockContent } from './ProductLayout/types';
 import { BaseBlockConfig } from './types';
 
 const DEFAULT_DURATION = 5;
@@ -12,7 +12,7 @@ interface ToastProps extends BaseBlockConfig {
 
 interface ToastMessage {
   type?: 'success' | 'error' | 'warning' | 'loading';
-  content: string | BlockContent | ReactNode;
+  content: string | Prismeai.LocalizedText;
   duration?: number;
   closed?: boolean;
   key: string;
@@ -23,6 +23,7 @@ let count = 0;
 export const Toast = ({ className, toastOn }: ToastProps) => {
   const { events } = useBlock();
   const [messages, setMessages] = useState<ToastMessage[]>([]);
+  const { localize } = useLocalizedText();
 
   const close = useCallback(
     (message: ToastMessage) => () => {
@@ -64,7 +65,7 @@ export const Toast = ({ className, toastOn }: ToastProps) => {
             message.closed ? 'pr-toast-message--closed' : ''
           }`}
         >
-          {message.content}
+          {localize(message.content)}
           <button
             className="pr-toast-message-close"
             type="button"
@@ -85,6 +86,7 @@ const defaultStyles = `:block {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  z-index: 99999999;
 }
 .pr-toast-message {
   position: relative;
