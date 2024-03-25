@@ -42,7 +42,9 @@ ENV NPM_CONFIG_LOGS_MAX 0
 
 # This is required to allow our start.js script update next 404.html files with env vars on startup
 RUN chown -R node:node /www/services/pages/.next/server/pages/ && \
-    find /www/services/pages/.next/server/pages/ -name "404.html" -exec chmod g+w {} \;
+    find /www/services/pages/.next/server/pages/ -name "404.html" -exec chmod g+w {} \; && \
+    chown node:node /www/services/pages/docker/start.js && \
+    chmod g+s /www/services/pages/docker/start.js
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
