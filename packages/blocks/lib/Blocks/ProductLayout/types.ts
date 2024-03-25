@@ -1,8 +1,7 @@
 import { ReactElement } from 'react';
 import { ActionConfig } from '../Action';
 import { BlocksListConfig } from '../BlocksList';
-
-export type BlockContent = string | ReactElement | BlocksListConfig['blocks'];
+import { BlockContent } from '../utils/types';
 
 export type Icons = string | 'gear' | 'share' | 'home' | 'charts';
 

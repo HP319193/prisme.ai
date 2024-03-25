@@ -10,7 +10,7 @@ import IconHome from './IconHome';
 import IconShare from './IconShare';
 import IconCharts from './IconCharts';
 import Content from './Content';
-import { Block } from './Block';
+import GenericBlock from '../utils/GenericBlock';
 import { useMemo } from 'react';
 
 export const ProductLayout = ({
@@ -28,7 +28,7 @@ export const ProductLayout = ({
       <div className={`product-layout ${className}`}>
         {sidebar && <Sidebar {...sidebar} />}
         <Content content={content} />
-        {toastBlocks && <Block content={toastBlocks} />}
+        {toastBlocks && <GenericBlock content={toastBlocks} />}
       </div>
     </ProductLayoutProvider>
   );

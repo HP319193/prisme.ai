@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
-import { Block } from './Block';
+import GenericBlock from '../utils/GenericBlock';
+
 import { ContentProps } from './types';
 
 const Tab = ({
@@ -25,7 +26,7 @@ const Tab = ({
     return (
       <Link href={value} className={className}>
         <button>
-          <Block
+          <GenericBlock
             content={title}
             ifString={({ className, content }) => (
               <span className={className}>{content}</span>
@@ -46,7 +47,7 @@ const Tab = ({
         }
       }}
     >
-      <Block
+      <GenericBlock
         content={title}
         ifString={({ className, content }) => (
           <span className={className}>{content}</span>
@@ -88,6 +89,7 @@ export const ContentPanel = ({
         <div className="product-layout-content-tabs">
           {_tabs.map((item, index) => (
             <Tab
+              key={index}
               {...item}
               onClick={() => setSelectedIndex(index)}
               active={index === selectedIndex}
@@ -97,12 +99,15 @@ export const ContentPanel = ({
         {additionalButtons && (
           <div className="product-layout-content-additional-buttons">
             {additionalButtons.map((button, key) => (
-              <Block key={key} content={[{ slug: 'Action', ...button }]} />
+              <GenericBlock
+                key={key}
+                content={[{ slug: 'Action', ...button }]}
+              />
             ))}
           </div>
         )}
       </div>
-      <Block
+      <GenericBlock
         className={`product-layout-content-panel product-layout-content-panel--${columns}col`}
         content={panelContent}
       />

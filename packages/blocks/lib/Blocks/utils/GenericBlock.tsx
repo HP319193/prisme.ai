@@ -10,7 +10,7 @@ interface BlockProps {
   className?: string;
   ifString?: (props: { content: string; className?: string }) => ReactElement;
 }
-export const Block = ({
+export const GenericBlock = ({
   content,
   className,
   ifString: Component = () => <>{content}</>,
@@ -30,3 +30,5 @@ export const Block = ({
     );
   return <>{content}</>;
 };
+
+export default GenericBlock;

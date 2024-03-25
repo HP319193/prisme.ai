@@ -6,8 +6,7 @@ import {
   ReactNode,
   useMemo,
 } from 'react';
-import { Block } from './Block';
-import { isBlock, isRenderProp, isString } from './getContentType';
+import { isBlock, isRenderProp, isString } from '../utils/getContentType';
 import { useProductLayoutContext } from './Provider';
 import { Icons, ProductLayoutProps, SidebarHeaderProps } from './types';
 import { useBlocks } from '../../Provider/blocksContext';
@@ -20,6 +19,7 @@ import IconHome from './IconHome';
 import IconCharts from './IconCharts';
 import useLocalizedText from '../../useLocalizedText';
 import { isLocalizedObject } from '@prisme.ai/design-system';
+import GenericBlock from '../utils/GenericBlock';
 
 const LinkOrNot = ({
   children,
@@ -89,7 +89,7 @@ export const SidebarHeader = ({
       return buttons;
     }
     if (isBlock(buttons)) {
-      return <Block content={buttons} />;
+      return <GenericBlock content={buttons} />;
     }
     return buttons?.map(({ icon, type, value, payload, className }) => {
       if (!icon) return null;
@@ -141,7 +141,7 @@ export const SidebarHeader = ({
             placement="right"
           >
             <div className="product-layout-sidebar__logo">
-              <Block
+              <GenericBlock
                 content={logo}
                 ifString={({ content, ...props }) => (
                   <img src={content} {...props} />
@@ -159,7 +159,7 @@ export const SidebarHeader = ({
         </LinkOrNot>
       )}
       {title && (
-        <Block
+        <GenericBlock
           content={title}
           className="product-layout-sidebar__title"
           ifString={({ content, ...props }) => (
@@ -188,7 +188,9 @@ const SidebarItems = ({
     return items;
   }
   if (isBlock(items)) {
-    return <Block content={items} className="product-layout-sidebar__items" />;
+    return (
+      <GenericBlock content={items} className="product-layout-sidebar__items" />
+    );
   }
   if (isString(items)) return <>{items}</>;
   const buttons = useMemo(
@@ -226,13 +228,13 @@ const SidebarItems = ({
                 <span className="product-layout-sidebar__item-label product-layout-sidebar__item-label">
                   {isLocalizedObject(text) && localize(text)}
                   {isRenderProp(text) && text}
-                  {isBlock(text) && <Block content={text} />}
+                  {isBlock(text) && <GenericBlock content={text} />}
                 </span>
               </div>
               <div className="product-layout-sidebar__item-label">
                 {isLocalizedObject(text) && localize(text)}
                 {isRenderProp(text) && text}
-                {isBlock(text) && <Block content={text} />}
+                {isBlock(text) && <GenericBlock content={text} />}
               </div>
             </button>
           </LinkOrNot>
