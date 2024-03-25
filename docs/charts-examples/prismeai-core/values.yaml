@@ -269,15 +269,6 @@ prismeai-api-gateway:
       value: '--max-old-space-size=200'
     - name: UPLOADS_MAX_SIZE
       value: '100000000' # 100MB
-    - name: WORKSPACES_API_URL
-      value: "" # Private internal hostname url, example : http://core-prismeai-workspaces.svc
-    - name: RUNTIME_API_URL
-      value: "" # Private internal hostname url, example : http://core-prismeai-runtime.svc
-    - name: EVENTS_API_URL
-      value: "" # Private internal hostname url, example : http://core-prismeai-events.svc
-    - name: CONSOLE_API_URL
-      value: "" # Private internal hostname url, example : http://core-prismeai-console.svc
-
   hpa: *CORE_CPU_HPA
 
 ########################################
