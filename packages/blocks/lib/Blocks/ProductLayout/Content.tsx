@@ -1,7 +1,7 @@
-import { Block } from './Block';
 import ContentPanel from './ContentPanel';
-import { isBlock, isRenderProp } from './getContentType';
+import { isBlock, isRenderProp } from '../utils/getContentType';
 import { ContentProps, ProductLayoutProps } from './types';
+import GenericBlock from '../utils/GenericBlock';
 
 function isContentProps(content: any): content is ContentProps {
   if (!content) return false;
@@ -16,12 +16,14 @@ export const Content = ({
 }) => {
   if (isRenderProp(content)) return content;
   if (isBlock(content))
-    return <Block content={content} className="product-layout-content" />;
+    return (
+      <GenericBlock content={content} className="product-layout-content" />
+    );
   if (!isContentProps(content)) return null;
   return (
     <div className="product-layout-content">
       {content.title && (
-        <Block
+        <GenericBlock
           content={content.title}
           className="product-layout-content-title"
           ifString={({ content, className }) => (
@@ -30,7 +32,7 @@ export const Content = ({
         />
       )}
       {content.description && (
-        <Block
+        <GenericBlock
           content={content.description}
           className="product-layout-content-description"
           ifString={({ content, className }) => (

@@ -5,7 +5,6 @@ import {
   useContext,
   useState,
 } from 'react';
-import { ProductLayoutProps, SidebarHeaderProps } from './types';
 
 export interface ProductLayoutContext {
   sidebarOpen: boolean;

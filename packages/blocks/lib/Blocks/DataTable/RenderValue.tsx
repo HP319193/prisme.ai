@@ -7,6 +7,8 @@ import { useBlock } from '../../Provider';
 import { RichText } from '../RichText';
 import { useBlocks } from '../../Provider/blocksContext';
 import _get from 'lodash.get';
+import { isBlock } from '../utils/getContentType';
+import GenericBlock from '../utils/GenericBlock';
 
 const generateColor = (str: string) => {
   const cyrb53 = function (str = '', seed = 0) {
@@ -42,6 +44,8 @@ export const renderValue =
     const {
       components: { Link },
     } = useBlocks();
+
+    if (isBlock(value)) return <GenericBlock content={value} />;
 
     switch (type) {
       case 'number': {
