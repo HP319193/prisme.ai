@@ -2,6 +2,7 @@ import { FunctionComponent, ReactNode } from 'react';
 import { DatePickerProps } from '../DatePicker';
 import { TextAreaProps } from '../TextArea';
 import { TagsOption } from '../Select';
+import { PasswordProps } from 'antd/lib/input';
 
 export const schemaTypes = [
   'string',
@@ -29,6 +30,7 @@ export const UIWidgetsForString = [
   'html',
   'slider',
   'code',
+  'password',
 ] as const;
 export const UIWidgetsForLocalizedString = ['textarea'] as const;
 export const UIWidgetsForNumber = ['slider'] as const;
@@ -72,7 +74,9 @@ export type UiOptionsOneOf = {
 export type UiOptionsArray = {
   array: 'row';
 };
-
+export type UiOptionsPassword = {
+  password: Omit<PasswordProps, 'value'>;
+};
 export type UiOptionsTextArea = {
   textarea: Omit<TextAreaProps, 'value'>;
 };
@@ -196,6 +200,7 @@ export interface Schema extends Record<string, any> {
     | UiOptionsGrid
     | UiOptionsOneOf
     | UiOptionsArray
+    | UiOptionsPassword
     | UiOptionsTextArea
     | UiOptionsUpload
     | UiOptionsSelect

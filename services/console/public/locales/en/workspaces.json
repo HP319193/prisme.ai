@@ -1741,7 +1741,9 @@
       "name_slider": "Slider",
       "description_slider": "Select a numeric value on a slider",
       "name_tags": "Multiple select",
-      "description_tags": "Select multiple values"
+      "description_tags": "Select multiple values",
+      "name_code": "Code",
+      "name_password": "Password"
     },
     "properties": {
       "label": "Object properties",

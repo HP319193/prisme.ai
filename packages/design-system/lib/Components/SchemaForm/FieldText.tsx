@@ -6,12 +6,14 @@ import FieldAutocomplete from './FieldAutocomplete';
 import DefaultFieldDate from './FieldDate';
 import FieldTextColor from './FieldTextColor';
 import FieldTextTextArea from './FieldTextTextArea';
+import FieldTextPassword from './FieldTextPassword';
 import FieldTextUpload from './FieldTextUpload';
 import {
   FieldProps,
   UiOptionsCode,
   UIOptionsNumber,
   UiOptionsSlider,
+  UiOptionsPassword,
   UiOptionsTextArea,
   UiOptionsUpload,
 } from './types';
@@ -46,6 +48,13 @@ export const FieldText = ({
         <FieldTextTextArea
           {...props}
           options={(uiOptions || { textarea: {} }) as UiOptionsTextArea}
+        />
+      );
+    case 'password':
+      return (
+        <FieldTextPassword
+          {...props}
+          options={(uiOptions || { pa: {} }) as UiOptionsPassword}
         />
       );
     case 'upload':

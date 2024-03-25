@@ -1741,7 +1741,9 @@
       "name_slider": "Glissière",
       "description_slider": "Sélection d'une valeur numérique sur une glissière",
       "name_tags": "Sélection multiple",
-      "description_tags": "Sélection de plusieurs valeurs"
+      "description_tags": "Sélection de plusieurs valeurs",
+      "name_code": "Code",
+      "name_password": "Mot de passe"
     },
     "properties": {
       "label": "Propriétés de l'objet",
