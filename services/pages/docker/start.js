@@ -27,7 +27,12 @@ function rewriteConfig(lang) {
         `${errorFile}`
       )
     );
-  } catch {}
+  } catch (err) {
+    console.error(
+      'Could not update NextJS 404 page with current environment variables',
+      err
+    );
+  }
 }
 
 const langs = fs

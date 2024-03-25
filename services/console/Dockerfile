@@ -30,6 +30,12 @@ COPY --from=build /www/node_modules/  /www/node_modules/
 EXPOSE 3000
 ENV PORT 3000
 ENV NODE_ENV production
+ENV NPM_CONFIG_OFFLINE true
+ENV NPM_CONFIG_LOGS_MAX 0
+
+# This is required to allow our start.js script update next 404.html files with env vars on startup
+RUN chown -R node:node /www/services/console/.next/server/pages/ && \
+    find /www/services/console/.next/server/pages/ -name "404.html" -exec chmod g+w {} \;
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
