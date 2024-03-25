@@ -67,4 +67,62 @@ The `mode` option allows you to restrict a repository to only `push` or `pull` a
 * `read-only` : Only for `pull`
 * `write-only` : Only for `push` 
 
+### Excluding files from imports  
 
+When configuring a repository, it is possible to tag specific parts of your workspace to not be overidden from imports, allowing you to keep customized (or even deleted) sections while pulling from a remote repository which do not have these changes.  
+
+Example :  
+
+```yaml
+repositories:
+  github:
+    name: My Own Github
+    type: git
+    mode: read-write
+    config:
+      ...
+    pull:
+      exclude:
+        - path: 'index' # Do not override your workspace index.yml (includes the workspace config & custom blocks)
+        - path: 'security' # Do not override your custom security files (includes roles definition) 
+        - path: 'pages/custom' # Do not override 'custom' page (i.e page's slug)
+        - path: 'automations/custom' # Do not override 'custom' automation (i.e automation's slug)
+        - path: 'imports/custom' # Do not override your 'custom' app instance (i.e appInstance's slug)
+```
+
+When pulling with a `pull.exclude` configured list, ignored filenames should not appear in `workspaces.imported` event summary.  
+
+
+## Pull
+
+### Result event
+
+After each archive import or repository pull, an event `workspaces.imported` is emitted with full import details :  
+
+```json
+{
+ "files": [
+  "index",
+  "security",
+  "pages/test.yml",
+   ...
+ ],
+ "deleted": [
+  "automations/removedAutomation.yml"
+ ],
+ "version": {
+  "name": "latest",
+  "repository": {
+   "id": "yourRepositoryId"
+  }
+ },
+ "errors": [
+  {
+   "msg": "Could not rename workspace slug from {oldSlug} to {newSlug} as it is already used by workspaceId zlkpbRF",
+   "err": "SlugAlreadyInUse",
+   "conflictingWorkspaceId": "..."
+  },
+  ...
+ ]
+}
+```

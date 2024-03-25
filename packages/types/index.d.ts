@@ -2717,6 +2717,11 @@ declare namespace Prismeai {
                 sshkey?: string;
             };
         };
+        pull?: {
+            exclude?: {
+                path: string;
+            }[];
+        };
     }
     export interface WorkspaceRole {
         description?: string;

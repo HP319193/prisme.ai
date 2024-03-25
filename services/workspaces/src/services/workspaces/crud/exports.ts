@@ -314,6 +314,15 @@ export class WorkspaceExports extends DsulCrud {
       true
     );
 
+    // For repositories pull, prepare exclusion list
+    const importOpts = opts?.sourceVersion?.repository?.id
+      ? {
+          exclude:
+            workspace.repositories?.[opts.sourceVersion.repository.id]?.pull
+              ?.exclude,
+        }
+      : {};
+
     const automations = new Automations(
       this.accessManager,
       this.broker.child(
@@ -373,11 +382,16 @@ export class WorkspaceExports extends DsulCrud {
     let imported: string[] = [];
     let errors: any[] = [];
     // First load index before other files
-    if (dsulStreams[DSULType.DSULIndex]) {
+    if (
+      dsulStreams[DSULType.DSULIndex] &&
+      !(importOpts?.exclude || []).some((cur) => cur.path === 'index')
+    ) {
       try {
         const buffer = await streamToBuffer(dsulStreams[DSULType.DSULIndex]);
         delete dsulStreams[DSULType.DSULIndex];
         const index: any = yaml.load(buffer.toString());
+
+        // Check for new workspace slug availability & keep old one if it's already used
         if (
           opts?.overwriteWorkspaceSlugIfAvailable &&
           index.slug &&
@@ -415,15 +429,18 @@ export class WorkspaceExports extends DsulCrud {
         ) {
           workspace.slug = index.slug;
         }
-        await this.applyDSULFile(
+        const applied = await this.applyDSULFile(
           [DSULType.DSULIndex],
           workspace,
           index,
           automations,
           imports,
-          security
+          security,
+          importOpts
         );
-        imported.push(DSULType.DSULIndex);
+        if (applied) {
+          imported.push(DSULType.DSULIndex);
+        }
       } catch (err) {
         return {
           errors: [
@@ -460,7 +477,8 @@ export class WorkspaceExports extends DsulCrud {
             content,
             automations,
             imports,
-            security
+            security,
+            importOpts
           );
           if (applied) {
             imported.push(splittedPath.join('/'));
@@ -506,7 +524,7 @@ export class WorkspaceExports extends DsulCrud {
         .map(({ key }) => key);
 
       if (deletedFiles.length) {
-        await Promise.all(
+        const isDeleted = await Promise.all(
           deletedFiles.map(async (cur) => {
             return await this.applyDSULFile(
               cur.split('/'),
@@ -514,10 +532,12 @@ export class WorkspaceExports extends DsulCrud {
               null,
               automations,
               imports,
-              security
+              security,
+              importOpts
             );
           })
         );
+        deletedFiles = deletedFiles.filter((_, idx) => isDeleted[idx]);
       }
     }
 
@@ -595,7 +615,10 @@ export class WorkspaceExports extends DsulCrud {
     content: any | null, // Can be set to null to delete the file
     automations: Automations,
     appInstances: AppInstances,
-    security: Security
+    security: Security,
+    opts?: {
+      exclude?: Required<Prismeai.WorkspaceRepository>['pull']['exclude'];
+    }
   ) {
     const [folder, subfile, ...nestedPath] = path;
     let subfileSlug = parse(subfile || '').name;
@@ -613,6 +636,15 @@ export class WorkspaceExports extends DsulCrud {
         .concat(nestedPath.filter(Boolean))
         .join('/')
         .replace(/\.[^/.]+$/, '');
+    }
+
+    const exclusionPath = subfileSlug
+      ? `${folderName}/${subfileSlug}`
+      : folderName;
+    const isExcluded =
+      opts?.exclude && opts.exclude.find((cur) => cur.path === exclusionPath);
+    if (isExcluded) {
+      return false;
     }
 
     switch (folderName) {

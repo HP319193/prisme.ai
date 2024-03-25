@@ -455,6 +455,7 @@ components:
       required:
         - name
         - config
+      additionalProperties: false
       properties:
         name:
           type: string
@@ -486,6 +487,20 @@ components:
                   type: string
                 sshkey:
                   type: string
+        pull:
+          type: object
+          properties:
+            exclude:
+              type: array
+              items:
+                type: object
+                required:
+                  - path
+                properties:
+                  path:
+                    type: string
+
+
 
     DSUL:
       type: object
