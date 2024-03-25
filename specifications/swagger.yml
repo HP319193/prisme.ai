@@ -463,30 +463,33 @@ components:
           type: string
           enum:
             - 'git'
+            - 'archive'
         mode:
           type: string
           enum:
             - 'read-write'
             - 'read-only'
         config:
-          type: object
-          required:
-            - url
-            - branch
-          properties:
-            url:
-              type: string
-            branch:
-              type: string
-            auth:
-              type: object
+          anyOf:
+            - type: object
+              required:
+                - url
+                - branch
               properties:
-                user:
+                url:
                   type: string
-                password:
+                branch:
                   type: string
-                sshkey:
-                  type: string
+                auth:
+                  type: object
+                  properties:
+                    user:
+                      type: string
+                    password:
+                      type: string
+                    sshkey:
+                      type: string
+            - type: object # Empty config for archive
         pull:
           type: object
           properties:

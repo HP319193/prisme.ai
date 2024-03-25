@@ -220,12 +220,19 @@ export class WorkspaceExports extends DsulCrud {
     if (!bulkExportStream) {
       // 2. Import a single workspace
       const target = workspaceId
-        ? { id: workspaceId }
+        ? await this.workspaces.getWorkspace(workspaceId)
         : await this.workspaces.createWorkspace({ name: 'Import' });
       const updatedDetailedWorkspace = await this.importDSUL(
         target.id,
         'current',
-        archive
+        archive,
+        {
+          exclude: workspaceId
+            ? Object.values(target?.repositories || {}).find(
+                (cur) => cur.type === 'archive'
+              )?.pull?.exclude
+            : undefined,
+        }
       );
       return updatedDetailedWorkspace;
     }
@@ -306,6 +313,7 @@ export class WorkspaceExports extends DsulCrud {
       removeAdditionalFiles?: boolean;
       sourceVersion?: Prismeai.WorkspaceVersion;
       publishApp?: boolean; // If  given archive has a .import.yml indicating app settings, this is true by default
+      exclude?: Required<Prismeai.WorkspaceRepository>['pull']['exclude'];
     }
   ) => {
     const workspace = await this.workspaces.getDetailedWorkspace(
@@ -315,13 +323,9 @@ export class WorkspaceExports extends DsulCrud {
     );
 
     // For repositories pull, prepare exclusion list
-    const importOpts = opts?.sourceVersion?.repository?.id
-      ? {
-          exclude:
-            workspace.repositories?.[opts.sourceVersion.repository.id]?.pull
-              ?.exclude,
-        }
-      : {};
+    const importOpts = {
+      exclude: opts?.exclude,
+    };
 
     const automations = new Automations(
       this.accessManager,

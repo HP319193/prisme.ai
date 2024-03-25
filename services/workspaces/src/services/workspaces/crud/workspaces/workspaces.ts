@@ -181,26 +181,28 @@ export class Workspaces extends DsulCrud {
 
           Object.entries(workspace.repositories || {}).forEach(
             ([repoId, repo]) => {
-              if (!repo?.config?.url) {
-                throw new MissingFieldError(
-                  `Missing url for  repository '${repoId}''`
-                );
-              }
+              if ((repo?.type || 'git') === 'git') {
+                if (!repo?.config?.url) {
+                  throw new MissingFieldError(
+                    `Missing url for  repository '${repoId}''`
+                  );
+                }
 
-              if (
-                repo?.config?.auth?.password &&
-                !repo.config.url.startsWith('https://')
-              ) {
-                throw new MissingFieldError(
-                  `Repository URL must start with https:// when used with password authentication (repo: '${repoId})''`
-                );
-              } else if (
-                repo?.config?.auth?.sshkey &&
-                !repo.config.url.startsWith('git@')
-              ) {
-                throw new MissingFieldError(
-                  `Repository URL must start with git@ when used with sshkey authentication (repo: '${repoId})''`
-                );
+                if (
+                  repo?.config?.auth?.password &&
+                  !repo.config.url.startsWith('https://')
+                ) {
+                  throw new MissingFieldError(
+                    `Repository URL must start with https:// when used with password authentication (repo: '${repoId})''`
+                  );
+                } else if (
+                  repo?.config?.auth?.sshkey &&
+                  !repo.config.url.startsWith('git@')
+                ) {
+                  throw new MissingFieldError(
+                    `Repository URL must start with git@ when used with sshkey authentication (repo: '${repoId})''`
+                  );
+                }
               }
             }
           );

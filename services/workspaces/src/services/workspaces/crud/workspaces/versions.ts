@@ -52,6 +52,13 @@ export class WorkspaceVersions extends DsulCrud {
       );
     }
 
+    if (repository.type && repository.type !== 'git') {
+      throw new PrismeError(
+        `Unsupported repository type ${repository.type} for versions pull/push.`,
+        {}
+      );
+    }
+
     let driver: IStorage;
     if ((repository.type || 'git') === 'git') {
       driver = buildStorage(DriverType.GIT, {
@@ -220,6 +227,8 @@ export class WorkspaceVersions extends DsulCrud {
       workspaceId
     );
 
+    const workspaceDsul = await this.storage.get({ workspaceId });
+
     let targetVersion: Prismeai.WorkspaceVersion = {
       name: version,
       description: '',
@@ -287,10 +296,9 @@ export class WorkspaceVersions extends DsulCrud {
         exportOptions
       );
     } else {
-      const workspaceMetadata = await this.storage.get({ workspaceId });
       // Export archive from workspace's own repository
       const sourceDriver = await this.getRepositoryDriver(
-        workspaceMetadata,
+        workspaceDsul,
         targetVersion.repository.id,
         'read'
       );
@@ -311,6 +319,10 @@ export class WorkspaceVersions extends DsulCrud {
           removeAdditionalFiles: true,
           sourceVersion: targetVersion,
           overwriteWorkspaceSlugIfAvailable: true,
+          exclude: targetVersion.repository?.id
+            ? workspaceDsul?.repositories?.[targetVersion.repository.id]?.pull
+                ?.exclude
+            : undefined,
         }
       ),
       versionArchivePromise,

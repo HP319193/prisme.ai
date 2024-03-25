@@ -2706,7 +2706,7 @@ declare namespace Prismeai {
     }
     export interface WorkspaceRepository {
         name: string;
-        type?: "git";
+        type?: "git" | "archive";
         mode?: "read-write" | "read-only";
         config: {
             url: string;
@@ -2716,6 +2716,8 @@ declare namespace Prismeai {
                 password?: string;
                 sshkey?: string;
             };
+        } | {
+            [key: string]: any;
         };
         pull?: {
             exclude?: {

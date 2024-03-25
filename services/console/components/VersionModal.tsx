@@ -32,11 +32,13 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
         mode: 'read-write' as string,
       },
     ].concat(
-      Object.entries(workspace?.repositories || {}).map(([key, repo]) => ({
-        label: repo?.name,
-        value: key,
-        mode: repo.mode || 'read-write',
-      }))
+      Object.entries(workspace?.repositories || {})
+        .filter(([_, repo]) => repo.type !== 'archive')
+        .map(([key, repo]) => ({
+          label: repo?.name,
+          value: key,
+          mode: repo.mode || 'read-write',
+        }))
     );
 
     return {

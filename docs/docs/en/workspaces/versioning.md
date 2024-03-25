@@ -92,6 +92,20 @@ repositories:
 
 When pulling with a `pull.exclude` configured list, ignored filenames should not appear in `workspaces.imported` event summary.  
 
+It is also possible to specify `pull.exclude` option for archive imports using the following system repository (`type: archive`) :  
+
+```yaml
+repositories:
+  archives:
+    name: Archives
+    type: archive
+    config: {}
+    pull:
+      exclude:
+        - path: security
+        - path: index
+```
+
 
 ## Pull
 
