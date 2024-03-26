@@ -33,6 +33,7 @@ import { replaceSilently } from '../../utils/urls';
 import { TrackingCategory, useTracking } from '../../components/Tracking';
 import PlayPanel from '../../components/AutomationBuilder/PlayPanel';
 import EditDetails from './EditDetails';
+import { useWorkspaceLayout } from '../../layouts/WorkspaceLayout/context';
 
 const cleanInstruction = (instruction: Prismeai.Instruction) => {
   const [type] = Object.keys(instruction);
@@ -95,6 +96,7 @@ export const Automation = () => {
   const [duplicating, setDuplicating] = useState(false);
   const [dirty] = useDirtyWarning(automation, value);
   const { trackEvent } = useTracking();
+  const { setAdvancedMode } = useWorkspaceLayout();
 
   const {
     query: { automationId },
@@ -310,7 +312,15 @@ export const Automation = () => {
       action: 'click',
     });
     setDisplaySource(!displaySource);
-  }, [displaySource, trackEvent]);
+    setAdvancedMode(!displaySource);
+  }, [displaySource, setAdvancedMode, trackEvent]);
+
+  useEffect(() => {
+    return () => {
+      setAdvancedMode(false);
+    };
+  }, [setAdvancedMode]);
+
   const mergeSource = useCallback(
     (source: any) => ({
       ...value,

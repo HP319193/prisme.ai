@@ -32,6 +32,8 @@ export interface WorkspaceLayoutContext {
     slug: string;
     name: Prismeai.LocalizedText;
   }) => Promise<boolean>;
+  advancedMode: boolean;
+  setAdvancedMode: (advancedMode: boolean) => void;
 }
 
 export const workspaceLayoutContext = createContext<

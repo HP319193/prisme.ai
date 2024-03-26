@@ -80,6 +80,7 @@ export const WorkspaceLayout: FC = ({ children }) => {
       ? window.innerWidth > 500
       : !Storage.get('__workpaceSidebarMinimized')
   );
+  const [advancedMode, setAdvancedMode] = useState(false);
 
   const [appStoreVisible, setAppStoreVisible] = useState(false);
   const { trackEvent } = useTracking();
@@ -370,6 +371,8 @@ export const WorkspaceLayout: FC = ({ children }) => {
           createPage: createPageHandler,
           createBlock: createBlockHandler,
           installApp: installAppHandler,
+          advancedMode,
+          setAdvancedMode,
         }}
       >
         <BlocksProvider>
