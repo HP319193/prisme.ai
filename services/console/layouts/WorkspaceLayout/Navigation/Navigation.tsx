@@ -25,6 +25,8 @@ import RootLinksGroup from './RootLinksGroup';
 import Highlight from '../../../components/Highlight';
 import Storage from '../../../utils/Storage';
 import { cleanSearch, search } from '../../../utils/filterUtils';
+import AutomationSnippet from './AutomationSnippet';
+import BlockSnippet from './BlockSnippet';
 
 const {
   ProductLayout: { IconHome, IconCharts, useProductLayoutContext },
@@ -35,7 +37,7 @@ export const Navigation = () => {
   const { localize } = useLocalizedText();
   const { workspace } = useWorkspace();
   const { opened, toggle } = useOpenState();
-  const { installApp } = useWorkspaceLayout();
+  const { installApp, advancedMode } = useWorkspaceLayout();
   const { toggleSidebar, sidebarOpen } = useProductLayoutContext();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState(
@@ -73,12 +75,16 @@ export const Navigation = () => {
       name,
       icon,
       tooltip = slug,
+      automation,
+      block,
     }: {
       type: string;
       slug: string;
       name: Prismeai.LocalizedText | string;
       icon?: string;
       tooltip?: string;
+      automation?: Prismeai.AutomationMeta;
+      block?: Prismeai.Block;
     }) {
       function getIcon() {
         switch (type) {
@@ -133,6 +139,10 @@ export const Navigation = () => {
                 {tooltip}
               </Highlight>
             </div>
+            {advancedMode && automation && (
+              <AutomationSnippet slug={slug} {...automation} />
+            )}
+            {advancedMode && block && <BlockSnippet slug={slug} {...block} />}
           </>
         ),
         active: decodeURIComponent(asPath) === href,
@@ -299,6 +309,7 @@ export const Navigation = () => {
                     type: 'automation',
                     slug,
                     name: automation.name || slug,
+                    automation,
                   })
                 )
             )
@@ -329,6 +340,7 @@ export const Navigation = () => {
                     type: 'block',
                     slug,
                     name: block.name || slug,
+                    block,
                   })
                 )
             )
@@ -376,6 +388,7 @@ export const Navigation = () => {
       },
     ];
   }, [
+    advancedMode,
     asPath,
     localize,
     opened,
