@@ -36,7 +36,7 @@ kubectl create namespace apps
 From the root of the directory (`./prismeai-apps`) execute the installation command :
 
 ```sh
-helm install . --namespace apps -f values.yaml 
+helm install apps . --namespace apps -f values.yaml 
 ```
 
 ### Test the microservices
