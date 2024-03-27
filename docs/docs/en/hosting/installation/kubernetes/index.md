@@ -60,7 +60,7 @@ Create a namespace for Prisme.ai and install the platform using the Helm chart:
 #### Option 1 : Charts downloaded
 ```sh
 kubectl create namespace core
-helm install . --namespace core -f values.yaml 
+helm install core . --namespace core -f values.yaml 
 ```
 
 #### Option 2 : Added as a repo
