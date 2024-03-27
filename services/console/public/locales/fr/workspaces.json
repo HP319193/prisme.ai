@@ -6,7 +6,7 @@
     "welcome": {
       "title": "Low-code Builder",
       "description": "Voici votre galerie, retrouvez-y nos suggestions pour vous aider à démarrer un workspace ou recherchez parmi vos workspaces déjà créés.",
-      "help": "<a href=\"https://docs.eda.prisme.ai/fr\" target=\"_blank\">Besoin d’aide ? Nous sommes là.</a>"
+      "help": "<a href=\"https://docs.eda.prisme.ai/en\" target=\"_blank\">Besoin d’aide ? Nous sommes là.</a>"
     },
     "suggestions": {
       "title": "Suggestions",
