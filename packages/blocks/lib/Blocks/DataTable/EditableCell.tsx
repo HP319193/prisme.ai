@@ -74,7 +74,7 @@ const CellInput = forwardRef<any, any>(
   }
 );
 
-const EditableCell: FC<EditableCellProps> = ({
+const EditableCell = ({
   title,
   editable,
   children,
@@ -85,7 +85,7 @@ const EditableCell: FC<EditableCellProps> = ({
   validators,
   schemaForm,
   ...restProps
-}) => {
+}: EditableCellProps) => {
   const [editing, setEditing] = useState(TypesAutoEdit.includes(type));
   const inputRef = useRef<InputRef>(null);
   const form = useEditable();
