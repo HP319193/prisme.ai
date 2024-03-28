@@ -88,7 +88,7 @@ export const TriggerForm: FC<TriggerFormProps> = ({ trigger, onChange }) => {
   );
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto mx-4">
       <SchemaForm
         schema={schema}
         initialValues={initialValue}
