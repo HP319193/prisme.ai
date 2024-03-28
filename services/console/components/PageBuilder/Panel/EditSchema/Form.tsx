@@ -22,7 +22,7 @@ const SchemaEditor = ({ name }: FieldProps) => {
           <InfoCircleOutlined />
         </Tooltip>
       </div>
-      <div className="absolute -top-2 -right-2">
+      <div className="absolute -top-2 right-2">
         <Tooltip title={t('pages.blocks.form.schema.add')} placement="left">
           <Button
             onClick={() =>

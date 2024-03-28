@@ -82,18 +82,19 @@ export const FieldContainerWithRaw: FC<FieldProps> = ({
     });
     return className;
   }, [children, displayRaw]);
-
   return (
-    <div className={`pr-form-field ${className}`}>
+    <div
+      className={`pr-form-field ${className} ${
+        (className || '').includes('pr-form-object') ? 'pt-[1rem]' : '' // We had some padding in order to be sure that the displayRaw button doesn't overlap another one
+      }`}
+    >
       <Tooltip
         title={t('form.raw', { context: displayRaw ? 'hide' : '' })}
         placement="left"
       >
         <button
           type="button"
-          className={`pr-form-raw absolute ${
-            className === 'pr-form-object' ? 'top-4 right-4' : 'top-0 right-0'
-          } mt-[0.35rem] flex flex-1 flex-row z-[1] text-[12px] items-center`}
+          className={`pr-form-raw absolute top-0 right-0 mt-[0.35rem] flex flex-1 flex-row z-[1] text-[12px] items-center`}
           onClick={toggle}
           tabIndex={-1}
         >

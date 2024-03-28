@@ -2,7 +2,7 @@
 
 exports[`should render 1`] = `
 <div
-  className="pr-form-field pr-form-block-selector pr-form-object"
+  className="pr-form-field pr-form-block-selector pr-form-object pt-[1rem]"
 >
   <button
     className="pr-form-raw absolute top-0 right-0 mt-[0.35rem] flex flex-1 flex-row z-[1] text-[12px] items-center"

@@ -4,7 +4,7 @@
     "title": "Espaces de travail — $t(common:main.title)",
     "description": "Créez de nouveaux espaces de travail et de nouvelles apps, éditez les et exécutez les",
     "welcome": {
-      "title": "Low-code Builder",
+      "title": "Builder",
       "description": "Voici votre galerie, retrouvez-y nos suggestions pour vous aider à démarrer un workspace ou recherchez parmi vos workspaces déjà créés.",
       "help": "<a href=\"https://docs.eda.prisme.ai/en\" target=\"_blank\">Besoin d’aide ? Nous sommes là.</a>"
     },
