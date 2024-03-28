@@ -122,12 +122,14 @@ export const InstructionForm: FC<InstructionFormProps> = ({
         </div>
       )}
       {edit && edit.instruction && (
-        <InstructionValue
-          instruction={edit.instruction}
-          value={edit.value}
-          schema={edit.schema}
-          onChange={setInstructionValue}
-        />
+        <div className="flex flex-1 flex-col mx-4">
+          <InstructionValue
+            instruction={edit.instruction}
+            value={edit.value}
+            schema={edit.schema}
+            onChange={setInstructionValue}
+          />
+        </div>
       )}
     </div>
   );

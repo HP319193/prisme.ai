@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { ReactNode } from 'react';
 import ShareWorkspace from '../../components/Share/ShareWorkspace';
 import { useWorkspace } from '../../providers/Workspace';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 interface EditShareProps {
   children: ReactNode;
@@ -15,7 +16,19 @@ export const EditShare = ({ children, className }: EditShareProps) => {
   return (
     <Popover
       content={() => <ShareWorkspace workspaceId={workspace.id} />}
-      title={t('share.label')}
+      titleClassName="flex m-0 pb-0 pt-4 pl-4 pr-4"
+      title={({ setOpen }) => (
+        <div className="flex flex-1 justify-between">
+          {t('share.label')}
+          <button
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            <CloseCircleOutlined />
+          </button>
+        </div>
+      )}
       onOpenChange={(open) => {
         // trackEvent({
         //   name: `${open ? 'Open' : 'Close'} Share Panel`,

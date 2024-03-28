@@ -76,22 +76,23 @@ export const Add = ({ children, type, path = '' }: AppProps) => {
               {
                 title: t('pages.create.label'),
                 properties: {
+                  name: {
+                    type: 'localized:string',
+                    title: t(`${type}s.details.name.label`),
+                    validators: {
+                      required: true,
+                    },
+                  },
                   slug: {
                     type: 'string',
                     title: t(`${type}s.details.slug.label`),
+                    placeholder: `${type}-slug`,
                     validators: {
                       required: true,
                       pattern: {
                         value: SLUG_VALIDATION_REGEXP.source,
                         message: t('InvalidSlugError', { ns: 'errors' }),
                       },
-                    },
-                  },
-                  name: {
-                    type: 'localized:string',
-                    title: t(`${type}s.details.name.label`),
-                    validators: {
-                      required: true,
                     },
                   },
                 } as Schema,
@@ -117,22 +118,23 @@ export const Add = ({ children, type, path = '' }: AppProps) => {
         : {
             type: 'object',
             properties: {
+              name: {
+                type: 'localized:string',
+                title: t(`${type}s.details.name.label`),
+                validators: {
+                  required: true,
+                },
+              },
               slug: {
                 type: 'string',
                 title: t(`${type}s.details.slug.label`),
+                placeholder: `${type}-slug`,
                 validators: {
                   required: true,
                   pattern: {
                     value: SLUG_VALIDATION_REGEXP.source,
                     message: t('InvalidSlugError', { ns: 'errors' }),
                   },
-                },
-              },
-              name: {
-                type: 'localized:string',
-                title: t(`${type}s.details.name.label`),
-                validators: {
-                  required: true,
                 },
               },
             } as Schema,

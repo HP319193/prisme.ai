@@ -1,4 +1,5 @@
 import {
+  CloseCircleOutlined,
   CodeOutlined,
   EditOutlined,
   EyeOutlined,
@@ -189,6 +190,19 @@ export const PageRenderer = ({
               </Tooltip>
               <Popover
                 onOpenChange={setShareOpen}
+                titleClassName="flex m-0 pb-0 pt-4 pl-4 pr-4"
+                title={({ setOpen }) => (
+                  <div className="flex flex-1 justify-between">
+                    {t('pages.share.label')}
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                      }}
+                    >
+                      <CloseCircleOutlined />
+                    </button>
+                  </div>
+                )}
                 content={() => (
                   <SharePage
                     pageId={`${value.id}`}
@@ -196,7 +210,6 @@ export const PageRenderer = ({
                     workspaceId={value.workspaceId!}
                   />
                 )}
-                title={t('pages.share.label')}
               >
                 <button className="ml-4 !px-0 focus:outline-none">
                   <Space>

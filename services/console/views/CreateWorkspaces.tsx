@@ -40,6 +40,7 @@ export const CreateWorkspaces = () => {
           name: {
             type: 'localized:string',
             title: t('workspace.create.name'),
+            placeholder: t('workspace.create.name'),
             validators: {
               required: true,
             },
@@ -47,6 +48,7 @@ export const CreateWorkspaces = () => {
           description: {
             type: 'localized:string',
             title: t('workspace.create.description'),
+            placeholder: t('workspace.create.description'),
             'ui:widget': 'textarea',
             validators: {
               required: true,

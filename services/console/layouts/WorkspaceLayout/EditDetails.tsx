@@ -192,6 +192,10 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
         };
       }
     }
+    notification.success({
+      message: t('expert.save.confirm'),
+      placement: 'bottomRight',
+    });
   }, [saveWorkspace, t, values, workspace.slug]);
 
   const confirmDelete = useCallback(() => {

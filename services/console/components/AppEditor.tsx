@@ -68,7 +68,7 @@ const AppEditor = ({ schema, block, appId }: AppEditorProps) => {
     };
 
     return (
-      <div>
+      <div className="flex flex-1 flex-col mx-4">
         <SchemaForm
           schema={s}
           onChange={onChange}

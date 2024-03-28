@@ -455,6 +455,7 @@ export const Navigation = () => {
               <input
                 type="search"
                 value={searchQuery}
+                placeholder={t('workspace.search')}
                 ref={searchInputRef}
                 onFocus={() => setSearchFocusState(true)}
                 onBlur={() => setSearchFocusState(false)}

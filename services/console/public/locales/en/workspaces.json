@@ -4,7 +4,7 @@
     "title": "Workspaces — $t(common:main.title)",
     "description": "Create new Workspaces and new Apps, edit them, and run them",
     "welcome": {
-      "title": "Low-code Builder",
+      "title": "Builder",
       "description": "Here's your gallery, where you can find our suggestions to help you start a workspace, or search through the workspaces you've already created.",
       "help": "<a href=\"https://docs.eda.prisme.ai/en\" target=\"_blank\">Need help? We're here to help.</a>"
     },
@@ -559,7 +559,7 @@
         "label": "Slug"
       },
       "name": {
-        "label": "Automation title"
+        "label": "Title"
       },
       "description": {
         "label": "Description"
@@ -733,7 +733,7 @@
     "details": {
       "title": "Edit Page details",
       "name": {
-        "label": "Page title"
+        "label": "Title"
       },
       "description": {
         "label": "Description"
@@ -1534,7 +1534,7 @@
     "details": {
       "title": "Edit Block details",
       "name": {
-        "label": "Block title"
+        "label": "Title"
       },
       "description": {
         "label": "Description"

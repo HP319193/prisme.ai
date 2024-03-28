@@ -6,7 +6,6 @@
     "./services/*",
     "./packages/*"
   ],
-
   "scripts": {
     "start": "ts-node scripts/start-dev.ts",
     "clean": "npx rimraf packages/**/dist",

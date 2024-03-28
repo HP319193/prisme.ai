@@ -12,8 +12,9 @@ import api from '../../utils/api';
 import { DisplayedSourceType, useWorkspaceLayout } from './context';
 import CodeIcon from '/icons/code.svgr';
 import ExportIcon from '/icons/export.svgr';
-import TagIcon from '/icons/tag.svgr';
 import UsersIcon from '/icons/users.svgr';
+import ArrowDown from '/icons/arrow-down.svgr';
+import ArrowUp from '/icons/arrow-up.svgr';
 
 interface ActionsMenuProps {
   children: ReactNode;
@@ -139,7 +140,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
             onClick={() => onVersion('push')}
             className="flex flex-row items-center"
           >
-            <TagIcon className="mr-2" />
+            <ArrowUp className="mr-2" />
             {t(`workspace.versions.create.label`)}
           </button>
         ),
@@ -151,7 +152,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
             onClick={() => onVersion('pull')}
             className="flex flex-row items-center"
           >
-            <TagIcon className="mr-2" />
+            <ArrowDown className="mr-2" />
             {t(`workspace.versions.pull.label`)}
           </button>
         ),

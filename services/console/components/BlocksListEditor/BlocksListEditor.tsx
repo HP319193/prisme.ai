@@ -31,6 +31,7 @@ export const BlocksListEditor = ({
         components={componentsWithBlocksList}
         onChange={onChange}
         buttons={[]}
+        className="pr-block-list-editor"
       />
     </BlocksListEditorProvider>
   );
