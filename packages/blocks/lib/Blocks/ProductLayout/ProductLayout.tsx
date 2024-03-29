@@ -88,6 +88,15 @@ const defaultStyles = `:block {
   justify-content: center;
   align-items: center;
 }
+.product-layout-sidebar__logo--default {
+  display: flex;
+  flex-direction: row;
+  width: 41px;
+  height: 41px;
+  border-radius: 8px;
+  padding: 4px;
+  font-weight: 700;
+}
 .product-layout-sidebar__logo img {
   display: flex;
   flex-direction: row;
