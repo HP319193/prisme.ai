@@ -20,6 +20,19 @@ import IconCharts from './IconCharts';
 import useLocalizedText from '../../useLocalizedText';
 import { isLocalizedObject } from '@prisme.ai/design-system';
 import GenericBlock from '../utils/GenericBlock';
+import hash from 'hash-sum';
+
+const DefaultLogo = ({ title }: { title: string }) => {
+  const color = useMemo(() => `#${hash(title).substring(0, 6)}`, [title]);
+  return (
+    <div
+      className="product-layout-sidebar__logo product-layout-sidebar__logo--default"
+      style={{ backgroundColor: color }}
+    >
+      {title.substring(0, 1).toUpperCase()}
+    </div>
+  );
+};
 
 const LinkOrNot = ({
   children,
@@ -135,21 +148,24 @@ export const SidebarHeader = ({
         className="product-layout-sidebar__header-link"
         onClick={back ? () => toggleSidebar() : undefined}
       >
-        {logo && (
-          <Tooltip
-            title={sidebarOpen ? undefined : localize(tooltip)}
-            placement="right"
-          >
-            <div className="product-layout-sidebar__logo">
+        <Tooltip
+          title={sidebarOpen ? undefined : localize(tooltip)}
+          placement="right"
+        >
+          <div className="product-layout-sidebar__logo">
+            {logo && (
               <GenericBlock
                 content={logo}
                 ifString={({ content, ...props }) => (
                   <img src={content} {...props} />
                 )}
               />
-            </div>
-          </Tooltip>
-        )}
+            )}
+            {!logo && (
+              <DefaultLogo title={typeof title === 'string' ? title : ''} />
+            )}
+          </div>
+        </Tooltip>
       </LinkOrNot>
       {back && (
         <LinkOrNot href={back} className="product-layout-sidebar__header-link">
