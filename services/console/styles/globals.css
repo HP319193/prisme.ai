@@ -248,7 +248,9 @@ body .ant-modal-confirm-body .ant-modal-confirm-title {
 body .ant-dropdown-menu-item {
   margin: 0.2rem 0.5rem;
 }
-
+body .ant-dropdown-menu-title-content {
+  display: flex;
+}
 body .ant-dropdown-menu-item:hover {
   background: #e6efff;
   border-radius: 5px;

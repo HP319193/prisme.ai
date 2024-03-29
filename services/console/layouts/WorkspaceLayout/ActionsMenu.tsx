@@ -25,6 +25,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
   const { trackEvent } = useTracking();
+  const [isOpen, setIsOpen] = useState(false);
 
   const { displaySource, sourceDisplayed } = useWorkspaceLayout();
   const [exporting, setExporting] = useState(false);
@@ -50,6 +51,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
       name: 'Display Roles Edition',
       action: 'click',
     });
+    setIsOpen(false);
     displaySource(
       sourceDisplayed === DisplayedSourceType.Roles
         ? DisplayedSourceType.None
@@ -62,6 +64,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
       name: 'Display Publish as App Modal',
       action: 'click',
     });
+    setIsOpen(false);
     setPublishVisible(true);
   }, [trackEvent]);
 
@@ -71,6 +74,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         name: 'Display ' + action + ' Versionning Modal',
         action: 'click',
       });
+      setIsOpen(false);
       setVersionVisible(action);
     },
     [trackEvent]
@@ -92,6 +96,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
     a.click();
     document.body.removeChild(a);
     setExporting(false);
+    setIsOpen(false);
   }, [exporting, trackEvent, workspace.id]);
 
   const menu: ItemType[] = useMemo(
@@ -101,7 +106,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         label: (
           <button
             onClick={onDisplaySource}
-            className="flex flex-row items-center"
+            className="flex flex-1 flex-row items-center"
           >
             <CodeIcon className="mr-2" />
             {t(`expert.show`)}
@@ -113,7 +118,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         label: (
           <button
             onClick={onDisplayRoles}
-            className="flex flex-row items-center"
+            className="flex flex-1 flex-row items-center"
           >
             <UsersIcon className="mr-2" />
             {t(`expert.security`)}
@@ -126,7 +131,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         label: (
           <button
             onClick={onPublishAsApp}
-            className="flex flex-row items-center"
+            className="flex flex-1 flex-row items-center"
           >
             <AppstoreAddOutlined className="mr-2" />
             {t(`apps.publish.menuLabel`)}
@@ -138,7 +143,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         label: (
           <button
             onClick={() => onVersion('push')}
-            className="flex flex-row items-center"
+            className="flex flex-1 flex-row items-center"
           >
             <ArrowUp className="mr-2" />
             {t(`workspace.versions.create.label`)}
@@ -150,7 +155,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         label: (
           <button
             onClick={() => onVersion('pull')}
-            className="flex flex-row items-center"
+            className="flex flex-1 flex-row items-center"
           >
             <ArrowDown className="mr-2" />
             {t(`workspace.versions.pull.label`)}
@@ -160,7 +165,10 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
       {
         key: 'export',
         label: (
-          <button onClick={onExport} className="flex flex-row items-center">
+          <button
+            onClick={onExport}
+            className="flex flex-1 flex-row items-center"
+          >
             {exporting ? (
               <LoadingOutlined className="mr-2" />
             ) : (
@@ -171,7 +179,15 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         ),
       },
     ],
-    []
+    [
+      exporting,
+      onDisplayRoles,
+      onDisplaySource,
+      onExport,
+      onPublishAsApp,
+      onVersion,
+      t,
+    ]
   );
   return (
     <>
@@ -188,6 +204,8 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
         placement="bottomLeft"
         trigger={['click']}
         className={className}
+        open={isOpen}
+        onOpenChange={setIsOpen}
       >
         <>{children}</>
       </Dropdown>
