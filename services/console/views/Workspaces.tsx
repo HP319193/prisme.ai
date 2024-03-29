@@ -38,9 +38,13 @@ const DftWorkspaceIcon = ({ color = 'black' }: { color?: string }) => (
 const MenuInCard = ({
   items,
   color = 'text-main-element-text',
+  isOpen,
+  setIsOpen,
 }: {
   items: ItemType[];
   color?: string;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }) => {
   return (
     <div onClick={(e) => e.stopPropagation()}>
@@ -48,6 +52,8 @@ const MenuInCard = ({
         overlay={<Menu items={items} />}
         trigger={['click']}
         className="absolute top-0 right-0 invisible group-hover:visible"
+        open={isOpen}
+        onOpenChange={setIsOpen}
       >
         <button
           onClick={(e) => e.preventDefault()}
@@ -65,6 +71,18 @@ export const WorkspacesView = () => {
   const { localize } = useLocalizedText();
   const [searchValue, setSearchValue] = useState('');
   const { trackEvent } = useTracking();
+  const [menuIsOpen, setMenuIsOpen] = useState<Map<string, boolean>>(new Map());
+
+  const setIsOpen = useCallback(
+    (key: string) => (isOpen: boolean) => {
+      setMenuIsOpen((prev) => {
+        const newMenus = new Map(prev);
+        newMenus.set(key, isOpen);
+        return newMenus;
+      });
+    },
+    []
+  );
 
   const { push } = useRouter();
   const {
@@ -162,15 +180,16 @@ export const WorkspacesView = () => {
       filePickr.addEventListener('change', async (e: any) => {
         filePickr.parentNode?.removeChild(filePickr);
         const { files } = e.target as HTMLInputElement;
-        if (!files) return;
-        handleImportArchive(files[0], workspaceId);
+        if (!files || !workspaceId) return;
+        await handleImportArchive(files[0], workspaceId);
+        setIsOpen(workspaceId)(false);
       });
       filePickr.addEventListener('cancel', () => {
         filePickr.parentNode?.removeChild(filePickr);
       });
       filePickr.click();
     },
-    [handleImportArchive, trackEvent]
+    [handleImportArchive, setIsOpen, trackEvent]
   );
 
   const handleDeleteWorkspace = useCallback(
@@ -180,8 +199,9 @@ export const WorkspacesView = () => {
         message: t('workspace.delete.toast'),
         placement: 'bottomRight',
       });
+      setIsOpen(workspaceId)(false);
     },
-    [deleteWorkspace, t]
+    [deleteWorkspace, setIsOpen, t]
   );
 
   const getWorkspaceMenu = useCallback(
@@ -390,7 +410,12 @@ export const WorkspacesView = () => {
                 className="rounded border-dashed border-[1px] border-[1BFBFBF] !bg-transparent"
                 textColor="text-white"
               />
-              <MenuInCard items={createMenu} color="text-main-text" />
+              <MenuInCard
+                items={createMenu}
+                color="text-main-text"
+                isOpen={!!menuIsOpen.get('new')}
+                setIsOpen={setIsOpen('new')}
+              />
             </a>
           </Link>
           {filteredWorkspaces.map(({ id, description, name, photo }) => (
@@ -405,7 +430,11 @@ export const WorkspacesView = () => {
                     )
                   }
                 />
-                <MenuInCard items={getWorkspaceMenu(id)} />
+                <MenuInCard
+                  items={getWorkspaceMenu(id)}
+                  isOpen={!!menuIsOpen.get(id)}
+                  setIsOpen={setIsOpen(id)}
+                />
                 <div className="absolute bottom-[30px] right-[30px] text-main-element-text underline">
                   {t('edit.label')}
                 </div>
