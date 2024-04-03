@@ -4,6 +4,7 @@ import {
   APP_NAME,
   BROKER_DRIVER,
   BROKER_HOST,
+  BROKER_MAX_SOCKETS,
   BROKER_NAMESPACE,
   BROKER_PASSWORD,
   BROKER_TOPIC_MAXLEN,
@@ -77,6 +78,7 @@ export function initEDA() {
         password: BROKER_PASSWORD,
         namespace: BROKER_NAMESPACE,
         topicsMaxLen: BROKER_TOPIC_MAXLEN,
+        maxSockets: BROKER_MAX_SOCKETS,
       },
       validator: {
         oasFilepath: EVENTS_OAS_PATH,

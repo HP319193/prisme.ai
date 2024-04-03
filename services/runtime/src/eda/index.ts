@@ -10,6 +10,7 @@ import {
   BROKER_NAMESPACE,
   BROKER_TOPIC_MAXLEN,
   BROKER_EMIT_MAXLEN,
+  BROKER_MAX_SOCKETS,
 } from '../../config';
 import { Logger, logger } from '../logger';
 
@@ -76,6 +77,7 @@ export function initEDA(service = APP_NAME) {
         password: BROKER_PASSWORD,
         namespace: BROKER_NAMESPACE,
         topicsMaxLen: BROKER_TOPIC_MAXLEN,
+        maxSockets: BROKER_MAX_SOCKETS,
       },
       validator: {
         oasFilepath: EVENTS_OAS_PATH,

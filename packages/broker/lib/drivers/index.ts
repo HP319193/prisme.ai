@@ -58,6 +58,7 @@ export interface DriverOptions {
   namespace?: string;
 
   topicsMaxLen?: number; // Cap topics to a max number of events (oldest events get removed to stay under this threshold)
+  maxSockets?: number; // Maximum number of client sockets opened
 }
 
 export function driver(opts: DriverOptions) {
