@@ -11,6 +11,7 @@ export interface StorageOptions {
     driver: CacheDriver;
   };
   indexes?: string[];
+  ttlKey?: string;
 }
 
 export interface SaveOpts<Model> {

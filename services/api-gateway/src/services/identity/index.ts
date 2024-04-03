@@ -32,6 +32,7 @@ const cache = buildCache(storage.Sessions);
 const Users = buildStorage<User>('Users', {
   ...storage.Users,
   indexes: ['email', 'authData.azure.id'],
+  ttlKey: 'authData.anonymous.expiresAt',
 });
 const OTPKeys = buildStorage<OTPKey>('OTPKeys', storage.Users);
 const AccessTokens = buildStorage<AccessToken>('AccessTokens', {

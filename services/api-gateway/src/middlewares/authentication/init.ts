@@ -156,7 +156,7 @@ async function initPassportStrategies(
   passport.use(
     'anonymous',
     new CustomStrategy(async function (req, done) {
-      const savedUser = await users.anonymousLogin();
+      const savedUser = await users.anonymousLogin(req.body.expiresAfter);
       try {
         done(null, savedUser);
       } catch (err) {

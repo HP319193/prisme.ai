@@ -2783,6 +2783,12 @@ declare namespace Prismeai {
 }
 declare namespace PrismeaiAPI {
     namespace AnonymousAuth {
+        export interface RequestBody {
+            /**
+             * Optional session expiration in seconds
+             */
+            expiresAfter?: number;
+        }
         namespace Responses {
             export interface $200 {
                 /**

@@ -35,10 +35,15 @@ async function mfaHandler(
 }
 
 async function anonymousLoginHandler(
-  req: Request<any, any>,
+  req: Request<any, any, PrismeaiAPI.AnonymousAuth.RequestBody>,
   res: Response<PrismeaiAPI.AnonymousAuth.Responses.$200>,
   next: NextFunction
 ) {
+  // Make sure our passport custom middleware will receive the expiration to ensure at database layer
+  if (!req.body.expiresAfter) {
+    req.body.expiresAfter = oidcCfg.ACCESS_TOKENS_MAX_AGE;
+  }
+
   passport.authenticate(
     'anonymous',
     { session: true },
@@ -48,7 +53,6 @@ async function anonymousLoginHandler(
         await req.broker.send<Prismeai.FailedLogin['payload']>(
           EventType.FailedLogin,
           {
-            email: req.body.email,
             ip: req.context?.http?.ip,
             provider: 'anonymous',
           }
@@ -63,7 +67,10 @@ async function anonymousLoginHandler(
         }
 
         // Mimic OIDC emitted JWT tokens so we can validate / handle these anonymous session exactly like for OIDC tokens
-        const { token, jwt, expires } = await getAccessToken(user.id);
+        const { token, jwt, expires } = await getAccessToken(
+          user.id,
+          req.body.expiresAfter
+        );
         req.session.prismeaiSessionId = token.prismeaiSessionId;
         req.session.mfaValidated = false;
         res.send({

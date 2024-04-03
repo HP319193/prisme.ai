@@ -36,20 +36,31 @@ export class MongodbDriver implements StorageDriver<any> {
     await this.client.connect();
     this.db = await this.client.db();
     this._collection = await this.db.collection(this.collectionName);
-    if (this.opts?.indexes?.length) {
-      this.ensureIndexes(this.opts.indexes);
-    }
+    this.ensureIndexes(this.opts.indexes, this.opts?.ttlKey);
   }
 
-  private async ensureIndexes(indexes: string[]) {
+  private async ensureIndexes(indexes?: string[], ttlKey?: string) {
     try {
-      await Promise.all(
-        indexes.map((name) =>
-          this._collection?.createIndex({
-            [name]: 1,
-          })
-        )
-      );
+      if (indexes?.length) {
+        await Promise.all(
+          indexes.map((name) =>
+            this._collection?.createIndex({
+              [name]: 1,
+            })
+          )
+        );
+      }
+
+      if (ttlKey) {
+        await this._collection?.createIndex(
+          {
+            [ttlKey]: 1,
+          },
+          {
+            expireAfterSeconds: 0,
+          }
+        );
+      }
     } catch (err) {
       logger.error({
         msg:

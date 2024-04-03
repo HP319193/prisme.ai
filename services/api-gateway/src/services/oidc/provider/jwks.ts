@@ -22,8 +22,11 @@ export async function sign(payload: any) {
   return token;
 }
 
-export async function getAccessToken(userId: string) {
-  const expires = new Date(Date.now() + oidcCfg.ACCESS_TOKENS_MAX_AGE * 1000);
+export async function getAccessToken(userId: string, expiresAfter?: number) {
+  if (!expiresAfter) {
+    expiresAfter = oidcCfg.ACCESS_TOKENS_MAX_AGE;
+  }
+  const expires = new Date(Date.now() + expiresAfter * 1000);
   // Mimic OIDC emitted JWT tokens so we can validate / handle these anonymous session exactly like for OIDC tokens
   const token = {
     exp: Math.floor(expires.getTime() / 1000),
