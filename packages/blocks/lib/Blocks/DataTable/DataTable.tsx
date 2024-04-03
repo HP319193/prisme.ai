@@ -14,7 +14,6 @@ import { TableProps } from 'antd';
 import { BaseBlock } from '../BaseBlock';
 import { BaseBlockConfig } from '../types';
 import { Events } from '@prisme.ai/sdk';
-import { kebabToCamel } from '../../utils/kebabToCamel';
 import { toKebab } from '../../utils/toKebab';
 
 export interface DataTableConfig extends BaseBlockConfig {

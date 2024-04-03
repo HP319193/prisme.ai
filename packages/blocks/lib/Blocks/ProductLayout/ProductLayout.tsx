@@ -38,6 +38,7 @@ const defaultStyles = `:block {
   display: flex;
   flex-direction: row;
   min-height: 100%;
+  width: 100%;
   flex: 1;
 }
 .product-layout-sidebar {
