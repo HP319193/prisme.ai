@@ -1,4 +1,4 @@
-import { FC, forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { Input, InputRef, Form, Switch } from 'antd';
 import { useEditable } from './EditableContext';
 import { ColumnDefinition, DataType } from './types';

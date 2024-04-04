@@ -2,12 +2,12 @@ import '../../i18n';
 import { Table } from '@prisme.ai/design-system';
 import { useBlock } from '../../Provider';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import BlockTitle from '../Internal/BlockTitle';
 
 import EditableRow from './EditableRow';
 import EditableCell from './EditableCell';
-import { ColumnDefinition, OnEdit } from './types';
+import { ColumnDefinition, DataType, OnEdit } from './types';
 import renderValue from './RenderValue';
 import useLocalizedText from '../../useLocalizedText';
 import { TableProps } from 'antd';
@@ -28,6 +28,12 @@ export interface DataTableConfig extends BaseBlockConfig {
     payload?: Record<string, any>;
   };
   customProps?: any;
+  onSort?:
+    | string
+    | {
+        event: string;
+        payload?: Record<string, any>;
+      };
 }
 
 interface DataTableProps extends DataTableConfig {
@@ -56,6 +62,7 @@ export const DataTable = ({
   className = '',
   data = emptyArray,
   events,
+  onSort,
   ...config
 }: DataTableProps) => {
   const {
@@ -118,7 +125,9 @@ export const DataTable = ({
         title: localize(label),
         dataIndex: key,
         key,
-        sorter: key
+        sorter: onSort
+          ? true
+          : key
           ? (a: any, b: any) => {
               const _a = key ? a[key] : '';
               const _b = key ? b[key] : '';
@@ -192,6 +201,24 @@ export const DataTable = ({
     } as TableProps<any>['pagination'];
   }, [config.pagination]);
 
+  const prevTableSort = useRef('');
+  const handleTableChange: TableProps<any>['onChange'] = (
+    pagination,
+    filters,
+    sorter
+  ) => {
+    if (!onSort) return;
+    if (JSON.stringify(sorter) === prevTableSort.current) return;
+    prevTableSort.current = JSON.stringify(sorter);
+    const { event, payload } =
+      typeof onSort === 'string' ? { event: onSort, payload: {} } : onSort;
+    events?.emit(event, {
+      ...payload,
+      ...sorter,
+    });
+  };
+
+
   return (
     <div
       className={`pr-block-data-table ${className}                  block-data-table`}
@@ -204,6 +231,7 @@ export const DataTable = ({
           locale={locales}
           components={components}
           pagination={pagination}
+          onChange={handleTableChange}
           {...config.customProps}
         />
       </div>
