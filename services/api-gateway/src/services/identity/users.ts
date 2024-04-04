@@ -358,12 +358,15 @@ export const anonymousLogin = (
   Users: StorageDriver<User>,
   ctx?: PrismeContext
 ) =>
-  async function () {
+  async function (expiresAfter?: number) {
+    let expiresAt = expiresAfter
+      ? new Date(Date.now() + expiresAfter * 1000)
+      : undefined;
     const user: Prismeai.User = {
       firstName:
         'anonymous-' + Date.now() + '-' + Math.round(Math.random() * 1000),
       authData: {
-        anonymous: {},
+        anonymous: { expiresAt },
       },
     };
     return await Users.save(user);

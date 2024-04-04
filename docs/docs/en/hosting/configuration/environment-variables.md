@@ -126,7 +126,7 @@
   <tr>
     <td>ACCESS_TOKENS_MAX_AGE</td>
     <td>api-gateway</td>
-    <td>Access tokens expiration (in seconds)</td>
+    <td>Session expiration, used for both anonymous & authenticated sessions (in seconds)</td>
     <td>2592000 (1 month)</td>
   </tr>      
   <tr>

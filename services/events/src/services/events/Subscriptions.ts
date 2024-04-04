@@ -267,6 +267,11 @@ export class Subscriptions {
       subscriber.apiKey
     );
 
+    await userAccessManager.pullRoleFromSubject(
+      SubjectType.Workspace,
+      workspaceId
+    );
+
     const fullSubscriber: Subscriber = {
       ...subscriber,
       ...workspaceUser,

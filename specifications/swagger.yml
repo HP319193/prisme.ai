@@ -3061,6 +3061,16 @@ paths:
         - API Gateway
       security:
         - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                expiresAfter:
+                  type: number
+                  description: "Optional session expiration in seconds"
+
       responses:
         '200': &LoginResponse
           description: Success Response

@@ -9,7 +9,7 @@ import { RedisClientType } from '@redis/client';
 import { DriverOptions, SubscriptionOptions } from '..';
 
 const NoGroupErrRegexp = new RegExp(/No such key '([a-zA-Z0-9_\-.:]+)'/);
-const MAX_CLIENTS = 10;
+const DEFAULT_MAX_CLIENTS = 20;
 const BLOCKING_TIME = 1000;
 
 type RedisClient = RedisClientType<RedisModules, RedisFunctions, RedisScripts>;
@@ -27,11 +27,11 @@ export type DeserializedMessages = Record<StreamName, RedisMessage[]>;
 /*
  * Abstract redis commands execution
  * Execute xread & xreadgroup commands in BLOCK mode whenever possible to reduce output traffic
- * To do so, it dispatch xread & xreadgroup to a pool of MAX_CLIENTS clients.
+ * To do so, it dispatch xread & xreadgroup to a pool of DEFAULT_MAX_CLIENTS clients.
  */
 /*
  * Please note that current implemenation does not handle switching between blocking clients for a dynamically growing list of stream names as once initialized, clients stay assigned to the first said streams
- * Once MAX_CLIENTS has been reached & new stream names are coming in, they will all be processed with the shared nonblocking client
+ * Once DEFAULT_MAX_CLIENTS has been reached & new stream names are coming in, they will all be processed with the shared nonblocking client
  */
 export class ClientPool {
   private opts: DriverOptions;
@@ -61,7 +61,10 @@ export class ClientPool {
       return this.clientsByStreams[key];
     }
 
-    if (Object.keys(this.clients).length >= MAX_CLIENTS) {
+    if (
+      Object.keys(this.clients).length >=
+      (this.opts?.maxSockets || DEFAULT_MAX_CLIENTS)
+    ) {
       return this.nonblocking;
     }
 

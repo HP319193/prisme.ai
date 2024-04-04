@@ -5,8 +5,8 @@ import GenericBlock from '../utils/GenericBlock';
 
 function isContentProps(content: any): content is ContentProps {
   if (!content) return false;
-  const { title, description, tabs } = content as ContentProps;
-  return !!(title || description || tabs);
+  const { title, description, tabs, content: c } = content as ContentProps;
+  return !!(title || description || tabs || c);
 }
 
 export const Content = ({
