@@ -1,4 +1,4 @@
-import prefixCSS from './prefixCSS';
+import prefixCSS, { replacePlaceholders, replaceVars } from './prefixCSS';
 import fs from 'fs';
 
 it('should prefix css', () => {
@@ -167,4 +167,71 @@ it('should not break webfont link', () => {
   font-size: 2rem;
 }"
   `);
+});
+
+it('should replace vars', () => {
+  expect(
+    replaceVars(
+      `.test-{{var}} {
+  
+}
+.test-{{autrevar}} {
+
+}`,
+      []
+    )
+  ).toBe(`.test-__________1 {
+  
+}
+.test-__________2 {
+
+}`);
+});
+it('should replace placeholders', () => {
+  expect(
+    replacePlaceholders(
+      `.test-__________1 {
+  
+}
+.test-__________2 {
+
+}`,
+      ['{{var}}', '{{autrevar}}']
+    )
+  ).toBe(`.test-{{var}} {
+  
+}
+.test-{{autrevar}} {
+
+}`);
+});
+it('should prefix variables', () => {
+  expect(
+    prefixCSS(
+      `.test-{{var}} {
+  color: red;
+}`,
+      {
+        block: '.prefix',
+        parent: '.parent',
+      }
+    )
+  ).toBe(`.prefix .test-{{var}} {
+  color: red;
+}`);
+
+  expect(
+    prefixCSS(
+      `.category-button--{{filters.category|replace:'[^a-zA-Z0-9]','-', 'g'}} .pr-block-action__button {
+  color: var(--primary) ! important;
+}`,
+      {
+        block: '.prefix',
+        parent: '.parent',
+      }
+    )
+  )
+    .toBe(`.prefix .category-button--{{filters.category|replace:'[^a-zA-Z0-9]','-', 'g'}} .pr-block-action__button {
+  color: var(--primary) ! important;
+}`);
 });
