@@ -11,9 +11,9 @@ export interface BlocksListConfig extends BaseBlockConfig {
   tag?: keyof JSX.IntrinsicElements | 'fragment';
   fragment?: boolean;
 }
-
+const EMPTY_ARRAY: BlocksListConfig['blocks'] = [];
 export const BlocksList = ({
-  blocks = [],
+  blocks = EMPTY_ARRAY,
   className,
   tag = 'div',
   sectionId = '',
