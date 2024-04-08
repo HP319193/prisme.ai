@@ -180,9 +180,11 @@ export const WorkspacesView = () => {
       filePickr.addEventListener('change', async (e: any) => {
         filePickr.parentNode?.removeChild(filePickr);
         const { files } = e.target as HTMLInputElement;
-        if (!files || !workspaceId) return;
+        if (!files) return;
         await handleImportArchive(files[0], workspaceId);
-        setIsOpen(workspaceId)(false);
+        if (workspaceId) {
+          setIsOpen(workspaceId)(false);
+        }
       });
       filePickr.addEventListener('cancel', () => {
         filePickr.parentNode?.removeChild(filePickr);
