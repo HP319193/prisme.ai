@@ -14,7 +14,13 @@ export const useDirtyWarning = <T,>(original: T, newValue: T) => {
   const originalValue = useRef(clone({ proto: false })(original));
 
   useEffect(() => {
-    if (!navigating.current && !equal(originalValue.current, newValue)) {
+    if (
+      !navigating.current &&
+      !equal(
+        JSON.parse(JSON.stringify(originalValue.current)),
+        JSON.parse(JSON.stringify(newValue))
+      )
+    ) {
       setDirty(true);
     }
   }, [newValue, original]);
