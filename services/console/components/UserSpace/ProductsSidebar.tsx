@@ -133,7 +133,9 @@ export const ProductsSidebar = () => {
                 added === slug ? 'animate-add-product animate-[' : ''
               }`}
             >
-              <Link href={history.get(slug) || href}>
+              <Link
+                href={index === selected ? href : history.get(slug) || href}
+              >
                 <a className="flex flex-1">
                   <Button
                     expanded={expanded}
