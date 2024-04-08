@@ -155,11 +155,18 @@ export const Block: FC<NodeProps & BlockProps> = ({
             typeof value === 'string' ? value : (value && value.event) || '';
           break;
         case 'repeat':
-          if (!value) {
-            displayedValue = '?';
+          if (value.on && value.until) {
+            return t('automations.instruction.label', {
+              context: 'repeat_on_until',
+              on: value.on,
+              count: +value.until,
+            });
           }
           if (value.on) {
-            displayedValue = value.on;
+            return t('automations.instruction.label', {
+              context: 'repeat_on',
+              on: value.on,
+            });
           }
           if (value.until) {
             return t('automations.instruction.label', {
@@ -167,7 +174,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
               count: +value.until,
             });
           }
-          displayedValue = (value && value.on) || value.until || '?';
+          displayedValue = '?';
           break;
         case 'set':
           displayedValue =

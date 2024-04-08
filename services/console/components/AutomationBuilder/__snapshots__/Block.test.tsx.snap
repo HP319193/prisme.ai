@@ -154,7 +154,7 @@ Array [
         }
       }
     >
-      automations.node.label
+      automations.instruction.label
     </button>
   </div>,
   ");",

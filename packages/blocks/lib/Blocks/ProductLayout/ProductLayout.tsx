@@ -21,8 +21,9 @@ export const ProductLayout = ({
 }: ProductLayoutProps & BaseBlockConfig) => {
   const toastBlocks = useMemo(
     () => toastOn && [{ slug: 'Toast', toastOn }],
-    []
+    [toastOn]
   );
+
   return (
     <ProductLayoutProvider opened={sidebar?.opened}>
       <div className={`product-layout ${className}`}>
