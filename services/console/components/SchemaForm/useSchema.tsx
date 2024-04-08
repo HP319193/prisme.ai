@@ -69,12 +69,14 @@ export const useSchema = (store: Record<string, any> = {}) => {
     workspace: {
       id,
       name: workspaceName,
-      config: { value: config } = {},
+      config: { value: workspaceConfig } = {},
       automations = {},
       pages = {},
       imports = {},
     },
   } = useWorkspace();
+
+  const config = store.config || workspaceConfig;
 
   const extractSelectOptions = useCallback(
     (schema: Schema) => {
