@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useField } from 'react-final-form';
 import Select from '../Select';
 import { SchemaFormContext, useSchemaForm } from './context';
@@ -104,6 +104,10 @@ export const OneOf = ({
     return { childSchema, childTitle };
   }, [selected]);
 
+  const lastValue = useRef(field.input.value);
+  useEffect(() => {
+    lastValue.current = field.input.value;
+  }, [field.input.value]);
   useEffect(() => {
     const newValue = Object.entries(childSchema.properties || {}).reduce(
       (acc, [key, value]) => {
@@ -115,9 +119,9 @@ export const OneOf = ({
         }
         return acc;
       },
-      {}
+      lastValue.current
     );
-
+    if (lastValue.current === newValue) return;
     field.input.onChange(newValue);
   }, [childSchema]);
 
@@ -149,7 +153,6 @@ export const OneOf = ({
         (name) => newValue[name] === field.input.value[name]
       )
     ) {
-      console.log('3');
       field.input.onChange({ ...newValue });
     }
   }, [selected]);
