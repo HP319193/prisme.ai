@@ -653,6 +653,14 @@ export class Api extends Fetcher {
     return await this.get(`/apps?${params.toString()}`);
   }
 
+  async getApp({
+    slug = '',
+  }: {
+    slug?: PrismeaiAPI.GetApp.PathParameters['appSlug'];
+  }): Promise<Fetched<PrismeaiAPI.GetApp.Responses.$200>> {
+    return await this.get(`/apps/${encodeURIComponent(slug)}`);
+  }
+
   async installApp(
     workspaceId: PrismeaiAPI.InstallAppInstance.PathParameters['workspaceId'],
     body: PrismeaiAPI.InstallAppInstance.RequestBody
