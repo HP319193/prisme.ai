@@ -24,6 +24,7 @@ instructions: Instructions
 conditions: Conditions
 examples: Tutorials
 airouting:  AI Contact Routing
+website2gpt: Website to Chatgpt (RAG)
 security: Security
 hosting: Self-hosting
 installation: Installation
