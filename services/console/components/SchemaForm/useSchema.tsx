@@ -242,7 +242,7 @@ export const useSchema = (store: Record<string, any> = {}) => {
   const extractFromConfig = useCallback(
     (path: string) => {
       const results = readAppConfig(config, path);
-      return results[0] || null;
+      return (results && results[0]) || null;
     },
     [config]
   );
