@@ -90,6 +90,7 @@ nav:
       - i18n.workspaces:
           - i18n.specifications: architecture/technical/workspaces/specifications.md
   - i18n.examples:
+      - i18n.airouting: examples/form-genai.md
       - i18n.index: examples/index.md
   - i18n.contributing:
       - i18n.index: contributing/index.md
