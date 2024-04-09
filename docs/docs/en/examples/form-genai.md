@@ -24,18 +24,49 @@ Now, let's create a page within your workspace that hosts our intelligent contac
 
 ### Page Setup:
 
-1. In your workspace, find the option to create a new page. Click on it.
-2. Name your page thoughtfully, for instance, "Contact Us Form". Assign a slug, such as `contact-us`, for easy web access.
-3. Go to the form builder section and click on Add a Block
-4. Search "Form" and click on it
-5. A coté de Form Specification click on "+" 
-    a. Fill Property Name with name (without space and specicial caracters) and Click on dropDown icon, then Field label, Description and placeholder
-    b. A coté de Form Specification click on "+", then do same for email
-    c. A coté de Form Specification click on "+", then do same for message, for this one choose text area as display mode
-    d. A coté de Form Specification click on "+", then do same for attachement, for this one choose Sending  a file as display mode
-6. Remplis le champ "On submit event" avec un nom d'événement de votre choix (Prisme.ai est une plateforme dite Event Drivent Architecture où les communications entre le front et le back peuvenet se faire uniquement par événement), par exemple formSubmit
-7. Click on save, you can see your Form
-     
+### Creating a Contact Us Page and Form on Prisme.ai
+
+Creating a dynamic contact form on Prisme.ai involves a straightforward yet powerful process. This form will be the bridge between your customers and your team, enabling an organized flow of information.
+
+#### 1. Initiating a New Page:
+
+1. Within your Prisme.ai workspace, navigate to the section where you can manage or create new pages.
+2. Click on the option to create a new page. This is your first step towards customizing the user experience on your platform.
+
+#### 2. Naming and Setting Up Your Page:
+
+1. Provide your page with a meaningful name that clearly indicates its purpose. For example, naming it "Contact Us Form" will make it easily identifiable.
+2. Assign a slug to your page, such as `contact-us`. This slug is crucial as it defines the page's URL path, making it accessible and memorably linked to its function.
+
+#### 3. Building the Form:
+
+1. Locate the form builder section within your page settings. Here, you're about to construct the backbone of your contact mechanism.
+2. Click on "Add a Block" to begin adding elements to your page. In the search bar that appears, type "Form" and select the form block to add it to your page.
+
+#### 4. Configuring Form Specifications:
+
+1. Next to the "Form Specification" section, you'll see a "+" button. Click this to start adding fields to your form.
+   - **For Name Field:**
+     - Click the "+" to add a new field.
+     - In "Property Name", input `name`. Ensure there are no spaces or special characters.
+     - Click on the dropdown icon to set the Field label, Description, and Placeholder. These help guide the user when filling out the form.
+   - **For Email Field:**
+     - Repeat the process to add another field, this time with the property name `email`, setting up its label, description, and placeholder similarly.
+   - **For Message Field:**
+     - Add a new field with the property name `message`. When setting its display options, choose "Text Area" to allow for longer messages.
+   - **For Attachment Field:**
+     - Lastly, add a field for attachments with the property name `attachment`. Choose "Sending a File" as its display mode to enable file uploads.
+
+#### 5. Setting Up Form Submission Event:
+
+1. Fill in the "On submit event" field with an event name of your choice. Prisme.ai operates on an Event-Driven Architecture, meaning front-end to back-end communications are facilitated through events. A suggested name could be `formSubmit`. This event name will be crucial for setting up automations and integrations later.
+
+#### 6. Saving Your Form:
+
+1. After configuring your form, click on "Save". You'll now be able to view your form as it will appear to users. This is a good moment to review and make any necessary adjustments to ensure clarity and usability.
+
+This enhanced setup guide provides a detailed walk-through for creating a contact form in Prisme.ai, emphasizing clarity and user engagement. By following these steps, you'll establish a straightforward, efficient channel for receiving and managing customer inquiries and requests.
+
     
 
 ### YAML Configuration:
@@ -111,36 +142,58 @@ This configuration not only automates email notifications upon each form submiss
 
 To ensure timely follow-ups on each contact form submission, we'll utilize the SendMail app from Prisme.ai's App Store for automated email notifications.
 
-## Step 5: Utilizing OpenAI for Gen.AI Routing
+Let's enhance the instructions for integrating OpenAI to facilitate intelligent routing of inquiries within your Prisme.ai setup, ensuring clarity and an efficient setup process.
 
-To automatically determine the nature of each inquiry, we'll use OpenAI.
+### Step 5: Implementing OpenAI for Gen.AI Inquiry Routing
 
-### OpenAI Setup:
+Harness the capabilities of Gen.AI to assess and route inquiries automatically, ensuring each is directed to the appropriate department based on content analysis.
 
-1. Install OpenAI from the marketplace and configure it within your workspace.
-2. Create an automation that sends the form's `message` field to OpenAI, asking it to categorize the inquiry. Use the prompt format mentioned earlier.
+#### OpenAI App Integration:
 
-## Step 6: Slack Integration for Real-Time Alerts
+1. **Installation and Configuration:**
+   - Navigate to the Prisme.ai App Store and locate the OpenAI App.
+   - Install the OpenAI App following the same installation process as previous apps. Once installed, configure it within your workspace by entering your OpenAI API Key. This key links Prisme.ai to your OpenAI account, enabling AI-powered functionalities.
 
-Receive instant notifications in Slack for every form submission and its categorization.
+2. **Setting Up Initial Variables:**
+   - In your "Form Submission Handler" automation, add a new instruction named "Set var". This will define a default recipient email. For the variable name, enter `recipient`, and for its value, use a placeholder email such as `hello@example.com`. This is a preliminary setup before dynamic routing is applied.
 
-### Slack App Setup:
+#### Configuring OpenAI Chat Completion:
 
-1. Install the Slack App and link it to your workspace.
-2. Configure it to send a message to a specific channel summarizing the submission and its suggested routing.
+1. **Preparing Chat Completion:**
+   - Before the SendMail instruction in your automation, add a "Chat Completion" instruction to initiate communication with OpenAI.
+   - Click "+" next to Messages to add a new message. Set the role to `System` and fill in the prompt with the context or instruction for OpenAI, guiding it on how to analyze the incoming message.
 
-## Step 7: Deploying Your Project
+2. **Capturing User Inquiry:**
+   - Again, click "+" next to Messages to add another message. This time, set the role to `User` and use `{{payload.message}}` as the prompt content. This ensures the user's actual inquiry from the form submission is fed into OpenAI for analysis.
 
-After configuring your project, it's time to deploy.
+3. **Processing OpenAI Response:**
+   - In "Assign the output to the variable", input a variable name that will hold OpenAI's response, such as `result`. This captures the AI's interpretation and suggestion based on the inquiry.
+
+4. **Extracting Relevant Content:**
+   - Add another "Set var" instruction to extract the message content from OpenAI's response, setting its value to `{{result.choices[0].message.content}}`. Use a descriptive variable name like `routingDecision` for clarity.
+
+#### Dynamic Routing Based on AI Analysis:
+
+1. **Implementing Conditional Routing:**
+   - Introduce a "Condition" instruction to evaluate the content of `routingDecision`. This step determines the nature of the inquiry (sales, support, careers) based on OpenAI's analysis.
+   - For each condition (`{{routingDecision}} = "sales"`, `{{routingDecision}} = "support"`, `{{routingDecision}} = "careers"`), add a corresponding "Set var" instruction to update the `recipient` variable with the appropriate departmental email (e.g., `sales@example.com`, `support@example.com`, `careers@example.com`).
+
+2. **Updating Email Recipient:**
+   - Modify the existing SendMail instruction to dynamically use the `{{recipient}}` variable as the **To:** field. This ensures that each inquiry is automatically routed to the correct departmental email based on the analysis performed by OpenAI.
+
+#### Finalization:
+
+- Once configured, save your automation. Test it thoroughly with various inquiries to ensure accurate routing. This setup leverages AI's powerful analysis capabilities to enhance the efficiency of handling contact form submissions, directing them to the appropriate department within your organization seamlessly.
+
 
 ### Version Control and Deployment:
 
 1. Test your setup thoroughly to ensure everything works as expected.
-2. Create a version of your workspace. This makes your project live and allows for easy management and updates.
+2. Navigate to your workspace settings, click on "Pull" to create a new version. This action automatically archives the current state, facilitating easy updates or rollbacks.
 
 ## Step 8: Monitoring and Optimization
 
-Leverage Prisme.ai's logging tools to monitor your application's performance and optimize it over time.
+Access the activity log in Prisme.ai to review all actions, from form submissions to event data and app installations. This comprehensive logging aids in debugging and auditing your setup.
 
 ### Logs and Activity Monitoring:
 
