@@ -20,17 +20,25 @@ export const WidgetSchema = ({ name, schema }: any) => {
 
   useEffect(() => {
     if (from !== 'config') return;
-    const schema = extractFromConfig(computePath(path, form.getState().values));
-    if (!schema || typeof schema !== 'object' || Array.isArray(schema)) {
+    const childSchema = extractFromConfig(
+      computePath(path, form.getState().values)
+    );
+    if (
+      !childSchema ||
+      typeof childSchema !== 'object' ||
+      Array.isArray(childSchema)
+    ) {
       setChildSchema(null);
       return;
     }
-    if (schema.type) {
-      setChildSchema(schema);
+    if (childSchema.type) {
+      setChildSchema(childSchema);
     } else {
       setChildSchema({
-        type: 'object',
-        properties: schema,
+        ...schema,
+        properties: {
+          ...childSchema,
+        },
       });
     }
   }, [extractFromConfig, form, from, path, schema]);

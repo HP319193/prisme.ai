@@ -1,15 +1,36 @@
 # LLM Open Source
 
-The `prismeai-llm` microservice uses [LocalAi](https://github.com/go-skynet/LocalAI), with the pre-built image available here : `quay.io/go-skynet/local-ai`.
+The `prismeai-llm` microservice uses [LocalAi](https://github.com/go-skynet/LocalAI) by default, with the pre-built image available here : `quay.io/go-skynet/local-ai`.  
+
+The `prismeai-llm` can also use [Ollama](https://github.com/ollama/ollama) instead of Localai.  
 
 ## Installation prerequisites
 
 This service need access to:  
 - A volume on which you can load the models to use  
 
-You can learn more about [installing the  models in the next section](#installing-models).
+For LocalAI, you can learn more about [installing the  models in the next section](#installing-models).
+
+### Ollama
+
+**Using Helm Chart :**  
+- Add the following lines under `prismeai-llm:` in `prismeai-apps/values.yaml` : 
+```yaml
+  image:
+    repository: ollama/ollama
+    tag: latest
+    pullPolicy: Always
+
+  env:
+     - name: OLLAMA_HOST
+       value: 0.0.0.0:5000
+     - name: OLLAMA_MODELS
+       value: /models/models/ollama  
+```
 
 ## Installing models
+
+### LocalAI 
 
 You will need to provide some files in the `./models` directory
 (relative to your installation method), for each model:  
@@ -47,12 +68,38 @@ This documentation can be summarized to :
 - Then find the appropriate template to use here https://github.com/go-skynet/model-gallery and copy it in the /models folder along the model.  
 - Restart the service to be able to use it  
 
+### Ollama  
+
+Any model provided by https://ollama.com/library can be downloaded within the LLM host / docker container with this command :  
+
+```
+ollama run <modelName>
+```
+
+For example :  
+
+```
+ollama run phi
+```
+
+Models will be automatically downloaded within `OLLAMA_MODELS` directory & made available to HTTP API.  
+In order to install models in an offline machine, this command can be run from any machine connected to Internet, and models directories can then be scp to the container :  
+```bash
+root:/# ls /models/models/ollama/
+blobs  manifests
+```
+
+By default & if not changed by a `OLLAMA_MODELS` environment variable, Ollama downloads models to `~/.ollama/models` on macOS, `/usr/share/ollama/.ollama/models` on Linux and `C:\Users\<username>\.ollama\models` on Windows.  
+
+See https://github.com/ollama/ollama/blob/main/docs/faq.md
+
+
 ## Microservice testing
 You can call your API with the following query to test. You can use "orca" or "airoboros" if using
 the provided examples.
 
 ```bash
-curl http://localhost:8080/v1/chat/completions -X POST -H "Content-Type: application/json" -d '{
+curl http://localhost:5000/v1/chat/completions -X POST -H "Content-Type: application/json" -d '{
      "model": "phi-2",
      "messages": [{
      	"role": "user",
