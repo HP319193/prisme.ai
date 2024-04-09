@@ -57,9 +57,16 @@ Creating a dynamic contact form on Prisme.ai involves a straightforward yet powe
    - **For Attachment Field:**
      - Lastly, add a field for attachments with the property name `attachment`. Choose "Sending a File" as its display mode to enable file uploads.
 
+![Configuring Form Specifications](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/hvuw0rAKUvfPfgxCmb3SV.Screenshot-2024-04-09-at-23.13.26.png "Configuring Form Specifications")
+
+2. 2. Obtain the URL for your page; each page follows the format: `workspace-slug.host-page/lang/page-slug`. For instance, `https://fast-sheep-60.pages.prisme.ai/en/contact-us`. To find it, click on the share icon located between the page name and the "duplicate" action. If you've named your slug "index," access it directly via `workspace-slug.host-page`.
+
+![Get page URL](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/vf0ff52bWJ7p5MDxBrfyU.Screenshot-2024-04-09-at-23.14.58.png "Get page URL")
+
+
 #### 5. Setting Up Form Submission Event:
 
-1. Fill in the "On submit event" field with an event name of your choice. Prisme.ai operates on an Event-Driven Architecture, meaning front-end to back-end communications are facilitated through events. A suggested name could be `formSubmit`. This event name will be crucial for setting up automations and integrations later.
+1. Fill in the "On submit event" field with an event name of your choice. Prisme.ai operates on an [Event-Driven Architecture](https://docs.eda.prisme.ai/en/architecture/), meaning front-end to back-end communications are facilitated through events. A suggested name could be `formSubmit`. This event name will be crucial for setting up automations and integrations later.
 
 #### 6. Saving Your Form:
 
@@ -126,6 +133,8 @@ To ensure timely follow-ups on each contact form submission, we'll utilize the S
 2. Look for the "+" button within the "Apps" section. This is your gateway to exploring the available applications.
 3. Use the search bar to find "SendMail". Once located, click on the app's name to add it to your workspace.
 
+![Prisme.ai App Store](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/tspQys2vW-e_b9LkvaPb1.Screenshot-2024-04-09-at-23.14.35.png "Prisme.ai App Store")
+
 #### 2. Configuring SendMail in Your Automation:
 
 Once SendMail is installed, you need to incorporate it into your form submission handling process for automated email dispatch.
@@ -172,6 +181,7 @@ Harness the capabilities of Gen.AI to assess and route inquiries automatically, 
 4. **Extracting Relevant Content:**
    - Add another "Set var" instruction to extract the message content from OpenAI's response, setting its value to `{{result.choices[0].message.content}}`. Use a descriptive variable name like `routingDecision` for clarity.
 
+
 #### Dynamic Routing Based on AI Analysis:
 
 1. **Implementing Conditional Routing:**
@@ -180,9 +190,9 @@ Harness the capabilities of Gen.AI to assess and route inquiries automatically, 
 
 2. **Updating Email Recipient:**
    - Modify the existing SendMail instruction to dynamically use the `{{recipient}}` variable as the **To:** field. This ensures that each inquiry is automatically routed to the correct departmental email based on the analysis performed by OpenAI.
+![Automation builder](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/x-AogVtqhSNar9EuVQQQW.Screenshot-2024-04-09-at-23.14.16.png "Automation builder")
 
 3.  Access the "See code" section to view and modify the YAML outlining each automation instruction, guaranteeing accurate data capture and organization. This section reveals the YAML structure, exemplifying the setup for efficient field configuration.
-
 
 ```yaml
 slug: form-sbmission-handler
@@ -237,9 +247,15 @@ output: '{{routingDecision}}'
 1. Test your setup thoroughly to ensure everything works as expected.
 2. Navigate to your workspace settings, click on "Pull" to create a new version. This action automatically archives the current state, facilitating easy updates or rollbacks.
 
+![Pull](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/MRLovKFBFrNffCOz6gecZ.Screenshot-2024-04-09-at-23.15.59.png "Pull")
+Learn more about [Version Control](https://docs.eda.prisme.ai/en/workspaces/versioning/) and [RBAC](https://docs.eda.prisme.ai/en/workspaces/security/) to manage access and permissons.
+
+
 ## Step 8: Monitoring and Optimization
 
 Access the activity log in Prisme.ai to review all actions, from form submissions to event data and app installations. This comprehensive logging aids in debugging and auditing your setup.
+![Activity](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/uAEBlLFKqTJBUTVAUV7Nu.Screenshot-2024-04-09-at-23.16.55.png "Activity")
+
 
 ### Logs and Activity Monitoring:
 
