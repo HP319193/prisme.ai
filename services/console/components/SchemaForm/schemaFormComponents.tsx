@@ -12,6 +12,7 @@ import { CodeEditorInline } from '../CodeEditor/lazy';
 import FieldContainerWithRaw from '../FieldContainerWithRaw';
 import RichTextEditor from '../RichTextEditor';
 import BlockSelector from './BlockSelector/BlockSelector';
+import WidgetSchema from './WidgetSchema';
 
 export const FieldAny = ({ schema, name, label }: FieldProps) => {
   const { t } = useTranslation('workspaces');
@@ -111,6 +112,7 @@ const components = {
   HTMLEditor: RichTextEditor,
   UiWidgets: {
     blockSelector: BlockSelector,
+    schema: WidgetSchema,
   },
 };
 export default components;

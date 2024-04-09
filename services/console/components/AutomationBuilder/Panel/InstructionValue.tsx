@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { Schema, SchemaForm, Tooltip } from '@prisme.ai/design-system';
 import useSchema from '../../SchemaForm/useSchema';
@@ -9,6 +9,7 @@ import { useWorkspace } from '../../../providers/Workspace';
 import { InstructionValueSet } from './InstructionValueSet';
 import Link from 'next/link';
 import { LinkOutlined } from '@ant-design/icons';
+import api from '../../../utils/api';
 
 interface InstructionValueProps {
   instruction: string;
@@ -34,15 +35,36 @@ export const InstructionValue: FC<InstructionValueProps> = ({
     workspace.automations || {}
   ).includes(instruction);
 
-  const { config: appInstance, appName } = useMemo(() => {
+  const { appName } = useMemo(() => {
     if (!workspace.imports) return { config: workspace.config };
     const [appName] = instruction.split(/\./);
     if (!workspace.imports[appName]) return { config: workspace.config };
     return { config: {}, appName };
   }, [instruction, workspace.config, workspace.imports]);
 
-  const { extractSelectOptions, extractAutocompleteOptions } = useSchema({
-    config: appInstance,
+  const [config, setConfig] = useState<any>();
+  useEffect(() => {
+    async function getConfig(appName: string) {
+      const { config: { value } = {} } = await api.getAppInstance(
+        workspace.id,
+        appName
+      );
+      if (!value) return;
+      setConfig(value);
+    }
+    if (appName) {
+      getConfig(appName);
+    } else {
+      setConfig(workspace.config?.value);
+    }
+  }, [appName, workspace.config, workspace.id]);
+
+  const {
+    extractSelectOptions,
+    extractAutocompleteOptions,
+    extractFromConfig,
+  } = useSchema({
+    config,
     automations: Object.keys(workspace.automations || {}).reduce(
       (prev, key) =>
         key === automationId
@@ -167,7 +189,11 @@ export const InstructionValue: FC<InstructionValueProps> = ({
       buttons={EmptyButtons}
       components={components}
       locales={locales}
-      utils={{ extractSelectOptions, extractAutocompleteOptions }}
+      utils={{
+        extractSelectOptions,
+        extractAutocompleteOptions,
+        extractFromConfig,
+      }}
     />
   );
 };

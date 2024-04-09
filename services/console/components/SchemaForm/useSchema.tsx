@@ -69,12 +69,14 @@ export const useSchema = (store: Record<string, any> = {}) => {
     workspace: {
       id,
       name: workspaceName,
-      config: { value: config } = {},
+      config: { value: workspaceConfig } = {},
       automations = {},
       pages = {},
       imports = {},
     },
   } = useWorkspace();
+
+  const config = store.config || workspaceConfig;
 
   const extractSelectOptions = useCallback(
     (schema: Schema) => {
@@ -237,7 +239,20 @@ export const useSchema = (store: Record<string, any> = {}) => {
     [id]
   );
 
-  return { extractSelectOptions, extractAutocompleteOptions, uploadFile };
+  const extractFromConfig = useCallback(
+    (path: string) => {
+      const results = readAppConfig(config, path);
+      return results[0] || null;
+    },
+    [config]
+  );
+
+  return {
+    extractSelectOptions,
+    extractAutocompleteOptions,
+    uploadFile,
+    extractFromConfig,
+  };
 };
 
 export default useSchema;

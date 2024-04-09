@@ -270,11 +270,17 @@ export function initDownloadProxy(
     res: Response<PrismeaiAPI.GetFile.Responses.$200>,
     next: NextFunction
   ) {
-    const path = req.path[0] === '/' ? req.path.slice(1) : req.path;
+    const path: string | { $in: string[] } =
+      req.path[0] === '/' ? req.path.slice(1) : req.path;
     const file = await fileStorage.get(
       authorizedAccessManager,
       {
-        path,
+        path:
+          decodeURIComponent(path) !== path
+            ? {
+                $in: [path, decodeURIComponent(path)],
+              }
+            : path,
       },
       req.context?.http?.baseUrl!
     );
@@ -305,6 +311,6 @@ export function initDownloadProxy(
     if (file.mimetype) {
       res.setHeader('content-type', file.mimetype);
     }
-    await fileStorage.download(path, res);
+    await fileStorage.download(file.path, res);
   });
 }

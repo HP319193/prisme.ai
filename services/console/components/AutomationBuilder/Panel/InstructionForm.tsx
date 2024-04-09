@@ -105,7 +105,6 @@ export const InstructionForm: FC<InstructionFormProps> = ({
       schema: null,
     });
   }, []);
-
   return (
     <div className="flex flex-1 h-full flex-col">
       {!instruction && edit && edit.instruction && (
