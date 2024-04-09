@@ -75,7 +75,7 @@ export interface SchemaFormContext {
     ) => Promise<
       string | { value: string; preview: string | ReactElement; label?: string }
     >;
-  };
+  } & Record<string, any>;
 }
 
 export const FieldContainer = DefaultFieldContainer;

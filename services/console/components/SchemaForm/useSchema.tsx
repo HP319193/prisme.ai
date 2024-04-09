@@ -239,7 +239,20 @@ export const useSchema = (store: Record<string, any> = {}) => {
     [id]
   );
 
-  return { extractSelectOptions, extractAutocompleteOptions, uploadFile };
+  const extractFromConfig = useCallback(
+    (path: string) => {
+      const results = readAppConfig(config, path);
+      return results[0] || null;
+    },
+    [config]
+  );
+
+  return {
+    extractSelectOptions,
+    extractAutocompleteOptions,
+    uploadFile,
+    extractFromConfig,
+  };
 };
 
 export default useSchema;

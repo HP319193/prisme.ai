@@ -59,7 +59,11 @@ export const InstructionValue: FC<InstructionValueProps> = ({
     }
   }, [appName, workspace.config, workspace.id]);
 
-  const { extractSelectOptions, extractAutocompleteOptions } = useSchema({
+  const {
+    extractSelectOptions,
+    extractAutocompleteOptions,
+    extractFromConfig,
+  } = useSchema({
     config,
     automations: Object.keys(workspace.automations || {}).reduce(
       (prev, key) =>
@@ -185,7 +189,11 @@ export const InstructionValue: FC<InstructionValueProps> = ({
       buttons={EmptyButtons}
       components={components}
       locales={locales}
-      utils={{ extractSelectOptions, extractAutocompleteOptions }}
+      utils={{
+        extractSelectOptions,
+        extractAutocompleteOptions,
+        extractFromConfig,
+      }}
     />
   );
 };
