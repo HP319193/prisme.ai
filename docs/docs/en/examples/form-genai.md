@@ -6,7 +6,7 @@ This  tutorial will guide you through creating a Gen.AI contact form on Prisme.a
 ## Prerequisites
 
 - Active account on Prisme.ai.
-- Access to OpenAI, and Slack applications (optional)
+- Access to OpenAI or OpenAI Azure, and Slack applications (optional)
 
 ## Step 1: Setting Up Your Workspace on Prisme.ai
 
@@ -71,7 +71,7 @@ This enhanced setup guide provides a detailed walk-through for creating a contac
 
 ### YAML Configuration:
 
-- Use See code Section to see and edit the YAML that defines each field's properties, ensuring proper data capture and structure. You can see that it looks like :
+- Access the "See code" section to view and modify the YAML outlining each field's properties, guaranteeing accurate data capture and organization. This section reveals the YAML structure, exemplifying the setup for efficient field configuration.
 
 ```yaml
 slug: contact-us
@@ -161,7 +161,7 @@ Harness the capabilities of Gen.AI to assess and route inquiries automatically, 
 
 1. **Preparing Chat Completion:**
    - Before the SendMail instruction in your automation, add a "Chat Completion" instruction to initiate communication with OpenAI.
-   - Click "+" next to Messages to add a new message. Set the role to `System` and fill in the prompt with the context or instruction for OpenAI, guiding it on how to analyze the incoming message.
+   - Click "+" next to Messages to add a new message. Set the role to `System` and fill in the prompt with the context or instruction for OpenAI, guiding it on how to analyze the incoming message. For example "Given the following customer inquiry, categorize it as either sales, support, or careers. Provide your categorization based on the content. Answer only with category nothing else."
 
 2. **Capturing User Inquiry:**
    - Again, click "+" next to Messages to add another message. This time, set the role to `User` and use `{{payload.message}}` as the prompt content. This ensures the user's actual inquiry from the form submission is fed into OpenAI for analysis.
@@ -180,6 +180,52 @@ Harness the capabilities of Gen.AI to assess and route inquiries automatically, 
 
 2. **Updating Email Recipient:**
    - Modify the existing SendMail instruction to dynamically use the `{{recipient}}` variable as the **To:** field. This ensures that each inquiry is automatically routed to the correct departmental email based on the analysis performed by OpenAI.
+
+3.  Access the "See code" section to view and modify the YAML outlining each automation instruction, guaranteeing accurate data capture and organization. This section reveals the YAML structure, exemplifying the setup for efficient field configuration.
+
+
+```yaml
+slug: form-sbmission-handler
+name: Form Submission Handler
+do:
+  - set:
+      name: recipient
+      value: hello@example.com
+  - OpenAI.chat-completion:
+      stream:
+        options:
+          persist: true
+      model: gpt-4
+      messages:
+        - role: user
+          content: '{{payload.message}}'
+        - role: system
+          content: Given the following customer inquiry, categorize it as either sales, support, or careers. Provide your categorization based on the content. Answer only with category nothing else.
+      output: result
+  - set:
+      name: routingDecision
+      value: '{{result.choices[0].message.content}}'
+  - conditions:
+      '{{routingDecision}} = "sales"':
+        - set:
+            name: recipient
+            value: sales@example.com
+      '"{{routingDecision}}" = "support"':
+        - set:
+            name: recipient
+            value: support@example.com
+      '"{{routingDecision}}" = "careers"':
+        - set:
+            name: recipient
+            value: careers@example.com
+      default: []
+  - SendMail.sendMail:
+      to: '{{recipient}}'
+      replyTo: '{{payload.email}}'
+      subject: New Contact Form Submission
+      body: 'Message: {{payload.message}}, Name: {{payload.name}}, Attachment: {{payload.attachment}}'
+output: '{{routingDecision}}'
+```
 
 #### Finalization:
 
