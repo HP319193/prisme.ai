@@ -14,6 +14,7 @@ import { ErrorSeverity, ObjectNotFoundError, PrismeError } from '../../errors';
 import path from 'path';
 import stream from 'stream';
 import { streamToBuffer } from '../../utils/streamToBuffer';
+import { Response as HttpResponse } from 'express';
 
 export interface S3Options {
   accessKeyId: string;
@@ -93,17 +94,34 @@ export default class S3Like implements IStorage {
           Key: key,
           Bucket: this.options.bucket,
         },
-        function (err: any, data) {
-          if (err) {
-            reject(new ObjectNotFoundError());
-          } else {
-            resolve(opts?.stream ? Streamed : data.Body);
-          }
-        }
+        opts?.stream
+          ? undefined // Passing a callback would cause opts.stream to receive data twice
+          : function (err: any, data) {
+              if (err) {
+                reject(new ObjectNotFoundError());
+              } else {
+                resolve(data.Body);
+              }
+            }
       );
 
       if (opts?.stream) {
-        getReq.createReadStream().pipe(opts?.stream);
+        const stream = getReq.createReadStream();
+        const outStream = opts?.stream!;
+        stream.on('error', (err) => {
+          if (
+            (<HttpResponse>outStream)?.status &&
+            (<HttpResponse>outStream)?.json
+          ) {
+            const httpRes = outStream as HttpResponse;
+            httpRes.status(404).json(new ObjectNotFoundError());
+          } else {
+            outStream.write(JSON.stringify(new ObjectNotFoundError().toJSON()));
+            outStream.end();
+          }
+        });
+        stream.pipe(outStream);
+        resolve(Streamed);
       }
     });
   }
