@@ -15,6 +15,7 @@ export const Product = memo(function Product() {
   const iframe = useRef<HTMLIFrameElement>(null);
   const {
     query: { slug = [] },
+    replace,
     push,
   } = useRouter();
 
@@ -52,13 +53,13 @@ export const Product = memo(function Product() {
 
       const [prefix] = window.location.pathname.split(`product/${productSlug}`);
       const rootPath = `${prefix}product/${productSlug}`;
-      history.replaceState({}, '', `${rootPath}${path}`);
+      replace(`${rootPath}${path}`);
     };
     window.addEventListener('message', listener);
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, [productSlug, productUrl, push]);
+  }, [productSlug, productUrl, push, replace]);
 
   if (!productUrl) return null;
   return <iframe ref={iframe} src={productUrl} className="h-full" allow="*" />;
