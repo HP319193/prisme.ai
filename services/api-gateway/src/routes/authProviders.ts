@@ -72,6 +72,7 @@ async function anonymousLoginHandler(
           req.body.expiresAfter
         );
         req.session.prismeaiSessionId = token.prismeaiSessionId;
+        req.session.expires = expires;
         req.session.mfaValidated = false;
         res.send({
           ...user,

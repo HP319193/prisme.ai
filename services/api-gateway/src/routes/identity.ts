@@ -49,6 +49,7 @@ async function meHandler(
   res.send({
     ...(req.user as any),
     sessionId: req.session.prismeaiSessionId,
+    expires: req.session.expires,
   });
 }
 

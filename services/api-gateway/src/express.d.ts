@@ -15,6 +15,7 @@ declare namespace Express {
 
   interface CustomSessionFields {
     prismeaiSessionId: string;
+    expires?: string;
     mfaValidated?: boolean;
     passport: {
       user: string;

@@ -3389,6 +3389,7 @@ declare namespace PrismeaiAPI {
                  */
                 id?: string;
                 sessionId: string;
+                expires?: string;
             }
             export type $401 = Prismeai.AuthenticationError;
         }
