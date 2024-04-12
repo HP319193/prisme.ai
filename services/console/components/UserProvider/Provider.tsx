@@ -211,6 +211,12 @@ export const UserProvider: FC<UserProviderProps> = ({
       api.token && cookie.set('access-token', api.token);
 
       const user = await api.me();
+      if (user?.expires && api.token) {
+        cookie.set('access-token', api.token, {
+          expires: new Date(user?.expires),
+        });
+      }
+
       if (user.authData && user.authData.anonymous && !anonymous) {
         throw {
           message: 'Anonymous user not allowed',
