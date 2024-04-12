@@ -40,7 +40,8 @@
     "check:translations:pages": "npx ts-node scripts/checkTranslations.ts services/pages/public/locales en",
     "check:front": "npm run check:translations:console && npm run check:translations:pages && npm run check:console && npm run check:pages && npm test -- packages/blocks -u && npm test -- packages/design-system -u && npm test -- services/console -u && npm test -- services/pages -u",
     "next:tag": "ts-node ./scripts/nexttag.ts | pbcopy",
-    "test": "jest --collect-coverage"
+    "test": "jest --collect-coverage",
+    "test-e2e": "npx --node-options=--require=dotenv/config playwright test"
   },
   "repository": {
     "type": "git",
@@ -120,6 +121,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@playwright/test": "^1.43.0",
     "@types/marked": "^4.0.8",
     "antd": "^4.23.0",
     "hash-sum": "^2.0.0",

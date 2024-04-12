@@ -29,10 +29,15 @@ variables:
   EVENTS_IMAGE_NAME: 'prisme.ai-events'
   EVENTS_K8S_NAME: 'prismeai-events'
 
-  SAST_EXCLUDED_ANALYZERS: ""
-  SAST_EXCLUDED_PATHS: "spec, test, tests, tmp, docs"
-  CS_ANALYZER_IMAGE: "$CI_TEMPLATE_REGISTRY_HOST/security-products/container-scanning:6"
+  SAST_EXCLUDED_ANALYZERS: ''
+  SAST_EXCLUDED_PATHS: 'spec, test, tests, tmp, docs'
+  CS_ANALYZER_IMAGE: '$CI_TEMPLATE_REGISTRY_HOST/security-products/container-scanning:6'
   CS_SCHEMA_MODEL: 15
+
+  TESTS_E2E_BASE_URL: '$TESTS_E2E_BASE_URL'
+  TESTS_E2E_API_URL: '$TESTS_E2E_API_URL'
+  TESTS_E2E_BASE_LOGIN: '$TESTS_E2E_BASE_LOGIN'
+  TESTS_E2E_BASE_PASSWORD: '$TESTS_E2E_BASE_PASSWORD'
 
 stages:
   - test
@@ -184,6 +189,30 @@ console_test:
   before_script:
     - export DIRECTORY=services/$CONSOLE_DIRECTORY
     - export OPTIONS="--include-workspace-root -w services/console -w packages/"
+
+platform_test_e2e:
+  stage: test
+  script:
+    # - >
+    #   if ! [[ -d node_modules/ ]] ; then
+    #     BUILD_PACKAGES=0 npm ci $OPTIONS
+    #   fi
+    - mv package-lock.json _package-lock.json
+    - mv package.json _package.json
+    - npm i @playwright/test dotenv
+    - npx playwright install --with-deps
+    - npx playwright test
+  coverage: '/All files\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)\s+\|\s+([\d\.]+)/'
+  artifacts:
+    when: always
+    paths:
+      - playwright-report
+    expire_in: 1 day
+  image: mcr.microsoft.com/playwright:v1.43.1-jammy
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+    - when: manual
 
 console_check_translations:
   stage: test
@@ -546,8 +575,8 @@ security_sast:
   extends: sast
   allow_failure: true
   image:
-    name: "bearer/bearer"
-    entrypoint: [""]
+    name: 'bearer/bearer'
+    entrypoint: ['']
   rules:
     - if: $SAST_DISABLED == 'true' || $SAST_DISABLED == '1'
       when: never
@@ -562,8 +591,8 @@ security_sast:
 security_sast_mr:
   allow_failure: true
   image:
-    name: "node:20"
-    entrypoint: [""]
+    name: 'node:20'
+    entrypoint: ['']
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes:
@@ -587,7 +616,7 @@ security_dependencies:
     - npm audit
 
 container_scanning:
-  image: "$CS_ANALYZER_IMAGE$CS_IMAGE_SUFFIX"
+  image: '$CS_ANALYZER_IMAGE$CS_IMAGE_SUFFIX'
   stage: test
   variables:
     # To provide a `vulnerability-allowlist.yml` file, override the GIT_STRATEGY variable in your
@@ -600,12 +629,12 @@ container_scanning:
   parallel:
     matrix:
       - TARGET:
-        - console
-        - pages
-        - runtime
-        - workspaces
-        - events
-        - api-gateway
+          - console
+          - pages
+          - runtime
+          - workspaces
+          - events
+          - api-gateway
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $TARGET == "console"'
       variables:
@@ -641,8 +670,13 @@ container_scanning:
     reports:
       container_scanning: gl-container-scanning-report.json
       dependency_scanning: gl-dependency-scanning-report.json
-      cyclonedx: "**/gl-sbom-*.cdx.json"
-    paths: [gl-container-scanning-report.json, gl-dependency-scanning-report.json, "**/gl-sbom-*.cdx.json"]
+      cyclonedx: '**/gl-sbom-*.cdx.json'
+    paths:
+      [
+        gl-container-scanning-report.json,
+        gl-dependency-scanning-report.json,
+        '**/gl-sbom-*.cdx.json',
+      ]
   dependencies: []
   script:
     - gtcs scan
@@ -650,7 +684,7 @@ container_scanning:
 security_dockerfile:
   image:
     name: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-infra:latest
-    entrypoint: [""]
+    entrypoint: ['']
   stage: test
   allow_failure: true
   rules:

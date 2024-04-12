@@ -13,3 +13,6 @@ services/console/.next
 test.js
 .vscode
 **/authProviders.config.yml
+tests-e2e/.auth
+playwright-report
+test-results
