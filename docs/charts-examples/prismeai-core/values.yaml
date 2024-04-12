@@ -71,9 +71,14 @@ prismeai-workspaces:
   serviceAccount:
     create: true
 
-  volumes: []
+  volumes:
+    - name: models
+      persistentVolumeClaim:
+        claimName: 'core-prismeai-workspaces-models'
 
-  volumeMounts: []
+  volumeMounts:
+    - name: models
+      mountPath: /data
 
   env:
     - name: NODE_OPTIONS
@@ -116,8 +121,14 @@ prismeai-runtime:
       url: redis://localhost:6379
       password: ""
 
-  volumes: []
-  volumeMounts: []
+  volumes:
+    - name: models
+      persistentVolumeClaim:
+        claimName: 'core-prismeai-workspaces-models'
+
+  volumeMounts:
+    - name: models
+      mountPath: /data
 
   env:
     - name: NODE_OPTIONS
@@ -272,6 +283,22 @@ prismeai-api-gateway:
     - name: UPLOADS_MAX_SIZE
       value: '100000000' # 100MB
   hpa: *CORE_CPU_HPA
+
+extraObjects:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      finalizers:
+        - kubernetes.io/pvc-protection
+      name: core-prismeai-workspaces-models
+      namespace: core
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: ''  # to fill
 
 ########################################
 # External/infra services configs
