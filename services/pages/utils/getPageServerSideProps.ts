@@ -28,17 +28,11 @@ async function getPage(host: string, pageSlug: string) {
 
 export const getPageServerSideProps =
   (
-    getSlug: (params: NextParsedUrlQuery | undefined) => string
+    getSlug: (params: NextParsedUrlQuery | undefined) => string | null
   ): GetServerSideProps<PageProps> =>
   async ({ req, res, locale = '', query, params }) => {
     const pageSlug = getSlug(params);
-
-    if (!pageSlug || req.url === '/favicon.ico')
-      return {
-        notFound: true,
-      };
-
-    if (pageSlug === 'index' && req.url !== '/') {
+    if (pageSlug === null) {
       return {
         redirect: {
           permanent: true,
@@ -46,6 +40,10 @@ export const getPageServerSideProps =
         },
       };
     }
+    if (!pageSlug || req.url === '/favicon.ico')
+      return {
+        notFound: true,
+      };
 
     let error: number | null = null;
     let initialConfig: Record<string, any>[] = [];
