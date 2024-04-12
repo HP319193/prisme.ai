@@ -130,16 +130,18 @@ prismeai-runtime:
 
     ## App configs:
     ## Those are examples and not necessary to run prismeai-core.
-    # - name: WORKSPACE_CONFIG_collection_mongoURI
-    #   value: 'mongodb+srv://prisme:password@mongodbcluster.example/collections?tls=true'
-    # - name: APP_CONFIG_CustomCode_apiUrl
-    #   value: 'http://apps-prismeai-functions.apps.svc.cluster.local'
-    # - name: APP_CONFIG_NLU_apiUrl
-    #   value: 'http://apps-prismeai-nlu.apps.svc'
-    # - name: APP_CONFIG_Crawler_apiUrl
-    #   value: 'http://apps-prismeai-searchengine.apps.svc'
-    # - name: WORKSPACE_CONFIG_crawler_apiUrl
-    #   value: 'http://apps-prismeai-searchengine.apps.svc'
+    - name: WORKSPACE_CONFIG_collection_mongoURI
+      value: 'mongodb+srv://prisme:password@mongodbcluster.example/collections?tls=true' # Note the path
+    - name: APP_CONFIG_CustomCode_apiUrl
+      value: 'http://apps-prismeai-functions.apps.svc.cluster.local'
+    - name: APP_CONFIG_NLU_apiUrl
+      value: 'http://apps-prismeai-nlu.apps.svc.cluster.local'
+    - name: APP_CONFIG_Crawler_apiUrl
+      value: 'http://apps-prismeai-searchengine.apps.svc.cluster.local'
+    - name: WORKSPACE_CONFIG_crawler_apiUrl
+      value: 'http://apps-prismeai-searchengine.apps.svc.cluster.local'
+    - name: APP_CONFIG_LLMOpen-Source_apiUrl
+      value: 'http://apps-prismeai-llm.apps.svc.cluster.local'
 
   hpa: *CORE_CPU_HPA
 
