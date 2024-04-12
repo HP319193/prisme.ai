@@ -81,6 +81,7 @@ export const FieldSlider = ({
             min={min}
             max={max}
             tooltip={{ formatter: null }}
+            data-testid={`schema-form-field-${field.input.name}`}
           />
         </Tooltip>
       </div>

@@ -149,7 +149,11 @@ export const SigninForm = ({ show403 }: SigninFormProps) => {
   return (
     <Form onSubmit={submit} validate={validate}>
       {({ handleSubmit }) => (
-        <form onSubmit={handleSubmit} className="md:w-96 flex">
+        <form
+          onSubmit={handleSubmit}
+          className="md:w-96 flex"
+          data-testid="signin-form"
+        >
           <div className="flex flex-col flex-1">
             {oAuthButtons.map(
               ({ icon, label, url }) =>

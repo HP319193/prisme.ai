@@ -31,7 +31,11 @@ export const FieldHTML = ({
       </Label>
       <Tooltip title={hasError} overlayClassName="pr-form-error">
         <div className="pr-form-input">
-          <HTMLEditor {...field.input} options={uiOptions.html} />
+          <HTMLEditor
+            {...field.input}
+            options={uiOptions.html}
+            data-testid={`schema-form-field-${field.input.name}`}
+          />
         </div>
       </Tooltip>
       <InfoBubble

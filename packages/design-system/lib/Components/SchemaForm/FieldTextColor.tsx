@@ -41,6 +41,7 @@ export const FieldTextColor = (props: FieldProps) => {
           id={field.input.name}
           onChange={onChange}
           type="color"
+          data-testid={`schema-form-field-${field.input.name}`}
         />
       </div>
       <InfoBubble
