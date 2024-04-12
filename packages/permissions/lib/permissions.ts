@@ -292,7 +292,11 @@ export class Permissions<SubjectType extends string> {
   loadRules(rules: Rules, context: Record<string, any> = {}) {
     const injectedRules = injectRules(rules, { user: this.user, ...context });
     this.rules = sortRules([...injectedRules, ...this.rules]);
-    this.ability = new Ability(this.rules);
+    return this.updateRules(this.rules);
+  }
+
+  updateRules(rules: Rules) {
+    this.ability = new Ability(rules);
     return this.ability;
   }
 

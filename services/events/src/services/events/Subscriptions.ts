@@ -5,6 +5,7 @@ import { AccessManager, SubjectType, ActionType } from '../../permissions';
 import { extractObjectsByPath } from '../../utils';
 import { SearchOptions } from './store';
 import { getWorkspaceUser, WorkspaceUser } from './users';
+import { Permissions } from '@prisme.ai/permissions';
 
 export type Subscriber = WorkspaceUser & {
   apiKey?: string;
@@ -121,6 +122,7 @@ export class Subscriptions {
           this.subscribers[event.source.workspaceId]?.all || [];
         (subscribers || []).forEach(
           async ({ callback, accessManager, searchOptions, socketId }) => {
+            // Test search filters first to avoid casl overhead if the event is not listened anyway
             if (
               !searchOptions ||
               this.matchSearchOptions(event, searchOptions, socketId)
@@ -275,6 +277,16 @@ export class Subscriptions {
       SubjectType.Workspace,
       workspaceId
     );
+
+    // Small performance improvement : reduce casl overhead by removing all others rules
+    const userPermissions = (<any>userAccessManager)
+      .permissions as Permissions<any>;
+    const filteredRules = userPermissions.ability.rules.filter(
+      (cur) =>
+        cur.subject === SubjectType.Event ||
+        (Array.isArray(cur.subject) && cur.subject.includes(SubjectType.Event))
+    );
+    userPermissions.updateRules(filteredRules);
 
     const fullSubscriber: Subscriber = {
       ...subscriber,
