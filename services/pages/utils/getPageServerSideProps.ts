@@ -14,16 +14,14 @@ async function getPage(host: string, pageSlug: string) {
   const workspaceSlug = getSubmodain(host || '');
   const key = `${workspaceSlug}-${pageSlug}`;
   if (!cache.has(key)) {
-    try {
-      const page = await api.getPageBySlug(workspaceSlug, pageSlug);
-      if (page.public) {
-        cache.set(key, page);
-        setTimeout(() => cache.delete(key), 1000 * 60);
-      }
-      return page;
-    } catch {}
+    const page = await api.getPageBySlug(workspaceSlug, pageSlug);
+    if (page.public) {
+      cache.set(key, page);
+      setTimeout(() => cache.delete(key), 1000 * 60);
+    }
+    return page;
   }
-  return cache.get(key);
+  return cache.get(key) || null;
 }
 
 export const getPageServerSideProps =
@@ -48,11 +46,13 @@ export const getPageServerSideProps =
     let error: number | null = null;
     let initialConfig: Record<string, any>[] = [];
     let styles = '';
-
-    api.token = req.cookies['access-token'] || null;
-    let page = await getPage(req.headers.host || '', pageSlug);
-
+    let page: Prismeai.DetailedPage | null = null;
     try {
+      api.token = req.cookies['access-token'] || null;
+      page = await getPage(req.headers.host || '', pageSlug);
+      if (!page) {
+        throw new HTTPError('not found', 404);
+      }
       page = (await getBlocksConfigFromServer(
         page,
         {
