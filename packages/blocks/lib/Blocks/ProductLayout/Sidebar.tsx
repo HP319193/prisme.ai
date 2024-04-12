@@ -104,10 +104,11 @@ export const SidebarHeader = ({
     if (isBlock(buttons)) {
       return <GenericBlock content={buttons} />;
     }
-    return buttons?.map(({ icon, type, value, payload, className }) => {
+    return buttons?.map(({ icon, type, value, payload, className }, key) => {
       if (!icon) return null;
       return (
         <LinkOrNot
+          key={key}
           href={['internal', 'external'].includes(type) ? value : undefined}
           className={`product-layout-sidebar__header-link product-layout-sidebar__header-link--button ${
             className || ''
