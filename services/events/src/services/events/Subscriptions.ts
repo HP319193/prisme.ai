@@ -121,17 +121,21 @@ export class Subscriptions {
           this.subscribers[event.source.workspaceId]?.all || [];
         (subscribers || []).forEach(
           async ({ callback, accessManager, searchOptions, socketId }) => {
-            const readable = await accessManager.can(
-              ActionType.Read,
-              SubjectType.Event,
-              event
-            );
             if (
-              readable &&
-              (!searchOptions ||
-                this.matchSearchOptions(event, searchOptions, socketId))
+              !searchOptions ||
+              this.matchSearchOptions(event, searchOptions, socketId)
             ) {
-              callback(event);
+              const readable = await accessManager.can(
+                ActionType.Read,
+                SubjectType.Event,
+                event,
+                {
+                  disableRolePull: true,
+                }
+              );
+              if (readable) {
+                callback(event);
+              }
             }
           }
         );
