@@ -17,6 +17,8 @@ global:
   oidc:
     studioClientId: 'local-client-id'
 
+restartPolicy: Always
+
 image:
   repository: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-console
   tag: latest
@@ -95,3 +97,6 @@ virtualService:
 networkPolicy:
   enabled: false
   from: []
+
+volumes: []
+volumeMounts: []

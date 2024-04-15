@@ -23,6 +23,8 @@ storage:
 # Additional envs
 env: []
 
+restartPolicy: Always
+
 image:
   repository: registry.gitlab.com/gogowego-devsecops/dev/prisme.ai-searchengine
   tag: latest
@@ -87,3 +89,6 @@ tolerations: []
 
 affinity:
   {}
+
+volumes: []
+volumeMounts: []

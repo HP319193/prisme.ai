@@ -6,6 +6,8 @@ redis:
 # Additional envs
 env: []
 
+restartPolicy: Always
+
 image:
   repository: redis/redis-stack-server
   tag: 7.0.6-RC9

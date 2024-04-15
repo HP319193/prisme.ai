@@ -28,7 +28,7 @@ spec:
     spec:
       imagePullSecrets:
         - name: {{ include "imagePullSecretName" . }}
-      restartPolicy: {{ .Values.image.pullPolicy }}
+      restartPolicy: {{ .Values.restartPolicy }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       affinity:
@@ -43,6 +43,10 @@ spec:
           persistentVolumeClaim:
             claimName: {{ include "name" . }}
 
+    {{- if .Values.volumes }}
+{{ toYaml .Values.volumes | indent 8 }}
+    {{- end }}
+
       containers:
         - name: {{ include "name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -56,6 +60,10 @@ spec:
           volumeMounts:
             - name: functions
               mountPath: /www/data
+
+        {{- if .Values.volumeMounts }}
+{{ toYaml .Values.volumeMounts | indent 12 }}
+        {{- end }}
 
           livenessProbe:
             httpGet:

@@ -5,6 +5,8 @@ storage: {}
 # Additional envs
 env: []
 
+restartPolicy: Always
+
 image:
   repository: quay.io/go-skynet/local-ai
   tag: latest
@@ -70,3 +72,5 @@ tolerations: []
 affinity:
   {}
 
+volumes: []
+volumeMounts: []

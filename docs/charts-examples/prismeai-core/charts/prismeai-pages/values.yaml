@@ -16,6 +16,8 @@ global:
 
   pagesHost: "" # Fills PAGES_HOST for workspace subdomains
 
+restartPolicy: Always
+
 image:
   repository: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-pages
   tag: latest
@@ -94,3 +96,6 @@ virtualService:
 networkPolicy:
   enabled: false
   from: []
+
+volumes: []
+volumeMounts: []
