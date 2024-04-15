@@ -33,6 +33,7 @@ export const FieldTextTextArea = ({
           status={hasError ? 'error' : ''}
           disabled={props.schema.disabled}
           className="pr-form-text__input pr-form-input"
+          data-testid={`schema-form-field-${field.input.name}`}
         />
       </Tooltip>
       <InfoBubble

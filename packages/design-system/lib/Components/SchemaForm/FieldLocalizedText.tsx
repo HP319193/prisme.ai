@@ -77,6 +77,7 @@ export const FieldLocalizedText = ({
         className={`pr-form-${type}__input ${
           uiWidget ? `pr-form-${type}__input--${uiWidget}` : ''
         } pr-form-input`}
+        data-testid={`schema-form-field-${field.input.name}`}
       />
       <InfoBubble
         className={`pr-form-${type}__description`}

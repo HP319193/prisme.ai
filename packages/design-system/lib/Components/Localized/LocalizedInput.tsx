@@ -71,6 +71,7 @@ export const LocalizedInput = ({
   className,
   initialLang = 'en',
   unmountOnLangChange = false,
+  ...props
 }: LocalizedInputProps) => {
   const [selectedLang, setSelectedLang] = useState(
     isLocalizedTextObject(value) ? getInitialLang(value, initialLang) : ''
@@ -215,6 +216,7 @@ export const LocalizedInput = ({
             setValue(value, selectedLang);
           }}
           {...InputProps}
+          {...props}
         />
       )}
       <Tooltip title={setLangTooltip} placement="left">
