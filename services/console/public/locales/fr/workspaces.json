@@ -140,7 +140,12 @@
         "label": "Revenir à une version antérieure (pull)",
         "description": "Mettre à jour le workspace depuis sa dernière version enregistrée. Toute modification qui n'a pas été sauvegardée sur ce même dépôt sera perdue.",
         "confirm_ok": "Mettre à jour",
-        "success": "Workspace mis à jour avec succès"
+        "success": "Workspace mis à jour avec succès",
+        "version": {
+          "label": "Choix de la version",
+          "latest": "Dernière version",
+          "older": "Voir les versions plus anciennes…"
+        }
       }
     },
     "tabs": {

@@ -140,7 +140,12 @@
         "label": "Revert to a previous version (pull)",
         "description": "Update the workspace from its last saved version. Any changes not saved to the same repository will be lost.",
         "confirm_ok": "Update",
-        "success": "Workspace succesfully updated."
+        "success": "Workspace succesfully updated.",
+        "version": {
+          "label": "Choice of version",
+          "latest": "Last version",
+          "older": "See older versions…"
+        }
       }
     },
     "tabs": {
