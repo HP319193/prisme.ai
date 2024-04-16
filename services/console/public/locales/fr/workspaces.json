@@ -121,7 +121,7 @@
     "versions": {
       "repository": "Dépôt",
       "create": {
-        "label": "Push",
+        "label": "Créer une nouvelle version (push)",
         "description": "Créez une nouvelle version vers laquelle vous pourrez revenir à tout instant même après avoir enregistré des modification sur votre Workspace.",
         "name": "Décrivez votre version si vous le désirez",
         "success": "Nouvelle version crée. Vous pourrez la retrouver dans l'Activité de votre Workspace."
@@ -137,8 +137,8 @@
         "label": "Exporter"
       },
       "pull": {
-        "label": "Pull",
-        "description": "Mettre à jour le workpsace depuis la dernière version d'un dépôt distant. Toute modification qui n'a pas été sauvegardée sur ce même dépôt sera perdue.",
+        "label": "Revenir à une version antérieure (pull)",
+        "description": "Mettre à jour le workspace depuis sa dernière version enregistrée. Toute modification qui n'a pas été sauvegardée sur ce même dépôt sera perdue.",
         "confirm_ok": "Mettre à jour",
         "success": "Workspace mis à jour avec succès"
       }
