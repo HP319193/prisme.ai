@@ -26,15 +26,21 @@ test('create workspace', async ({ page, baseURL, request, context }) => {
   await page.waitForURL(`${baseURL}/workspaces/new`);
 
   await expect(page.getByText('Name of new Workspace')).toBeAttached();
-  await expect(page.locator('.pr-form input[type=text]')).toBeAttached();
-  await page.locator('.pr-form input[type=text]').fill('A test Workspace name');
-  await page.locator('.pr-form textarea').fill('A test Workspace description');
+  await expect(
+    page.getByTestId('schema-form-field-values.name')
+  ).toBeAttached();
+  await page
+    .getByTestId('schema-form-field-values.name')
+    .fill('A test Workspace name');
+  await page
+    .getByTestId('schema-form-field-values.description')
+    .fill('A test Workspace description');
   await page.waitForTimeout(200);
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.locator('.pr-form input[type=file]').click();
+  await page.getByTestId('schema-form-field-values.photo').click();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(path.join(__dirname, '../assets/prisme-logo.png'));
-  await page.locator('.pr-form input[type=text]').press('Enter');
+  await page.getByTestId('schema-form-field-values.name').press('Enter');
   let createdId = '';
   await page.waitForURL((url: URL) => {
     const [, id] = url.pathname.split('/en/workspaces/');

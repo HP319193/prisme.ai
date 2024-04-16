@@ -23,7 +23,9 @@ setup('authenticate', async ({ page, request, context, baseURL }) => {
     if (me.status() === 200) return;
   }
   await page.goto(TESTS_E2E_BASE_URL);
-  await page.waitForTimeout(200);
+  await page.waitForURL((url) => {
+    return url.searchParams.has('interaction');
+  });
   await page.getByPlaceholder('Email').fill(TESTS_E2E_BASE_LOGIN);
   await page.getByPlaceholder('Password').fill(TESTS_E2E_BASE_PASSWORD);
   await page.waitForTimeout(200);

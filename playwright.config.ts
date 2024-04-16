@@ -27,7 +27,6 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    storageState: './tests-e2e/.auth/user.json',
     baseURL: TESTS_E2E_BASE_URL,
   },
 
@@ -38,11 +37,20 @@ export default defineConfig({
       testMatch: /tests-e2e\/.*\.setup\.ts/,
     },
     {
-      name: 'chromium',
+      name: 'Builder',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: './tests-e2e/.auth/user.json',
+      },
+      testMatch: /tests-e2e\/builder\/*/,
+      dependencies: ['setup'],
+    },
+    {
+      name: 'Public pages',
       use: {
         ...devices['Desktop Chrome'],
       },
-      dependencies: ['setup'],
+      testMatch: /tests-e2e\/public\/\/*/,
     },
   ],
 });
