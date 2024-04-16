@@ -24,7 +24,7 @@ spec:
     spec:
       imagePullSecrets:
         - name: {{ include "imagePullSecretName" . }}
-      restartPolicy: {{ .Values.image.pullPolicy }}
+      restartPolicy: {{ .Values.restartPolicy }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       affinity:
@@ -33,6 +33,8 @@ spec:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
 
       serviceAccountName: {{ include "serviceAccountName" . }}
+
+      volumes: {{- toYaml .Values.volumes | nindent 9 }}
 
       containers:
         - name: {{ include "name" . }}
@@ -43,6 +45,8 @@ spec:
             name: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          
+          volumeMounts: {{- toYaml .Values.volumeMounts | nindent 13 }}
 
           env:
             - name: PORT

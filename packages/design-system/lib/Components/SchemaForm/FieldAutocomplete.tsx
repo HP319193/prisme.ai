@@ -79,7 +79,10 @@ export const FieldAutocomplete = ({
           onChange={field.input.onChange}
           onSearch={filterOptions}
         >
-          <Input status={hasError ? 'error' : ''} />
+          <Input
+            status={hasError ? 'error' : ''}
+            data-testid={`schema-form-field-${field.input.name}`}
+          />
         </AutoComplete>
       </Tooltip>
       <InfoBubble

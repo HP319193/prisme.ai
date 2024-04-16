@@ -26,7 +26,7 @@ spec:
     spec:
       imagePullSecrets:
         - name: {{ include "imagePullSecretName" . }}
-      restartPolicy: {{ .Values.image.pullPolicy }}
+      restartPolicy: {{ .Values.restartPolicy }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
       affinity:
@@ -182,9 +182,6 @@ spec:
 
             - name: MAILGUN_API_KEY
               value: '{{ .Values.providers.mailgun.apiKey }}'
-
-            - name: CONSOLE_URL
-              value: '{{ .Values.global.consoleUrl }}'
 
             - name: RESET_PASSWORD_URL
               value: '{{ default (printf "%s/forgot" .Values.global.consoleUrl) }}'

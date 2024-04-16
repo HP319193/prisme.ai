@@ -40,6 +40,17 @@ const getSubscriptions = (
   chunksGenerator: (cb: (event: Chunk) => void) => void
 ) => {
   class DummyAccessManager {
+    permissions: any;
+
+    constructor() {
+      this.permissions = {
+        updateRules: () => {},
+        ability: {
+          rules: [],
+        },
+      };
+    }
+
     as() {
       return this;
     }

@@ -45,6 +45,8 @@ global:
       s3_like_endpoint: ""
       s3_like_secretKey: ""
 
+restartPolicy: Always
+
 image:
   repository: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-runtime
   tag: latest

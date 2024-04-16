@@ -528,13 +528,16 @@ export class AccessManager<
   async can<returnType extends SubjectType>(
     actionType: ActionType | string,
     subjectType: returnType,
-    subject: SubjectInterfaces[returnType]
+    subject: SubjectInterfaces[returnType],
+    opts?: { disableRolePull?: boolean }
   ): Promise<boolean> {
     const { permissions } = this.checkAsUser();
-    await this.pullRoleFromSubject(
-      subjectType,
-      typeof subject.toJSON === 'function' ? subject.toJSON() : subject
-    );
+    if (!opts?.disableRolePull) {
+      await this.pullRoleFromSubject(
+        subjectType,
+        typeof subject.toJSON === 'function' ? subject.toJSON() : subject
+      );
+    }
     return permissions.can(actionType, subjectType, subject);
   }
 

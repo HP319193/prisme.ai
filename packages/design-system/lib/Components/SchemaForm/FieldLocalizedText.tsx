@@ -25,6 +25,8 @@ export const FieldLocalizedText = ({
   const [, type] = (props.schema.type || '').split(':');
   const [InputComponent, InputProps] = useMemo(() => {
     const commonProps = {
+      placeholder: props.schema.placeholder,
+      disabled: props.schema.disabled,
       type: type === 'number' ? 'number' : 'text',
     };
     switch (uiWidget) {
@@ -77,6 +79,7 @@ export const FieldLocalizedText = ({
         className={`pr-form-${type}__input ${
           uiWidget ? `pr-form-${type}__input--${uiWidget}` : ''
         } pr-form-input`}
+        data-testid={`schema-form-field-${field.input.name}`}
       />
       <InfoBubble
         className={`pr-form-${type}__description`}

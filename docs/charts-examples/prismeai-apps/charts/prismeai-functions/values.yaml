@@ -7,6 +7,8 @@ env:
   - name: PORT
     value: "80"
 
+restartPolicy: Always
+
 image:
   repository: registry.gitlab.com/gogowego-devsecops/dev/apps/prisme.ai-functions
   tag: latest
@@ -84,3 +86,6 @@ networkPolicy:
   from: []
 
 statefulset: false
+
+volumes: []
+volumeMounts: []

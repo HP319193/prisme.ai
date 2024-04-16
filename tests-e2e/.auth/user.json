@@ -1,0 +1,193 @@
+{
+  "cookies": [
+    {
+      "name": "_interaction_resume",
+      "value": "P0gd1sTxCX-hFGkVaATu_",
+      "domain": "api.staging.prisme.ai",
+      "path": "/oidc/auth/P0gd1sTxCX-hFGkVaATu_",
+      "expires": 1713259204.289919,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_interaction_resume.sig",
+      "value": "F_g9DyjM1XGzbdZd1x7-5DF1yxE",
+      "domain": "api.staging.prisme.ai",
+      "path": "/oidc/auth/P0gd1sTxCX-hFGkVaATu_",
+      "expires": 1713259204.28996,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_interaction_resume.legacy",
+      "value": "P0gd1sTxCX-hFGkVaATu_",
+      "domain": "api.staging.prisme.ai",
+      "path": "/oidc/auth/P0gd1sTxCX-hFGkVaATu_",
+      "expires": 1713259204.289984,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_interaction_resume.legacy.sig",
+      "value": "2SZV7PHL5cpv9pEnHiwtEboL36M",
+      "domain": "api.staging.prisme.ai",
+      "path": "/oidc/auth/P0gd1sTxCX-hFGkVaATu_",
+      "expires": 1713259204.290001,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_interaction_resume",
+      "value": "Fg3xHZA6-1_S7XRsXhpZH",
+      "domain": "api.staging.prisme.ai",
+      "path": "/oidc/auth/Fg3xHZA6-1_S7XRsXhpZH",
+      "expires": 1713259205.670597,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_interaction_resume.sig",
+      "value": "XAhU_ARDAnozYJF6Joz-QXxiGxg",
+      "domain": "api.staging.prisme.ai",
+      "path": "/oidc/auth/Fg3xHZA6-1_S7XRsXhpZH",
+      "expires": 1713259205.670613,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_interaction_resume.legacy",
+      "value": "Fg3xHZA6-1_S7XRsXhpZH",
+      "domain": "api.staging.prisme.ai",
+      "path": "/oidc/auth/Fg3xHZA6-1_S7XRsXhpZH",
+      "expires": 1713259205.670629,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_interaction_resume.legacy.sig",
+      "value": "mUt8OJ_vUs3CDne6Bi68uy6zmrc",
+      "domain": "api.staging.prisme.ai",
+      "path": "/oidc/auth/Fg3xHZA6-1_S7XRsXhpZH",
+      "expires": 1713259205.670642,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_interaction",
+      "value": "Fg3xHZA6-1_S7XRsXhpZH",
+      "domain": ".prisme.ai",
+      "path": "/",
+      "expires": 1713259205.670477,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_interaction.sig",
+      "value": "1trrxZdqzTY_Es1sHMGlq8JuDg0",
+      "domain": ".prisme.ai",
+      "path": "/",
+      "expires": 1713259205.670536,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_interaction.legacy",
+      "value": "Fg3xHZA6-1_S7XRsXhpZH",
+      "domain": ".prisme.ai",
+      "path": "/",
+      "expires": 1713259205.670559,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_interaction.legacy.sig",
+      "value": "cUcnvstIN67xu-FivDM21P2kmYE",
+      "domain": ".prisme.ai",
+      "path": "/",
+      "expires": 1713259205.670578,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_session",
+      "value": "rF5ourDHvw62Li-0tnIi2",
+      "domain": ".prisme.ai",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_session.sig",
+      "value": "XdNV3ztzuiCAYQeqrtDkLW781yY",
+      "domain": ".prisme.ai",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_session.legacy",
+      "value": "rF5ourDHvw62Li-0tnIi2",
+      "domain": ".prisme.ai",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_session.legacy.sig",
+      "value": "rwRhfXjOrsjGpzfn3jK1ytM15Q4",
+      "domain": ".prisme.ai",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "access-token",
+      "value": "eyJhbGciOiJSUzI1NiIsInR5cCI6ImF0K2p3dCIsImtpZCI6InhtMHVvLWNUajJxSmxpX05FQ3M5X1dSNjZERmR5RFVzVzZyZnRpbHFkZXMifQ.eyJwcmlzbWVhaVNlc3Npb25JZCI6ImN3Rlh2azM5UnhFQ2hvRktzMmVDbCIsImp0aSI6IkhQVkVqd05FY0FzbG1HMUZtSjhDNSIsInN1YiI6IjY2MTkyZjJjZTdkMTMzMmRhOTkxNGVkYiIsImlhdCI6MTcxMzI1NTYwNiwiZXhwIjoxNzE1ODQ3NjA2LCJzY29wZSI6ImV2ZW50czp3cml0ZSBldmVudHM6cmVhZCB3ZWJob29rcyBwYWdlczpyZWFkIGZpbGVzOndyaXRlIGZpbGVzOnJlYWQiLCJjbGllbnRfaWQiOiJwcmlzbWVhaS1zdHVkaW8tY2xpZW50IiwiaXNzIjoiaHR0cHM6Ly9hcGkuc3RhZ2luZy5wcmlzbWUuYWkiLCJhdWQiOiJodHRwczovL2FwaS5zdGFnaW5nLnByaXNtZS5haS92MiJ9.R_XLvTnO7oolIEpQvALo9LqjxBEOVPtiF5FmXScrBFJSsR-NMsedFgzAxRar042yNAA0zCzCrt-rlEQ4xB7WPvsO-NDAO90np7B3PYYKrOZqr2nMwjwaDHNnkW_gBt_GTrJ7nlOXyeIHOp2JWetXquLYILNTmum4FUI0OgKTz9oq-qJ3U7UD4wiCt9xubAd9OV-ThtUv_6ikCr_fkmICH-2Phxd3DoGq5OBwgYqWz8LFFcEoCwtYsJd4V31RRDFR_f9nGAo_HiTTlipJepEs1bzO265_uYV2JkwoCXdMA5lGrNKEJ9yZGwMAZcuOUn0_ZPhK0P4tvkxeEhgLmtaJYw",
+      "domain": "staging.prisme.ai",
+      "path": "/",
+      "expires": 1715847606,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://staging.prisme.ai",
+      "localStorage": [
+        {
+          "name": "client-id",
+          "value": "prismeai-studio-client"
+        },
+        {
+          "name": "code-verifier",
+          "value": "UbU7IOlCUWjuk8kaTI4s2GpgL7r1kdsOdsRJ9Wl59QK15Iu.i2iD2XsJ5bvxP3Td"
+        },
+        {
+          "name": "access-token",
+          "value": "eyJhbGciOiJSUzI1NiIsInR5cCI6ImF0K2p3dCIsImtpZCI6InhtMHVvLWNUajJxSmxpX05FQ3M5X1dSNjZERmR5RFVzVzZyZnRpbHFkZXMifQ.eyJwcmlzbWVhaVNlc3Npb25JZCI6ImN3Rlh2azM5UnhFQ2hvRktzMmVDbCIsImp0aSI6IkhQVkVqd05FY0FzbG1HMUZtSjhDNSIsInN1YiI6IjY2MTkyZjJjZTdkMTMzMmRhOTkxNGVkYiIsImlhdCI6MTcxMzI1NTYwNiwiZXhwIjoxNzE1ODQ3NjA2LCJzY29wZSI6ImV2ZW50czp3cml0ZSBldmVudHM6cmVhZCB3ZWJob29rcyBwYWdlczpyZWFkIGZpbGVzOndyaXRlIGZpbGVzOnJlYWQiLCJjbGllbnRfaWQiOiJwcmlzbWVhaS1zdHVkaW8tY2xpZW50IiwiaXNzIjoiaHR0cHM6Ly9hcGkuc3RhZ2luZy5wcmlzbWUuYWkiLCJhdWQiOiJodHRwczovL2FwaS5zdGFnaW5nLnByaXNtZS5haS92MiJ9.R_XLvTnO7oolIEpQvALo9LqjxBEOVPtiF5FmXScrBFJSsR-NMsedFgzAxRar042yNAA0zCzCrt-rlEQ4xB7WPvsO-NDAO90np7B3PYYKrOZqr2nMwjwaDHNnkW_gBt_GTrJ7nlOXyeIHOp2JWetXquLYILNTmum4FUI0OgKTz9oq-qJ3U7UD4wiCt9xubAd9OV-ThtUv_6ikCr_fkmICH-2Phxd3DoGq5OBwgYqWz8LFFcEoCwtYsJd4V31RRDFR_f9nGAo_HiTTlipJepEs1bzO265_uYV2JkwoCXdMA5lGrNKEJ9yZGwMAZcuOUn0_ZPhK0P4tvkxeEhgLmtaJYw"
+        }
+      ]
+    }
+  ]
+}

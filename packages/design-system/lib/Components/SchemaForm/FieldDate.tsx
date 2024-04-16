@@ -41,6 +41,7 @@ export const FieldDate = (props: FieldProps) => {
           {...dateOptions}
           className="!flex-[unset]"
           placeholder={props.schema.placeholder}
+          data-testid={`schema-form-field-${field.input.name}`}
         />
       </div>
       <InfoBubble

@@ -135,6 +135,7 @@ export const FieldTextUpload = ({
             defaultUploadAccept
           }
           multiple={false}
+          data-testid={`schema-form-field-${field.input.name}`}
         />
         {field.input.value && (
           <div className="pr-form-upload__delete">

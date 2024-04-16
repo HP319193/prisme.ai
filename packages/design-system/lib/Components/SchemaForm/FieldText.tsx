@@ -84,6 +84,7 @@ export const FieldText = ({
         <FieldCode
           {...props}
           options={(uiOptions || { code: {} }) as UiOptionsCode}
+          data-testid={`schema-form-field-${field.input.name}`}
         />
       ) : null;
   }
@@ -123,6 +124,7 @@ export const FieldText = ({
           className="pr-form-text__input pr-form-input"
           id={field.input.name}
           inputMode={inputMode}
+          data-testid={`schema-form-field-${field.input.name}`}
           {...inputProps}
         />
       </Tooltip>

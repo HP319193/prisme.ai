@@ -56,6 +56,8 @@ global:
 
   internalApiKey: ""
 
+restartPolicy: Always
+
 image:
   repository: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-events
   tag: latest

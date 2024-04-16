@@ -158,6 +158,7 @@ export const SchemaForm = ({
                   type="submit"
                   className="pr-form-submit"
                   disabled={hasValidationErrors}
+                  data-testid="schema-form-submit-button"
                 >
                   {locales.submit || 'Submit'}
                 </Button>

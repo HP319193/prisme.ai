@@ -24,6 +24,7 @@ export const FieldBoolean = (props: FieldProps) => {
         disabled={props.schema.disabled}
         className="pr-form-boolean__input pr-form-input"
         id={field.input.name}
+        data-testid={`schema-form-field-${field.input.name}`}
       />
       <InfoBubble
         className="pr-form-boolean__description"

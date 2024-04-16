@@ -184,6 +184,7 @@ async function initPassportStrategies(
       async (req: Request, token: any, done: any) => {
         req.session = {
           prismeaiSessionId: token.prismeaiSessionId,
+          expires: new Date(token.exp * 1000).toISOString(),
           mfaValidated: false,
         };
         delete req.headers['authorization']; // Do not pass user JWT to backed services

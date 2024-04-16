@@ -64,6 +64,8 @@ storage:
   permissions:
     driver:
     url:
+    
+restartPolicy: Always
 
 image:
   repository: registry.gitlab.com/prisme.ai/prisme.ai/prisme.ai-api-gateway

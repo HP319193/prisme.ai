@@ -299,6 +299,7 @@ exports[`should use ui:widgets 1`] = `
                 </div>
                 <input
                   accept="image/jpeg"
+                  data-testid="schema-form-field-values.upload"
                   multiple={false}
                   onChange={[Function]}
                   type="file"

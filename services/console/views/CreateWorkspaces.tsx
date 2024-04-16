@@ -20,6 +20,7 @@ const SubmitButton = ({ ...props }: ButtonProps) => {
       type="submit"
       disabled={hasValidationErrors || creating}
       className="self-center !h-auto font-bold py-[10px] px-[30px] mt-[50px] !text-[20px] !font-bold"
+      data-testid="create-workspace-submit-button"
       {...props}
     />
   );
