@@ -25,6 +25,8 @@ export const FieldLocalizedText = ({
   const [, type] = (props.schema.type || '').split(':');
   const [InputComponent, InputProps] = useMemo(() => {
     const commonProps = {
+      placeholder: props.schema.placeholder,
+      disabled: props.schema.disabled,
       type: type === 'number' ? 'number' : 'text',
     };
     switch (uiWidget) {
