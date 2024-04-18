@@ -34,6 +34,15 @@ export interface DataTableConfig extends BaseBlockConfig {
         event: string;
         payload?: Record<string, any>;
       };
+  bulkActions: {
+    onSelect?:
+      | string
+      | {
+          event: string;
+          payload?: Record<string, any>;
+        };
+    label: Prismeai.LocalizedText;
+  }[];
 }
 
 interface DataTableProps extends DataTableConfig {
@@ -63,6 +72,7 @@ export const DataTable = ({
   data = emptyArray,
   events,
   onSort,
+  bulkActions,
   ...config
 }: DataTableProps) => {
   const {
@@ -218,14 +228,54 @@ export const DataTable = ({
     });
   };
 
+  const selection = useRef<DataType[]>([]);
+  const [hasSelection, setHasSelection] = useState(false);
+  const rowSelection = useMemo(
+    () =>
+      bulkActions && {
+        onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+          selection.current = selectedRows;
+          setHasSelection(selectedRows.length > 0);
+        },
+        selections: bulkActions.flatMap(({ label, onSelect }) =>
+          onSelect
+            ? [
+                {
+                  key: label,
+                  text: localize(label),
+                  onSelect: () => {
+                    const { event, payload = {} } =
+                      typeof onSelect === 'string'
+                        ? { event: onSelect }
+                        : onSelect;
+                    events?.emit(event, {
+                      ...payload,
+                      data: selection.current,
+                    });
+                  },
+                },
+              ]
+            : []
+        ),
+      },
+    []
+  );
 
   return (
     <div
-      className={`pr-block-data-table ${className}                  block-data-table`}
+      className={`pr-block-data-table ${className} ${
+        hasSelection ? 'pr-block-data-table--has-bulk-selection' : ''
+      }                  block-data-table`}
     >
       {config.title && <BlockTitle value={localize(config.title)} />}
       <div className="pr-block-data-table__table-container                 block-data-table__table-container table-container">
         <Table
+          rowSelection={
+            bulkActions && {
+              type: 'checkbox',
+              ...rowSelection,
+            }
+          }
           dataSource={dataSource}
           columns={columns}
           locale={locales}
@@ -242,6 +292,25 @@ export const DataTable = ({
 const defaultStyles = `
 .pr-block-data-table__table-container {
   overflow: auto;
+}
+.ant-table-selection {
+  display: flex;
+  flex-direction: row;
+  width: 3rem;
+}
+.ant-table-selection-column {
+  text-align: left;
+}
+.ant-table-selection-extra {
+  right: 0;
+  opacity: 0;
+  transition: opacity .2s ease-in;
+}
+:block.pr-block-data-table--has-bulk-selection .ant-table-selection-extra {
+  opacity: 1;
+}
+.ant-table-selection-extra svg {
+  color: black;
 }
 `;
 
