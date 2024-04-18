@@ -121,7 +121,7 @@
     "versions": {
       "repository": "Repository",
       "create": {
-        "label": "Push",
+        "label": "Create a new version (push)",
         "description": "Create a new version to which you can return at any time even after saving changes to your Workspace.",
         "name": "Describe your version if you wish",
         "success": "New version created. You will be able to find it in the Activity of your Workspace."
@@ -137,10 +137,15 @@
         "label": "Export"
       },
       "pull": {
-        "label": "Pull",
-        "description": "Update current workspace from a remote repository. Any update not synced with that repository will be lost.",
+        "label": "Revert to a previous version (pull)",
+        "description": "Update the workspace from its last saved version. Any changes not saved to the same repository will be lost.",
         "confirm_ok": "Update",
-        "success": "Workspace succesfully updated."
+        "success": "Workspace succesfully updated.",
+        "version": {
+          "label": "Choice of version",
+          "latest": "Last version",
+          "older": "See older versions…"
+        }
       }
     },
     "tabs": {

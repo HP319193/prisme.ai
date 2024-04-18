@@ -3,12 +3,14 @@ import {
   notification,
   TextArea,
   Select,
+  Tooltip,
 } from '@prisme.ai/design-system';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWorkspace } from '../providers/Workspace';
 import api from '../utils/api';
+import { useDateFormat } from '../utils/dates';
 import { useTracking } from './Tracking';
 
 interface VersionModalProps {
@@ -22,6 +24,7 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
 
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
+  const dateFormat = useDateFormat();
   const { push } = useRouter();
   const { trackEvent } = useTracking();
   const { readRepositories, writeRepositories } = useMemo(() => {
@@ -49,6 +52,72 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
     };
   }, [workspace?.repositories]);
 
+  const [version, setVersion] = useState('latest');
+  const [versions, setVersions] =
+    useState<{ label: ReactNode; value: string }[]>();
+  useEffect(() => {
+    if (visible !== 'pull') return;
+    async function fetchVersions() {
+      const events = await api.getEvents(workspace.id, {
+        type: 'workspaces.versions.published',
+        limit: 10,
+      });
+      const versions = events.flatMap(({ payload: { version } }) =>
+        version
+          ? [
+              {
+                label: (
+                  <Tooltip
+                    title={
+                      <div>
+                        <div>{version.name}</div>
+                        <div>
+                          {dateFormat(new Date(version.createdAt), {
+                            relative: true,
+                          })}
+                        </div>
+                      </div>
+                    }
+                    placement="right"
+                  >
+                    {version.description || version.name}
+                  </Tooltip>
+                ),
+                value: version.name,
+              },
+            ]
+          : []
+      );
+      if (versions.length) {
+        setVersion('latest');
+        if (versions.length === 10) {
+          versions.unshift({
+            label: <div>{t('workspace.versions.pull.version.latest')}</div>,
+            value: 'latest',
+          });
+          versions.push({
+            label: (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  push(
+                    '/workspaces/KgIMCs2?type=workspaces.versions.published'
+                  );
+                  close();
+                }}
+              >
+                {t('workspace.versions.pull.version.older')}
+              </button>
+            ),
+            value: '',
+          });
+        }
+      }
+      setVersions(versions);
+    }
+    fetchVersions();
+  }, [close, dateFormat, push, t, visible, workspace.id]);
+
   const onConfirm = useCallback(
     async (mode: 'pull' | 'push') => {
       trackEvent({
@@ -69,7 +138,9 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
         } else if (mode === 'pull') {
           await api
             .workspaces(workspace.id)
-            .versions.rollback('latest', { repository: remoteRepository });
+            .versions.rollback(version || 'latest', {
+              repository: remoteRepository,
+            });
         }
         notification.success({
           message: (
@@ -95,7 +166,7 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
         });
       }
     },
-    [description, push, t, trackEvent, workspace.id, repository]
+    [trackEvent, repository, t, workspace.id, description, version, push]
   );
 
   return (
@@ -136,15 +207,26 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
             <br />
           </>
         ) : null}
-        {t('workspace.versions.repository')}
-        <br />
-        <Select
-          value={repository}
-          selectOptions={
-            visible === 'push' ? writeRepositories : readRepositories
-          }
-          onChange={(value) => setRepository(value)}
-        />
+        {versions && (
+          <label className="flex flex-col mb-2">
+            {t('workspace.versions.pull.version.label')}
+            <Select
+              value={version}
+              selectOptions={versions}
+              onChange={setVersion}
+            />
+          </label>
+        )}
+        <label className="flex flex-col">
+          {t('workspace.versions.repository')}
+          <Select
+            value={repository}
+            selectOptions={
+              visible === 'push' ? writeRepositories : readRepositories
+            }
+            onChange={(value) => setRepository(value)}
+          />
+        </label>
       </div>
     </Modal>
   );

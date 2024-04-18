@@ -17,6 +17,15 @@ test('enter builder', async ({ page, baseURL }) => {
 test('list workspaces', async ({ page, baseURL }) => {
   await page.goto(`${baseURL}/workspaces`);
   await expect(page.getByText('Create a workspace')).toBeAttached();
+  await expect(
+    page.getByRole('link', { name: 'Test Product Layout' })
+  ).toBeAttached();
+  await expect(
+    page.getByRole('link', { name: 'Second test workspace title' })
+  ).toBeAttached();
+  await expect(
+    page.getByRole('link', { name: 'Third test workspace title' })
+  ).toBeAttached();
 });
 
 test('create workspace', async ({ page, baseURL, request, context }) => {

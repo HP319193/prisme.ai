@@ -35,6 +35,9 @@ export default defineConfig({
     {
       name: 'setup',
       testMatch: /tests-e2e\/.*\.setup\.ts/,
+      use: {
+        storageState: './tests-e2e/.auth/user.json',
+      },
     },
     {
       name: 'Builder',

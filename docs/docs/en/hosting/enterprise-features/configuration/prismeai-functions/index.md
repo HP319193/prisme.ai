@@ -3,8 +3,9 @@ This microservice is capable of running custom user functions (NodeJS or Python)
 ## Installation prerequisites
 
 Here is a few thing that should be considered:   
-- The service should have access to a npm registry. You can use the `NPM_CONFIG_REGISTRY` environment variable to specify your own.  
-- The service needs a volume, we recommend using volumes with a high I/O speed as it might be highly solicited when installing dependencies for example.  
+
+* The **service must have access to a npm registry**. You can use the `NPM_CONFIG_REGISTRY` environment variable to specify your own.  
+* The service needs a volume, we recommend using volumes with a high I/O speed as it might be highly solicited when installing dependencies for example.  
 
 ## Environment variables  
 

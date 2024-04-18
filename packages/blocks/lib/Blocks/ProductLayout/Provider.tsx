@@ -23,17 +23,35 @@ export function useProductLayoutContext() {
   return context;
 }
 
+const keyProductLayoutSidebarIsOpen = 'productLayoutSidebarIsOpen';
+function getOpenedState() {
+  try {
+    return sessionStorage.getItem(keyProductLayoutSidebarIsOpen) === 'true';
+  } catch {
+    return false;
+  }
+}
+function saveOpenedState(state: boolean) {
+  try {
+    sessionStorage.setItem(keyProductLayoutSidebarIsOpen, `${state}`);
+  } catch {}
+}
+
 interface ProductLayoutProviderProps {
   children: ReactNode;
   opened?: boolean;
 }
 export const ProductLayoutProvider = (props: ProductLayoutProviderProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(props.opened || false);
+  const [sidebarOpen, setSidebarOpen] = useState(
+    props.opened !== undefined ? props.opened : getOpenedState() || false
+  );
   const toggleSidebar: ProductLayoutContext['toggleSidebar'] = useCallback(
     (state) => {
-      if (state === 'open') return setSidebarOpen(true);
-      if (state === 'close') return setSidebarOpen(false);
-      setSidebarOpen((prev) => !prev);
+      setSidebarOpen((prev) => {
+        const newState = state === undefined ? !prev : state === 'open';
+        saveOpenedState(newState);
+        return newState;
+      });
     },
     []
   );

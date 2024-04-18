@@ -21,6 +21,17 @@ The architecture can be reviewed [here](../../architecture/index.md).
     - S3 compatible object storage  
     - Azure Blob storage  
     <!-- - Google Storage -->
+
+### Offline environments
+If the installation environment does not have access to internet, ensure that the following prerequisites are always met :  
+
+* If using [app microservices](./enterprise-features/installation/), `prismeai-functions` need access to a NPM registry. If the default https://registry.npmjs.org/ is not available, you must configure your own npm registry using **NPM_CONFIG_REGISTRY** environment variable inside `prismeai-functions` microservice
+  * Depending on your NPM proxy, it might require additional configuration for authentication
+* If using internal / self-signed TLS certificates, they must be configured inside almost all microservices to avoid HTTPS errors
+  * `prismeai-searchengine` and `prismeai-crawler` are Python microservices : once mounted, the certificate file location can be configured with [REQUESTS_CA_BUNDLE](https://requests.readthedocs.io/en/latest/user/advanced/#ssl-cert-verification)
+  * `prismeai-llm` does not need the custom certificate
+  * Every other `prismeai-*` services are NodeJS : once mounted, the certificate file location can be configured with [NODE_EXTRA_CA_CERTS](https://nodejs.org/docs/latest-v4.x/api/cli.html#cli_node_extra_ca_certs_file)
+
   
 ## Available guides
 

@@ -12,7 +12,6 @@ const authFile = 'tests-e2e/.auth/user.json';
 
 setup('authenticate', async ({ page, request, context, baseURL }) => {
   const accessToken = await getAccessToken(context);
-
   if (accessToken) {
     const me = await request.get(`${TESTS_E2E_API_URL}/me`, {
       headers: {
@@ -29,7 +28,7 @@ setup('authenticate', async ({ page, request, context, baseURL }) => {
   await page.getByPlaceholder('Email').fill(TESTS_E2E_BASE_LOGIN);
   await page.getByPlaceholder('Password').fill(TESTS_E2E_BASE_PASSWORD);
   await page.waitForTimeout(200);
-  await page.getByPlaceholder('Email').press('Enter');
+  await page.getByRole('button', { name: 'Login' }).click();
   await page.waitForURL(`${baseURL}/products`);
   await page.context().storageState({ path: authFile });
 });
