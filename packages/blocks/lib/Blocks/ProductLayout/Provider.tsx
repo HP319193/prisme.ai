@@ -27,17 +27,14 @@ const keyProductLayoutSidebarIsOpen = 'productLayoutSidebarIsOpen';
 function getOpenedState() {
   try {
     return sessionStorage.getItem(keyProductLayoutSidebarIsOpen) === 'true';
-  } catch (e) {
-    console.error('getOpenedState', e);
+  } catch {
     return false;
   }
 }
 function saveOpenedState(state: boolean) {
   try {
     sessionStorage.setItem(keyProductLayoutSidebarIsOpen, `${state}`);
-  } catch (e) {
-    console.error('saveOpenedState', e);
-  }
+  } catch {}
 }
 
 interface ProductLayoutProviderProps {
