@@ -8,7 +8,7 @@ import BlockTitle from '../Internal/BlockTitle';
 import EditableRow from './EditableRow';
 import EditableCell from './EditableCell';
 import { ColumnDefinition, DataType, OnEdit } from './types';
-import renderValue from './RenderValue';
+import RenderValue from './RenderValue';
 import useLocalizedText from '../../useLocalizedText';
 import { TableProps } from 'antd';
 import { BaseBlock } from '../BaseBlock';
@@ -157,22 +157,18 @@ export const DataTable = ({
           schemaForm,
           className: key && `pr-block-data-table__cell--${toKebab(key)}`,
         }),
-        render: renderValue({
-          key,
-          type,
-          language,
-          format,
-          onEdit,
-          validators,
-          schemaForm,
-          actions:
-            actions && Array.isArray(actions)
-              ? actions.map((action) => ({
-                  ...action,
-                  label: localize(action.label),
-                }))
-              : undefined,
-        }),
+        render: (_: any, item: any) => (
+          <RenderValue
+            colKey={key}
+            type={type}
+            language={language}
+            format={format}
+            onEdit={onEdit}
+            validators={validators}
+            actions={actions}
+            item={item}
+          />
+        ),
       })
     );
   }, [dataSource, localize]);
