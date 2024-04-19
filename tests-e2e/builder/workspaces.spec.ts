@@ -71,3 +71,35 @@ test('create workspace', async ({ page, baseURL, request, context }) => {
     });
   }
 });
+
+test('delete workspace from workspaces list', async ({
+  page,
+  baseURL,
+  request,
+  context,
+}) => {
+  const resp = await request.post(`${TESTS_E2E_API_URL}/workspaces`, {
+    headers: {
+      Authorization: `Bearer ${await getAccessToken(context)}`,
+    },
+    data: {
+      name: 'name test to delete',
+      description: 'description test to delete',
+    },
+  });
+  expect(resp.status()).toBe(200);
+  await page.goto(`${baseURL}/workspaces`);
+  await expect(
+    page.getByRole('link', { name: 'name test to delete Edit' })
+  ).toBeAttached();
+  await page.getByRole('link', { name: 'name test to delete Edit' }).hover();
+  await page
+    .getByRole('link', { name: 'name test to delete Edit' })
+    .getByRole('button')
+    .click();
+  await page.getByRole('button', { name: 'Delete Workspace' }).click();
+  await page.getByRole('button', { name: 'Yes' }).click();
+  await expect(
+    page.getByRole('link', { name: 'name test to delete Edit' })
+  ).not.toBeAttached();
+});
