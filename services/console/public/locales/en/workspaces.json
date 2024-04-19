@@ -1277,6 +1277,42 @@
               "description": "Number of item per page."
             }
           },
+          "onSort": {
+            "label": "Sort by event",
+            "description": "By default, columns are sorted on the current page in real time. If you wish to perform sorting by automation on all data, specify here the event that will be sent when a sort action is performed on a column.",
+            "event": {
+              "label": "Event name",
+              "description": "The name of the event that will be sent to your Workspace when the user clicks on a column to change the sorting."
+            },
+            "payload": {
+              "label": "Payload (optional, JSON format)",
+              "description": "You can attach any type of data to your event."
+            }
+          },
+          "bulkActions": {
+            "label": "Bulk actions",
+            "description": "Actions to be performed on a selection of lines.",
+            "item": {
+              "_label": "Action",
+              "description": "Checkboxes will be displayed before each line and this action will be proposed to the user.",
+              "onSelect": {
+                "label": "On selection event",
+                "description": "Name of the event sent when this action is selected. The selected lines will be added to the attached data.",
+                "event": {
+                  "label": "Event name",
+                  "description": "The name of the event."
+                },
+                "payload": {
+                  "label": "Payload (optional, JSON format)",
+                  "description": "You can attach any type of data to your event."
+                }
+              },
+              "label": {
+                "label": "Action name",
+                "description": "Enter a name to represent the action."
+              }
+            }
+          },
           "customProps": {
             "label": "Additional properties",
             "description": "Additional properties to send to the Table, as supported by ant design : https://ant.design/components/table"

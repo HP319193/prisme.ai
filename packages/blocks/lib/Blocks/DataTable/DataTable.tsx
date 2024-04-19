@@ -2,13 +2,13 @@ import '../../i18n';
 import { Table } from '@prisme.ai/design-system';
 import { useBlock } from '../../Provider';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import BlockTitle from '../Internal/BlockTitle';
 
 import EditableRow from './EditableRow';
 import EditableCell from './EditableCell';
-import { ColumnDefinition, OnEdit } from './types';
-import renderValue from './RenderValue';
+import { ColumnDefinition, DataType, OnEdit } from './types';
+import RenderValue from './RenderValue';
 import useLocalizedText from '../../useLocalizedText';
 import { TableProps } from 'antd';
 import { BaseBlock } from '../BaseBlock';
@@ -28,6 +28,21 @@ export interface DataTableConfig extends BaseBlockConfig {
     payload?: Record<string, any>;
   };
   customProps?: any;
+  onSort?:
+    | string
+    | {
+        event: string;
+        payload?: Record<string, any>;
+      };
+  bulkActions: {
+    onSelect?:
+      | string
+      | {
+          event: string;
+          payload?: Record<string, any>;
+        };
+    label: Prismeai.LocalizedText;
+  }[];
 }
 
 interface DataTableProps extends DataTableConfig {
@@ -56,6 +71,8 @@ export const DataTable = ({
   className = '',
   data = emptyArray,
   events,
+  onSort,
+  bulkActions,
   ...config
 }: DataTableProps) => {
   const {
@@ -118,7 +135,9 @@ export const DataTable = ({
         title: localize(label),
         dataIndex: key,
         key,
-        sorter: key
+        sorter: onSort
+          ? true
+          : key
           ? (a: any, b: any) => {
               const _a = key ? a[key] : '';
               const _b = key ? b[key] : '';
@@ -138,22 +157,18 @@ export const DataTable = ({
           schemaForm,
           className: key && `pr-block-data-table__cell--${toKebab(key)}`,
         }),
-        render: renderValue({
-          key,
-          type,
-          language,
-          format,
-          onEdit,
-          validators,
-          schemaForm,
-          actions:
-            actions && Array.isArray(actions)
-              ? actions.map((action) => ({
-                  ...action,
-                  label: localize(action.label),
-                }))
-              : undefined,
-        }),
+        render: (_: any, item: any) => (
+          <RenderValue
+            colKey={key}
+            type={type}
+            language={language}
+            format={format}
+            onEdit={onEdit}
+            validators={validators}
+            actions={actions}
+            item={item}
+          />
+        ),
       })
     );
   }, [dataSource, localize]);
@@ -192,18 +207,77 @@ export const DataTable = ({
     } as TableProps<any>['pagination'];
   }, [config.pagination]);
 
+  const prevTableSort = useRef('');
+  const handleTableChange: TableProps<any>['onChange'] = (
+    pagination,
+    filters,
+    sorter
+  ) => {
+    if (!onSort) return;
+    if (JSON.stringify(sorter) === prevTableSort.current) return;
+    prevTableSort.current = JSON.stringify(sorter);
+    const { event, payload } =
+      typeof onSort === 'string' ? { event: onSort, payload: {} } : onSort;
+    events?.emit(event, {
+      ...payload,
+      ...sorter,
+    });
+  };
+
+  const selection = useRef<DataType[]>([]);
+  const [hasSelection, setHasSelection] = useState(false);
+  const rowSelection = useMemo(
+    () =>
+      bulkActions && {
+        onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+          selection.current = selectedRows;
+          setHasSelection(selectedRows.length > 0);
+        },
+        selections: bulkActions.flatMap(({ label, onSelect }) =>
+          onSelect
+            ? [
+                {
+                  key: label,
+                  text: localize(label),
+                  onSelect: () => {
+                    const { event, payload = {} } =
+                      typeof onSelect === 'string'
+                        ? { event: onSelect }
+                        : onSelect;
+                    events?.emit(event, {
+                      ...payload,
+                      data: selection.current,
+                    });
+                  },
+                },
+              ]
+            : []
+        ),
+      },
+    []
+  );
+
   return (
     <div
-      className={`pr-block-data-table ${className}                  block-data-table`}
+      className={`pr-block-data-table ${className} ${
+        hasSelection ? 'pr-block-data-table--has-bulk-selection' : ''
+      }                  block-data-table`}
     >
       {config.title && <BlockTitle value={localize(config.title)} />}
       <div className="pr-block-data-table__table-container                 block-data-table__table-container table-container">
         <Table
+          rowSelection={
+            bulkActions && {
+              type: 'checkbox',
+              ...rowSelection,
+            }
+          }
           dataSource={dataSource}
           columns={columns}
           locale={locales}
           components={components}
           pagination={pagination}
+          onChange={handleTableChange}
           {...config.customProps}
         />
       </div>
@@ -214,6 +288,25 @@ export const DataTable = ({
 const defaultStyles = `
 .pr-block-data-table__table-container {
   overflow: auto;
+}
+.ant-table-selection {
+  display: flex;
+  flex-direction: row;
+  width: 3rem;
+}
+.ant-table-selection-column {
+  text-align: left;
+}
+.ant-table-selection-extra {
+  right: 0;
+  opacity: 0;
+  transition: opacity .2s ease-in;
+}
+:block.pr-block-data-table--has-bulk-selection .ant-table-selection-extra {
+  opacity: 1;
+}
+.ant-table-selection-extra svg {
+  color: black;
 }
 `;
 
