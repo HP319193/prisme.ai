@@ -1277,6 +1277,42 @@
               "description": "Nombre d'éléments à afficher sur chaque page."
             }
           },
+          "onSort": {
+            "label": "Tri par évènement",
+            "description": "Les colonnes sont par défaut triées sur la page en cours en temps réel. Si vous voulez effectuer un tri par le biais d'une automatisation sur l'ensemble des données, spécifiez ici l'évènement qui sera envoyé lors d'une action de tri sur une colonne.",
+            "event": {
+              "label": "Nom de l'évènement",
+              "description": "Le nom de l'évènement qui sera envoyé à votre Workspace quand l'utilisateur cliquera sur une colonne pour changer le tri."
+            },
+            "payload": {
+              "label": "Données à attacher (optionnel, format JSON)",
+              "description": "Vous pouvez attacher n'importe quel type de données à votre événement."
+            }
+          },
+          "bulkActions": {
+            "label": "Actions en lot",
+            "description": "Actions à effectuer sur une sélection de lignes.",
+            "item": {
+              "_label": "Action",
+              "description": "Des cases à cocher seront affichées avant chaque ligne et cette action sera proposée à l'utilisateur.",
+              "onSelect": {
+                "label": "Évènement à la selection",
+                "description": "Nom de l'évènement envoyé lors de la sélection de cette action. Les lignes sélectionnées seront ajoutées aux données attachées.",
+                "event": {
+                  "label": "Nom de l'évènement",
+                  "description": "Le nom de l'évènement."
+                },
+                "payload": {
+                  "label": "Données à attacher (optionnel, format JSON)",
+                  "description": "Vous pouvez attacher n'importe quel type de données à votre événement."
+                }
+              },
+              "label": {
+                "label": "Nom de l'action",
+                "description": "Indiquez un nom représentant l'action."
+              }
+            }
+          },
           "customProps": {
             "label": "Propriétés additionelles",
             "description": "Propriétés supplémentaires à envoyer au tableau, comme supporté par la librairie ant design : https://ant.design/components/table"

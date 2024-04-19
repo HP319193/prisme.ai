@@ -131,6 +131,66 @@ const schema = {
         },
       },
     },
+    onSort: {
+      type: 'object',
+      title: 'pages.blocks.datatable.settings.onSort.label',
+      description: 'pages.blocks.datatable.settings.onSort.description',
+      properties: {
+        event: {
+          type: 'string',
+          title: 'pages.blocks.datatable.settings.onSort.event.label',
+          description:
+            'pages.blocks.datatable.settings.onSort.event.description',
+        },
+        payload: {
+          title: 'pages.blocks.datatable.settings.onSort.payload.label',
+          description:
+            'pages.blocks.datatable.settings.onSort.payload.description',
+        },
+      },
+    },
+    bulkActions: {
+      type: 'array',
+      title: 'pages.blocks.datatable.settings.bulkActions.label',
+      description: 'pages.blocks.datatable.settings.bulkActions.description',
+      items: {
+        type: 'object',
+        title: 'pages.blocks.datatable.settings.bulkActions.item._label',
+        description:
+          'pages.blocks.datatable.settings.bulkActions.item.description',
+        properties: {
+          label: {
+            type: 'localized:string',
+            title:
+              'pages.blocks.datatable.settings.bulkActions.item.label.label',
+            description:
+              'pages.blocks.datatable.settings.bulkActions.item.label.description',
+          },
+          onSelect: {
+            type: 'object',
+            title:
+              'pages.blocks.datatable.settings.bulkActions.item.onSelect.label',
+            description:
+              'pages.blocks.datatable.settings.bulkActions.item.onSelect.description',
+            properties: {
+              event: {
+                type: 'string',
+                title:
+                  'pages.blocks.datatable.settings.bulkActions.item.onSelect.event.label',
+                description:
+                  'pages.blocks.datatable.settings.bulkActions.item.onSelect.event.description',
+              },
+              payload: {
+                title:
+                  'pages.blocks.datatable.settings.bulkActions.item.onSelect.payload.label',
+                description:
+                  'pages.blocks.datatable.settings.bulkActions.item.onSelect.payload.description',
+              },
+            },
+          },
+        },
+      },
+    },
     customProps: {
       type: 'object',
       additionalProperties: true,
