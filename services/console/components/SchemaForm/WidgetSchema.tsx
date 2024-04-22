@@ -43,12 +43,6 @@ export const WidgetSchema = ({ name, schema }: any) => {
     }
   }, [extractFromConfig, form, from, path, schema]);
 
-  useEffect(() => {
-    if (!childSchema) {
-      field.input.onChange(undefined);
-    }
-  }, [childSchema, field.input]);
-
   if (!childSchema) return null;
   return (
     <SchemaForm
