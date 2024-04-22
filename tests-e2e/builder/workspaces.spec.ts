@@ -4,6 +4,16 @@ import { getAccessToken } from '../getAccessToken';
 
 const { TESTS_E2E_API_URL = '' } = process.env;
 
+let actionsOnEnd: Function[] = [];
+
+test.beforeEach(() => {
+  actionsOnEnd = [];
+});
+test.afterEach(async ({ request }) => {
+  await Promise.all(actionsOnEnd.map((fn) => fn({ request })));
+  actionsOnEnd = [];
+});
+
 test('enter builder', async ({ page, baseURL }) => {
   await page.goto(baseURL || '');
   await page.waitForURL(`${baseURL}/products`);
@@ -78,9 +88,10 @@ test('delete workspace from workspaces list', async ({
   request,
   context,
 }) => {
+  const token = await getAccessToken(context);
   const resp = await request.post(`${TESTS_E2E_API_URL}/workspaces`, {
     headers: {
-      Authorization: `Bearer ${await getAccessToken(context)}`,
+      Authorization: `Bearer ${token}`,
     },
     data: {
       name: 'name test to delete',
@@ -88,6 +99,16 @@ test('delete workspace from workspaces list', async ({
     },
   });
   expect(resp.status()).toBe(200);
+  const id = (await resp.json())?.id;
+  actionsOnEnd.push(async ({ request }) => {
+    try {
+      await request.delete(`${TESTS_E2E_API_URL}/workspaces/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch {}
+  });
   await page.goto(`${baseURL}/workspaces`);
   await expect(
     page.getByRole('link', { name: 'name test to delete Edit' })
