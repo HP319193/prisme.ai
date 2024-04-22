@@ -58,7 +58,7 @@ test('display arguments in CustomCode.run instruction', async ({
     .filter({ hasText: 'slug: Custom Codeconfig:' })
     .nth(1)
     .click();
-  await page.getByRole('textbox').press('Meta+a');
+  await page.getByRole('textbox').selectText();
   await page.getByRole('textbox').fill(`slug: Custom Code
 config:
   functions:
