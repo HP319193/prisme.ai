@@ -90,7 +90,9 @@ config:
   await page.getByTitle('doSomething').locator('div').click();
   await page.getByTestId('schema-form-field-values.foo').click();
   await page.getByTestId('schema-form-field-values.foo').fill('value');
-
+  await expect(
+    await page.getByRole('button', { name: 'Save' })
+  ).not.toHaveAttribute('disabled');
   await page.getByRole('button', { name: 'Save' }).click();
   await page.reload();
   await page.getByRole('button', { name: 'Run function edit' }).click();
