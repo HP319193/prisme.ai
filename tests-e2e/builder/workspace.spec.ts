@@ -53,11 +53,6 @@ test('display arguments in CustomCode.run instruction', async ({
     .click();
   await page.getByRole('heading', { name: 'Custom Code', exact: true }).click();
   await page.getByRole('button', { name: 'code See code' }).click();
-  await page
-    .locator('#ace-editor div')
-    .filter({ hasText: 'slug: Custom Codeconfig:' })
-    .nth(1)
-    .click();
   await page.getByRole('textbox').selectText();
   await page.getByRole('textbox').fill(`slug: Custom Code
 config:
