@@ -932,7 +932,7 @@ declare namespace Prismeai {
         firstName?: string;
         lastName?: string;
         email?: string;
-        language?: string;
+        language?: any;
     }
     export interface AuthenticationError {
         /**

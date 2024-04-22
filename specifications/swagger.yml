@@ -96,8 +96,7 @@ components:
           type: string
         email:
           type: string
-        language:
-          type: string
+        language: {}
 
     User:
       allOf:
