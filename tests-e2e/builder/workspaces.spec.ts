@@ -124,3 +124,56 @@ test('delete workspace from workspaces list', async ({
     page.getByRole('link', { name: 'name test to delete Edit' })
   ).not.toBeAttached();
 });
+
+test('duplicate workspace from workspaces list', async ({
+  page,
+  baseURL,
+  request,
+  context,
+}) => {
+  const token = await getAccessToken(context);
+  const resp = await request.post(`${TESTS_E2E_API_URL}/workspaces`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    data: {
+      name: 'name test to duplicate',
+      description: 'description test to duplicate',
+    },
+  });
+  expect(resp.status()).toBe(200);
+  const id = (await resp.json())?.id;
+  actionsOnEnd.push(async ({ request }) => {
+    try {
+      await request.delete(`${TESTS_E2E_API_URL}/workspaces/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch {}
+  });
+  await page.goto(`${baseURL}/workspaces`);
+  await page.getByRole('link', { name: 'name test to duplicate Edit' }).hover();
+  await page
+    .getByRole('link', { name: 'name test to duplicate Edit' })
+    .getByRole('button')
+    .click();
+  await page.getByRole('button', { name: 'Duplicate' }).click();
+  let duplicateId;
+  await page.waitForURL((url) => {
+    if (!url) return false;
+    const [, dId] = url.pathname.split('workspaces/');
+    if (!dId) return false;
+    duplicateId = dId;
+    return true;
+  });
+  actionsOnEnd.push(async ({ request }) => {
+    try {
+      await request.delete(`${TESTS_E2E_API_URL}/workspaces/${duplicateId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch {}
+  });
+});
