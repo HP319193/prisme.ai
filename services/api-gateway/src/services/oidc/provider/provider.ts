@@ -81,7 +81,13 @@ export const initOidcProvider = (broker: Broker): ProviderType => {
       const user = await identity.get(token.accountId);
       email = user.email;
       authData = user.authData || { prismeai: { id: user.id } };
-    } catch {}
+    } catch (err) {
+      logger.debug({
+        msg: `Could not find user corresponding to issued access token, emitted login event will likely miss auth data`,
+        err,
+        token,
+      });
+    }
 
     broker
       .send<Prismeai.SucceededLogin['payload']>(EventType.SucceededLogin, {
