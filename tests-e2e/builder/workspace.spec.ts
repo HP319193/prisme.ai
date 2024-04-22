@@ -69,6 +69,9 @@ config:
         foo:
           type: string
 `);
+  await expect(
+    await page.getByRole('button', { name: 'Save' })
+  ).not.toHaveAttribute('disabled');
   await page.getByRole('button', { name: 'Save' }).click();
 
   // The test start here
