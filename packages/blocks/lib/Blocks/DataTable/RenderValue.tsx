@@ -9,6 +9,7 @@ import { useBlocks } from '../../Provider/blocksContext';
 import _get from 'lodash.get';
 import { isBlock } from '../utils/getContentType';
 import GenericBlock from '../utils/GenericBlock';
+import useLocalizedText from '../../useLocalizedText';
 
 const generateColor = (str: string) => {
   const cyrb53 = function (str = '', seed = 0) {
@@ -51,6 +52,7 @@ export const RenderValue = ({
   const {
     components: { Link },
   } = useBlocks();
+  const { localize } = useLocalizedText();
   if (isBlock(value)) return <GenericBlock content={value} />;
 
   switch (type) {
@@ -73,7 +75,7 @@ export const RenderValue = ({
         );
         return formatter.format(new Date(value));
       } catch {
-        return value;
+        return value || '';
       }
     }
     case 'boolean':
@@ -108,7 +110,7 @@ export const RenderValue = ({
                 if (type === 'event') {
                   return (
                     <Button
-                      key={`${label}${type}${value}`}
+                      key={`${localize(label)}${type}${value}`}
                       type="button"
                       onClick={() => {
                         if (!value) return;
@@ -120,7 +122,7 @@ export const RenderValue = ({
                         });
                       }}
                     >
-                      {label}
+                      {localize(label)}
                     </Button>
                   );
                 }
