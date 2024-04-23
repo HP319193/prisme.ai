@@ -8,41 +8,74 @@ The "Data Table Block" is designed to display and manipulate structured data wit
 **2. Field Descriptions and Explanations:**
 
 **Example 1: Simple Data Table**
+
 - **slug**: Identifier for the data table block.
+
 - **data**: An array of objects representing each row in the table. Each object contains properties that correspond to the table columns.
+
 - **columns**: An array defining the structure and headings of the table:
+
   - **label**: The visible column header text.
+
   - **key**: The key that matches with data properties to display in each column.
+
   - **type**: Data type expected in the column, which helps in rendering and formatting the column data appropriately.
 
+
 **Example 2: Configurable Data Table with Actions**
+
 - **slug**: Identifier for the data table block.
+
 - **columns**: Defines multiple columns, including special columns for actions such as delete:
+
   - **label**: Column header label.
+
   - **key**: Data key for matching column data.
+
   - **type**: Defines the data type (e.g., string).
+
   - **actions**: Optional actions that can be taken from this column, like deleting a row.
+
 - **config**: Additional configuration settings:
+
   - **customProps**: Custom properties like loading indicators.
+
   - **title**: Title of the table in multiple languages.
+
   - **onInit**: Event triggered when the table is initialized.
+
   - **updateOn**: Event to trigger data updates.
+
 - **data**: Placeholder for data, expecting to be filled by an automation or dynamic source.
 
 **Example 3: Complex Table with Pagination and Bulk Actions**
+
 - **slug**: Identifier for the data table block.
+
 - **data**: Dynamically linked data entries from a template or a collection.
+
 - **columns**: Template-driven or dynamically defined columns.
+
 - **pagination**: Controls for navigating through pages of data:
+
   - **event**: Event triggered for pagination.
+
   - **payload**: Details to fetch specific page data.
+
   - **page**: Current page number.
+
   - **itemCount**: Total number of items in the dataset.
+
   - **pageSize**: Number of items per page.
+
 - **onSort**: Event and payload definitions for sorting the table data.
+
 - **bulkActions**: Actions that can be applied to multiple selected items:
+
   - **label**: Text label for the action in multiple languages.
+
   - **onSelect**: Event and payload to execute when the action is selected.
+  
 
 **3. Yaml files (See code section):**
 
