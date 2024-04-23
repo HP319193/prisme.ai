@@ -1,5 +1,10 @@
 import { Api } from '../api';
 import { Fetched } from '../fetcher';
+import {
+  ImportProcessing,
+  ImportProcessingError,
+  ImportSuccess,
+} from '../ImportProcessing';
 import { dataURItoBlob, removedUndefinedProperties } from '../utils';
 import WorkspacesVersionsEndpoint from './workspacesVersions';
 
@@ -92,21 +97,21 @@ export class WorkspacesEndpoint {
     return this.api.get(`/workspaces/${this.id}/usage?${params.toString()}`);
   }
 
-  async importArchive(
-    archive: File
-  ): Promise<PrismeaiAPI.ImportNewWorkspace.Responses.$200> {
+  async importArchive(archive: File): Promise<ImportSuccess> {
     return new Promise((resolve) => {
       const fileReader = new FileReader();
       fileReader.addEventListener('load', async ({ target }) => {
         const file = target?.result as string;
         const formData = new FormData();
         formData.append('archive', ...dataURItoBlob(file));
-        resolve(
-          await this.api.post<PrismeaiAPI.ImportNewWorkspace.Responses.$200>(
-            `/workspaces/${this.id}/import`,
-            formData
-          )
+        const result = await this.api.post<ImportProcessing | ImportSuccess>(
+          `/workspaces/${this.id}/import`,
+          formData
         );
+        if ((result as ImportProcessing).processing) {
+          throw new ImportProcessingError(result as ImportProcessing);
+        }
+        resolve(result as ImportSuccess);
       });
       fileReader.readAsDataURL(archive);
     });

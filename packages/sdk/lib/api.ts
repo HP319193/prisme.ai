@@ -7,6 +7,11 @@ import { removedUndefinedProperties } from './utils';
 import WorkspacesEndpoint from './endpoints/workspaces';
 import ApiError from './ApiError';
 import UsersEndpoint from './endpoints/users';
+import {
+  ImportProcessing,
+  ImportProcessingError,
+  ImportSuccess,
+} from './ImportProcessing';
 
 interface PageWithMetadata extends Prismeai.Page {
   createdAt: string;
@@ -870,21 +875,22 @@ export class Api extends Fetcher {
     return this.get(`/workspaces/${workspaceId}/usage?${params.toString()}`);
   }
 
-  async importArchive(
-    archive: File
-  ): Promise<PrismeaiAPI.ImportNewWorkspace.Responses.$200> {
+  async importArchive(archive: File): Promise<ImportSuccess> {
     return new Promise((resolve) => {
       const fileReader = new FileReader();
       fileReader.addEventListener('load', async ({ target }) => {
         const file = target?.result as string;
         const formData = new FormData();
         formData.append('archive', ...dataURItoBlob(file));
-        resolve(
-          await this.post<PrismeaiAPI.ImportNewWorkspace.Responses.$200>(
-            `/workspaces/import`,
-            formData
-          )
+
+        const result = await this.post<ImportProcessing | ImportSuccess>(
+          `/workspaces/import`,
+          formData
         );
+        if ((result as ImportProcessing).processing) {
+          throw new ImportProcessingError(result as ImportProcessing);
+        }
+        resolve(result as ImportSuccess);
       });
       fileReader.readAsDataURL(archive);
     });

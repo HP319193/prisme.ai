@@ -126,11 +126,15 @@ export const WorkspacesProvider = ({ children }: WorkspacesProviderProps) => {
   const [importing, setImporting] = useState(false);
   const importArchive = useCallback(async (file: File, target) => {
     setImporting(true);
-    const { workspace } = await (target
-      ? api.workspaces(target).importArchive(file)
-      : api.importArchive(file));
-    setImporting(false);
-    return workspace;
+    try {
+      const { workspace } = await (target
+        ? api.workspaces(target).importArchive(file)
+        : api.importArchive(file));
+      setImporting(false);
+      return workspace;
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   const refreshWorkspace: WorkspacesContext['refreshWorkspace'] = useCallback(
