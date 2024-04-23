@@ -22,7 +22,10 @@ export function isString(content: any): content is string {
 
 export function isBlock(content: any): content is BlocksListConfig['blocks'] {
   return (
-    typeof content === 'object' && Array.isArray(content) && !!content[0].slug
+    typeof content === 'object' &&
+    Array.isArray(content) &&
+    typeof content[0] === 'object' &&
+    !!content[0].slug
   );
 }
 
