@@ -354,8 +354,19 @@ export default function init(
       throw new MissingFieldError('Missing archive');
     }
 
+    // Timeout at 15 sec to avoid gtw api default timeout's 408 status that would trigger a re upload from remote browser
+    let timeoutHandler: NodeJS.Timeout | null = setTimeout(() => {
+      timeoutHandler = null;
+      res.send({
+        processing: true,
+        message: `Import still processing, result will be emitted as a workspaces.imported event in relevant workspaces. For multi workspaces import, additional logs will be displayed internally.`,
+      });
+    }, 15000);
     const result = await exports.importArchive(file?.buffer, workspaceId);
-    res.send(result);
+    if (timeoutHandler) {
+      clearTimeout(timeoutHandler);
+      res.send(result);
+    }
   }
 
   const app = express.Router();

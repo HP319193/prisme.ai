@@ -177,3 +177,39 @@ test('duplicate workspace from workspaces list', async ({
     } catch {}
   });
 });
+
+test('search workspace', async ({ page, baseURL }) => {
+  await page.goto(`${baseURL}/workspaces`);
+  await expect(page.getByPlaceholder('Search a workspace')).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Test Product Layout Test' })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Second test workspace title' })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Third test workspace title' })
+  ).toBeVisible();
+  await page.getByPlaceholder('Search a workspace').click();
+  await page.getByPlaceholder('Search a workspace').fill('third');
+  await expect(
+    page.getByRole('link', { name: 'Test Product Layout Test' })
+  ).not.toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Second test workspace title' })
+  ).not.toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Third test workspace title' })
+  ).toBeVisible();
+
+  await page.getByPlaceholder('Search a workspace').fill('');
+  await expect(
+    page.getByRole('link', { name: 'Test Product Layout Test' })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Second test workspace title' })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Third test workspace title' })
+  ).toBeVisible();
+});

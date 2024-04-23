@@ -4657,37 +4657,44 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - imported
-                properties:
-                  createdWorkspaceIds:
-                    type: array
-                    items:
-                      type: string
-                  updatedWorkspaceIds:
-                    type: array
-                    items:
-                      type: string
-                  imported:
-                    type: array
-                    items:
-                      type: string
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      additionalProperties: true
-                  workspace:
-                    $ref: '#/components/schemas/DSULReadOnly'
-                  publishedApps:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/App'
-                  deleted:
-                    type: array
-                    items:
-                      type: string
+                anyOf:
+                  - type: object
+                    properties:
+                      processing:
+                        type: boolean
+                      message:
+                        type: string
+                  - type: object
+                    required:
+                      - imported
+                    properties:
+                      createdWorkspaceIds:
+                        type: array
+                        items:
+                          type: string
+                      updatedWorkspaceIds:
+                        type: array
+                        items:
+                          type: string
+                      imported:
+                        type: array
+                        items:
+                          type: string
+                      errors:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: true
+                      workspace:
+                        $ref: '#/components/schemas/DSULReadOnly'
+                      publishedApps:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/App'
+                      deleted:
+                        type: array
+                        items:
+                          type: string
         '401':
           description: AuthenticationError
           content:

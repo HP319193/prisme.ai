@@ -254,7 +254,7 @@ export const DataTable = ({
             : []
         ),
       },
-    []
+    [events, bulkActions, setHasSelection, localize]
   );
 
   return (

@@ -205,3 +205,21 @@ it('should remove items', () => {
     )
   ).toEqual({ list: [{ id: 1 }, { id: 3 }] });
 });
+
+it('should remove items list', () => {
+  expect(
+    applyCommands(
+      { list: [{ id: 1 }, { id: 2 }, { id: 3 }] },
+      { $remove: { list: { id: [2, 3] } } }
+    )
+  ).toEqual({ list: [{ id: 1 }] });
+});
+
+it('should not crash', () => {
+  expect(() =>
+    applyCommands(
+      { list: { items: [{ id: 1 }, { id: 2 }, { id: 3 }] } },
+      { $remove: { list: { id: [2, 3] } } }
+    )
+  ).not.toThrow();
+});

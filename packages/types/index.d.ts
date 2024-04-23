@@ -3631,7 +3631,10 @@ declare namespace PrismeaiAPI {
             archive: string; // binary
         }
         namespace Responses {
-            export interface $200 {
+            export type $200 = {
+                processing?: boolean;
+                message?: string;
+            } | {
                 createdWorkspaceIds?: string[];
                 updatedWorkspaceIds?: string[];
                 imported: string[];
@@ -3641,7 +3644,7 @@ declare namespace PrismeaiAPI {
                 workspace?: Prismeai.DSULReadOnly;
                 publishedApps?: Prismeai.App[];
                 deleted?: string[];
-            }
+            };
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -3656,7 +3659,10 @@ declare namespace PrismeaiAPI {
             archive: string; // binary
         }
         namespace Responses {
-            export interface $200 {
+            export type $200 = {
+                processing?: boolean;
+                message?: string;
+            } | {
                 createdWorkspaceIds?: string[];
                 updatedWorkspaceIds?: string[];
                 imported: string[];
@@ -3666,7 +3672,7 @@ declare namespace PrismeaiAPI {
                 workspace?: Prismeai.DSULReadOnly;
                 publishedApps?: Prismeai.App[];
                 deleted?: string[];
-            }
+            };
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
