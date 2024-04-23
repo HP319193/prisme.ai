@@ -98,7 +98,8 @@ nav:
       - i18n.airouting: examples/form-genai.md
       - i18n.website2gpt: examples/website-gpt.md
       - Effortless Data Storage & classification: examples/store-data.md
-      - i18n.index: examples/index.md
+      - AI Webhook Builder: examples/api-webhook.md
+      - Other examples : examples/index.md
   - i18n.contributing:
       - i18n.index: contributing/index.md
 
