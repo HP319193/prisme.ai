@@ -55,12 +55,15 @@ export function remove(value: Value, _with: Value) {
   let newValue = { ...value };
   Object.entries(_with).forEach(([path, v]) => {
     const _v = _get(newValue, path);
-    if (typeof _v !== 'object') return;
+    if (!Array.isArray(_v)) return;
     newValue = _set(
       newValue,
       path,
       _v.filter(
-        (item: any) => !Object.entries(v).every(([k, v]) => item[k] === v)
+        (item: any) =>
+          !Object.entries(v).every(([k, v]) =>
+            Array.isArray(v) ? v.includes(item[k]) : item[k] === v
+          )
       )
     );
   });
