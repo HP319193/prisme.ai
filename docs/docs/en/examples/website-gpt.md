@@ -25,20 +25,27 @@ The crawler is a crucial app for our chatbot, designed to inspect your website a
 ## Interacting with the Chat UI
 
 Once the crawler has processed some pages:
+
 - Move to the Chat page, where you can directly ask questions about the content of your website.
+
 - If unsure what to ask, explore the Prisme.ai hub for AI knowledge, accessible from the sidebar. This area showcases your latest AI project and the documents available for querying.
 
 ## Crafting Queries
 
 With the AI project selected:
+
 - Choose a document to query. For demonstration, select a document and note down any folders or workspaces mentioned within.
+
 - Use this information to ask your chatbot a question, such as "Which folders contain workspaces?"
 
 ## Integrating the Chatbot into Your Website
 
 To embed the chatbot:
+
 - Navigate to the "Widget" page where you'll see the chat icon.
+
 - By editing the widget settings, you can customize aspects like the background color or the chat icon. For instance, changing the close icon color to red. You have access to CSS for more advanced customization.
+
 - To integrate the chatbot into your website, copy the provided script from the widget's setup page and paste it into your website's HTML.
 
 ## Optimizing your RAG
