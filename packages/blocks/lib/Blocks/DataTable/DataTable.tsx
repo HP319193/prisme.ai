@@ -224,14 +224,19 @@ export const DataTable = ({
     });
   };
 
-  const selection = useRef<DataType[]>([]);
-  const [hasSelection, setHasSelection] = useState(false);
+  const [selection, setSelection] = useState({
+    selectedRowKeys: [] as React.Key[],
+    selectedRows: [] as DataType[],
+  });
   const rowSelection = useMemo(
     () =>
       bulkActions && {
+        selectedRowKeys: selection.selectedRowKeys,
         onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-          selection.current = selectedRows;
-          setHasSelection(selectedRows.length > 0);
+          setSelection({
+            selectedRowKeys,
+            selectedRows,
+          });
         },
         selections: bulkActions.flatMap(({ label, onSelect }) =>
           onSelect
@@ -246,7 +251,11 @@ export const DataTable = ({
                         : onSelect;
                     events?.emit(event, {
                       ...payload,
-                      data: selection.current,
+                      data: selection?.selectedRows,
+                    });
+                    setSelection({
+                      selectedRowKeys: [],
+                      selectedRows: [],
                     });
                   },
                 },
@@ -254,13 +263,15 @@ export const DataTable = ({
             : []
         ),
       },
-    [events, bulkActions, setHasSelection, localize]
+    [events, bulkActions, localize, selection]
   );
 
   return (
     <div
       className={`pr-block-data-table ${className} ${
-        hasSelection ? 'pr-block-data-table--has-bulk-selection' : ''
+        selection?.selectedRowKeys.length > 0
+          ? 'pr-block-data-table--has-bulk-selection'
+          : ''
       }                  block-data-table`}
     >
       {config.title && <BlockTitle value={localize(config.title)} />}
