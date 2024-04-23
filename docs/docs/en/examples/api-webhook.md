@@ -10,7 +10,9 @@ This tutorial will guide you through creating streamlined automations using APIs
 ## Tutorial Overview
 
 This guide focuses on two key automations:
+
 1. **Generate Summary**: Uses OpenAI's GPT-4 to create concise summaries from structured JSON data.
+
 2. **Webhook**: Receives incoming data, processes it with Custom Code, and triggers the summary generation.
 
 These automations teach you to handle incoming API requests effectively, process the data using custom functions, and utilize AI to add significant value to the data — all within a serverless environment, eliminating the need for traditional database management.
@@ -125,8 +127,6 @@ config:
         data:
           type: string
 ```
-
-Let’s expand on the tutorial to include details on **Version Control and Deployment** as well as **Logs and Activity Monitoring** to provide a comprehensive understanding of maintaining and monitoring your setup on Prisme.ai.
 
 ## Version Control and Deployment
 
