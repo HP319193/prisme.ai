@@ -12,6 +12,7 @@ A page is a block-based container web page utilizes modular building components,
 **Reusability**:
 
    - Blocks are designed to be reused across different pages or projects, minimizing redundancy and ensuring consistency across platforms.
+
 **Quality**:
 
    - Utilizing predefined blocks ensures that each component meets certain standards of performance and design, maintaining high quality across the web experience.
@@ -19,6 +20,7 @@ A page is a block-based container web page utilizes modular building components,
 **Speed in Digitalization**:
 
    - By using blocks that are pre-tested and ready to integrate, organizations can speed up the process of deploying new digital solutions.
+   
 **Explanation of Attributes:**
 
 **Slug**:
