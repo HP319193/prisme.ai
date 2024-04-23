@@ -155,10 +155,12 @@ do:
               persist: true
             event: error
             payload: '{{data}}'
+        - set:
+            name: payload.error
+            value: '{{data.error.message}}'
+            type: merge
   - Collection.insert:
       data: '{{payload}}
-
-'
   - emit:
       target:
         currentSocket: true
