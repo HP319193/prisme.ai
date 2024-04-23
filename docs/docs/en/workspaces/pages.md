@@ -2,23 +2,35 @@
 A page is a block-based container web page utilizes modular building components, allowing for the assembly of a complex web page structure that is highly reusable, scalable, and efficient in facilitating digital transformation. Unlike pixel-by-pixel design, this approach emphasizes reusability and modularity, enhancing the quality and speed of web development.
 
 **Core Concepts:**
+
  **Container vs. Block**:
+
    - **Container**: Represents the overall structure of the page that holds various blocks.
+
    - **Block**: Modular units within the container that handle specific functionalities or content displays.
+
 **Reusability**:
+
    - Blocks are designed to be reused across different pages or projects, minimizing redundancy and ensuring consistency across platforms.
 **Quality**:
+
    - Utilizing predefined blocks ensures that each component meets certain standards of performance and design, maintaining high quality across the web experience.
+
 **Speed in Digitalization**:
+
    - By using blocks that are pre-tested and ready to integrate, organizations can speed up the process of deploying new digital solutions.
 **Explanation of Attributes:**
 
 **Slug**:
+
    - **Purpose**: Acts as a unique identifier for the page, useful in routing and linking.
+
    - **Example**: `slug: produits/medicament/api-biox
 
 **Name**:
+
    - **Purpose**: Provides a multilingual name for the page, used for SEO, accessibility, and user interface display.
+
    - **Example**:
      ```yaml
      name:
@@ -27,7 +39,9 @@ A page is a block-based container web page utilizes modular building components,
      ```
 
 **Blocks**:
+
    - **Purpose**: Define the specific components that make up the page. Each [**block**](#blocks)  can have its own nested blocks, creating a deeply structured and rich content experience.
+
    - **Example**:
      ```yaml
      blocks:
@@ -62,7 +76,9 @@ A page is a block-based container web page utilizes modular building components,
      ```
 
 **Styles**:
+
    - **Purpose**: Custom CSS rules to define the visual style and layout of the page. This can include color schemes, typography, and layout behaviors.
+   
    - **Example**:
      ```yaml
      styles: |
@@ -96,6 +112,7 @@ A page is a block-based container web page utilizes modular building components,
 **Automation and Updates**:
 
    - **Purpose**: Automate certain processes upon initialization and specify what actions trigger updates to the page.
+   
    - **Example**:
      ```yaml
      automation: init
