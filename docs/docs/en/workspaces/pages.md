@@ -29,8 +29,8 @@ A page is a block-based container web page utilizes modular building components,
    - **Example**:
      ```yaml
      name:
-       fr: Api-bioxal® poudre pour traitement dans la ruche - Laboratoire Destaing
-       en: Api-bioxal® powder for treatment in the hive - Laboratoire Destaing
+       fr: Api-bioxal® poudre pour traitement dans la ruche - Laboratoire
+       en: Api-bioxal® powder for treatment in the hive - Laboratoire
      ```
 
 3. **Blocks**:
@@ -38,10 +38,10 @@ A page is a block-based container web page utilizes modular building components,
    - **Example**:
      ```yaml
      blocks:
-       - slug: Destaing Layout
+       - slug: Layout
          content:
            blocks:
-             - slug: Destaing Summary
+             - slug: Summary
                cover: [URL]
                title:
                  fr: Api-bioxal® poudre pour traitement dans la ruche
@@ -64,8 +64,8 @@ A page is a block-based container web page utilizes modular building components,
                        fr: Api-bioxal® poudre pour traitement dans la ruche
                        en: Api-bioxal® powder for treatment in the hive
                      value: /produits/medicament/api-bioxal-poudretraitement-dansruche
-             - slug: Destaing MedVet
-               id: d25d5e64-e9ae-4780-ad5f-7761d7be94ee
+             - slug: MedVet
+               id: d25d5e64-e9ae-4780-ad5f
      ```
 
 4. **Styles**:
