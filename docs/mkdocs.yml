@@ -77,6 +77,7 @@ nav:
           - Schema Form: workspaces/schemaform.md
           - Update commands: blocks/commands.md
       - Apps: workspaces/apps.md
+      - Code: workspaces/code.md
       - i18n.security: workspaces/security.md
       - i18n.versioning: workspaces/versioning.md
   - API: /api
