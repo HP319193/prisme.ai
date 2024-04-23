@@ -1,30 +1,23 @@
-## Pages
-
 ## Overview
 A page is a block-based container web page utilizes modular building components, allowing for the assembly of a complex web page structure that is highly reusable, scalable, and efficient in facilitating digital transformation. Unlike pixel-by-pixel design, this approach emphasizes reusability and modularity, enhancing the quality and speed of web development.
 
 **Core Concepts:**
-
-1. **Container vs. Block**:
+ **Container vs. Block**:
    - **Container**: Represents the overall structure of the page that holds various blocks.
    - **Block**: Modular units within the container that handle specific functionalities or content displays.
-
-2. **Reusability**:
+**Reusability**:
    - Blocks are designed to be reused across different pages or projects, minimizing redundancy and ensuring consistency across platforms.
-
-3. **Quality**:
+**Quality**:
    - Utilizing predefined blocks ensures that each component meets certain standards of performance and design, maintaining high quality across the web experience.
-
-4. **Speed in Digitalization**:
+**Speed in Digitalization**:
    - By using blocks that are pre-tested and ready to integrate, organizations can speed up the process of deploying new digital solutions.
+**Explanation of Attributes:**
 
-**Detailed Explanation of Attributes:**
-
-1. **Slug**:
+**Slug**:
    - **Purpose**: Acts as a unique identifier for the page, useful in routing and linking.
    - **Example**: `slug: produits/medicament/api-biox
 
-2. **Name**:
+**Name**:
    - **Purpose**: Provides a multilingual name for the page, used for SEO, accessibility, and user interface display.
    - **Example**:
      ```yaml
@@ -33,7 +26,7 @@ A page is a block-based container web page utilizes modular building components,
        en: Api-bioxal® powder for treatment in the hive - Laboratoire
      ```
 
-3. **Blocks**:
+**Blocks**:
    - **Purpose**: Define the specific components that make up the page. Each [**block**](#blocks)  can have its own nested blocks, creating a deeply structured and rich content experience.
    - **Example**:
      ```yaml
@@ -68,7 +61,7 @@ A page is a block-based container web page utilizes modular building components,
                id: d25d5e64-e9ae-4780-ad5f
      ```
 
-4. **Styles**:
+**Styles**:
    - **Purpose**: Custom CSS rules to define the visual style and layout of the page. This can include color schemes, typography, and layout behaviors.
    - **Example**:
      ```yaml
@@ -100,7 +93,8 @@ A page is a block-based container web page utilizes modular building components,
        }
      ```
 
-5. **Automation and Updates**:
+**Automation and Updates**:
+
    - **Purpose**: Automate certain processes upon initialization and specify what actions trigger updates to the page.
    - **Example**:
      ```yaml
