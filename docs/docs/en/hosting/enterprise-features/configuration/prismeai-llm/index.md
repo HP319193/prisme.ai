@@ -11,6 +11,11 @@ This service need access to:
 
 For LocalAI, you can learn more about [installing the  models in the next section](#installing-models).
 
+We recommend customizing your resource allocation based on your specific needs. 
+For models that require additional resources, we suggest considering the addition of vCPU and RAM. Depending on the extent of your usage, it may be necessary to dedicate these resources exclusively to this service for optimal performance.
+
+To begin, we recommend initiating with a 16vCPU machine.
+
 ### Ollama
 
 **Using Helm Chart :**  

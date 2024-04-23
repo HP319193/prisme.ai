@@ -14,7 +14,7 @@ The architecture can be reviewed [here](../../architecture/index.md).
 
 ### Provision required cloud provider resources :
 - A load balancer with ingress controller capabilities. Other load balancing methods might be used but are not documented here
-- A minimal Kubernetes cluster for Prisme.ai should have at least **3 nodes 4vCPU / 16GB**
+- A minimal Kubernetes cluster for Prisme.ai should have **at least** **3 nodes 4vCPU / 16GB**, this configuration is suitable to run a smooth **core** installation. If your installation includes microservices from the [enterprise features](../enterprise-features/installation/index.md#prerequisites) you may need more depending on the additional microservices. 
 - External services such as Elasticsearch, Redis or MongoDB can either be self-hosted or managed. We recommend using a managed solution, if you want to self-host those services, please check their official documentation.
 - Services workspaces and runtime requires one of these document/object storage :  
     - Filesystem (either through a local directory or a Kubernetes PVC)  
