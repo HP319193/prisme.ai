@@ -6,7 +6,11 @@ export function getContentType(content: BlockContent) {
   if (typeof content !== 'object') {
     return 'string';
   }
-  if (Array.isArray(content) && content[0].slug) {
+  if (
+    Array.isArray(content) &&
+    typeof content[0] === 'object' &&
+    content[0].slug
+  ) {
     return 'blocks';
   }
   return 'component';
