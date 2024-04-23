@@ -12,8 +12,11 @@ At Prisme.ai, we empower developers with the flexibility to create custom and co
 ### Benefits of Using Custom Code
 
 Utilizing Custom Code within Prisme.ai offers significant advantages:
+
 - **Tailored Solutions:** Address specific business needs by implementing custom logic directly within your automation.
+
 - **No Infrastructure Hassles:** Forget about the overheads related to infrastructure and hosting, as Prisme.ai handles these aspects seamlessly.
+
 - **Flexibility and Control:** Choose between Python and Node.js to leverage the strengths of each language as per your use case.
 
 Incorporating these capabilities into your work ensures that your automations are not only powerful and efficient but also customized to meet the exact needs of your enterprise.
@@ -22,51 +25,52 @@ Incorporating these capabilities into your work ensures that your automations ar
 
 To begin utilizing Custom Code in your workspace, follow these simple steps:
 
-1. **Install Custom Code:** Add the Custom Code capability to your workspace through the platform interface.
+**Install Custom Code:** Add the Custom Code capability to your workspace through the platform interface.
 
-2. **Write Your Function:**
+**Write Your Function:**
 
    - **Node.js Functions:** You can write your function in Node.js and import external libraries as required to extend functionality.
 
    - **Python Functions:** Python functions can be authored using a predefined set of libraries. While external library imports are not supported for Python, the following libraries are available:
      ```plaintext
-        python = ">=3.10,<3.12"
-        requests = "==2.31.0"
-        ipykernel = "==6.23.1"
-        python-dotenv = "==1.0.0"
-        pandas = ">=1.5,<1.6"
-        aiohttp = "*"
-        numpy = "*"
-        dateparser = ">=1.1,<1.2"
-        geopandas = ">=0.13,<0.14"
-        tabulate = ">=0.9.0,<1.0"
-        PyPDF2 = ">=3.0,<3.1"
-        pdfminer = ">=20191125,<20191200"
-        pdfplumber = ">=0.9,<0.10"
-        matplotlib = ">=3.7,<3.8"
-        fastapi = {extras = ["all"], version = "*"}
-        python-json-logger = "*"
-        aiofiles = "*"
-        pyyaml = "*"
-        openpyxl = "*"
-        llama-index = "==0.10.4"
-        llama-index-vector-stores-elasticsearch = "==0.1.2"
-        llama-index-vector-stores-redis = "==0.1.1"
-        llama-index-vector-stores-azurecosmosmongo = "==0.1.1"
-        llama-index-vector-stores-mongodb = "==0.1.2"
-        llama-index-embeddings-azure-openai = "==0.1.1"
-        llama-index-embeddings-elasticsearch = "==0.1.1"
-        llama-index-embeddings-openai = "==0.1.1"
-        llama-index-llms-azure-openai = "==0.1.1"
-        llama-index-llms-mistralai = "==0.1.1"
-        llama-index-llms-openai-like = "==0.1.1"
-        llama-index-llms-openai = "==0.1.1"
-        python-pptx = "*"
-        pymupdf = "1.24.0"
-        llama-parse = "^0.4.0"
-        langchain-community = "^0.0.32"
+      python = ">=3.10,<3.12"
+      requests = "==2.31.0"
+      ipykernel = "==6.23.1"
+      python-dotenv = "==1.0.0"
+      pandas = ">=1.5,<1.6"
+      aiohttp = "*"
+      numpy = "*"
+      dateparser = ">=1.1,<1.2"
+      geopandas = ">=0.13,<0.14"
+      tabulate = ">=0.9.0,<1.0"
+      PyPDF2 = ">=3.0,<3.1"
+      pdfminer = ">=20191125,<20191200"
+      pdfplumber = ">=0.9,<0.10"
+      matplotlib = ">=3.7,<3.8"
+      fastapi = {extras = ["all"], version = "*"}
+      python-json-logger = "*"
+      aiofiles = "*"
+      pyyaml = "*"
+      openpyxl = "*"
+      llama-index = "==0.10.4"
+      llama-index-vector-stores-elasticsearch = "==0.1.2"
+      llama-index-vector-stores-redis = "==0.1.1"
+      llama-index-vector-stores-azurecosmosmongo = "==0.1.1"
+      llama-index-vector-stores-mongodb = "==0.1.2"
+      llama-index-embeddings-azure-openai = "==0.1.1"
+      llama-index-embeddings-elasticsearch = "==0.1.1"
+      llama-index-embeddings-openai = "==0.1.1"
+      llama-index-llms-azure-openai = "==0.1.1"
+      llama-index-llms-mistralai = "==0.1.1"
+      llama-index-llms-openai-like = "==0.1.1"
+      llama-index-llms-openai = "==0.1.1"
+      python-pptx = "*"
+      pymupdf = "1.24.0"
+      llama-parse = "^0.4.0"
+      langchain-community = "^0.0.32"
      ```
-3. **Function Example:** Access the 'See Code' menu to view example codes, or use the visual editor to create or modify your functions. Below is an example of a simple data cleaning function written in Node.js:
+
+**Function Example:** Access the 'See Code' menu to view example codes, or use the visual editor to create or modify your functions. Below is an example of a simple data cleaning function written in Node.js:
 
    ```yaml
    appName: Custom Code
@@ -100,9 +104,11 @@ To begin utilizing Custom Code in your workspace, follow these simple steps:
 
 Once your custom function is ready, integrate it into your automation processes:
 
-1. **Navigate to the Automation Section:** Select the automation workflow where the function should be applied.
-2. **Add the Custom Function:** Use the 'Run Function' option to choose your custom function, set necessary parameters, and incorporate it into your workflow.
-3. **Save Your Configuration:** Confirm your settings by saving the updated automation configuration.
+**Navigate to the Automation Section:** Select the automation workflow where the function should be applied.
+
+**Add the Custom Function:** Use the 'Run Function' option to choose your custom function, set necessary parameters, and incorporate it into your workflow.
+
+**Save Your Configuration:** Confirm your settings by saving the updated automation configuration.
 
 ### Sharing Code Within Your Company
 
@@ -110,10 +116,13 @@ Prisme.ai offers a streamlined way to share your code within your organization w
 
 #### How to Publish and Share Your App
 
-1. **Publish your workspace:** Once your coding is complete, publish your workspace as an App. This transforms your workspace into a reusable application.
-2. **Access from new workspaces:** When you create a new workspace, you will find your newly published app in the Prisme.ai App Store.
-3. **Installation by team members:** Your team members can install the app from the App Store. They will have access to all public automations associated with the app without needing access to the underlying source code.
-4. **Maintain and Update seamlessly:** Any updates, including new features or bug fixes, can be published as a new version of your app. This update automatically propagates to all workspaces that have installed your app, unless they have specified a fixed version.
+**Publish your workspace:** Once your coding is complete, publish your workspace as an App. This transforms your workspace into a reusable application.
+
+**Access from new workspaces:** When you create a new workspace, you will find your newly published app in the Prisme.ai App Store.
+
+**Installation by team members:** Your team members can install the app from the App Store. They will have access to all public automations associated with the app without needing access to the underlying source code.
+
+**Maintain and Update seamlessly:** Any updates, including new features or bug fixes, can be published as a new version of your app. This update automatically propagates to all workspaces that have installed your app, unless they have specified a fixed version.
 
 #### Execution and Access Control
 
