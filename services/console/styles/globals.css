@@ -248,9 +248,11 @@ body .ant-modal-confirm-body .ant-modal-confirm-title {
 body .ant-dropdown-menu-item {
   margin: 0.2rem 0.5rem;
 }
+
 body .ant-dropdown-menu-title-content {
   display: flex;
 }
+
 body .ant-dropdown-menu-item:hover {
   background: #e6efff;
   border-radius: 5px;
@@ -417,4 +419,9 @@ dialog.copy-fallback {
   max-width: 80%;
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
   border-radius: 1rem;
+}
+
+img {
+  overflow: clip;
+  font-size: smaller;
 }
