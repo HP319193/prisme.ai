@@ -59,7 +59,7 @@ export const Products = () => {
       found && Array.isArray(found)
         ? found.map((item) => ({
             ...item,
-            href: `/products/${item.slug}`,
+            href: `/product/${item.slug}`,
           }))
         : Array.from(products.values()),
     [found, products]
