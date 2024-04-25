@@ -9,38 +9,68 @@ The technical objective of "Block Form" is to define a versatile and multi-lingu
 **2. Field Descriptions and Explanations:**
 
 **Example 1: Issue Reporting Form**
+
 - **slug**: Identifier for the form.
+
 - **title**: The title of the form provided in both French and English.
+
 - **schema**: Describes the structure of the form data as an object with properties:
+
   - **title**: Text input for the issue's title with placeholders in both languages.
+
   - **content**: Textarea for detailed issue description with specified rows.
+
   - **attachments**: Allows file uploads as an array of strings.
+
 - **submitLabel**: Label for the submission button in both languages.
+
 - **onSubmit**: Event to trigger to handle form submission (e.g., `submitIssue`).
+
 - **css**: Custom CSS to style the form.
+
 - **updateOn**: Event to trigger to update form after submission (e.g., `updateTicketsTable`).
 
+
 **Example 2: Assistant Configuration Form**
+
 - **slug**: Identifier for the form.
+
 - **values**: Pre-defined values that can populate the form fields.
+
 - **schema**: Structure describing each configuration option for the assistant:
+
   - **name**, **description**, **img**, **prompt**: Fields for basic assistant details.
+
   - **starters**: An array to specify initial conversational prompts.
+
   - **welcome**, **fallbackAnswer**: Textareas for customizable messages.
+
   - **public**, **unlisted**: Boolean flags to control visibility in the Store.
+
 - **onSubmit**: Specifies how to handle form submission, including event name and payload.
+
 - **submitLabel**: Text for the update button in both languages.
 
 **Example 3: Contact Form**
+
 - **slug**: Form identifier.
+
 - **onSubmit**: Event to trigger to handle form submission (e.g., `submitContact`).
+
 - **className**: Additional CSS classes to apply (e.g., `flat-radio`).
+
 - **schema**: Defines the form fields for contact details:
+
   - **help**: A block to display contact instructions.
+
   - **email**, **phone**, **civil**, **firstName**, **lastName**, **company**, **address**: Various fields for personal and contact details, each with validation rules.
+
   - **message**: Textarea for additional user messages.
+
   - **captcha**: Integration for bot protection.
+
   - **optin**: Boolean field for marketing consent.
+
 - **css**: Custom styles for the form layout and elements.
 
 **3. Yaml files (see code section on the Builder):**

@@ -59,7 +59,7 @@ Creating a dynamic contact form on Prisme.ai involves a straightforward yet powe
 
 ![Configuring Form Specifications](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/hvuw0rAKUvfPfgxCmb3SV.Screenshot-2024-04-09-at-23.13.26.png "Configuring Form Specifications")
 
-2. 2. Obtain the URL for your page; each page follows the format: `workspace-slug.host-page/lang/page-slug`. For instance, `https://fast-sheep-60.pages.prisme.ai/en/contact-us`. To find it, click on the share icon located between the page name and the "duplicate" action. If you've named your slug "index," access it directly via `workspace-slug.host-page`.
+2. Obtain the URL for your page; each page follows the format: `workspace-slug.host-page/lang/page-slug`. For instance, `https://fast-sheep-60.pages.prisme.ai/en/contact-us`. To find it, click on the share icon located between the page name and the "duplicate" action. If you've named your slug "index," access it directly via `workspace-slug.host-page`.
 
 ![Get page URL](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/vf0ff52bWJ7p5MDxBrfyU.Screenshot-2024-04-09-at-23.14.58.png "Get page URL")
 

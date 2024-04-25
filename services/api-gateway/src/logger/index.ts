@@ -1,4 +1,5 @@
 import pino from 'pino';
+import { syscfg } from '../config';
 
 export type Logger = pino.Logger;
 
@@ -15,4 +16,5 @@ export const logger = pino({
   base: {
     app: 'prisme.ai-api-gateway',
   },
+  level: syscfg.DEBUG ? LogLevel.Trace : LogLevel.Info,
 });

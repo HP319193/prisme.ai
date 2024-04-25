@@ -24,14 +24,6 @@ config:
     LOGIN_URL: "{{config.API_URL}}/login"
     headers:
       apiKey: someAPIKey
-
-automations:
-  fetchMyAPI:
-    ...
-    do:
-      - fetch:
-          url: '{{config.API_URL}}'
-          headers: '{{config.headers}}'
 ```  
 
 The **config.value** field defined at the top of this workspace is exposed as a **config** variable inside your automations.  
@@ -47,19 +39,6 @@ This will set the same `config.API_URL` variable as in above example. Workspace 
 [More details on variables usage](automations#variables).  
 
 The **config** object accepts an additional field specific to apps : [**config.schema**](apps#defining-an-app-config-schema)
-
-## Versioning and backups
-Versions can be made to store the current workspace's state. It includes everything in the workspace. Later on, you can
-restore your workspace to be in the same state as a previous version (current Automations, apps, pages, config will be replaced).
-To save the current state, simply access the workspace's settings, then "create a version".
-In the newly shown input, you can leave a message to recognize this version, or leave it blank.  
-To restore a previous version, access the event feed, and on "filters", select "filters suggestions", and finally "Workspace versions".
-The activity feed will now show all your versions. 
-
-<a href="https://www.loom.com/share/67483c03226647bb8e8fb8824ccfd78c">
-    <p>Versionning - EN - Watch Video</p>
-    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/67483c03226647bb8e8fb8824ccfd78c-with-play.gif">
-  </a>
 
 ## Events  
 Each workspace has a continuous and real-time stream of **events** describing what's happening at any time.  
@@ -101,4 +80,4 @@ You can attach a custom domain name to your workspace to be able to display your
 customDomains:
   - www.acme.fr
 ```
-3. [Call us](mailto:support@prisme.ai) to do the final step.
+3. [Contact us for Entreprise version](mailto:support@prisme.ai)

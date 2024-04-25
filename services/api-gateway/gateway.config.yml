@@ -1,8 +1,8 @@
 endpoints:
   webhooks:
-    path: '/v2/workspaces/*/webhooks/*'
+    path: '/v2/workspaces/:workspaceId/webhooks/*'
   test:
-    path: '/v2/workspaces/*/test/*'
+    path: '/v2/workspaces/:workspaceId/test/*'
 
   workspaces:
     path: '/v2/workspaces*'
@@ -23,9 +23,9 @@ endpoints:
 
   events:
     paths:
-      - '/v2/workspaces/*/events'
-      - '/v2/workspaces/*/usage'
-      - '/v2/workspaces/*/search'
+      - '/v2/workspaces/:workspaceId/events'
+      - '/v2/workspaces/:workspaceId/usage'
+      - '/v2/workspaces/:workspaceId/search'
       - '/v2/search'
 
   console:
