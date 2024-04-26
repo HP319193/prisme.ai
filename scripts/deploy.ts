@@ -1,0 +1,41 @@
+import { promisify } from 'node:util';
+
+import child from 'node:child_process';
+const exec = promisify(child.exec);
+
+async function isRepoClean() {
+  const { stdout } = await exec('git status');
+  return (
+    stdout ===
+    'On branch feature/run-deploy\nnothing to commit, working tree clean\n'
+  );
+}
+
+async function createNewVersion() {
+  const { stdout: version } = await exec(`ts-node ${__dirname}/nexttag`);
+  return version;
+}
+
+async function deploy() {
+  if (!(await isRepoClean())) {
+    console.error(
+      'Repo is not clean. Commit or stash your current work and run the deploy command again.'
+    );
+    return process.exit(1);
+  }
+  await exec('git checkout main');
+  await exec('git pull --rebase');
+  await exec('git checkout prod');
+  await exec('git pull --rebase');
+  await exec('git merge main --no-ff');
+  const version = await createNewVersion();
+  await exec('git add package.json');
+  await exec('git commit -m "deploy new version"');
+  await exec(`git tag ${version}`);
+  await exec('git checkout main');
+  await exec('git merge prod --no-ff');
+  await exec('git push prod');
+  await exec('git push main');
+}
+
+deploy();
