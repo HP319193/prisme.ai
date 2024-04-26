@@ -1,6 +1,7 @@
 import { Broker } from '@prisme.ai/broker';
 import http from 'http';
 import { Server } from 'socket.io';
+//@ts-ignore Dunno why, but typings not found in CI
 import { createAdapter } from '@socket.io/redis-streams-adapter';
 import { createClient } from '@redis/client';
 import {

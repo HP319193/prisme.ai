@@ -49,7 +49,7 @@ export function syncEventStoreWithEDA(store: EventsStore, broker: Broker) {
 
     const written = eventsStorageStream.write(event);
     if (!written) {
-      logger.info({
+      logger.warn({
         msg: `Events persistence hitting highWaterMark (${EVENTS_BUFFER_HIGH_WATERMARK})`,
       });
     }
