@@ -11,6 +11,7 @@ import { useUser } from '../UserProvider';
 import Image from 'next/image';
 import ConfirmButton from '../ConfirmButton';
 import { Tooltip } from 'antd';
+import { version } from '../../../../package.json';
 
 function getProductSlug(path: string) {
   if (path.match(/^\/workspaces/)) {
@@ -161,6 +162,9 @@ export const ProductsSidebar = () => {
               </div>
             </div>
           ))}
+          <div className="text-white flex flex-1 justify-end items-end mr-6">
+            v{version}
+          </div>
         </div>
       </div>
     </div>
