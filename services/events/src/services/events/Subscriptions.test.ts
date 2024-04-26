@@ -2,6 +2,12 @@ import { Broker, CallbackContext, EventCallback } from '@prisme.ai/broker';
 import { Subscriptions } from './Subscriptions';
 import Cache from '../../cache/__mocks__/cache';
 
+jest.mock('@prisme.ai/broker', () => ({
+  Broker: function Broker() {
+    this.all = () => {};
+  },
+}));
+
 jest.setTimeout(5000);
 const WorkspaceA = 'myFirstWorkspace';
 const UserA = 'myFirstUser';
@@ -48,6 +54,7 @@ const getSubscriptions = (
         ability: {
           rules: [],
         },
+        can: () => true,
       };
     }
 
@@ -62,36 +69,28 @@ const getSubscriptions = (
     }
   }
 
-  return new Subscriptions(
+  const subscriptions = new Subscriptions(
     {
-      all: (cb: EventCallback<any, any>) => {
-        chunksGenerator((event) =>
-          cb(
-            {
-              payload: event,
-              id: event.id,
-              type: event.type,
-              createdAt: '',
-              source: {
-                workspaceId: event.workspaceId,
-              },
-            },
-            undefined as any as Broker,
-            {
-              logger: {
-                trace: () => null,
-                info: () => null,
-              },
-            } as CallbackContext
-          )
-        );
-        return Promise.resolve(true);
-      },
       on: () => Promise.resolve(),
-    } as Pick<Broker, 'all'> as Broker,
+      send: (event) => Promise.resolve(event),
+    } as any as Broker,
     new DummyAccessManager() as any,
     new Cache()
   );
+
+  chunksGenerator((event) => {
+    subscriptions.push({
+      payload: event,
+      id: event.id,
+      type: event.type,
+      createdAt: '',
+      source: {
+        workspaceId: event.workspaceId,
+      },
+    });
+  });
+
+  return subscriptions;
 };
 
 const verifyReceivedChunks = (receivedChunks: Chunk[], sentChunks: Chunk[]) => {
@@ -117,15 +116,18 @@ describe('Basic', () => {
 
     // Subscribe before starting emitting events
     await events.subscribe(WorkspaceA, {
-      id: UserA,
+      workspaceId: WorkspaceA,
+      userId: UserA,
       sessionId: 'mySessionId',
-      callback: (event) => {
-        received.push(event.payload);
-      },
+      socketId: 'mySocketId',
+      filters: {},
+      authData: {},
     });
 
     // Emit events
-    events.start();
+    events.start((subscriber, event) => {
+      received.push(event.payload as any);
+    });
 
     // Wait & see
     await sleep(1200);
@@ -148,17 +150,20 @@ describe('Basic', () => {
 
         if (sentIdx === subscribeAfter) {
           await events.subscribe(WorkspaceA, {
-            id: UserA,
+            workspaceId: WorkspaceA,
+            userId: UserA,
             sessionId: 'mySessionId',
-            callback: (event) => {
-              received.push(event.payload);
-            },
+            socketId: 'mySocketId',
+            filters: {},
+            authData: {},
           });
         }
       }
       return true;
     });
-    events.start();
+    events.start((subscriber, event) => {
+      received.push(event.payload as any);
+    });
 
     // Wait & see
     await sleep(3000);
@@ -185,11 +190,12 @@ describe('Basic', () => {
 
         if (sentIdx === subscribeAfter) {
           const subscription = await events.subscribe(WorkspaceA, {
-            id: UserA,
+            workspaceId: WorkspaceA,
+            userId: UserA,
             sessionId: 'mySessionId',
-            callback: (event) => {
-              received.push(event.payload);
-            },
+            socketId: 'mySocketId',
+            filters: {},
+            authData: {},
           });
           unsubscribeCallback = subscription.unsubscribe;
         } else if (sentIdx === unsubscribeAfter) {
@@ -198,7 +204,9 @@ describe('Basic', () => {
       }
       return true;
     });
-    events.start();
+    events.start((subscriber, event) => {
+      received.push(event.payload as any);
+    });
 
     // Wait & see
     await sleep(3000);

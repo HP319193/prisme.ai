@@ -2081,6 +2081,76 @@ components:
                 type: string
     ########################## Events API events ##########################
 
+    JoinedWorkspaceSubscriber:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.subscribers.joined
+          enum:
+            - events.subscribers.joined
+        payload:
+          type: object
+          additionalProperties: true
+          required:
+            - workspaceId
+            - userId
+            - sessionId
+            - socketId
+            - permissions
+          properties:
+            workspaceId:
+              type: string
+            userId:
+              type: string
+            sessionId:
+              type: string
+            socketId:
+              type: string
+            filters:
+              type: object
+              additionalProperties: true
+              properties:
+                payloadQuery: {}
+            permissions:
+              type: array
+              items:
+                $ref: '#/components/schemas/PermissionRule'
+            oldSocketId:
+              type: string
+
+    LeftWorkspaceSubscriber:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.subscribers.left
+          enum:
+            - events.subscribers.left
+        payload:
+          type: object
+          additionalProperties: true
+          required:
+            - workspaceId
+            - userId
+            - sessionId
+            - socketId
+          properties:
+            workspaceId:
+              type: string
+            userId:
+              type: string
+            sessionId:
+              type: string
+            socketId:
+              type: string
+
     CleanedEvents:
       type: object
       required:

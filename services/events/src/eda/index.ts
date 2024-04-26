@@ -32,6 +32,8 @@ export enum EventType {
   TriggeredInteraction = 'runtime.interactions.triggered',
   ExecutedAutomation = 'runtime.automations.executed',
 
+  JoinedWorkspaceSubscriber = 'events.subscribers.joined',
+  LeftWorkspaceSubscriber = 'events.subscribers.left',
   CleanedEvents = 'events.cleaned',
 }
 

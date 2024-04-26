@@ -1,7 +1,7 @@
-import { PrismeEvent } from '@prisme.ai/broker';
+import { Broker } from '@prisme.ai/broker';
 import http from 'http';
 import { Server } from 'socket.io';
-import { createAdapter } from '@socket.io/redis-adapter';
+import { createAdapter } from '@socket.io/redis-streams-adapter';
 import { createClient } from '@redis/client';
 import {
   API_KEY_HEADER,
@@ -16,19 +16,43 @@ import {
 import { logger } from '../../logger';
 import sendEvent from '../../services/events/send';
 import { SearchOptions } from '../../services/events/store';
-import { Subscriber, Subscriptions } from '../../services/events/Subscriptions';
+import {
+  LocalSubscriber,
+  Subscriptions,
+} from '../../services/events/Subscriptions';
 import { cleanSearchQuery } from './events';
-import { Cache } from '../../cache';
 import { fetchMe } from '@prisme.ai/permissions';
 import { PrismeError } from '../../errors';
 
-const WORKSPACE_PATH = /^\/v2\/workspaces\/([\w-_]+)\/events$/;
+const WORKSPACE_NSP_PATTERN = /^\/v2\/workspaces\/([\w-_]+)\/events$/;
+const getWorkspaceNsp = (workspaceId: string) =>
+  `/v2/workspaces/${workspaceId}/events`;
 
-export function initWebsockets(
+export async function initWebsockets(
   httpServer: http.Server,
-  events: Subscriptions,
-  cache: Cache
+  broker: Broker,
+  subscriptions: Subscriptions
 ) {
+  const redisWebsocketClient = createClient({
+    url: SOCKETIO_REDIS_HOST,
+    password: SOCKETIO_REDIS_PASSWORD,
+    name: `${APP_NAME}-websockets`,
+    pingInterval: 4 * 1000 * 60,
+  });
+  redisWebsocketClient.on('error', (err: Error) => {
+    console.error(`Error occured with websockets redis pub client : ${err}`);
+  });
+  redisWebsocketClient.on('connect', () => {
+    console.info('Websockets redis pub client connected.');
+  });
+  redisWebsocketClient.on('reconnecting', () => {
+    console.info('Websockets redis pub client reconnecting ...');
+  });
+  redisWebsocketClient.on('ready', () => {
+    console.info('Websockets redis pub client is ready.');
+  });
+  redisWebsocketClient.connect();
+
   const io = new Server(httpServer, {
     cors: {
       origin: true,
@@ -38,38 +62,20 @@ export function initWebsockets(
       name: 'io',
       maxAge: SOCKETIO_COOKIE_MAX_AGE,
     },
+    adapter: createAdapter(redisWebsocketClient) as any,
   });
 
-  const redisPubClient = createClient({
-    url: SOCKETIO_REDIS_HOST,
-    password: SOCKETIO_REDIS_PASSWORD,
-    name: `${APP_NAME}-websockets`,
-    pingInterval: 4 * 1000 * 60,
-  });
-  redisPubClient.on('error', (err: Error) => {
-    console.error(`Error occured with websockets redis pub client : ${err}`);
-  });
-  redisPubClient.on('connect', () => {
-    console.info('Websockets redis pub client connected.');
-  });
-  redisPubClient.on('reconnecting', () => {
-    console.info('Websockets redis pub client reconnecting ...');
-  });
-  redisPubClient.on('ready', () => {
-    console.info('Websockets redis pub client is ready.');
-  });
-  const redisSubClient = redisPubClient.duplicate();
-  redisSubClient.on('error', (err: Error) => {
-    console.error(`Error occured with websockets redis sub client : ${err}`);
+  const workspaces = io.of(WORKSPACE_NSP_PATTERN);
+  // Listen to platform generated events & send to the listening sockets
+  subscriptions.start((subscriber, event) => {
+    const nsp = event?.source?.workspaceId
+      ? io.of(getWorkspaceNsp(event.source.workspaceId))
+      : workspaces;
+    nsp.to(subscriber.socketId).emit(event.type, event);
   });
 
-  Promise.all([redisPubClient.connect(), redisSubClient.connect()]).then(() => {
-    io.adapter(createAdapter(redisPubClient, redisSubClient) as any);
-  });
-
-  const workspaces = io.of(WORKSPACE_PATH);
   workspaces.on('connection', async (socket) => {
-    const [, workspaceId] = socket.nsp.name.match(WORKSPACE_PATH) || [];
+    const [, workspaceId] = socket.nsp.name.match(WORKSPACE_NSP_PATTERN) || [];
     const query = Object.entries(socket.handshake.query || {}).reduce(
       (obj, [k, v]) =>
         ['EIO', 'transport', 't', 'b64'].includes(k)
@@ -125,18 +131,16 @@ export function initWebsockets(
       });
     }
 
-    let subscription: Subscriber;
-    const ready = events
+    let subscription: LocalSubscriber;
+    const ready = subscriptions
       .subscribe(workspaceId, {
-        id: userId as string,
+        workspaceId,
+        userId: userId as string,
         sessionId: sessionId as string,
         apiKey: apiKey as string,
         authData,
         socketId,
-        callback: (event: PrismeEvent<any>) => {
-          socket.emit(event.type, event);
-        },
-        searchOptions: cleanSearchQuery(query),
+        filters: cleanSearchQuery(query),
       })
       .then((suscribed) => {
         subscription = suscribed;
@@ -158,16 +162,13 @@ export function initWebsockets(
         ((<any>socket).recovered ? ' (RECOVERED)' : ''),
       ...logsCtx,
     });
-    cache
-      .registerSocketId(workspaceId, sessionId as string, socketId)
-      .catch(logger.error);
 
     // Handle events creation
     const userIp = Array.isArray(socket.handshake.headers?.['x-forwarded-for'])
       ? socket.handshake.headers?.['x-forwarded-for'][0]
       : socket.handshake.headers?.['x-forwarded-for'] ||
         socket.handshake.address;
-    let childBroker = events.broker.child({
+    let childBroker = broker.child({
       workspaceId,
       userId: userId as string,
       sessionId: sessionId as string,
@@ -192,18 +193,20 @@ export function initWebsockets(
               }
             );
           } else if (type === 'filters') {
-            subscription.searchOptions = payload as SearchOptions;
+            await subscriptions.updateLocalSubscriber(subscription, {
+              filters: payload as SearchOptions,
+            });
           } else if (
             type === 'reconnection' &&
             (<any>payload)?.socketId &&
             sessionId
           ) {
-            // Allow keeping same socketIds accross reconnection
-            // in order to make runtime socket context persistent through reconnections
-            const allowed = await cache.isKnownSocketId(
-              workspaceId,
-              sessionId as string,
-              (<any>payload).socketId
+            const previousSocketId = subscription.socketId;
+            const allowed = await subscriptions.updateLocalSubscriber(
+              subscription,
+              {
+                socketId: (<any>payload).socketId,
+              }
             );
             if (!allowed) {
               logger.warn({
@@ -215,10 +218,10 @@ export function initWebsockets(
               return;
             }
 
-            const previousSocketId = subscription.socketId;
-            subscription.socketId = (<any>payload).socketId;
             logsCtx.socketId = (<any>payload).socketId;
-            childBroker = events.broker.child({
+            socket.leave(previousSocketId);
+            socket.join(logsCtx.socketId);
+            childBroker = broker.child({
               workspaceId,
               userId: userId as string,
               sessionId: sessionId as string,
@@ -258,6 +261,7 @@ export function initWebsockets(
         msg: 'Websocket connected.',
         ...logsCtx,
       });
+      socket.join(socket.id);
     });
     socket.on('reconnect', () => {
       logger.info({

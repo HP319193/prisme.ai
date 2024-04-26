@@ -1,4 +1,4 @@
-import { Broker } from '@prisme.ai/broker';
+import { Broker, PrismeEvent } from '@prisme.ai/broker';
 import {
   EVENTS_BUFFER_FLUSH_AT,
   EVENTS_BUFFER_FLUSH_EVERY,
@@ -10,10 +10,20 @@ import { logger } from '../../logger';
 import BatchExecStream from '../../utils/BatchExecStream';
 import { EventsStore } from './store';
 
-export async function syncEventStoreWithEDA(
-  store: EventsStore,
-  broker: Broker
-) {
+export function syncEventStoreWithEDA(store: EventsStore, broker: Broker) {
+  broker.on<Prismeai.DeletedWorkspace['payload']>(
+    [EventType.DeletedWorkspace],
+    async function saveEvent(event): Promise<boolean> {
+      const workspaceId = event.payload?.workspaceId!;
+      await store.closeWorkspace(workspaceId);
+      logger.info({
+        msg: `Scheduled events of workspace ${workspaceId} for deletion (${EVENTS_SCHEDULED_DELETION_DAYS}d)`,
+        workspaceId,
+      });
+      return true;
+    }
+  );
+
   const eventsStorageStream = new BatchExecStream<Prismeai.PrismeEvent>({
     highWaterMark: EVENTS_BUFFER_HIGH_WATERMARK,
     flushAt: EVENTS_BUFFER_FLUSH_AT,
@@ -32,25 +42,19 @@ export async function syncEventStoreWithEDA(
     },
   });
 
-  broker.all(async function saveEvent(event): Promise<boolean> {
+  async function saveEvent(event: PrismeEvent): Promise<boolean> {
     if (event?.options?.persist === false) {
       return true;
     }
 
-    await eventsStorageStream.write(event);
-    return true;
-  });
-
-  broker.on<Prismeai.DeletedWorkspace['payload']>(
-    [EventType.DeletedWorkspace],
-    async function saveEvent(event): Promise<boolean> {
-      const workspaceId = event.payload?.workspaceId!;
-      await store.closeWorkspace(workspaceId);
+    const written = eventsStorageStream.write(event);
+    if (!written) {
       logger.info({
-        msg: `Scheduled events of workspace ${workspaceId} for deletion (${EVENTS_SCHEDULED_DELETION_DAYS}d)`,
-        workspaceId,
+        msg: `Events persistence hitting highWaterMark (${EVENTS_BUFFER_HIGH_WATERMARK})`,
       });
-      return true;
     }
-  );
+    return written;
+  }
+
+  return saveEvent;
 }

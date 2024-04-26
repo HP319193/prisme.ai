@@ -7,18 +7,18 @@ import { initUsageRoutes } from './usage';
 import { initSearchRoutes } from './search';
 import { initWebsockets } from './websockets';
 import { initCleanupRoutes } from './cleanup';
-import { Subscriptions } from '../../services/events/Subscriptions';
 import { EventsStore } from '../../services/events/store';
-import { Cache } from '../../cache';
+import { Broker } from '@prisme.ai/broker';
+import { Subscriptions } from '../../services/events/Subscriptions';
 
-export const init = (
+export const init = async (
   app: Application,
   httpServer: http.Server,
-  eventsSubscription: Subscriptions,
   eventsStore: EventsStore,
-  cache: Cache
+  broker: Broker,
+  subscriptions: Subscriptions
 ) => {
-  const io = initWebsockets(httpServer, eventsSubscription, cache);
+  const io = await initWebsockets(httpServer, broker, subscriptions);
 
   const root = '/v2';
   app.use(`/sys/cleanup`, initCleanupRoutes(eventsStore));

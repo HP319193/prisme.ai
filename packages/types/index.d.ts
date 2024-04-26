@@ -1847,6 +1847,40 @@ declare namespace Prismeai {
             topic: string;
         };
     }
+    export interface JoinedWorkspaceSubscriber {
+        /**
+         * example:
+         * events.subscribers.joined
+         */
+        type: "events.subscribers.joined";
+        payload: {
+            [name: string]: any;
+            workspaceId: string;
+            userId: string;
+            sessionId: string;
+            socketId: string;
+            filters?: {
+                [name: string]: any;
+                payloadQuery?: any;
+            };
+            permissions: PermissionRule[];
+            oldSocketId?: string;
+        };
+    }
+    export interface LeftWorkspaceSubscriber {
+        /**
+         * example:
+         * events.subscribers.left
+         */
+        type: "events.subscribers.left";
+        payload: {
+            [name: string]: any;
+            workspaceId: string;
+            userId: string;
+            sessionId: string;
+            socketId: string;
+        };
+    }
     export type LocalizedText = {
         [name: string]: string;
     } | string;

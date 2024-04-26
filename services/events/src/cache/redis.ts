@@ -22,6 +22,10 @@ export default class RedisCache implements CacheDriver {
     return true;
   }
 
+  async listKeys(pattern: string): Promise<string[]> {
+    return await this.client.keys(pattern);
+  }
+
   async get(key: string) {
     return await this.client.get(key);
   }
@@ -67,5 +71,30 @@ export default class RedisCache implements CacheDriver {
 
   async listSet(key: string) {
     return await this.client.sMembers(key);
+  }
+
+  async hSet(
+    key: string,
+    field: string,
+    value: any,
+    opts?: { ttl?: number | undefined } | undefined
+  ): Promise<any> {
+    if (!opts?.ttl) {
+      return await this.client.hSet(key, field, value);
+    }
+    const result = await this.client
+      .multi()
+      .hSet(key, field, value)
+      .expire(key, opts.ttl)
+      .exec();
+    return result[0] as number;
+  }
+
+  async hGetAll(key: string): Promise<Record<string, any>> {
+    return await this.client.hGetAll(key);
+  }
+
+  async hDel(key: string, field: string): Promise<boolean> {
+    return (await this.client.hDel(key, field)) > 0;
   }
 }
