@@ -64,11 +64,12 @@ const defaultStyles = `:block {
 .product-layout-sidebar__header {
   display: flex;
   flex-direction: row;
-  padding: 23px 20px;
+  padding: 23px 20px 23px 6px;
   align-items: center;
 }
 .product-layout-sidebar__header--has-back {
   transition: margin .2s ease-in;
+  padding: 23px 20px;
 }
 .product-layout-sidebar--open .product-layout-sidebar__header--has-back {
   margin-left: -61px;
@@ -76,8 +77,11 @@ const defaultStyles = `:block {
 .product-layout-sidebar__header-link {
   display: flex;
   flex-direction: row;
-  margin-right: 0;
+  margin-right: 1rem;
   margin-left: 16px;
+}
+.product-layout-sidebar__header--has-back .product-layout-sidebar__header-link {
+  margin-right: 0;
 }
 .product-layout-sidebar__header-link--button {
   margin-left: 1rem;
