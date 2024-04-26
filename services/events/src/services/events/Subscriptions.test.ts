@@ -1,5 +1,5 @@
 import { Broker, CallbackContext, EventCallback } from '@prisme.ai/broker';
-import { Subscriptions } from './Subscriptions';
+import { Subscriptions } from './subscriptions';
 import Cache from '../../cache/__mocks__/cache';
 
 jest.mock('@prisme.ai/broker', () => ({

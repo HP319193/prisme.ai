@@ -18,7 +18,7 @@ import { AccessManager } from '../permissions';
 import { accessManagerMiddleware } from './middlewares/accessManager';
 import { Cache } from '../cache';
 import { Broker } from '@prisme.ai/broker';
-import { Subscriptions } from '../services/events/Subscriptions';
+import { Subscriptions } from '../services/events/subscriptions';
 
 export async function initAPI(
   app: Application,

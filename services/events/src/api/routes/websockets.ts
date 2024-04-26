@@ -19,7 +19,7 @@ import { SearchOptions } from '../../services/events/store';
 import {
   LocalSubscriber,
   Subscriptions,
-} from '../../services/events/Subscriptions';
+} from '../../services/events/subscriptions';
 import { cleanSearchQuery } from './events';
 import { fetchMe } from '@prisme.ai/permissions';
 import { PrismeError } from '../../errors';

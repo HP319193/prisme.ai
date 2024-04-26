@@ -1,107 +1,23 @@
 import { Broker, PrismeEvent } from '@prisme.ai/broker';
-import { Cache, WorkspaceSubscriber } from '../../cache';
-import { EventType } from '../../eda';
-import { AccessManager, SubjectType, ActionType } from '../../permissions';
-import { extractObjectsByPath } from '../../utils';
-import { SearchOptions } from './store';
-import { getWorkspaceUser } from './users';
+import { Cache, WorkspaceSubscriber } from '../../../cache';
+import { EventType } from '../../../eda';
+import { AccessManager, SubjectType, ActionType } from '../../../permissions';
+import { SearchOptions } from '../store';
+import { getWorkspaceUser } from '../users';
 import { Permissions, Rules } from '@prisme.ai/permissions';
-import { logger } from '../../logger';
+import { logger } from '../../../logger';
 import { Readable } from 'stream';
+import { searchFilters } from './searchFilters';
+import {
+  LocalSubscriber,
+  Subscriber,
+  WorkspaceId,
+  WorkspaceSubscribers,
+} from './types';
+import { updateSubscriberUserTopics } from './updateSubscriberUserTopics';
 
-export type Subscriber = Omit<WorkspaceSubscriber, 'permissions'> & {
-  permissions: Permissions<SubjectType>;
-  unsubscribe?: () => void;
-  local?: boolean; // If true, means the corresponding socket is connected to current instance
-  oldSocketId?: string; // When reconnecting to a previous socketId, Joined event sets oldSocketId to the temporary & new socketId & socketId to the reconnected previous socketId
-};
+export * from './types';
 
-export type LocalSubscriber = Omit<Subscriber, 'local' | 'unsubscribe'> &
-  Required<Pick<Subscriber, 'local' | 'unsubscribe' | 'permissions'>>;
-
-type WorkspaceId = string;
-type UserId = string;
-
-const searchFilters: {
-  [k in keyof Required<SearchOptions>]: (
-    event: PrismeEvent,
-    opts: SearchOptions[k],
-    ctx: { socketId?: string }
-  ) => boolean;
-} = {
-  text: (event, value) => {
-    return !value || JSON.stringify(event).includes(value);
-  },
-  types: (event, allowedTypes) => {
-    return !allowedTypes || allowedTypes.includes(event.type);
-  },
-  beforeDate: (event, date) =>
-    !date || new Date(event.createdAt).getTime() < new Date(date).getTime(),
-  afterDate: (event, date) =>
-    !date || new Date(event.createdAt).getTime() > new Date(date).getTime(),
-  appInstanceDepth: (event, depth) =>
-    typeof depth === 'number' && event.source?.appInstanceDepth
-      ? event.source?.appInstanceDepth <= depth
-      : true,
-  payloadQuery: function matchQuery(
-    event,
-    query,
-    ctx?: { socketId?: string }
-  ): boolean {
-    if (!query) {
-      return true;
-    }
-    if (Array.isArray(query)) {
-      return query.some((query) => matchQuery(event, query, ctx));
-    }
-    const { currentSocket: currentSocketOnly = true } = event?.target || {};
-    // By default, events coming from a socket are not sent to others sockets listening to the same session
-    if (
-      'source.sessionId' in query &&
-      !('source.socketId' in query) &&
-      ctx?.socketId &&
-      event?.source?.socketId &&
-      currentSocketOnly &&
-      event?.source?.socketId !== ctx?.socketId
-    ) {
-      return false; // Do not send
-    }
-
-    return Object.entries(query)
-      .map(([k, expected]) => {
-        const found = extractObjectsByPath(event, k);
-        if (Array.isArray(expected)) {
-          return expected.includes(found);
-        }
-        if (!expected) {
-          return !found;
-        }
-        if (
-          typeof found !== 'string' ||
-          typeof expected !== 'string' ||
-          (expected[expected.length - 1] !== '*' && expected[0] !== '*')
-        ) {
-          return found === expected;
-        }
-        // Only support beginning OR ending wildcard for the moment
-        return expected[0] === '*'
-          ? found.endsWith(expected.slice(1))
-          : found.startsWith(expected.slice(0, -1));
-      })
-      .every(Boolean);
-  },
-
-  // Noop
-  beforeId: () => true,
-  page: () => true,
-  limit: () => true,
-  sort: () => true,
-};
-
-type WorkspaceSubscribers = {
-  all: Subscriber[];
-  userIds: Record<UserId, Subscriber[]>;
-};
 export class Subscriptions extends Readable {
   public broker: Broker;
   public accessManager: AccessManager;
@@ -275,81 +191,7 @@ export class Subscriptions extends Readable {
               this.subscribers[workspaceId]?.userIds?.[userId] || [];
             await Promise.all(
               activeSubscribers.map((subscriber) => {
-                const rules = subscriber.permissions?.ability?.rules || [];
-                let topicAlreadyAllowed = false;
-                //  For each subscriber, start to find permissions rules matching userTopics
-                const userTopicRules = rules.filter((cur) => {
-                  if (!cur?.conditions?.['target.userTopic']) {
-                    return false;
-                  }
-                  if (
-                    Array.isArray(cur.action) &&
-                    !cur.action.includes('read')
-                  ) {
-                    return false;
-                  }
-                  if (typeof cur.action === 'string' && cur.action !== 'read') {
-                    return false;
-                  }
-                  if (
-                    Array.isArray(cur.subject) &&
-                    !cur.subject.includes('events')
-                  ) {
-                    return false;
-                  }
-                  if (
-                    typeof cur.subject === 'string' &&
-                    cur.subject !== 'events'
-                  ) {
-                    return false;
-                  }
-                  const currentTopics =
-                    (cur?.conditions?.['target.userTopic'] as any)?.['$in'] ||
-                    cur?.conditions?.['target.userTopic'];
-                  if (
-                    currentTopics === topicName ||
-                    (Array.isArray(currentTopics) &&
-                      currentTopics.includes(topicName))
-                  ) {
-                    topicAlreadyAllowed = true;
-                  }
-                  return Array.isArray(currentTopics);
-                });
-
-                if (topicAlreadyAllowed) {
-                  return;
-                }
-
-                // Update permissions rules
-                if (!userTopicRules?.length) {
-                  // This subscriber didn't have any userTopic allowed ; create the corresponding rule
-                  rules.push({
-                    action: ['read'],
-                    subject: 'events',
-                    conditions: {
-                      'target.userTopic': {
-                        $in: [topicName],
-                      },
-                    },
-                  });
-                } else {
-                  userTopicRules.forEach((cur) => {
-                    const currentTopics: string[] =
-                      (cur?.conditions?.['target.userTopic'] as any)?.['$in'] ||
-                      cur?.conditions?.['target.userTopic'];
-                    cur.conditions = {
-                      ...cur.conditions,
-                      'target.userTopic': {
-                        $in: Array.isArray(currentTopics)
-                          ? currentTopics.concat([topicName])
-                          : [topicName],
-                      },
-                    };
-                  });
-                }
-
-                // Rebuild permissions & emit
-                subscriber.permissions = Permissions.buildFrom(rules);
+                updateSubscriberUserTopics(subscriber, topicName);
                 this.registerSubscriber(subscriber);
               })
             );

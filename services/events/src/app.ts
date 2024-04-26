@@ -17,7 +17,7 @@ import { buildEventsStore } from './services/events/store';
 import { initAccessManager } from './permissions';
 import { buildCache } from './cache';
 import { syncEventStoreWithEDA } from './services/events/syncEventStoreWithEDA';
-import { Subscriptions } from './services/events/Subscriptions';
+import { Subscriptions } from './services/events/subscriptions';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 

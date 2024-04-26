@@ -9,7 +9,7 @@ import { initWebsockets } from './websockets';
 import { initCleanupRoutes } from './cleanup';
 import { EventsStore } from '../../services/events/store';
 import { Broker } from '@prisme.ai/broker';
-import { Subscriptions } from '../../services/events/Subscriptions';
+import { Subscriptions } from '../../services/events/subscriptions';
 
 export const init = async (
   app: Application,
