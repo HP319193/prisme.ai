@@ -33,7 +33,7 @@ async function deploy() {
   await exec('git merge main --no-ff');
   const version = await createNewVersion();
   await exec('git add package.json');
-  await exec('git commit -m "deploy new version"');
+  await exec(`git commit -m "deploy version ${version}"`);
   await exec(`git tag ${version}`);
   await exec(`git push ${remote} prod`);
   await exec('git checkout main');
