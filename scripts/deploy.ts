@@ -5,10 +5,7 @@ const exec = promisify(child.exec);
 
 async function isRepoClean() {
   const { stdout } = await exec('git status');
-  return (
-    stdout ===
-    'On branch feature/run-deploy\nnothing to commit, working tree clean\n'
-  );
+  return stdout.match('working tree clean');
 }
 
 async function createNewVersion() {
