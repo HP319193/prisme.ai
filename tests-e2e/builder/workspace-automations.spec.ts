@@ -36,7 +36,6 @@ test.afterEach(async ({ request }) => {
 });
 
 test('create a new Automation', async ({ page, request, context, baseURL }) => {
-  console.log({ workspaceId });
   await page.goto(`${baseURL}/workspaces/${workspaceId}`);
 
   await page.getByRole('button', { name: 'Automations Automations' }).click();
