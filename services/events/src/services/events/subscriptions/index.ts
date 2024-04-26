@@ -44,61 +44,22 @@ export class Subscriptions extends Readable {
     >(
       [EventType.JoinedWorkspaceSubscriber, EventType.LeftWorkspaceSubscriber],
       (event) => {
-        const workspaceId = event.payload?.workspaceId!;
-        const userId = event.payload?.userId!;
-        const socketId = event.payload?.socketId!;
-
         if (event.type === EventType.JoinedWorkspaceSubscriber) {
-          const joined =
+          const { oldSocketId, ...joined } =
             event.payload as any as Prismeai.JoinedWorkspaceSubscriber['payload'];
-          const existingSubscriber = (
-            this.subscribers?.[workspaceId]?.userIds?.[userId] || []
-          ).find(
-            (cur) =>
-              // If this event has been emitted by current instance, the Subscriber socketId has already been updated, so we must check existing subscribers with both socketId & oldSocketId
-              cur.socketId === joined.socketId ||
-              (joined.oldSocketId && cur.socketId === joined.oldSocketId)
-          );
-          if (existingSubscriber && existingSubscriber.local) {
-            // Igore events from local subscriptions as they have been updated in first place
-            return true;
-          }
-
-          if (existingSubscriber) {
-            logger.debug({
-              msg: 'Update existing subscriber',
-              workspaceId,
-              userId,
-              socketId: existingSubscriber.socketId,
-              newSocketId: joined.socketId,
-              filters: joined.filters,
-            });
-            Object.assign(existingSubscriber, {
-              socketId: joined.socketId,
-              filters: joined.filters,
-              permissions: Permissions.buildFrom(joined.permissions),
-            });
-          } else {
-            // New subscriber
-            logger.debug({
-              msg: 'Adding new subscriber',
-              workspaceId,
-              userId,
-              socketId,
-              filters: joined.filters,
-            });
-            const subscriber: Subscriber = {
+          this.saveSubscriber(
+            {
               ...joined,
               permissions: Permissions.buildFrom(joined.permissions),
-            };
-            this.addSubscriber(subscriber);
-          }
+            },
+            { oldSocketId }
+          );
         } else if (event.type === EventType.LeftWorkspaceSubscriber) {
           logger.debug({
             msg: 'Removing subscriber',
-            workspaceId,
-            userId,
-            socketId,
+            workspaceId: event.payload?.workspaceId!,
+            userId: event.payload?.userId!,
+            socketId: event.payload?.socketId!,
           });
           const left =
             event.payload as any as Prismeai.LeftWorkspaceSubscriber['payload'];
@@ -128,7 +89,8 @@ export class Subscriptions extends Readable {
       });
 
       for (let subscriber of subscribers) {
-        if (this.addSubscriber(subscriber)) {
+        // Do not update any existing subscriber already synced from events
+        if (this.saveSubscriber(subscriber, { disableUpdate: true })) {
           totalSubscribersRestored += 1;
         }
       }
@@ -146,6 +108,9 @@ export class Subscriptions extends Readable {
       const subscribers = this.subscribers[event.source.workspaceId]?.all || [];
       (subscribers || []).forEach(async (subscriber) => {
         const { permissions, filters, socketId } = subscriber;
+        if (!socketId) {
+          return;
+        }
         // Test search filters first to avoid casl overhead if the event is not listened anyway
         if (!filters || this.matchSearchFilters(event, filters, socketId)) {
           const readable = permissions.can(
@@ -204,7 +169,7 @@ export class Subscriptions extends Readable {
     );
   }
 
-  matchSearchFilters(
+  private matchSearchFilters(
     data: PrismeEvent,
     filters: SearchOptions,
     socketId?: string
@@ -273,20 +238,22 @@ export class Subscriptions extends Readable {
       },
       local: true,
     };
-    this.addSubscriber(fullSubscriber);
+    this.saveSubscriber(fullSubscriber);
     this.registerSubscriber(fullSubscriber);
 
     return fullSubscriber;
   }
 
-  private addSubscriber(subscriber: Subscriber) {
+  private saveSubscriber(
+    subscriber: Subscriber,
+    opts?: { oldSocketId?: string; disableUpdate?: boolean }
+  ) {
     if (!(subscriber.workspaceId in this.subscribers)) {
       this.subscribers[subscriber.workspaceId] = {
         all: [],
         userIds: {},
       };
     }
-
     if (
       !(subscriber.userId in this.subscribers[subscriber.workspaceId].userIds)
     ) {
@@ -294,22 +261,74 @@ export class Subscriptions extends Readable {
     }
 
     // First check if this subscriber already exists to keep it updated without pushing it twice
-    const existingSocketId = subscriber.oldSocketId || subscriber.socketId;
-    const existingSubscriber = this.subscribers[subscriber.workspaceId].userIds[
-      subscriber.userId
-    ].find((cur) => cur.socketId === existingSocketId);
-    if (!existingSubscriber) {
+    const existingSubscribers = this.subscribers[
+      subscriber.workspaceId
+    ].userIds[subscriber.userId].filter(
+      (cur) =>
+        // If this event has been emitted by current instance, the Subscriber socketId has already been updated, so we must check existing subscribers with both socketId & oldSocketId
+        cur.socketId === subscriber.socketId ||
+        (opts?.oldSocketId && cur.socketId === opts?.oldSocketId)
+    );
+    if (!existingSubscribers.length) {
       this.subscribers[subscriber.workspaceId].all.push(subscriber);
       this.subscribers[subscriber.workspaceId].userIds[subscriber.userId].push(
         subscriber
       );
+      logger.debug({
+        msg: 'Adding new subscriber',
+        workspaceId: subscriber.workspaceId,
+        userId: subscriber.userId,
+        socketId: subscriber.socketId,
+        filters: subscriber.filters,
+      });
       return true;
     }
+    if (opts?.disableUpdate) {
+      return false;
+    }
+    // Make sure we never have more than 1 subscriber with the same socketId, as it would make us sending same events multiple times to the corresponding socket
+    const [existingSubscriber, ...inactiveSubscribers] = !opts?.oldSocketId
+      ? existingSubscribers
+      : // If we were given an oldSocketId, keep this old socket in priority so we don't remove some instance currently used by local websockets
+        existingSubscribers.sort((a) =>
+          a.socketId === opts?.oldSocketId ? -1 : 0
+        );
+    const previousSocketId =
+      opts?.oldSocketId && existingSubscriber.socketId === opts?.oldSocketId
+        ? opts?.oldSocketId
+        : undefined;
+    Object.assign(existingSubscriber, {
+      socketId: subscriber.socketId,
+      filters: subscriber.filters,
+      permissions: subscriber.permissions,
+    });
+    logger.debug({
+      msg: 'Update existing subscriber',
+      workspaceId: existingSubscriber.workspaceId,
+      userId: existingSubscriber.userId,
+      socketId: existingSubscriber.socketId,
+      previousSocketId,
+      filters: existingSubscriber.filters,
+    });
+
+    // Drop additional subscribers from our memory
+    if (inactiveSubscribers.length) {
+      inactiveSubscribers.forEach((cur) => {
+        // Simply unlink their socketId to avoid performance overhead of rebuilding the entire workspace + user subscribers list without these
+        delete cur.socketId;
+        delete cur.filters;
+        delete (cur as any).permissions;
+      });
+    }
+
     return false;
   }
 
   // Declare the new or updated Subscriber to the rest of the cluster
-  private async registerSubscriber(subscriber: Subscriber) {
+  private async registerSubscriber(
+    subscriber: Subscriber,
+    oldSocketId?: string
+  ) {
     const publishedSubscriber: WorkspaceSubscriber = {
       workspaceId: subscriber.workspaceId,
       userId: subscriber.userId,
@@ -317,7 +336,7 @@ export class Subscriptions extends Readable {
       socketId: subscriber.socketId,
       filters: subscriber.filters,
       permissions: subscriber.permissions.ability.rules,
-      oldSocketId: subscriber.oldSocketId,
+      oldSocketId: oldSocketId,
     };
 
     // So we can know later on if this user can reuse this socketId for contexts persistence throughout disconnections
@@ -358,12 +377,12 @@ export class Subscriptions extends Readable {
       .catch(logger.error);
 
     // Finally, clear subscriber from previous socketId if we just changed it
-    if (subscriber.oldSocketId) {
+    if (oldSocketId) {
       this.cache
         .unregisterSubscriber(
           subscriber.workspaceId,
           subscriber.sessionId,
-          subscriber.oldSocketId
+          oldSocketId
         )
         .catch(logger.error);
     }
@@ -444,14 +463,21 @@ export class Subscriptions extends Readable {
       }
     }
 
+    let oldSocketId;
     if (update?.filters) {
       subscriber.filters = update.filters;
-    } else if (update?.socketId) {
-      subscriber.oldSocketId = subscriber.socketId;
-      subscriber.socketId = update.socketId;
+    }
+    if (update?.socketId) {
+      oldSocketId = subscriber.socketId;
+      // Here we use saveSubscriber() to get rid of any duplicate subscribers that could have been retrieved from cache
+      // If we'd mutated directly subscriber.socketId, we might end up with 2 or more subscribers with the same socketId, resulting in events received twice by the same socket
+      this.saveSubscriber(
+        { ...subscriber, socketId: update.socketId },
+        { oldSocketId }
+      );
     }
 
-    this.registerSubscriber(subscriber);
+    this.registerSubscriber(subscriber, oldSocketId);
 
     return true;
   }
