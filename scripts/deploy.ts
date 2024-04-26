@@ -8,6 +8,11 @@ async function isRepoClean() {
   return stdout.match('working tree clean');
 }
 
+async function getRmote() {
+  const { stdout } = await exec('git remote');
+  return stdout.split(/\n/)[0];
+}
+
 async function createNewVersion() {
   const { stdout: version } = await exec(`ts-node ${__dirname}/nexttag`);
   return version;
@@ -20,6 +25,7 @@ async function deploy() {
     );
     return process.exit(1);
   }
+  const remote = await getRmote();
   await exec('git checkout main');
   await exec('git pull --rebase');
   await exec('git checkout prod');
@@ -29,10 +35,10 @@ async function deploy() {
   await exec('git add package.json');
   await exec('git commit -m "deploy new version"');
   await exec(`git tag ${version}`);
-  await exec('git push prod');
+  await exec(`git push ${remote} prod`);
   await exec('git checkout main');
   await exec('git merge prod --no-ff');
-  await exec('git push main');
+  await exec(`git push ${remote} main`);
 }
 
 deploy();
