@@ -29,9 +29,9 @@ async function deploy() {
   await exec('git add package.json');
   await exec('git commit -m "deploy new version"');
   await exec(`git tag ${version}`);
+  await exec('git push prod');
   await exec('git checkout main');
   await exec('git merge prod --no-ff');
-  await exec('git push prod');
   await exec('git push main');
 }
 
