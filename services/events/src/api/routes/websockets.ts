@@ -68,11 +68,18 @@ export async function initWebsockets(
 
   const workspaces = io.of(WORKSPACE_NSP_PATTERN);
   // Listen to platform generated events & send to the listening sockets
-  subscriptions.start((subscriber, event) => {
+  subscriptions.start((event, subscribers) => {
     const nsp = event?.source?.workspaceId
       ? io.of(getWorkspaceNsp(event.source.workspaceId))
       : workspaces;
-    nsp.to(subscriber.socketId).emit(event.type, event);
+    const rooms = subscribers.map((cur) => cur.socketId);
+    if (rooms.length) {
+      nsp.to(rooms).emit(event.type, event);
+    }
+    logger.debug({
+      msg: `Sending ${event.type} to ${rooms.length} rooms`,
+      rooms,
+    });
   });
 
   workspaces.on('connection', async (socket) => {
@@ -178,6 +185,10 @@ export async function initWebsockets(
     });
     socket.onAny(
       async (type, payload: Prismeai.PrismeEvent | SearchOptions) => {
+        logger.trace({
+          msg: `Socket ${subscription?.socketId} sending ${type}`,
+          ...logsCtx,
+        });
         const isReady = await ready;
         if (!isReady) {
           return;

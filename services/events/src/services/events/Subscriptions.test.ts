@@ -125,7 +125,10 @@ describe('Basic', () => {
     });
 
     // Emit events
-    events.start((subscriber, event) => {
+    events.start((event, subscribers) => {
+      if (!subscribers.length) {
+        return;
+      }
       received.push(event.payload as any);
     });
 
@@ -161,7 +164,10 @@ describe('Basic', () => {
       }
       return true;
     });
-    events.start((subscriber, event) => {
+    events.start((event, subscribers) => {
+      if (!subscribers.length) {
+        return;
+      }
       received.push(event.payload as any);
     });
 
@@ -204,7 +210,10 @@ describe('Basic', () => {
       }
       return true;
     });
-    events.start((subscriber, event) => {
+    events.start((event, subscribers) => {
+      if (!subscribers.length) {
+        return;
+      }
       received.push(event.payload as any);
     });
 

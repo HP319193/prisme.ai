@@ -62,6 +62,10 @@ export default class Cache implements CacheDriver {
     return Promise.resolve(true);
   }
 
+  hGet(key: string, field: string): Promise<any> {
+    return Promise.resolve({});
+  }
+
   hGetAll(key: string): Promise<Record<string, any>> {
     return Promise.resolve({});
   }
@@ -88,5 +92,9 @@ export default class Cache implements CacheDriver {
 
   unregisterSubscriber() {
     return Promise.resolve(true);
+  }
+
+  getWorkspaceSubscriber() {
+    return Promise.resolve({});
   }
 }

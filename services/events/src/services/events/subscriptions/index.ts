@@ -15,6 +15,7 @@ import {
   WorkspaceSubscribers,
 } from './types';
 import { updateSubscriberUserTopics } from './updateSubscriberUserTopics';
+import { EVENTS_ENABLE_LIVE_CACHE_PULL } from '../../../../config';
 
 export * from './types';
 
@@ -102,27 +103,72 @@ export class Subscriptions extends Readable {
     });
   }
 
-  async start(callback: (subscriber: Subscriber, event: PrismeEvent) => void) {
+  async start(
+    callback: (event: PrismeEvent, subscribers: Subscriber[]) => void
+  ) {
     // Listen to events, find matching subscribers & pass to listener callback for websocket transmission
-    this.on('data', (event) => {
-      const subscribers = this.subscribers[event.source.workspaceId]?.all || [];
-      (subscribers || []).forEach(async (subscriber) => {
-        const { permissions, filters, socketId } = subscriber;
-        if (!socketId) {
-          return;
-        }
+    this.on('data', async (event) => {
+      const matchingSubscribers: Subscriber[] = [];
+      let foundSocketSubscriber = event?.source?.socketId ? false : true;
+      const matchSubscriber = (subscriber: Subscriber) => {
         // Test search filters first to avoid casl overhead if the event is not listened anyway
-        if (!filters || this.matchSearchFilters(event, filters, socketId)) {
-          const readable = permissions.can(
+        if (
+          !subscriber.filters ||
+          this.matchSearchFilters(
+            event,
+            subscriber.filters,
+            subscriber.socketId
+          )
+        ) {
+          const readable = subscriber.permissions.can(
             ActionType.Read,
             SubjectType.Event,
             event
           );
           if (readable) {
-            callback(subscriber, event);
+            matchingSubscribers.push(subscriber);
           }
         }
+      };
+
+      const candidateSubscribers =
+        this.subscribers[event.source.workspaceId]?.all || [];
+      (candidateSubscribers || []).forEach(async (subscriber) => {
+        if (!subscriber.socketId) {
+          return;
+        }
+        if (
+          event?.source?.socketId &&
+          subscriber.socketId === event?.source?.socketId
+        ) {
+          foundSocketSubscriber = true;
+        }
+        matchSubscriber(subscriber);
       });
+
+      // If we do not have any subscriber corresponding to this event socketId, this means we are late on events.subscribers.* live synchronization & need to pull from cache
+      if (!foundSocketSubscriber && EVENTS_ENABLE_LIVE_CACHE_PULL) {
+        const subscriberData = await this.cache.getWorkspaceSubscriber(
+          event?.source?.workspaceId,
+          event?.source?.sessionId,
+          event?.source?.socketId
+        );
+        logger.warn({
+          msg: `No subscriber matching ${event?.source?.socketId}, pulled from cache.`,
+          found: !!subscriberData,
+        });
+        if (subscriberData) {
+          const subscriber: Subscriber = {
+            ...subscriberData,
+            permissions: Permissions.buildFrom(subscriberData.permissions),
+          };
+          this.saveSubscriber(subscriber);
+          matchSubscriber(subscriber);
+        }
+      }
+
+      // Finally send our event & matching subscribers
+      callback(event, matchingSubscribers);
     });
 
     // Persist userTopics subscriptions in cache
@@ -239,7 +285,7 @@ export class Subscriptions extends Readable {
       local: true,
     };
     this.saveSubscriber(fullSubscriber);
-    this.registerSubscriber(fullSubscriber);
+    await this.registerSubscriber(fullSubscriber);
 
     return fullSubscriber;
   }
@@ -339,53 +385,65 @@ export class Subscriptions extends Readable {
       oldSocketId: oldSocketId,
     };
 
+    let promises: Promise<any>[] = [];
+
     // So we can know later on if this user can reuse this socketId for contexts persistence throughout disconnections
-    this.cache
-      .registerSocketId(
-        subscriber.workspaceId,
-        subscriber.sessionId,
-        subscriber.socketId
-      )
-      .catch(logger.error);
+    promises.push(
+      this.cache
+        .registerSocketId(
+          subscriber.workspaceId,
+          subscriber.sessionId,
+          subscriber.socketId
+        )
+        .catch(logger.error)
+    );
 
     // So future prismeai-events instances know when to emit events to this subscriber
-    this.cache
-      .registerSubscriber(
-        subscriber.workspaceId,
-        subscriber.sessionId,
-        subscriber.socketId,
-        publishedSubscriber
-      )
-      .catch(logger.error);
+    promises.push(
+      this.cache
+        .registerSubscriber(
+          subscriber.workspaceId,
+          subscriber.sessionId,
+          subscriber.socketId,
+          publishedSubscriber
+        )
+        .catch(logger.error)
+    );
 
     // So current prismeai-events instances know when to emit events to this subscriber
-    this.broker
-      .send<Prismeai.JoinedWorkspaceSubscriber['payload']>(
-        EventType.JoinedWorkspaceSubscriber,
-        publishedSubscriber as Prismeai.JoinedWorkspaceSubscriber['payload'],
-        {},
-        {
-          options: {
-            persist: false,
+    promises.push(
+      this.broker
+        .send<Prismeai.JoinedWorkspaceSubscriber['payload']>(
+          EventType.JoinedWorkspaceSubscriber,
+          publishedSubscriber as Prismeai.JoinedWorkspaceSubscriber['payload'],
+          {},
+          {
+            options: {
+              persist: false,
+            },
           },
-        },
-        {
-          // This emit must not fail, which it could easily do because of nested objects validation by express-openapi
-          disableValidation: true,
-        }
-      )
-      .catch(logger.error);
+          {
+            // This emit must not fail, which it could easily do because of nested objects validation by express-openapi
+            disableValidation: true,
+          }
+        )
+        .catch(logger.error)
+    );
 
     // Finally, clear subscriber from previous socketId if we just changed it
     if (oldSocketId) {
-      this.cache
-        .unregisterSubscriber(
-          subscriber.workspaceId,
-          subscriber.sessionId,
-          oldSocketId
-        )
-        .catch(logger.error);
+      promises.push(
+        this.cache
+          .unregisterSubscriber(
+            subscriber.workspaceId,
+            subscriber.sessionId,
+            oldSocketId
+          )
+          .catch(logger.error)
+      );
     }
+
+    await Promise.all(promises);
   }
 
   async unregisterSubscriber(

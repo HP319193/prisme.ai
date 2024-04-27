@@ -49,6 +49,11 @@ export interface Cache extends CacheDriver {
     socketId: string
   ): Promise<boolean>;
   getAllWorkspaceSubscribers(): Promise<Record<string, WorkspaceSubscriber[]>>;
+  getWorkspaceSubscriber(
+    workspaceId: string,
+    sessionId: string,
+    socketId: string
+  ): Promise<WorkspaceSubscriber | false>;
 }
 
 export function buildCache(opts: CacheOptions): Cache {
@@ -182,6 +187,22 @@ export function buildCache(opts: CacheOptions): Cache {
           [curWorkspaceId]: curList,
         };
       }, {});
+    }
+
+    async getWorkspaceSubscriber(
+      workspaceId: string,
+      sessionId: string,
+      socketId: string
+    ): Promise<WorkspaceSubscriber | false> {
+      try {
+        const str = await this.hGet(
+          getCacheKey(CacheKeyType.WorkspaceSubscribers, { workspaceId }),
+          `${sessionId}:${socketId}`
+        );
+        return JSON.parse(str) as WorkspaceSubscriber;
+      } catch {
+        return false;
+      }
     }
 
     async unregisterSubscriber(

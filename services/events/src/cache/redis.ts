@@ -90,6 +90,10 @@ export default class RedisCache implements CacheDriver {
     return result[0] as number;
   }
 
+  async hGet(key: string, field: string): Promise<any> {
+    return await this.client.hGet(key, field);
+  }
+
   async hGetAll(key: string): Promise<Record<string, any>> {
     return await this.client.hGetAll(key);
   }

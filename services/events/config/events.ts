@@ -35,3 +35,7 @@ export const EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS = parseInt(
 export const EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS = parseInt(
   process.env.EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS || '100'
 );
+
+export const EVENTS_ENABLE_LIVE_CACHE_PULL = ['0', 'true', 'y', 'yes'].includes(
+  (process.env.EVENTS_ENABLE_LIVE_CACHE_PULL || 'false').toLowerCase()
+);

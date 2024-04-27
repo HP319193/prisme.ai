@@ -24,6 +24,7 @@ export interface CacheDriver {
     opts?: SetOptions
   ): Promise<boolean>;
   hDel(key: string, field: string): Promise<boolean>;
+  hGet(key: string, field: string): Promise<any>;
   hGetAll(key: string): Promise<Record<string, any>>;
 }
 
