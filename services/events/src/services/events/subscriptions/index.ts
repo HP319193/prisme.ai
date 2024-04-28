@@ -15,7 +15,6 @@ import {
   WorkspaceSubscribers,
 } from './types';
 import { updateSubscriberUserTopics } from './updateSubscriberUserTopics';
-import { EVENTS_ENABLE_LIVE_CACHE_PULL } from '../../../../config';
 
 export * from './types';
 
@@ -147,7 +146,7 @@ export class Subscriptions extends Readable {
       });
 
       // If we do not have any subscriber corresponding to this event socketId, this means we are late on events.subscribers.* live synchronization & need to pull from cache
-      if (!foundSocketSubscriber && EVENTS_ENABLE_LIVE_CACHE_PULL) {
+      if (!foundSocketSubscriber) {
         const subscriberData = await this.cache.getWorkspaceSubscriber(
           event?.source?.workspaceId,
           event?.source?.sessionId,

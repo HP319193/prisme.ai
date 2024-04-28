@@ -9,7 +9,7 @@ export enum CacheType {
 }
 
 // Subscribers that have not been updated (meaning no reconnection or filter update) since this TTL will be removed from cache
-const SUBSCRIBER_TTL = 3600 * 12;
+const SUBSCRIBER_TTL = 3600 * 4;
 
 export type WorkspaceSubscriber = Omit<
   Prismeai.JoinedWorkspaceSubscriber['payload'],
