@@ -77,6 +77,7 @@ export function extractSocketContext(socket: Socket): Partial<SocketCtx> {
   } catch {
     logger.error({
       msg: `Could not parse JSON from authData header '${AUTH_DATA_HEADER}'`,
+      authData: socket.handshake.headers[AUTH_DATA_HEADER],
     });
   }
   return {

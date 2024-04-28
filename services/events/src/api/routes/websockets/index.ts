@@ -36,6 +36,9 @@ export async function initWebsockets(
   });
 
   workspaces.on('connection', async (socket) => {
+    logger.debug({
+      msg: `Handling websocket ${socket.id} connection ...`,
+    });
     const socketHandler = new SocketHandler(
       extractSocketContext(socket) as SocketCtx,
       broker
@@ -124,6 +127,35 @@ export async function initWebsockets(
         processMessage(socketHandler, type, payload);
       }
     );
+    socket.on('disconnect', (reason) => {
+      socketHandler.logger.info({
+        msg: `Websocket disconnected (${reason})`,
+      });
+      if (socketHandler.subscriber) {
+        socketHandler.subscriber.unsubscribe();
+      }
+    });
+    socket.on('connect', async () => {
+      socketHandler.logger.info({
+        msg: 'Websocket connected.',
+      });
+      socket.join(socketHandler.socketId);
+    });
+    socket.on('reconnect', () => {
+      socketHandler.logger.info({
+        msg: 'Websocket reconnected !',
+      });
+    });
+    socket.on('reconnect_attempt', (attempt) => {
+      socketHandler.logger.info({
+        msg: `Websocket reconnection attempt ${attempt}`,
+      });
+    });
+    socket.on('reconnect_failed', (attempt) => {
+      socketHandler.logger.warn({
+        msg: `Websocket could not reconnect`,
+      });
+    });
 
     if (!socketHandler.userId) {
       // api-gateway HTTP authentication middlewares are never called when websocket are directly opened without a first http req, so we have to fetch /me with received token in order to authenticate user
@@ -145,6 +177,12 @@ export async function initWebsockets(
         return;
       }
     }
+
+    socketHandler.logger.info({
+      msg:
+        'Websocket connected.' +
+        ((<any>socket).recovered ? ' (RECOVERED)' : ''),
+    });
 
     subscriptions
       .subscribe(socketHandler.workspaceId, {
@@ -172,42 +210,6 @@ export async function initWebsockets(
         });
         return false;
       });
-
-    socketHandler.logger.info({
-      msg:
-        'Websocket connected.' +
-        ((<any>socket).recovered ? ' (RECOVERED)' : ''),
-    });
-
-    socket.on('disconnect', (reason) => {
-      socketHandler.logger.info({
-        msg: `Websocket disconnected (${reason})`,
-      });
-      if (socketHandler.subscriber) {
-        socketHandler.subscriber.unsubscribe();
-      }
-    });
-    socket.on('connect', async () => {
-      socketHandler.logger.info({
-        msg: 'Websocket connected.',
-      });
-      socket.join(socket.id);
-    });
-    socket.on('reconnect', () => {
-      socketHandler.logger.info({
-        msg: 'Websocket reconnected !',
-      });
-    });
-    socket.on('reconnect_attempt', (attempt) => {
-      socketHandler.logger.info({
-        msg: `Websocket reconnection attempt ${attempt}`,
-      });
-    });
-    socket.on('reconnect_failed', (attempt) => {
-      socketHandler.logger.warn({
-        msg: `Websocket could not reconnect`,
-      });
-    });
   });
 
   return workspaces as any as Server;
