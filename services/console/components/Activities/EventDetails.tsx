@@ -137,6 +137,11 @@ export const EventDetails: FC<EventsDetailsProps & { replay: () => void }> = ({
         name: 'size',
         value: event.size,
       },
+      {
+        key: 'createdAt',
+        name: 'createdAt',
+        value: new Date(event.createdAt).toISOString(),
+      },
     ].filter(Boolean) as EventRecord[];
   }, [event]);
   const onRowClick = useCallback(({ target }: MouseEvent) => {

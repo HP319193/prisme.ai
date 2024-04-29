@@ -252,7 +252,80 @@ export const Navigation = () => {
       });
       return items;
     }
-
+    const automations = sortItems(
+      setActive(
+        generateNesting(
+          Object.entries(workspace.automations || {})
+            .filter(([slug, { name = '', description = '' }]) =>
+              search(cleanSearch(searchQuery))(
+                `${slug} ${localize(name) || ''} ${localize(description) || ''}`
+              )
+            )
+            .map(([slug, automation]) =>
+              processItems({
+                type: 'automation',
+                slug,
+                name: automation.name || slug,
+                automation,
+              })
+            )
+        )
+      )
+    );
+    const pages = sortItems(
+      setActive(
+        generateNesting(
+          Object.entries(workspace.pages || {})
+            .filter(([slug, { name = '', description = '' }]) =>
+              search(cleanSearch(searchQuery))(
+                `${slug} ${localize(name) || ''} ${localize(description) || ''}`
+              )
+            )
+            .map(([slug, page]) =>
+              processItems({ type: 'page', slug, name: page.name || slug })
+            )
+        )
+      )
+    );
+    const blocks = sortItems(
+      setActive(
+        generateNesting(
+          Object.entries(workspace.blocks || {})
+            .filter(([slug, { name = '', description = '' }]) =>
+              search(cleanSearch(searchQuery))(
+                `${slug} ${localize(name) || ''} ${localize(description) || ''}`
+              )
+            )
+            .map(([slug, block]) =>
+              processItems({
+                type: 'block',
+                slug,
+                name: block.name || slug,
+                block,
+              })
+            )
+        )
+      )
+    );
+    const apps = sortItems(
+      setActive(
+        generateNesting(
+          Object.entries(workspace.imports || {})
+            .filter(([slug, { appName = '' }]) =>
+              search(cleanSearch(searchQuery))(`${slug} ${localize(appName)}`)
+            )
+            .map(([slug, app]) =>
+              processItems({
+                type: 'app',
+                slug,
+                name: app.appName || slug,
+                icon: app.photo,
+                tooltip: localize(app.appName || app.appSlug),
+              })
+            )
+        )
+      )
+    );
     return [
       {
         icon: <IconHome />,
@@ -267,24 +340,8 @@ export const Navigation = () => {
         active: decodeURIComponent(asPath).match(
           `^\/workspaces\/${workspace.id}\/pages\//`
         ),
-        items: sortItems(
-          setActive(
-            generateNesting(
-              Object.entries(workspace.pages || {})
-                .filter(([slug, { name = '', description = '' }]) =>
-                  search(cleanSearch(searchQuery))(
-                    `${slug} ${localize(name) || ''} ${
-                      localize(description) || ''
-                    }`
-                  )
-                )
-                .map(([slug, page]) =>
-                  processItems({ type: 'page', slug, name: page.name || slug })
-                )
-            )
-          )
-        ),
-        opened: opened.has('page'),
+        items: pages,
+        opened: opened.has('page') || (pages.length > 0 && searchQuery),
       },
       {
         type: 'automation',
@@ -293,29 +350,9 @@ export const Navigation = () => {
         active: decodeURIComponent(asPath).match(
           `^\/workspaces\/${workspace.id}\/automations\//`
         ),
-        items: sortItems(
-          setActive(
-            generateNesting(
-              Object.entries(workspace.automations || {})
-                .filter(([slug, { name = '', description = '' }]) =>
-                  search(cleanSearch(searchQuery))(
-                    `${slug} ${localize(name) || ''} ${
-                      localize(description) || ''
-                    }`
-                  )
-                )
-                .map(([slug, automation]) =>
-                  processItems({
-                    type: 'automation',
-                    slug,
-                    name: automation.name || slug,
-                    automation,
-                  })
-                )
-            )
-          )
-        ),
-        opened: opened.has('automation') || searchQuery,
+        items: automations,
+        opened:
+          opened.has('automation') || (automations.length > 0 && searchQuery),
       },
       {
         type: 'block',
@@ -324,29 +361,8 @@ export const Navigation = () => {
         active: decodeURIComponent(asPath).match(
           `^\/workspaces\/${workspace.id}\/blocks\//`
         ),
-        items: sortItems(
-          setActive(
-            generateNesting(
-              Object.entries(workspace.blocks || {})
-                .filter(([slug, { name = '', description = '' }]) =>
-                  search(cleanSearch(searchQuery))(
-                    `${slug} ${localize(name) || ''} ${
-                      localize(description) || ''
-                    }`
-                  )
-                )
-                .map(([slug, block]) =>
-                  processItems({
-                    type: 'block',
-                    slug,
-                    name: block.name || slug,
-                    block,
-                  })
-                )
-            )
-          )
-        ),
-        opened: opened.has('block'),
+        items: blocks,
+        opened: opened.has('block') || (blocks.length > 0 && searchQuery),
       },
       {
         type: 'app',
@@ -355,28 +371,8 @@ export const Navigation = () => {
         active: decodeURIComponent(asPath).match(
           `^\/workspaces\/${workspace.id}\/apps\//`
         ),
-        items: sortItems(
-          setActive(
-            generateNesting(
-              Object.entries(workspace.imports || {})
-                .filter(([slug, { appName = '' }]) =>
-                  search(cleanSearch(searchQuery))(
-                    `${slug} ${localize(appName)}`
-                  )
-                )
-                .map(([slug, app]) =>
-                  processItems({
-                    type: 'app',
-                    slug,
-                    name: app.appName || slug,
-                    icon: app.photo,
-                    tooltip: localize(app.appName || app.appSlug),
-                  })
-                )
-            )
-          )
-        ),
-        opened: opened.has('app'),
+        items: apps,
+        opened: opened.has('app') || (apps.length > 0 && searchQuery),
       },
       {
         icon: <IconCharts />,
