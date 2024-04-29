@@ -18,7 +18,6 @@ setup('authenticate', async ({ page, request, context, baseURL }) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
     if (me.status() === 200) return;
   }
   await page.goto(TESTS_E2E_BASE_URL);

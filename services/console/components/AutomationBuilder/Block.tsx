@@ -288,6 +288,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
                     visibility: isHover ? 'visible' : 'hidden',
                   }}
                   onClick={(e) => e?.stopPropagation()}
+                  data-testid={`automation builder delete instruction ${data.index}`}
                 >
                   <DeleteOutlined className="!text-orange-500" />
                 </button>
