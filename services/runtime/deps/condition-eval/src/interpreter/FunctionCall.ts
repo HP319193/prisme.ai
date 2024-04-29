@@ -2,6 +2,7 @@ import { InvalidExpressionSyntax } from '../../../../src/errors';
 import Evaluatable from '../Evaluatable';
 import DateExpression from './DateExpression';
 import get from 'lodash/get';
+import URLSearchParamsExpression from './URLSearchParamsExpression';
 
 const mathFloorRoundCeil = (
   number: number,
@@ -43,6 +44,8 @@ class FunctionCall extends Evaluatable {
     switch (this.functionName) {
       case 'date':
         return new DateExpression(functionPayload).evaluate(context);
+      case 'URLSearchParams':
+        return new URLSearchParamsExpression(functionPayload).evaluate(context);
       case 'isArray':
         const arrayValue =
           typeof functionArgs[0] === 'string' && functionArgs[0]

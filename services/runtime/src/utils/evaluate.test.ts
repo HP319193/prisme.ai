@@ -1,4 +1,5 @@
 import { evaluate } from './evaluate';
+import { InvalidExpressionSyntax } from '../errors';
 
 describe('Should handle basic conditions features', () => {
   it('should handle parenthesis', () => {
@@ -698,5 +699,46 @@ describe('Should handle basic array features', () => {
       'quatre',
     ]);
     expect(evaluate('slice({{someArray}}, 10)', ctx, false)).toEqual([]);
+  });
+});
+describe('Should handle URL search parameters parsing & manipulation', () => {
+  it('works with the URLSearchParams() keyword for asString method.', () => {
+    expect(
+      evaluate(
+        'URLSearchParams("param1=value1&param2=value2").asString == "param1=value1&param2=value2"',
+        {}
+      )
+    ).toEqual(true);
+
+    expect(
+      evaluate('URLSearchParams({{var}}).asString == "youp=yo&hey=da"', {
+        var: {
+          youp: 'yo',
+          hey: 'da',
+        },
+      })
+    ).toEqual(true);
+  });
+
+  it('correctly converts URL search parameters to JSON.', () => {
+    expect(
+      evaluate('URLSearchParams("key1=value1&key2=value2").asJSON', {}, false)
+    ).toEqual({ key1: 'value1', key2: 'value2' });
+
+    expect(
+      evaluate(
+        'URLSearchParams("multiKey=value1&multiKey=value2").asJSON',
+        {},
+        false
+      )
+    ).toEqual({ multiKey: 'value2' });
+  });
+
+  it('handles invalid or empty inputs gracefully.', () => {
+    expect(evaluate('URLSearchParams("").asString == ""', {})).toEqual(true);
+
+    expect(
+      evaluate('URLSearchParams().asJSON', {}, false) // Assuming default constructor handles no input as empty string
+    ).toEqual(undefined);
   });
 });
