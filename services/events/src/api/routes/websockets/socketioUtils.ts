@@ -3,10 +3,12 @@ import { Server, Socket } from 'socket.io';
 import { createClient } from '@redis/client';
 //@ts-ignore Dunno why, but typings not found in CI
 import { createAdapter } from '@socket.io/redis-streams-adapter';
+import { createAdapter as createPubSubAdapter } from '@socket.io/redis-adapter';
 import {
   API_KEY_HEADER,
   APP_NAME,
   AUTH_DATA_HEADER,
+  EVENTS_SOCKETIO_ADAPTER,
   SESSION_ID_HEADER,
   SOCKETIO_COOKIE_MAX_AGE,
   SOCKETIO_REDIS_HOST,
@@ -16,7 +18,7 @@ import {
 import { SocketCtx, WORKSPACE_NSP_PATTERN } from './types';
 import { logger } from '../../../logger';
 
-export function getSocketioServer(httpServer: http.Server) {
+export async function getSocketioServer(httpServer: http.Server) {
   const redisWebsocketClient = createClient({
     url: SOCKETIO_REDIS_HOST,
     password: SOCKETIO_REDIS_PASSWORD,
@@ -35,7 +37,16 @@ export function getSocketioServer(httpServer: http.Server) {
   redisWebsocketClient.on('ready', () => {
     console.info('Websockets redis pub client is ready.');
   });
-  redisWebsocketClient.connect();
+  await redisWebsocketClient.connect();
+
+  let adapter: any;
+  if (EVENTS_SOCKETIO_ADAPTER === 'redis') {
+    const redisSubClient = redisWebsocketClient.duplicate();
+    await redisSubClient.connect();
+    adapter = createPubSubAdapter(redisWebsocketClient, redisSubClient) as any;
+  } else {
+    adapter = createAdapter(redisWebsocketClient) as any;
+  }
 
   const io = new Server(httpServer, {
     cors: {
@@ -46,7 +57,7 @@ export function getSocketioServer(httpServer: http.Server) {
       name: 'io',
       maxAge: SOCKETIO_COOKIE_MAX_AGE,
     },
-    adapter: createAdapter(redisWebsocketClient) as any,
+    adapter,
   });
 
   return io;

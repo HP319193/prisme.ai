@@ -17,7 +17,7 @@ export async function initWebsockets(
   broker: Broker,
   subscriptions: Subscriptions
 ) {
-  const io = getSocketioServer(httpServer);
+  const io = await getSocketioServer(httpServer);
   const workspaces = io.of(WORKSPACE_NSP_PATTERN);
 
   // Listen to platform generated events & send to the listening sockets
