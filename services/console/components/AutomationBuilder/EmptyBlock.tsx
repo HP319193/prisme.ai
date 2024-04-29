@@ -38,6 +38,7 @@ export const EmptyBlock: FC<NodeProps> = ({ data = {}, id }) => {
                 });
                 addInstruction(data.parent, data.index);
               }}
+              data-testid={`automation-builder-add-${data.index}`}
             >
               <Image src={plus.src} width={17} height={17} alt="" />
             </button>

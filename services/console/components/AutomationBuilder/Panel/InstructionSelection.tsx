@@ -104,6 +104,10 @@ export const InstructionSelection: FC<InstructionSelectionProps> = ({
                     onSubmit(slug);
                   }}
                   className="w-full text-left !h-fit !p-0"
+                  data-testid={`automation-builder-instruction-${slug.replace(
+                    /[^a-zA-Z0-9]/g,
+                    '-'
+                  )}`}
                 >
                   <ListItem
                     title={t('automations.instruction.label', {

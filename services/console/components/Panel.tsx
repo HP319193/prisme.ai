@@ -83,6 +83,7 @@ export const Panel: FC<PanelProps> = ({
         ${hidden ? '' : '-translate-x-full'}
         ${className || ''}
       `}
+      data-testid="panel"
     >
       <div className="flex w-full items-center justify-between flex-row p-5 bg-dark-accent text-white font-semibold">
         <div className="flex items-center flex-row">
@@ -96,6 +97,7 @@ export const Panel: FC<PanelProps> = ({
                 onBack();
               }}
               className="flex mx-1 w-[20px] items-center"
+              data-testid="panel-back-btn"
             >
               <span className="flex rotate-90">
                 <LeftIcon width=".8rem" height=".8rem" />
@@ -116,6 +118,7 @@ export const Panel: FC<PanelProps> = ({
               variant="grey"
               className="flex justify-center items-center !text-white"
               onClick={toggleLarge}
+              data-testid="panel-enlarge-btn"
             >
               {large ? <CompressOutlined /> : <ExpandOutlined />}
             </Button>
@@ -131,6 +134,7 @@ export const Panel: FC<PanelProps> = ({
                 });
                 setHidden(true);
               }}
+              data-testid="panel-close-btn"
             >
               <CloseCircleOutlined />
             </Button>
