@@ -163,4 +163,8 @@ Functions like rand() can also be combined with mathematical operators : `rand(1
 `join(['one', 'two', 'three'], ',') == 'one,two,thre'`  
 
 ## String replacement
-`replace('hello world', 'world', 'there') == 'hello there'`   
+`replace('hello world', 'world', 'there') == 'hello there'`
+
+## Querystring
+`URLSearchParams("key1=value1&key2=value2").asJSON`
+`URLSearchParams({foo: "bar", abc: "xyz").asString == "foo=bar&abc=xyz"`
