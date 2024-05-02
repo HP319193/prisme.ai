@@ -86,4 +86,8 @@ export default {
   UPLOADS_MAX_SIZE: parseInt(
     process.env.UPLOADS_MAX_SIZE || '10000000' // 10MB
   ),
+
+  ENABLE_HEALTHCHECK_LOGS: ['yes', 'enabled', 'enable', 'true'].includes(
+    (process.env.ENABLE_HEALTHCHECK_LOGS || 'no').toLowerCase()
+  ),
 };
