@@ -16,5 +16,6 @@ export const logger = pino({
   base: {
     app: 'prisme.ai-api-gateway',
   },
-  level: syscfg.DEBUG ? LogLevel.Trace : LogLevel.Info,
+  level:
+    process.env.LOG_LEVEL || (syscfg.DEBUG ? LogLevel.Trace : LogLevel.Info),
 });
