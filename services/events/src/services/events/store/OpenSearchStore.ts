@@ -1,10 +1,15 @@
-import elasticsearch from '@elastic/elasticsearch';
+import {
+  Client as OpensearchClient,
+  ApiResponse,
+} from '@opensearch-project/opensearch';
+import { AwsSigv4Signer } from '@opensearch-project/opensearch/aws';
+import { defaultProvider } from '@aws-sdk/credential-provider-node';
+import fetch from 'node-fetch';
 import { StoreDriverOptions } from '.';
 import {
   EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS,
   EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS,
   EVENTS_RETENTION_DAYS,
-  EVENTS_SCHEDULED_DELETION_DAYS,
   EVENTS_STORAGE_ES_BULK_REFRESH,
 } from '../../../../config';
 import { EventType } from '../../../eda';
@@ -21,22 +26,99 @@ import {
 import { sizeStringToBytes } from '../../../utils/sizeStringToBytes';
 import { PrismeContext } from '../../../api/middlewares';
 import { EVENTS_MAPPING, mapElasticBuckets, mergeArrays } from './common';
+import { URL } from 'url';
 
-export class ElasticsearchStore implements EventsStore {
-  readonly client: elasticsearch.Client;
+const transformMapping = (json: typeof EVENTS_MAPPING) => {
+  const updatedJson = JSON.parse(JSON.stringify(json)); // Deep clone the JSON object
+
+  function replaceType(obj: typeof updatedJson.properties) {
+    for (const key in obj) {
+      if (typeof obj[key] === 'object') {
+        replaceType(obj[key]); // Recursively traverse nested objects
+      } else if (key === 'type' && obj[key] === 'flattened') {
+        obj[key] = 'flat_object'; // Replace 'flattened' with 'flat_object' // We might prefer 'nested'
+        delete obj['ignore_above']; // Remove 'ignore_above' key as it not supported yet
+      }
+    }
+  }
+
+  replaceType(updatedJson.properties);
+  return updatedJson;
+};
+
+export async function fetchProvider(
+  url: string,
+  { method, body, headers }: { method: string; body?: any; headers?: any }
+) {
+  const res = await fetch(url, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const json = await res.json();
+  if (res.status >= 400 && res.status < 600) {
+    throw json;
+  }
+  return json;
+}
+
+export class Opensearchstore implements EventsStore {
+  readonly client: OpensearchClient;
   readonly namespace?: string;
+  _fetch: (
+    path: string,
+    { method, body, headers }: { method: string; body?: any; headers?: any }
+  ) => Promise<any> | undefined;
 
   constructor(opts: StoreDriverOptions, namespace?: string) {
-    this.client = new elasticsearch.Client({
-      node: opts.host,
-      auth: opts.user
-        ? {
-            username: opts.user,
-            password: opts.password,
-          }
-        : undefined,
-      ...opts.driverOptions,
-    });
+    if (opts.driverOptions.aws) {
+      this.client = new OpensearchClient({
+        ...AwsSigv4Signer({
+          region: opts.driverOptions.aws.region,
+          service: opts.driverOptions.aws.service, // 'es' (Classic) or 'aoss' (OpenSearch Serverless)
+          getCredentials: () => {
+            const credentialsProvider = defaultProvider();
+            return credentialsProvider();
+          },
+        }),
+        node: opts.host, // OpenSearch domain URL
+        // node: 'https://search-xxx.region.es.amazonaws.com' (Classic)
+        // node: "https://xxx.region.aoss.amazonaws.com" (OpenSearch Serverless)
+      });
+    } else {
+      this.client = new OpensearchClient({
+        node: opts.host,
+        auth: opts.user
+          ? {
+              username: opts.user,
+              password: opts.password,
+            }
+          : undefined,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+        ...opts.driverOptions,
+      });
+    }
+
+    this._fetch = async (path, { method, body, headers = {} }) => {
+      const url = new URL(path, opts.host).toString();
+      const response = await fetchProvider(url, {
+        method,
+        body,
+        headers: {
+          ...headers,
+          Authorization: `Basic ${Buffer.from(
+            `${opts.user}:${opts.password}`
+          ).toString('base64')}`,
+        },
+      });
+
+      return response;
+    };
     this.namespace = namespace;
     this.initializeConfiguration();
   }
@@ -55,54 +137,97 @@ export class ElasticsearchStore implements EventsStore {
       this.namespace ? '-' + this.namespace : ''
     }`;
 
-    await this.client.ilm.putLifecycle({
-      policy: policyName,
+    // Delete and recreate the policy, cause we cannot update without retrieving info about the first one.
+    try {
+      await this._fetch(`/_plugins/_ism/policies/${policyName}`, {
+        method: 'DELETE',
+      });
+    } catch (error) {
+      logger.warn({
+        msg: `PolicyDeletionFailed`,
+        policy: policyName,
+        error: error,
+      });
+    }
+    await this._fetch(`/_plugins/_ism/policies/${policyName}`, {
+      method: 'PUT',
       body: {
         policy: {
-          phases: {
-            hot: {
-              actions: {
-                rollover: {
-                  max_size: '40GB',
-                  max_primary_shard_size: '40GB',
+          description: 'Limit indexes size',
+          default_state: 'keep_small',
+          states: [
+            {
+              name: 'keep_small',
+              actions: [
+                {
+                  rollover: {
+                    min_size: '40GB',
+                    min_primary_shard_size: '40GB',
+                  },
                 },
-                forcemerge: {
-                  max_num_segments: 1,
+                {
+                  force_merge: {
+                    max_num_segments: 1,
+                  },
                 },
-              },
+              ],
             },
+          ],
+          ism_template: {
+            index_patterns: [this.getWorkspaceEventsIndexName('*')],
           },
         },
       },
     });
 
-    await this.client.ilm.putLifecycle({
-      policy: deletionScheduledPolicyName,
-      body: {
-        policy: {
-          phases: {
-            delete: {
-              min_age: `${EVENTS_SCHEDULED_DELETION_DAYS}d`,
-              actions: {
-                delete: {},
+    // @WARNING - Missing requirement : Data retention for x days.
+    // Using Opensearch the data retention is not possible using policies, so we delete right away.
+    // We might wang to implement a data retention manually.
+    try {
+      await this._fetch(
+        `/_plugins/_ism/policies/${deletionScheduledPolicyName}`,
+        {
+          method: 'DELETE',
+        }
+      );
+    } catch (error) {
+      logger.warn({
+        msg: `PolicyDeletionFailed`,
+        policy: deletionScheduledPolicyName,
+        error: error,
+      });
+    }
+    await this._fetch(
+      `/_plugins/_ism/policies/${deletionScheduledPolicyName}`,
+      {
+        method: 'PUT',
+        body: {
+          policy: {
+            description: 'Delete old indexes',
+            default_state: 'closed_index',
+            states: [
+              {
+                name: 'closed_index',
+                actions: [{ delete: {} }],
               },
-            },
+            ],
           },
         },
-      },
-    });
+      }
+    );
 
     await this.client.cluster.putComponentTemplate({
       name: templateName,
       body: {
         template: {
           settings: {
-            'index.lifecycle.name': policyName,
+            'plugins.index_state_management.policy_id': policyName, // This doesn't do anything in OpenSearch
           },
-          mappings: EVENTS_MAPPING,
+          mappings: transformMapping(EVENTS_MAPPING),
         },
       },
     });
+
     await this.client.indices.putIndexTemplate(
       {
         name: indexTemplateName,
@@ -233,7 +358,7 @@ export class ElasticsearchStore implements EventsStore {
     options: SearchOptions = {},
     body: any,
     ctx?: PrismeContext
-  ): Promise<elasticsearch.ApiResponse['body']> {
+  ): Promise<ApiResponse['body']> {
     const index = this.getWorkspaceEventsIndexName(workspaceId);
     const page = options.page || 0;
     const limit = typeof options.limit !== 'undefined' ? options.limit : 50;
@@ -761,21 +886,17 @@ export class ElasticsearchStore implements EventsStore {
     const scheduledDeletionPolicy = `policy-events-deletion-scheduled${
       this.namespace ? '-' + this.namespace : ''
     }`;
-    // 1. Delete current ilm policy
-    await this.client.ilm.removePolicy({
-      index,
+    // 1. Delete current ism policy
+    await this._fetch(`/_plugins/_ism/remove/${index}`, {
+      method: 'POST',
     });
 
     // 2. Apply deletion policy
-    await this.client.indices.putSettings({
-      index,
+    // In Opensearch : cannot set the origination_date.
+    await this._fetch(`/_plugins/_ism/add/${index}`, {
+      method: 'POST',
       body: {
-        index: {
-          lifecycle: {
-            name: scheduledDeletionPolicy,
-            origination_date: Date.now(),
-          },
-        },
+        policy_id: scheduledDeletionPolicy,
       },
     });
 
@@ -881,11 +1002,15 @@ export class ElasticsearchStore implements EventsStore {
   }
 
   async findInactiveIndices(indicesStats: EventsIndicesStats) {
-    // 1. list data streams
-    const { body: datastreams } = await this.client.indices.dataStreamsStats();
+    // 1. List data streams
+    // @TODO : Verify the reponse from stats
+    const datastreams = await this._fetch('_data_stream/**/_stats', {
+      method: 'GET',
+    });
+
     const closedDatastreams = new Set();
     const knownDatastreams: Set<string> = new Set(
-      datastreams.data_streams.map((cur: any) => {
+      datastreams?.data_streams?.map((cur: any) => {
         if (cur.maximum_timestamp === 0) {
           closedDatastreams.add(cur.data_stream);
         }
@@ -1077,8 +1202,8 @@ export class ElasticsearchStore implements EventsStore {
 
     try {
       deleteDatastreamsResult = deleteDatastreams?.length
-        ? await this.client.indices.deleteDataStream({
-            name: deleteDatastreams.map((cur) => cur.name),
+        ? await this.client.indices.delete({
+            index: deleteDatastreams.map((cur) => cur.name),
           })
         : {};
     } catch (err) {
