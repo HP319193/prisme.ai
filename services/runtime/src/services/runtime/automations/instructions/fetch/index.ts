@@ -318,7 +318,7 @@ async function getResponseBody(response: Response) {
   if (contentType.includes('text/')) {
     return await response.text();
   }
-  if (contentType.includes('application/')) {
+  if (contentType.includes('application/') || contentType.includes('image/')) {
     return await response.buffer();
   }
   return await response.text();
