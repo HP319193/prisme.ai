@@ -21,7 +21,7 @@ import {
 import { UserStatus } from '../../services/identity/users';
 import { ResourceServer } from '../../config/oidc';
 import { URL } from 'url';
-import { verifyToken } from '../../services/oidc/provider';
+import { verifyToken as verifyExternalToken } from '../../services/jwks/external';
 import { AuthProviders } from '../../services/identity';
 import { EventType } from '../../eda';
 import { logger } from '../../logger';
@@ -255,7 +255,7 @@ async function initPassportStrategies(
               new AuthenticationError('JWT missing in token_endpoint response')
             );
           }
-          const claims = await verifyToken(
+          const claims = await verifyExternalToken(
             params.id_token,
             providerName,
             provider.config.jwks_uri

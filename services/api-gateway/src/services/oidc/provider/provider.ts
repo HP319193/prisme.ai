@@ -8,11 +8,18 @@ import { URL } from 'url';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { logger } from '../../../logger';
+import { JWKStore } from '../../jwks/store';
 const Provider = require('fix-esm').require('oidc-provider').default;
+const initializeKeystore = require('fix-esm').require(
+  'oidc-provider/lib/helpers/initialize_keystore.js'
+).default;
 
-export const initOidcProvider = (broker: Broker): ProviderType => {
+export const initOidcProvider = async (
+  broker: Broker,
+  jwks: JWKStore
+): Promise<ProviderType> => {
   const provider = new Provider(oidcCfg.PROVIDER_URL, {
-    ...oidcCfg.CONFIGURATION,
+    ...oidcCfg.initConfiguration(jwks.store),
     adapter: RedisAdapter,
     // @param request
     // @param sub {string} - account identifier (subject)
@@ -103,5 +110,10 @@ export const initOidcProvider = (broker: Broker): ProviderType => {
       .catch(logger.warn);
   });
   provider.proxy = true;
+
+  // Whenever our JWK store is updated, update our provider so it can sign & validate JWT with the updated keystore !
+  jwks.on('jwks.updated', () => {
+    initializeKeystore.call(provider, jwks.store);
+  });
   return provider;
 };
