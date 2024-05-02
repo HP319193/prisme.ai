@@ -51,5 +51,4 @@ RUN chown -R node:node /www/services/pages/.next/server/pages/ && \
 # Uncomment the following line in case you want to disable telemetry.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-
 CMD ["/www/services/pages/docker/start.sh"]
