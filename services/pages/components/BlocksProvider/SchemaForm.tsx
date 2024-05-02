@@ -14,6 +14,7 @@ import { SchemaFormContext } from '@prisme.ai/design-system/lib/Components/Schem
 import { FieldComponentProps } from '@prisme.ai/design-system/lib/Components/SchemaForm/Field';
 import { useBlock } from '@prisme.ai/blocks';
 import { get } from 'lodash';
+import equal from 'fast-deep-equal';
 
 const FieldCode: SchemaFormContext['components']['FieldCode'] = ({
   schema,
@@ -24,11 +25,28 @@ const FieldCode: SchemaFormContext['components']['FieldCode'] = ({
   const [invalidJSON, setInvalidJSON] = useState(false);
 
   const field = useField(name);
+
   const [value, setValue] = useState(
     typeof field.input.value === 'string'
       ? field.input.value
       : JSON.stringify(field.input.value, null, '  ')
   );
+  const [mountEditor, setMountEditor] = useState(true);
+
+  useEffect(() => {
+    setValue((prev) => {
+      let prevValue = prev;
+      try {
+        prevValue = JSON.parse(prev);
+      } catch {}
+      if (equal(field.input.value, prevValue)) return prev;
+      setMountEditor(false);
+      setTimeout(() => setMountEditor(true));
+      if (typeof field.input.value === 'string') return field.input.value;
+      return JSON.stringify(field.input.value, null, '  ');
+    });
+  }, [field.input.value]);
+
   const onChange = useCallback(
     (value: string) => {
       setValue(value);
@@ -64,12 +82,14 @@ const FieldCode: SchemaFormContext['components']['FieldCode'] = ({
       </Tooltip>
       <div className="pr-form-input">
         <div className="flex flex-1">
-          <CodeEditorInline
-            value={value}
-            onChange={onChange}
-            mode={mode}
-            style={codeStyle}
-          />
+          {mountEditor && (
+            <CodeEditorInline
+              value={value}
+              onChange={onChange}
+              mode={mode}
+              style={codeStyle}
+            />
+          )}
         </div>
       </div>
     </div>

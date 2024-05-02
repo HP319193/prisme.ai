@@ -9,6 +9,16 @@ export default function (
   res: express.Response,
   next?: express.NextFunction
 ) {
+  // Fix occasional "res.status is not a function" errors
+  if (typeof res?.status !== 'function') {
+    logger.error({
+      ...req.context,
+      msg: 'Cannot send error through HTTP res as res.status is not a function',
+      err,
+    });
+    return;
+  }
+
   if (err) {
     if (((<any>err)?.message || '').includes('request entity too large')) {
       err = new PayloadTooLarge((<any>err).length, (<any>err).limit);

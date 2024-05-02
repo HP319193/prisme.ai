@@ -5,6 +5,8 @@ const DEBUG = ['dev', 'development'].includes(
 );
 
 const API_KEY_HEADER = process.env.API_KEY_HEADER || 'x-prismeai-api-key';
+const SOURCE_WORKSPACE_ID_HEADER = 'x-prismeai-workspace-id';
+
 export default {
   PORT: process.env.PORT || 3001,
   API_URL: process.env.API_URL || 'http://studio.local.prisme.ai:3001/v2',
@@ -36,10 +38,11 @@ export default {
   AUTH_DATA_HEADER: process.env.AUTH_DATA_HEADER || 'x-prismeai-auth-data',
 
   API_KEY_HEADER,
+  SOURCE_WORKSPACE_ID_HEADER,
 
   ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE: [
     API_KEY_HEADER,
-    'x-prismeai-workspace-id',
+    SOURCE_WORKSPACE_ID_HEADER,
   ],
 
   ROLE_HEADER: process.env.ROLE_HEADER || 'x-prismeai-role',
@@ -82,5 +85,9 @@ export default {
   // Since we can't distinguish regular requests from upload ones yet
   UPLOADS_MAX_SIZE: parseInt(
     process.env.UPLOADS_MAX_SIZE || '10000000' // 10MB
+  ),
+
+  ENABLE_HEALTHCHECK_LOGS: ['yes', 'enabled', 'enable', 'true'].includes(
+    (process.env.ENABLE_HEALTHCHECK_LOGS || 'no').toLowerCase()
   ),
 };

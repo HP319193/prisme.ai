@@ -26,6 +26,12 @@ export interface PrismeContext {
   http?: HTTPContext;
 }
 
+export function extractRequestIp(req: Request) {
+  return (
+    <string>req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip
+  );
+}
+
 export function requestDecorator(
   req: Request,
   res: Response,
@@ -46,20 +52,17 @@ export function requestDecorator(
   const adminEmails = syscfg.SUPER_ADMIN_EMAILS?.split(',').map((email) =>
     email.trim()
   );
-
+  const ip = extractRequestIp(req);
   const context: PrismeContext = {
     correlationId,
     userId,
     sessionId,
-    ip: req.ip,
+    ip,
     workspaceId: workspaceId,
     http: {
       originalUrl: req.originalUrl,
       method: req.method,
-      ip:
-        <string>req.headers['x-forwarded-for'] ||
-        req.socket.remoteAddress ||
-        req.ip,
+      ip,
       path: req.path,
       hostname: req.hostname,
       requestLength: req.socket.bytesRead,

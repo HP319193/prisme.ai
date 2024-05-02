@@ -8,6 +8,9 @@ const { MAILGUN_API_KEY, MAILGUN_DOMAIN, MAILGUN_HOST, EMAIL_FROM } = config;
 
 // Configure transport
 const initTransport = () => {
+  if (!MAILGUN_API_KEY) {
+    return;
+  }
   try {
     return nodemailer.createTransport(
       mailgunTransport({

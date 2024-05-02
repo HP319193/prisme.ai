@@ -13,6 +13,9 @@ import set from 'lodash.set';
 export const EVENTS_STORAGE_DRIVER =
   (process.env.EVENTS_STORAGE_DRIVER as StoreDriverType) || 'elasticsearch';
 
+export const EVENTS_STORAGE_NAMESPACE =
+  process.env.EVENTS_STORAGE_NAMESPACE || BROKER_NAMESPACE;
+
 export const EVENTS_STORAGE_ES_HOST =
   process.env.EVENTS_STORAGE_ES_HOST || 'http://localhost:9200';
 
@@ -20,9 +23,6 @@ export const EVENTS_STORAGE_ES_USER = process.env.EVENTS_STORAGE_ES_USER;
 
 export const EVENTS_STORAGE_ES_PASSWORD =
   process.env.EVENTS_STORAGE_ES_PASSWORD;
-
-export const EVENTS_STORAGE_NAMESPACE =
-  process.env.EVENTS_STORAGE_NAMESPACE || BROKER_NAMESPACE;
 
 export const EVENTS_STORAGE_ES_OPTIONS: StoreDriverOptions = {
   driver: EVENTS_STORAGE_DRIVER,

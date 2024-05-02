@@ -109,7 +109,7 @@ test.describe('Insert instructions', () => {
     );
   });
 
-  test('insert wait instructions', async ({ page, baseURL }) => {
+  test('insert wait instruction', async ({ page, baseURL }) => {
     await page.goto(
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
@@ -135,7 +135,7 @@ test.describe('Insert instructions', () => {
       '{"do":[{"wait":{"oneOf":[{"filters":{},"event":"wait for it"}],"timeout":30}}],"name":"test all instructions","slug":"test all instructions"}'
     );
   });
-  test('insert set instructions', async ({ page, baseURL }) => {
+  test('insert set instruction', async ({ page, baseURL }) => {
     await page.goto(
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
@@ -158,6 +158,274 @@ test.describe('Insert instructions', () => {
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(body).toBe(
       '{"do":[{"set":{"name":"foo","value":"{{bar}}"}}],"name":"test all instructions","slug":"test all instructions"}'
+    );
+  });
+  test('insert delete instruction', async ({ page, baseURL }) => {
+    await page.goto(
+      `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
+    );
+    await page.getByTestId('automation-builder-add-0').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-delete').click();
+
+    await page.getByTestId('schema-form-field-values.name').fill('foo');
+
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    let body = '';
+    page.on('request', (request) => {
+      body = request.postData() || '';
+    });
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(body).toBe(
+      '{"do":[{"delete":{"name":"foo"}}],"name":"test all instructions","slug":"test all instructions"}'
+    );
+  });
+
+  test('insert conditions instruction', async ({ page, baseURL }) => {
+    await page.goto(
+      `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
+    );
+    await page.getByTestId('automation-builder-add-0').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-conditions').click();
+
+    await page.getByRole('button', { name: 'Add condition' }).click();
+    await page.getByTestId('schema-form-field-values').fill('{{foo}}');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+    await page.mouse.move(200, 200);
+    await page.mouse.down();
+    await page.mouse.move(-300, 300);
+    await page.mouse.up();
+
+    await page.getByTestId('automation-builder-add-undefined').first().click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-set').click();
+    await page.getByTestId('schema-form-field-values.name').fill('foo');
+    await page.getByTestId('panel').locator('textarea').fill('{{bar}}');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    await page.getByTestId('automation-builder-add-undefined').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-set').click();
+    await page.getByTestId('schema-form-field-values.name').fill('foo');
+    await page.getByTestId('panel').locator('textarea').fill('{{bar}}');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    await page.mouse.move(200, 200);
+    await page.mouse.down();
+    await page.mouse.move(-300, 0);
+    await page.mouse.up();
+
+    await page.getByRole('button', { name: 'Add condition' }).click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('schema-form-field-values').click();
+    await page
+      .getByTestId('schema-form-field-values')
+      .fill('{{otherCondition}}');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    await page.getByTestId('automation-builder-add-undefined').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-set').click();
+    await page.getByTestId('schema-form-field-values.name').click();
+    await page.getByTestId('schema-form-field-values.name').fill('foo');
+    await page.locator('.ace_content').click();
+    await page
+      .getByTestId('panel')
+      .locator('textarea')
+      .fill('{{anotherValue}}');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+    let body = '';
+    page.on('request', (request) => {
+      body = request.postData() || '';
+    });
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(body).toBe(
+      '{"do":[{"conditions":{"{{foo}}":[{"set":{"name":"foo","value":"{{bar}}"}}],"{{otherCondition}}":[{"set":{"name":"foo","value":"{{anotherValue}}"}}],"default":[{"set":{"name":"foo","value":"{{bar}}"}}]}}],"name":"test all instructions","slug":"test all instructions"}'
+    );
+  });
+
+  test('insert repeat instruction', async ({ page, baseURL }) => {
+    await page.goto(
+      `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
+    );
+    await page.getByTestId('automation-builder-add-0').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-repeat').click();
+
+    await page.getByTestId('schema-form-field-values.on').fill('{{list}}');
+    await page.getByTestId('schema-form-field-values.until').fill('42');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    await page.getByTestId('automation-builder-add-0').nth(1).click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-set').click();
+    await page.getByTestId('schema-form-field-values.name').fill('foo');
+    await page.locator('textarea').fill('{{bar}}');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    let body = '';
+    page.on('request', (request) => {
+      body = request.postData() || '';
+    });
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(body).toBe(
+      '{"do":[{"repeat":{"on":"{{list}}","do":[{"set":{"name":"foo","value":"{{bar}}"}}],"until":42}}],"name":"test all instructions","slug":"test all instructions"}'
+    );
+  });
+
+  test('insert all instruction', async ({ page, baseURL }) => {
+    await page.goto(
+      `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
+    );
+    await page.getByTestId('automation-builder-add-0').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-all').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    await page.mouse.move(200, 200);
+    await page.mouse.down();
+    await page.mouse.move(0, -200);
+    await page.mouse.up();
+
+    await page.getByTestId('automation-builder-add-0').nth(1).click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-set').click();
+    await page.getByTestId('schema-form-field-values.name').fill('foo');
+    await page.locator('textarea').fill('{{bar}}');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    await page.getByTestId('automation-builder-add-1').first().click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-set').click();
+    await page.getByTestId('schema-form-field-values.name').fill('bar');
+    await page.locator('textarea').fill('{{foo}}');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    let body = '';
+    page.on('request', (request) => {
+      body = request.postData() || '';
+    });
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(body).toBe(
+      '{"do":[{"all":[{"set":{"name":"foo","value":"{{bar}}"}},{"set":{"name":"bar","value":"{{foo}}"}}]}],"name":"test all instructions","slug":"test all instructions"}'
+    );
+  });
+
+  test('insert break instruction', async ({ page, baseURL }) => {
+    await page.goto(
+      `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
+    );
+    await page.getByTestId('automation-builder-add-0').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-break').click();
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    await page.mouse.move(200, 200);
+    await page.mouse.down();
+    await page.mouse.move(0, -100);
+    await page.mouse.up();
+
+    await page.getByTestId('automation-builder-add-1').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-break').click();
+
+    await page.getByLabel('Scope').click();
+    await page.getByText('All', { exact: true }).click();
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    await page.mouse.move(200, 200);
+    await page.mouse.down();
+    await page.mouse.move(0, -100);
+    await page.mouse.up();
+
+    await page.getByTestId('automation-builder-add-2').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-break').click();
+
+    await page.getByLabel('Scope').click();
+    await page.getByText('This automation', { exact: true }).click();
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    let body = '';
+    page.on('request', (request) => {
+      body = request.postData() || '';
+    });
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(body).toBe(
+      '{"do":[{"break":{}},{"break":{"scope":"all"}},{"break":{"scope":"automation"}}],"name":"test all instructions","slug":"test all instructions"}'
+    );
+  });
+
+  test('insert fetch instruction', async ({ page, baseURL }) => {
+    await page.goto(
+      `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
+    );
+    await page.getByTestId('automation-builder-add-0').click();
+    await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
+    await page.getByTestId('automation-builder-instruction-fetch').click();
+
+    await page
+      .getByTestId('schema-form-field-values.url')
+      .fill('https://prisme.ai');
+    await page.getByLabel('HTTP method').click();
+    await page.getByText('GET', { exact: true }).click();
+    await page.getByTestId('schema-form-field-values.output').click();
+    await page.getByTestId('schema-form-field-values.output').fill('output');
+    await page.getByTestId('panel-close-btn').click();
+    await expect(page.getByTestId('panel')).not.toHaveClass(
+      /-translate-x-full/
+    );
+
+    let body = '';
+    page.on('request', (request) => {
+      body = request.postData() || '';
+    });
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(body).toBe(
+      '{"do":[{"fetch":{"emitErrors":true,"stream":{"target":{"currentSocket":true},"options":{"persist":true}},"outputMode":"body","headers":{},"query":{},"url":"https://prisme.ai","method":"get","output":"output"}}],"name":"test all instructions","slug":"test all instructions"}'
     );
   });
 });

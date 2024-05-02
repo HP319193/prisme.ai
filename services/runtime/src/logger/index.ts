@@ -17,5 +17,5 @@ export const logger = pino({
   base: {
     app: APP_NAME,
   },
-  level: DEBUG ? LogLevel.Trace : LogLevel.Info,
+  level: process.env.LOG_LEVEL || (DEBUG ? LogLevel.Trace : LogLevel.Info),
 });

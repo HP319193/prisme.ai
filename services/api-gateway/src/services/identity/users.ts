@@ -244,17 +244,29 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
 // User getter for /me
 export const get = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function (id: string): Promise<Prismeai.User> {
+    let user: User;
     try {
-      const user = await Users.get(id);
-      return filterUserFields(user);
+      user = await Users.get(id);
     } catch (err) {
-      logger.warn({
-        msg: `An error occured while trying to fetch user ${id}`,
+      if (
+        err instanceof Error &&
+        (err?.message || '').includes('Argument passed in must be')
+      ) {
+        throw new AuthenticationError(`Invalid userId ${id}`);
+      }
+      logger.error({
+        msg: 'Storage driver raised exception while fetching user ' + id,
         userId: id,
         err,
       });
+      throw new AuthenticationError(
+        'An internal error occured, please try again later or contact support.'
+      );
+    }
+    if (!user) {
       throw new NotFoundError('User not found', { userId: id });
     }
+    return filterUserFields(user);
   };
 
 const filterUserFields = (user: User): Prismeai.User => {

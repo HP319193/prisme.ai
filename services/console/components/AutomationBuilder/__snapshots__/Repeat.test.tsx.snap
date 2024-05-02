@@ -46,6 +46,7 @@ Array [
         App
         <button
           className="border-none cursor-pointer flex justify-center items-center"
+          data-testid="automation builder delete instruction undefined"
           onClick={[Function]}
           style={
             Object {

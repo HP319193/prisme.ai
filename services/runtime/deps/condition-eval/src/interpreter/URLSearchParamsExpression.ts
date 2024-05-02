@@ -1,3 +1,4 @@
+import { URLSearchParams } from 'url';
 import { InvalidExpressionSyntax } from '../../../../src/errors';
 import Evaluatable from '../Evaluatable';
 import Variable from './Variable';
