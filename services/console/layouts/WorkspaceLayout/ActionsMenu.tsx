@@ -15,6 +15,8 @@ import ExportIcon from '/icons/export.svgr';
 import UsersIcon from '/icons/users.svgr';
 import ArrowDown from '/icons/arrow-down.svgr';
 import ArrowUp from '/icons/arrow-up.svgr';
+import useLocalizedText from '../../utils/useLocalizedText';
+import { kebabCase } from 'lodash';
 
 interface ActionsMenuProps {
   children: ReactNode;
@@ -24,6 +26,7 @@ interface ActionsMenuProps {
 export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
+  const { localize } = useLocalizedText();
   const { trackEvent } = useTracking();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -90,14 +93,17 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
     const zip = await api.workspaces(workspace.id).versions.export();
     const a = document.createElement('a');
     a.style.display = 'none';
-    a.setAttribute('download', `workspace-${workspace.id}.zip`);
+    a.setAttribute(
+      'download',
+      `workspace-${kebabCase(localize(workspace.name))}-${workspace.id}.zip`
+    );
     a.setAttribute('href', URL.createObjectURL(zip));
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     setExporting(false);
     setIsOpen(false);
-  }, [exporting, trackEvent, workspace.id]);
+  }, [exporting, localize, trackEvent, workspace.id, workspace.name]);
 
   const menu: ItemType[] = useMemo(
     () => [
