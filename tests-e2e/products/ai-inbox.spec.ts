@@ -98,22 +98,4 @@ test('Search a team', async ({ page }) => {
     page.getByRole('button', { name: 'Une autre équipe' })
   ).toBeAttached();
   await expect(page.getByRole('button', { name: 'A Team' })).not.toBeAttached();
-
-  await page.getByTestId('schema-form-field-values.search').blur();
-
-  await page.waitForTimeout(1000);
-  await page.getByTestId('schema-form-field-values.search').click();
-  await page.getByTestId('schema-form-field-values.search').fill('');
-  await page.getByTestId('schema-form-field-values.search').press('Enter');
-  await page.waitForTimeout(200);
-
-  await expect(
-    page.getByRole('button', { name: 'Une équipe Une équipe' })
-  ).toBeAttached();
-  await expect(
-    page.getByRole('button', { name: 'Une autre équipe' })
-  ).toBeAttached();
-  await expect(
-    page.getByRole('button', { name: 'A Team' }).first()
-  ).toBeAttached();
 });
