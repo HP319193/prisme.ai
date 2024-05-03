@@ -62,18 +62,67 @@ With your documents integrated, you can begin querying your knowledge base using
 1. **Perform Queries**: Use the AI Knowledge interface to execute queries across your integrated documents.
 2. **Customize Query Handling**: Adjust settings like Self-Query and Enhance User Query to improve retrieval accuracy.
 
-### Step 5.1: Advanced customization using the Builder
+### Step 5: Implementing Test-Driven Development for AI Knowledge
+
+After setting up your knowledge base and before proceeding to advanced customizations, it's crucial to integrate a test-driven approach to ensure your AI performs accurately and consistently over time.
+
+#### Why Implement Test-Driven Development?
+
+AI Knowledge supports automated testing, which is essential for:
+
+- **Evaluating AI Performance**: Regularly assess the effectiveness of your AI in understanding and processing queries.
+- **Quality Tracking and Observability**: Monitor changes in AI performance over time to detect and correct deviations or improvements.
+- **Ease of Switching LLMs**: AI Knowledge is agnostic to the underlying Large Language Model (LLM). This flexibility allows you to switch to a more efficient, cost-effective, or environmentally friendly LLM without compromising on performance, thanks to robust testing.
+
+#### Step-by-Step Guide to adding Automated Tests
+
+1. **Access the Testing Module**: Navigate to the testing section in your AI Knowledge project settings.
+
+2. **Create a New Test Suite**: Define a suite where you can group related tests, such as querying effectiveness or response accuracy.
+
+3. **Add Test Cases**: For each test case, input a set of questions with expected answers. These can range from simple factual inquiries to complex reasoning tasks that your AI should handle.
+
+   Example of a test case:
+   - **Question**: "What are the storage conditions for sensitive electronic components?"
+   - **Expected Answer**: "Store in a cool, dry place away from sunlight."
+
+4. **Configure Test Settings**: Set the frequency of test runs (e.g., daily) and specify whether they should be triggered automatically or manually.
+
+5. **Running Tests**: Execute the tests to see how the AI responds. The platform automatically records and analyzes the performance.
+
+#### Observing Test Results
+
+For each test run, the following details are provided:
+
+- **Prompt and Context**: View the exact prompt and context used by the AI for generating responses.
+- **Generated Response**: The response from the AI is displayed.
+- **Response Evaluation**: Each response is evaluated against the expected answer and rated as poor, correct, or good. This rating is color-coded for quick assessment.
+- **Context Evaluation**: The relevance and accuracy of the context provided to the AI are also rated, ensuring the AI's understanding aligns with the query requirements.
+
+#### Continuous Improvement Based on Test Results
+
+AI Knowledge leverages test results to automatically suggest prompt adjustments and other modifications to improve response accuracy. This proactive feature helps in:
+
+- **Optimizing Interaction**: Refine how questions are presented to the AI to elicit the most accurate responses.
+- **Enhancing AI Understanding**: Adjust the contextual information provided to the AI based on test feedback to improve comprehension and response relevance.
+
+#### Integration into the AI Development Lifecycle
+
+By incorporating this test-driven step, you ensure that your AI system not only meets the initial requirements but also adapts and improves over time, maintaining high standards of accuracy and reliability. This approach is crucial for organizations looking to leverage AI dynamically and sustainably in the face of evolving data and varying LLM capabilities.
+
+
+### Step 6.1: Advanced customization using the Builder
 
 For enhanced customization and to improve collaboration with business teams, such as developing specific RAG pipelines, utilize the Builder:
 
 1. **Access the Builder**: Go to this feature on the Prisme.ai Platform.
 2. **Implement Custom Code**: Use Python or NodeJS to incorporate specific functionalities with LLamaIndex or Langchain. Once you've set up the automation (making it accessible via URL), copy the URL and proceed to **Home > API & Webhook** on the platform. Here, enable the webhook and enter the automation URL. You can subscribe to notifications for actions like asked questions, and when documents are added, deleted, or updated, as well as for tests.
 
-### Step 5.2: Advanced customization using your own hosted code 
+### Step 6.2: Advanced customization using your own hosted code 
 
 You can link your AI Knowledge project to your externally hosted code using a Webhook. To achieve this, navigate to **Home > API & Webhook** on your platform to configure your URL and enhance your project with specific functionalities.
 
-### Step 6: Monitoring and Maintenance
+### Step 7: Monitoring and Maintenance
 
 Regularly monitor your system to ensure optimal performance. Make adjustments to your knowledge base and AI settings as needed based on feedback and performance metrics.
 
