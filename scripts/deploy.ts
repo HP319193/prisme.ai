@@ -39,6 +39,7 @@ async function deploy() {
   await exec('git checkout main');
   await exec('git merge prod --no-ff');
   await exec(`git push ${remote} main`);
+  await exec(`git push ${remote} ${version}`);
 }
 
 deploy();
