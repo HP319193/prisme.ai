@@ -403,6 +403,10 @@ button {
   margin-right: 1rem;
 }
 
+.pr-form-any .pr-form-input {
+  width: 100% !important;
+}
+
 .pr-panel-settings .ant-tabs-nav {
   margin-bottom: 0 !important;
 }

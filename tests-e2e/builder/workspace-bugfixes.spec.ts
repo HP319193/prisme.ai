@@ -59,6 +59,9 @@ test('display arguments in CustomCode.run instruction', async ({
               foo: {
                 type: 'string',
               },
+              bar: {
+                type: 'object',
+              },
             },
           },
         },
@@ -94,36 +97,31 @@ test('display arguments in CustomCode.run instruction', async ({
   await page.getByTitle('doSomething').locator('div').click();
   await page.getByTestId('schema-form-field-values.foo').click();
   await page.getByTestId('schema-form-field-values.foo').fill('value');
+  await page.locator('.ace_content').click();
+  await page.locator('textarea').fill('{"ba": "papa"}');
+
+  let body = '';
+  page.on('request', (request) => {
+    body = request.postData() || '';
+  });
   await expect(
     await page.getByRole('button', { name: 'Save' })
   ).not.toHaveAttribute('disabled');
   await page.getByRole('button', { name: 'Save' }).click();
+  await expect(body).toBe(
+    '{"do":[{"Custom Code.run function":{"function":"doSomething","parameters":{"foo":"value","bar":{"ba":"papa"}}}}],"name":"test","slug":"test"}'
+  );
+
   await page.reload();
   await page.getByRole('button', { name: 'Run function edit' }).click();
   await page.waitForTimeout(100);
   await expect(page.getByTestId('schema-form-field-values.foo')).toHaveValue(
     'value'
   );
-
-  // Check automation content on server side
-  const savedAutomationResp = await request.get(
-    `${TESTS_E2E_API_URL}/workspaces/${id}/automations/${slug}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  const savedAutomation = await savedAutomationResp.json();
-
-  expect(savedAutomation.do).toEqual([
-    {
-      'Custom Code.run function': {
-        function: 'doSomething',
-        parameters: {
-          foo: 'value',
-        },
-      },
-    },
-  ]);
+  await expect(
+    page
+      .locator('#ace-editor div')
+      .filter({ hasText: '{ "ba": "papa"}' })
+      .nth(1)
+  ).toBeAttached();
 });
