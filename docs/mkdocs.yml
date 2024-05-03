@@ -99,6 +99,7 @@ nav:
       - i18n.website2gpt: examples/website-gpt.md
       - Effortless Data Storage & classification: examples/store-data.md
       - AI Webhook Builder: examples/api-webhook.md
+      - AI Knowledge - RAG : examples/start-rag.md
       - Other examples : examples/index.md
   - i18n.contributing:
       - i18n.index: contributing/index.md
