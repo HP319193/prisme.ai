@@ -1,19 +1,19 @@
-### Introduction to Test-Driven Development in AI Knowledge
+### Introduction to Test-Driven Building in AI Knowledge
 
-In the rapidly evolving field of AI, maintaining a consistent and reliable development process is crucial. Test-Driven Development (TDD) within the AI Knowledge platform enables a collaborative environment where Data Scientists, Data Engineers, Developers, and Business Teams can work together efficiently. 
+In the rapidly evolving field of AI, maintaining a consistent and reliable development process is crucial. Test-Driven Building (TDB) within the AI Knowledge platform enables a collaborative environment where Data Scientists, Data Engineers, Developers, and Business Teams can work together efficiently. 
 
 !!! info "Access"
 
     This unified approach ensures that everyone operates from a single source of truth, significantly enhancing efficiency and agility across teams.
 
-#### Benefits of a Unified Development Approach
+#### Benefits of a Unified Building Approach
 
 - **Efficiency**: By aligning all stakeholders around a shared set of tests and outcomes, teams can avoid duplicative work and miscommunications, speeding up the development cycle.
 - **Agility**: With a shared understanding of objectives and metrics, teams can more rapidly adapt to changes in project scope or market demands without losing momentum.
 - **Value Delivery**: Continuous integration of feedback through TDD allows teams to iteratively improve the product, ensuring that enhancements and optimizations directly address user needs and real-world performance.
 - **Incremental Improvement**: As tests are run and re-run, they not only validate the AI’s performance but also guide further development, allowing for gradual enhancements that cumulatively lead to a superior product.
 
-This approach not only streamlines project management and development but also underpins a culture of continuous improvement and cross-disciplinary collaboration, driving forward the development of robust and effective AI systems. By implementing TDD, organizations can foster a dynamic and responsive development environment, ultimately leading to faster delivery of high-value AI solutions.
+This approach not only streamlines project management and Building but also underpins a culture of continuous improvement and cross-disciplinary collaboration, driving forward the development of robust and effective AI systems. By implementing TDB, organizations can foster a dynamic and responsive Building environment, ultimately leading to faster delivery of high-value AI solutions.
 
 ## Creating an AI with RAG Specialization Using AI Knowledge
 
@@ -87,11 +87,11 @@ With your documents integrated, you can begin querying your knowledge base using
 
     Please note that this adds an additional call to the LLM, which may slow down response times and consume more tokens.
 
-### Step 6: Implementing Test-Driven Development for AI Knowledge
+### Step 6: Implementing Test-Driven Building for AI Knowledge
 
 After setting up your knowledge base and before proceeding to advanced customizations, it's crucial to integrate a test-driven approach to ensure your AI performs accurately and consistently over time.
 
-#### Why Implement Test-Driven Development?
+#### Why Implement Test-Driven Building?
 
 AI Knowledge supports automated testing, which is essential for:
 
@@ -156,17 +156,35 @@ For enhanced customization and to improve collaboration with business teams, suc
 
 You can link your AI Knowledge project to your externally hosted code using a Webhook. To achieve this, navigate to **Home > API & Webhook** on your platform to configure your URL and enhance your project with specific functionalities.
 
-### Step 8: Monitoring and Maintenance
 
-Regularly monitor your system to ensure optimal performance. Make adjustments to your knowledge base and AI settings as needed based on feedback and performance metrics. Use the Webhook feature to Implement alerting using the Builder to slack, Teams, ticketing system....
+### Step 8: Personally Identifiable Information and safety controls
 
-### Conclusion
+Additionally, regarding PII (Personally Identifiable Information) and safety controls, buidlers have the ability to implement specific measures through the Webhook functionality. This enables the detection of personal data within the information processed by the AI. Depending on the use case, you can choose to anonymize this data or not. Furthermore, you can integrate custom safety controls tailored to their specific solutions, enhancing the security and compliance of the system. This capability ensures that the handling of sensitive data is both flexible and aligned with organizational needs and regulatory requirements.
 
-By following these steps, you can effectively create and manage an AI with RAG capabilities using AI Knowledge. This setup allows for the efficient retrieval of information and customization of the AI to meet specific needs, enhancing your ability to manage and leverage data within your organization.
+
+### Step 9: Monitoring and Maintenance
+
+Regularly monitor your system to ensure optimal performance. Make adjustments to your knowledge base and AI settings as needed based on feedback and performance metrics. Use the Webhook feature to Implement alerting using the Builder to slack, Teams, ticketing system...
+
+### Step 10: Recommendations for building High-Performance Gen.AI Systems
+
+#### 1. Importance of Knowledge Architecture:
+The knowledge architecture is a crucial element in the success of any AI project. It should be designed to facilitate easy access and interpretation of data by AI systems. A well-organized structure not only enhances the understanding of queries but also supports more accurate and rapid responses, which are essential for real-time interactions.
+
+#### 2. Data Quality:
+Data quality represents approximately 80% of the success in AI generation projects. Ensuring that data is accurate, well-formatted, and relevant is vital. Poor data quality can lead to inefficiencies and inaccuracies in the output, severely hampering the performance of the AI system.
+
+####  3. Integration of NLU and LLM Technologies:
+Combining Natural Language Understanding (NLU) for rapid tag extraction with Large Language Models (LLM) for generating responses can significantly reduce the reliance on multiple calls to LLM systems and speed up interactions. This approach underscores the importance of hybrid AI models in enhancing system responsiveness and efficiency. A specific tutorial is coming soon for this approach.
+
+####  4. Continuous monitoring and optimization:
+Regular monitoring and optimization of AI systems are essential. This includes checking response times, accuracy, and the effectiveness of data retrieval methods. Adjustments based on these metrics can help maintain and improve the system's performance over time.
+
+For Gen.AI projects, focus on developing a robust knowledge architecture and maintaining high data quality to significantly influence the overall effectiveness and efficiency of the AI system.
 
 ### Additional Resources
 
-For further guidance, refer to AI Knowledge's Embeded documentation sections:
+For further guidance, refer to AI Knowledge's embeded documentation sections:
 
 - **API References**: Learn how to interact with your knowledge base programmatically.
 
