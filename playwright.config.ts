@@ -49,6 +49,14 @@ export default defineConfig({
       dependencies: ['setup'],
     },
     {
+      name: 'Products',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: './tests-e2e/.auth/user.json',
+      },
+      testMatch: /tests-e2e\/products\/*/,
+    },
+    {
       name: 'Public pages',
       use: {
         ...devices['Desktop Chrome'],
