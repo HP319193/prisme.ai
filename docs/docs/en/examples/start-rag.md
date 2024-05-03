@@ -1,68 +1,65 @@
-### Introduction to Test-Driven Building in AI Knowledge
+### Introduction to AI Knowledge product
 
-In the rapidly evolving field of AI, maintaining a consistent and reliable development process is crucial. Test-Driven Building (TDB) within the AI Knowledge platform enables a collaborative environment where Data Scientists, Data Engineers, Developers, and Business Teams can work together efficiently. 
+The AI Knowledge product functions as a RAG-as-a-Service offering. It fosters a collaborative environment where Data Scientists, Data Engineers, Developers, and Business Teams can efficiently collaborate. In the fast-paced realm of AI, it is vital to maintain a consistent and dependable development process. This product features a unique and innovative methodology known as Gen.AI Test-Driven Building.
 
-!!! info "Access"
+!!! info "Unified approach"
 
     This unified approach ensures that everyone operates from a single source of truth, significantly enhancing efficiency and agility across teams.
 
-#### Benefits of a Unified Building Approach
+#### Benefits of a unified building approach
 
-- **Efficiency**: By aligning all stakeholders around a shared set of tests and outcomes, teams can avoid duplicative work and miscommunications, speeding up the development cycle.
+- **Efficiency**: By aligning all stakeholders around a shared set of tests and outcomes, teams can avoid duplicative work and miscommunications, speeding up the building cycle.
 - **Agility**: With a shared understanding of objectives and metrics, teams can more rapidly adapt to changes in project scope or market demands without losing momentum.
-- **Value Delivery**: Continuous integration of feedback through TDD allows teams to iteratively improve the product, ensuring that enhancements and optimizations directly address user needs and real-world performance.
+- **Value Delivery**: Continuous integration of feedback through this method allows teams to iteratively improve the product, ensuring that enhancements and optimizations directly address user needs and real-world performance.
 - **Incremental Improvement**: As tests are run and re-run, they not only validate the AI’s performance but also guide further development, allowing for gradual enhancements that cumulatively lead to a superior product.
 
 This approach not only streamlines project management and Building but also underpins a culture of continuous improvement and cross-disciplinary collaboration, driving forward the development of robust and effective AI systems. By implementing TDB, organizations can foster a dynamic and responsive Building environment, ultimately leading to faster delivery of high-value AI solutions.
 
-## Creating an AI with RAG Specialization Using AI Knowledge
-
-AI Knowledge allows for the effective management of a knowledge base by integrating various documents from sources like files, websites, and text into a unified system. This tutorial explains how to create an AI using the RAG architecture.
+## Creating a RAG project using AI Knowledge
 
 ### Prerequisites
 
-- Access to the AI Knowledge platform.
+- Access to the AI Knowledge product (self-hosted or Cloud version).
 - Basic understanding of prompting.
 - Documents or data to be integrated (web pages, PDFs, Word, PPT, JSON...).
 
 ### Step 1: Understand the AI Knowledge Interface
 
-First, familiarize yourself with the AI Knowledge platform's architecture. It includes components like the Home > AI section, where you can manage your AI models, and tools for document integration, query handling, and customization.
+First, familiarize yourself with the AI Knowledge product's architecture. It includes components like the Home > AI section, where you can manage your AI models, and tools for document integration, query handling, and customization.
 
-- **Home**: Configure AI models , select embedding models, and set other parameters.
+- **Home**: Configure AI models, select embedding models, and set other parameters.
 
-- **Test**: Configure Tests, supervize and analyze results
+- **Test**: Configure Tests, supervize and analyze results.
 
 - **Analytics**: some KPI to monitor your AI usage: tokens, generated answers, daily usage... 
 
-- **Docs**: Embeded product documentation.
+- **Help**: Embeded product documentation.
 
-### Step 2: Setting up Your Knowledge Base
+### Step 2: Setting up your knowledge base
 
 Create a new project in AI Knowledge to organize your documents effectively.
 
 1. **Log into AI Knowledge**: Access your dashboard.
-2. **Create a wew Project**: Navigate to the project management area and create a new project for storing your knowledge base.
+2. **Create a wew Project**: Navigate to the project management area and create a new project to start building your AI.
 
 ![Create project](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/8Th-fkX-OgPCEtflsr2kU.Screenshot-2024-05-03-at-17.42.00.png "Create project")
 
 
-### Step 3: Understand the AI Knowledge Architecture
+### Step 3: Understand the AI Knowledge architecture
 
 ![AI Knowledge architecture](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/wW3UZla/-PRT5DBRYcGqov5FvHnPQ.AI-Knowledge.png "AI Knowledge architecture")
 
-This description provides an overview of the RAG (Retriever-Augmented Generation) architecture, as it is presented without necessitating any coding for the customization of your Large Language Model (LLM). The framework is deliberately designed to be indifferent to the specifics of LLMs, ensuring compatibility across various models for both embedding and generative tasks. It offers a flexible and adaptable solution for integrating LLMs into a wide range of applications.
-
+This description provides an overview of the RAG (Retriever-Augmented Generation) architecture, as it is presented without necessitating any coding for the customization of your Large Language Model (LLM). The product is deliberately designed to be indifferent to the specifics of LLMs, ensuring compatibility across various models for both embedding and generative tasks. It offers a flexible and adaptable solution for integrating LLMs into a wide range of applications.
 
 ### Step 4: Integrating Documents
 
-To include web pages and PDFs into your knowledge base, follow these steps:
+To include web pages, PPT, Word, PDFs... into your knowledge base, follow these steps:
 
 1. **Document Integration**: Use the system's interface to add documents from your selected sources.
 
 ![Adding doc](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/778upsF0H0H9SqNXlU7cL.Screenshot-2024-05-03-at-17.44.56.png "Adding doc")
 
-2. **Segmentation and Vectorization**: Documents are loaded, segmented into chunks, and vectorized with embedding model. This process involves settings adjustments such as:
+2. **Segmentation and Vectorization**: Documents are loaded, segmented into chunks, and vectorized using the available embedding models. This process involves settings adjustments such as:
    - **Text Splitter**: Choose between static or dynamic modes for document segmentation.
    - **Embeddings Settings**: Customize how text is transformed into vectors.
 
@@ -70,20 +67,20 @@ To include web pages and PDFs into your knowledge base, follow these steps:
 
 With your documents integrated, you can begin querying your knowledge base using the provided tools:
 
-1. **Perform Queries**: Click on Chat to use the AI Store interface to chat across your integrated documents with ChatGPT Like interface.
+1. **Perform Queries**: Click on Chat to use the AI Store interface to chat across your integrated documents with ChatGPT-Like interface.
 
 ![Chat](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/Qi2YYaz5DXouem8lqcvdm.Screenshot-2024-05-03-at-17.57.12.png "Chat")
 
 ![Source and chuncks](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/Jfx8GgfNuAGJuzUYmgvPC.Screenshot-2024-05-03-at-18.08.25.png "Source and chuncks")
 
-!!! info "Access"
+!!! info "Control"
 
     As you can observe, sources are cited along with the option to view all chunks used to formulate the response. This feature allows you to thoroughly understand and challenge the AI's responses before making any decisions.
 
 
 2. **Customize Query Handling**: Adjust settings like Self-Query and Enhance User Query to improve retrieval accuracy. 
 
-!!! info "Access"
+!!! info "Notice"
 
     Please note that this adds an additional call to the LLM, which may slow down response times and consume more tokens.
 
@@ -145,11 +142,11 @@ AI Knowledge leverages test results to automatically suggest prompt adjustments 
 By incorporating this test-driven step, you ensure that your AI system not only meets the initial requirements but also adapts and improves over time, maintaining high standards of accuracy and reliability. This approach is crucial for organizations looking to leverage AI dynamically and sustainably in the face of evolving data and varying LLM capabilities.
 
 
-### Step 7.1: Advanced customization using the Builder
+### Step 7.1: Advanced customization using the Builder product
 
 For enhanced customization and to improve collaboration with business teams, such as developing specific RAG pipelines, utilize the Builder:
 
-1. **Access the Builder**: Go to this feature on the Prisme.ai Platform.
+1. **Access the Builder**: Go to this product on the Prisme.ai Platform.
 2. **Implement Custom Code**: Use Python or NodeJS to incorporate specific functionalities with LLamaIndex or Langchain. Once you've set up the automation (making it accessible via URL), copy the URL and proceed to **Home > API & Webhook** on the platform. Here, enable the webhook and enter the automation URL. You can subscribe to notifications for actions like asked questions, and when documents are added, deleted, or updated, as well as for tests.
 
 ### Step 7.2: Advanced customization using your own hosted code 
@@ -164,12 +161,12 @@ Additionally, regarding PII (Personally Identifiable Information) and safety con
 
 ### Step 9: Monitoring and Maintenance
 
-Regularly monitor your system to ensure optimal performance. Make adjustments to your knowledge base and AI settings as needed based on feedback and performance metrics. Use the Webhook feature to Implement alerting using the Builder to slack, Teams, ticketing system...
+Regularly monitor your system to ensure optimal performance. Make adjustments to your knowledge base and AI settings as needed based on feedback and performance metrics. Leverage the Webhook feature to implement alerts using the Builder for platforms like Slack, Teams, Gitlab, Jira, and more.
 
-### Step 10: Recommendations for building High-Performance Gen.AI Systems
+### Step 10: Recommendations for building high-performance RAG for Gen.AI Systems
 
 #### 1. Importance of Knowledge Architecture:
-The knowledge architecture is a crucial element in the success of any AI project. It should be designed to facilitate easy access and interpretation of data by AI systems. A well-organized structure not only enhances the understanding of queries but also supports more accurate and rapid responses, which are essential for real-time interactions.
+The knowledge architecture is a crucial element in the success of any AI project. It should be designed to facilitate easy access and interpretation of data by AI systems. A well-organized structure not only enhances the understanding of queries but also supports more accurate and rapid responses, which are essential for real-time interactions. A specific tutorial is coming soon for this approach.
 
 #### 2. Data Quality:
 Data quality represents approximately 80% of the success in AI generation projects. Ensuring that data is accurate, well-formatted, and relevant is vital. Poor data quality can lead to inefficiencies and inaccuracies in the output, severely hampering the performance of the AI system.
