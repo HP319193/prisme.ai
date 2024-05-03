@@ -167,8 +167,11 @@ By following these steps, you can effectively create and manage an AI with RAG c
 ### Additional Resources
 
 For further guidance, refer to AI Knowledge's Embeded documentation sections:
+
 - **API References**: Learn how to interact with your knowledge base programmatically.
+
 - **Webhook Documentation**: Discover how to set up specific automations that trigger when an end user asks a question, the business team manipulates documents, or when running tests.
+
 - **Glossary**: Understand key terms and components used within the platform.
 
 By the end of this tutorial, you should be able to create a specialized AI that leverages the power of RAG for enhanced information retrieval and knowledge management.
