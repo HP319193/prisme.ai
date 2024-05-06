@@ -97,6 +97,7 @@ test('Search a team', async ({ page }) => {
   await page.getByTestId('schema-form-field-values.search').fill('équipe');
   await page.waitForTimeout(200);
   await page.getByTestId('schema-form-field-values.search').press('Enter');
+  await page.waitForTimeout(200);
   await expect(lastFrameSent).toBe(
     '42/v2/workspaces/iGsXZ6I/events,["event",{"type":"filter teams","payload":{"search":"équipe"}}]'
   );
