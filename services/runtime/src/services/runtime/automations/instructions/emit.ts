@@ -1,4 +1,4 @@
-import { Broker } from '@prisme.ai/broker';
+import { Broker, EventSource } from '@prisme.ai/broker';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../../config';
 import { InvalidEventError } from '../../../../errors';
 import { AppContext } from '../../../workspaces';
@@ -10,22 +10,54 @@ export async function emit(
   ctx: ContextsManager,
   appContext?: AppContext
 ) {
+  const emitSourceContext: Partial<EventSource> = {
+    ...appContext,
+    userId: undefined, // Only custom events sent from API or Websocket have their source userId sent
+    // sessionId might have been manually changed since given broker initialization
+    sessionId: ctx.session?.sessionId || broker.parentSource?.sessionId,
+    serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
+    automationDepth: ctx.depth,
+  };
+
+  if (payload == undefined || payload == null) {
+    payload = {};
+  }
+
+  // Do not allow emitting a non object payload as it could not be persisted
+  if (typeof payload !== 'object' || Array.isArray(payload)) {
+    return await broker.send(
+      appContext?.appInstanceFullSlug
+        ? `${appContext?.appInstanceFullSlug}.error`
+        : 'error',
+      {
+        error: 'InvalidEventError',
+        message: `Event payload must be an object, received ${
+          payload?.constructor?.name || typeof payload
+        }`,
+        details: {
+          event: event,
+          payload,
+        },
+      },
+      emitSourceContext,
+      {},
+      {
+        throwErrors: true,
+      }
+    );
+  }
+
   try {
     return await broker.send(
       appContext?.appInstanceFullSlug
         ? `${appContext?.appInstanceFullSlug}.${event}`
         : event,
       payload || {},
-      {
-        ...appContext,
-        userId: undefined, // Only custom events sent from API or Websocket have their source userId sent
-        // sessionId might have been manually changed since given broker initialization
-        sessionId: ctx.session?.sessionId || broker.parentSource?.sessionId,
-        serviceTopic: RUNTIME_EMITS_BROKER_TOPIC,
-        automationDepth: ctx.depth,
-      },
+      emitSourceContext,
       { target, options },
-      true
+      {
+        throwErrors: true,
+      }
     );
   } catch (error) {
     if (
