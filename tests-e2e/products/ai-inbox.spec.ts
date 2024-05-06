@@ -43,34 +43,6 @@ test('Display AI Inbox', async ({ page }) => {
   ).toBeAttached();
 });
 
-// Does not work on gitlablci 😡
-test.fixme('Search a team', async ({ page }) => {
-  const framesSent: string[] = [];
-  page.on('websocket', (ws) => {
-    ws.on('framesent', (event) => {
-      framesSent.push(event.payload.toString());
-    });
-  });
-
-  await page.goto(baseUrl);
-  await page.getByTestId('schema-form-field-values.search').focus();
-  await page.getByTestId('schema-form-field-values.search').fill('équipe');
-  await page.getByTestId('schema-form-field-values.search').focus();
-  await page.waitForTimeout(200);
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(500);
-  await expect(framesSent).toContain(
-    '42/v2/workspaces/iGsXZ6I/events,["event",{"type":"filter teams","payload":{"search":"équipe"}}]'
-  );
-  await expect(
-    page.getByRole('button', { name: 'Une équipe Une équipe' })
-  ).toBeAttached();
-  await expect(
-    page.getByRole('button', { name: 'Une autre équipe' })
-  ).toBeAttached();
-  await expect(page.getByRole('button', { name: 'A Team' })).not.toBeAttached();
-});
-
 test('Create a team', async ({ page }) => {
   await page.goto(baseUrl);
 
@@ -113,4 +85,30 @@ test('Create a team', async ({ page }) => {
 
   // delete
   await page.goto(`${baseUrl}/deleteTeam?team=${createdId}`);
+});
+
+test('Search a team', async ({ page }) => {
+  const framesSent: string[] = [];
+  page.on('websocket', (ws) => {
+    ws.on('framesent', (event) => {
+      framesSent.push(event.payload.toString());
+    });
+  });
+
+  await page.goto(baseUrl);
+  await page.getByTestId('schema-form-field-values.search').focus();
+  await page.getByTestId('schema-form-field-values.search').fill('équipe');
+  await page.getByTestId('schema-form-field-values.search').focus();
+  await page.waitForTimeout(1000);
+  await page.keyboard.press('Enter');
+  await expect(framesSent).toContain(
+    '42/v2/workspaces/iGsXZ6I/events,["event",{"type":"filter teams","payload":{"search":"équipe"}}]'
+  );
+  await expect(
+    page.getByRole('button', { name: 'Une équipe Une équipe' })
+  ).toBeAttached();
+  await expect(
+    page.getByRole('button', { name: 'Une autre équipe' })
+  ).toBeAttached();
+  await expect(page.getByRole('button', { name: 'A Team' })).not.toBeAttached();
 });
