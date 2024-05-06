@@ -43,12 +43,12 @@ const defaultStyles = `:block {
   flex: 1;
 }
 .product-layout-sidebar {
-  --text-color: #F9F9F9;
+  --text-color: var(--secondary-text);
 
   display: flex;
   flex-direction: column;
   flex: none;
-  background-color: #1A2537;
+  background-color: var(--layout-surface-secondary);
   width: 81px;
   overflow: hidden;
   color: var(--text-color);
