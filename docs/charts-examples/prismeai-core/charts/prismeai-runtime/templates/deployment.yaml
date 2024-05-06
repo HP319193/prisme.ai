@@ -81,6 +81,13 @@ spec:
             - name: NODE_ENV
               value: {{ .Values.nodeEnv | default "production" }}
 
+            - name: INTERNAL_API_KEY
+              {{- if kindIs "map" .Values.global.internalApiKey }}
+              {{- toYaml .Values.global.internalApiKey | nindent 14 }}
+              {{ else }}
+              value: {{ .Values.global.internalApiKey }}
+              {{- end }}
+
             - name: BROKER_DRIVER
               value: {{ .Values.global.broker.driver }}
             - name: BROKER_HOST

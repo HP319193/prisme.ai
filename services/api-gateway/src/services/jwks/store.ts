@@ -54,17 +54,20 @@ export class JWKStore extends EventEmitter {
       this.broker.on(
         EventType.UpdatedJWKS,
         async (event) => {
-          if (
+          const fromLocal =
             event?.source?.host?.replica &&
-            event?.source?.host?.replica === this.broker.consumer.name
-          ) {
+            event?.source?.host?.replica === this.broker.consumer.name;
+          this.emit('jwks.updated', {
+            fromLocal,
+          });
+
+          if (fromLocal) {
             return true;
           }
           logger.info({
             msg: `Reloading JWKS store`,
           });
           await this.init(false);
-          this.emit('jwks.updated');
           return true;
         },
         {
@@ -146,7 +149,12 @@ export class JWKStore extends EventEmitter {
       this.broker
         .send<Prismeai.UpdatedJWKS['payload']>(
           EventType.UpdatedJWKS,
-          storeUpdateEvent
+          storeUpdateEvent,
+          {},
+          {},
+          {
+            disableValidation: true,
+          }
         )
         .catch(logger.error);
     }

@@ -13,6 +13,7 @@ import { initOidcProvider } from './services/oidc/provider';
 import startWorkspacesClientSync from './services/oidc/client';
 import { cleanIncomingRequest } from './middlewares';
 import { JWKStore } from './services/jwks/store';
+import { publishJWKToRuntime } from './services/jwks/internal';
 
 const { CONSOLE_URL = '', PAGES_HOST = '' } = process.env;
 
@@ -44,12 +45,20 @@ app.use(
   })
 );
 
-let gtwcfg, oidc;
+let gtwcfg: GatewayConfig, oidc;
 (async function () {
   try {
     gtwcfg = new GatewayConfig(syscfg.GATEWAY_CONFIG);
+
     const jwks = new JWKStore(broker);
     await jwks.init();
+    // Keep runtime in sync with our signing JWK
+    await publishJWKToRuntime(gtwcfg, jwks);
+    jwks.on(
+      'jwks.updated',
+      ({ fromLocal }) => fromLocal && publishJWKToRuntime(gtwcfg, jwks)
+    );
+
     oidc = await initOidcProvider(broker, jwks);
 
     initMetrics(app);

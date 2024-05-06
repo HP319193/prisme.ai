@@ -3,6 +3,7 @@ import http from 'http';
 import {
   APP_NAME,
   CONTEXTS_CACHE,
+  JWKS_FILEPATH,
   PERMISSIONS_STORAGE_MONGODB_OPTIONS,
   PORT,
   WORKSPACES_STORAGE_OPTIONS,
@@ -18,6 +19,7 @@ import { Workspaces } from './services/workspaces';
 import { Apps } from './services/apps';
 import { Schedules } from './services/schedules';
 import { buildCache } from './cache';
+import { initJWKStore } from './utils/jwks';
 
 process.on('uncaughtException', uncaughtExceptionHandler);
 
@@ -40,6 +42,8 @@ const workspacesSynchroBroker = initEDA(`${APP_NAME}-workspaces-synchro`);
 
   const cache = await buildCache(CONTEXTS_CACHE);
   await cache.connect();
+
+  await initJWKStore(broker, cache, JWKS_FILEPATH ? JWKS_FILEPATH : undefined);
 
   const apps = new Apps(
     WORKSPACES_STORAGE_TYPE,
@@ -72,7 +76,7 @@ const workspacesSynchroBroker = initEDA(`${APP_NAME}-workspaces-synchro`);
   process.on('SIGTERM', exit);
   process.on('SIGINT', exit);
 
-  const app = initAPI(runtime, broker, accessManager);
+  const app = initAPI(runtime, broker, accessManager, cache);
   const httpServer = http.createServer(app);
   httpServer.listen(PORT, function () {
     console.log(`${APP_NAME} listening on ${PORT}.`);

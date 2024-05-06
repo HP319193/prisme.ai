@@ -1,15 +1,9 @@
 import path from 'path';
-import { getJWKS } from '../src/utils/jwks';
 import { API_URL } from './api';
 
 export const JWKS_FILEPATH =
   process.env.NODE_ENV !== 'test' &&
   (process.env.JWKS_FILEPATH || path.resolve('../../jwks.json'));
-
-export const JWKS =
-  JWKS_FILEPATH && JWKS_FILEPATH !== 'disabled' && JWKS_FILEPATH !== 'false'
-    ? getJWKS(JWKS_FILEPATH)
-    : undefined;
 
 export const OIDC_PROVIDER_URL =
   process.env.OIDC_PROVIDER_URL || API_URL.replace('/v2', '');
