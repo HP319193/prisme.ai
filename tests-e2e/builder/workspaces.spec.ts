@@ -78,14 +78,11 @@ test('create workspace', async ({ page, baseURL, context }) => {
       new URL(baseURL || '').hostname
     );
     actionsOnEnd.push(async ({ request }) => {
-      const resp = await request.delete(
-        `${TESTS_E2E_API_URL}/workspaces/${createdId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await request.delete(`${TESTS_E2E_API_URL}/workspaces/${createdId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
     });
   }
 });

@@ -63,7 +63,7 @@ test('create a new Automation', async ({ page, baseURL }) => {
 
 test.describe('Insert instructions', () => {
   let automationSlug = '';
-  test.beforeEach(async ({ context, request }) => {
+  test.beforeEach(async ({ context, request, baseURL }) => {
     const token = await getAccessToken(
       context,
       new URL(baseURL || '').hostname
