@@ -26,6 +26,7 @@
     "js-yaml": "^4.1.0",
     "lodash.set": "^4.3.2",
     "nanoid": "^3.1.30",
+    "node-fetch": "^2.6.7",
     "on-finished": "^2.3.0",
     "pino": "^7.2.0",
     "prom-client": "^14.0.1",
