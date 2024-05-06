@@ -93,7 +93,7 @@ test('Search a team', async ({ page }) => {
   });
 
   await page.goto('https://ai-knowledge-inbox.pages.prisme.ai/fr');
-  await page.getByTestId('schema-form-field-values.search').click();
+  await page.getByTestId('schema-form-field-values.search').focus();
   await page.getByTestId('schema-form-field-values.search').fill('équipe');
   await page.waitForTimeout(200);
   await page.getByTestId('schema-form-field-values.search').press('Enter');
