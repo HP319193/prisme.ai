@@ -6,8 +6,8 @@ const { TESTS_E2E_API_URL = '' } = process.env;
 let actionsOnEnd: Function[] = [];
 let workspaceId = '';
 
-test.beforeEach(async ({ context, request }) => {
-  const token = await getAccessToken(context);
+test.beforeEach(async ({ context, request, baseURL }) => {
+  const token = await getAccessToken(context, new URL(baseURL || '').hostname);
   actionsOnEnd = [];
   const resp = await request.post(`${TESTS_E2E_API_URL}/workspaces`, {
     headers: {
@@ -64,7 +64,10 @@ test('create a new Automation', async ({ page, baseURL }) => {
 test.describe('Insert instructions', () => {
   let automationSlug = '';
   test.beforeEach(async ({ context, request }) => {
-    const token = await getAccessToken(context);
+    const token = await getAccessToken(
+      context,
+      new URL(baseURL || '').hostname
+    );
     const respAutomation = await request.post(
       `${TESTS_E2E_API_URL}/workspaces/${workspaceId}/automations`,
       {

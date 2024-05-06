@@ -11,7 +11,10 @@ const {
 const authFile = 'tests-e2e/.auth/user.json';
 
 setup('authenticate', async ({ page, request, context, baseURL }) => {
-  const accessToken = await getAccessToken(context);
+  const accessToken = await getAccessToken(
+    context,
+    new URL(baseURL || '').hostname
+  );
   if (accessToken) {
     const me = await request.get(`${TESTS_E2E_API_URL}/me`, {
       headers: {

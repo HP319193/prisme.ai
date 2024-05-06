@@ -73,7 +73,10 @@ test('create workspace', async ({ page, baseURL, context }) => {
   await expect(page.getByText('A test Workspace name')).toBeAttached();
 
   if (createdId) {
-    const token = await getAccessToken(context);
+    const token = await getAccessToken(
+      context,
+      new URL(baseURL || '').hostname
+    );
     actionsOnEnd.push(async ({ request }) => {
       const resp = await request.delete(
         `${TESTS_E2E_API_URL}/workspaces/${createdId}`,
@@ -93,7 +96,7 @@ test('delete workspace from workspaces list', async ({
   request,
   context,
 }) => {
-  const token = await getAccessToken(context);
+  const token = await getAccessToken(context, new URL(baseURL || '').hostname);
   const resp = await request.post(`${TESTS_E2E_API_URL}/workspaces`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -136,7 +139,7 @@ test('duplicate workspace from workspaces list', async ({
   request,
   context,
 }) => {
-  const token = await getAccessToken(context);
+  const token = await getAccessToken(context, new URL(baseURL || '').hostname);
   const resp = await request.post(`${TESTS_E2E_API_URL}/workspaces`, {
     headers: {
       Authorization: `Bearer ${token}`,

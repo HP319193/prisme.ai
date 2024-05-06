@@ -19,7 +19,7 @@ test('display arguments in CustomCode.run instruction', async ({
   context,
   baseURL,
 }) => {
-  const token = await getAccessToken(context);
+  const token = await getAccessToken(context, new URL(baseURL || '').hostname);
   const resp = await request.post(`${TESTS_E2E_API_URL}/workspaces`, {
     headers: {
       Authorization: `Bearer ${token}`,
