@@ -85,12 +85,21 @@ test('Create a team', async ({ page }) => {
 });
 
 test('Search a team', async ({ page }) => {
+  let lastFrameSent = '';
+  page.on('websocket', (ws) => {
+    ws.on('framesent', (event) => {
+      lastFrameSent = event.payload.toString();
+    });
+  });
+
   await page.goto('https://ai-knowledge-inbox.pages.prisme.ai/fr');
   await page.getByTestId('schema-form-field-values.search').click();
   await page.getByTestId('schema-form-field-values.search').fill('équipe');
+  await page.waitForTimeout(200);
   await page.getByTestId('schema-form-field-values.search').press('Enter');
-  await page.waitForTimeout(500);
-
+  await expect(lastFrameSent).toBe(
+    '42/v2/workspaces/iGsXZ6I/events,["event",{"type":"filter teams","payload":{"search":"équipe"}}]'
+  );
   await expect(
     page.getByRole('button', { name: 'Une équipe Une équipe' })
   ).toBeAttached();
