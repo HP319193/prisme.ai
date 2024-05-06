@@ -307,6 +307,9 @@ const defaultStyles = `:block {
 .product-layout-content-panel--3col > .pr-block-blocks-list__block:nth-child(2) {
   margin-right: 26px;
 }
+.product-layout-content-panel .ant-table-tbody>tr>td {
+  border: none;
+}
 
 `;
 
