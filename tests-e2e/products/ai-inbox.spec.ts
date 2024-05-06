@@ -89,7 +89,7 @@ test('Search a team', async ({ page }) => {
   await page.getByTestId('schema-form-field-values.search').click();
   await page.getByTestId('schema-form-field-values.search').fill('équipe');
   await page.getByTestId('schema-form-field-values.search').press('Enter');
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(500);
 
   await expect(
     page.getByRole('button', { name: 'Une équipe Une équipe' })
