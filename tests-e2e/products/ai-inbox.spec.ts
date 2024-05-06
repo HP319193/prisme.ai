@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { getAccessToken } from '../getAccessToken';
 
 const { TESTS_E2E_BASE_LOGIN = '', TESTS_E2E_BASE_PASSWORD = '' } = process.env;
 const authFile = 'tests-e2e/.auth/user.json';
@@ -44,8 +43,35 @@ test('Display AI Inbox', async ({ page }) => {
   ).toBeAttached();
 });
 
-test('Create a team', async ({ page, request, context }) => {
-  await page.goto('https://ai-knowledge-inbox.pages.prisme.ai/fr');
+test('Search a team', async ({ page }) => {
+  const framesSent: string[] = [];
+  page.on('websocket', (ws) => {
+    ws.on('framesent', (event) => {
+      framesSent.push(event.payload.toString());
+    });
+  });
+
+  await page.goto(baseUrl);
+  await page.getByTestId('schema-form-field-values.search').focus();
+  await page.getByTestId('schema-form-field-values.search').fill('équipe');
+  await page.getByTestId('schema-form-field-values.search').focus();
+  await page.waitForTimeout(200);
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(500);
+  await expect(framesSent).toContain(
+    '42/v2/workspaces/iGsXZ6I/events,["event",{"type":"filter teams","payload":{"search":"équipe"}}]'
+  );
+  await expect(
+    page.getByRole('button', { name: 'Une équipe Une équipe' })
+  ).toBeAttached();
+  await expect(
+    page.getByRole('button', { name: 'Une autre équipe' })
+  ).toBeAttached();
+  await expect(page.getByRole('button', { name: 'A Team' })).not.toBeAttached();
+});
+
+test('Create a team', async ({ page }) => {
+  await page.goto(baseUrl);
 
   await page.getByRole('button', { name: 'Créer une équipe' }).click();
 
@@ -84,43 +110,6 @@ test('Create a team', async ({ page, request, context }) => {
     page.locator(`[href="/fr/inbox?team=${createdId}"]`)
   ).toBeAttached();
 
-  // Clean : delete the team
-  const token = await getAccessToken(context, new URL(baseUrl).hostname);
-  await request.post(
-    'https://api.studio.prisme.ai/v2/workspaces/iGsXZ6I/webhooks/UI_initDeleteTeam',
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data: {
-        team: createdId,
-      },
-    }
-  );
-});
-
-test('Search a team', async ({ page }) => {
-  const framesSent: string[] = [];
-  page.on('websocket', (ws) => {
-    ws.on('framesent', (event) => {
-      framesSent.push(event.payload.toString());
-    });
-  });
-
-  await page.goto('https://ai-knowledge-inbox.pages.prisme.ai/fr');
-  await page.getByTestId('schema-form-field-values.search').focus();
-  await page.getByTestId('schema-form-field-values.search').fill('équipe');
-  await page.waitForTimeout(200);
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(500);
-  await expect(framesSent).toContain(
-    '42/v2/workspaces/iGsXZ6I/events,["event",{"type":"filter teams","payload":{"search":"équipe"}}]'
-  );
-  await expect(
-    page.getByRole('button', { name: 'Une équipe Une équipe' })
-  ).toBeAttached();
-  await expect(
-    page.getByRole('button', { name: 'Une autre équipe' })
-  ).toBeAttached();
-  await expect(page.getByRole('button', { name: 'A Team' })).not.toBeAttached();
+  // delete
+  await page.goto(`${baseUrl}/deleteTeam?team=${createdId}`);
 });
