@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import { getAccessToken } from '../getAccessToken';
 
 const { TESTS_E2E_BASE_LOGIN = '', TESTS_E2E_BASE_PASSWORD = '' } = process.env;
 const authFile = 'tests-e2e/.auth/user.json';
@@ -43,7 +44,7 @@ test('Display AI Inbox', async ({ page }) => {
   ).toBeAttached();
 });
 
-test('Create a team', async ({ page }) => {
+test('Create a team', async ({ page, request, context }) => {
   await page.goto('https://ai-knowledge-inbox.pages.prisme.ai/fr');
 
   await page.getByRole('button', { name: 'Créer une équipe' }).click();
@@ -82,6 +83,20 @@ test('Create a team', async ({ page }) => {
   await expect(
     page.locator(`[href="/fr/inbox?team=${createdId}"]`)
   ).toBeAttached();
+
+  // Clean : delete the team
+  const token = await getAccessToken(context, new URL(baseUrl).hostname);
+  await request.post(
+    'https://api.studio.prisme.ai/v2/workspaces/iGsXZ6I/webhooks/UI_initDeleteTeam',
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        team: createdId,
+      },
+    }
+  );
 });
 
 test('Search a team', async ({ page }) => {
