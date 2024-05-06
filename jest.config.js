@@ -7,6 +7,7 @@ module.exports = () => {
       '\\.svg$': '<rootDir>/__mocks__/svgMock.js',
       '\\.svgr$': '<rootDir>/__mocks__/svgrMock.js',
     },
+    modulePathIgnorePatterns: ['<rootDir>/tests-e2e/'],
     testEnvironment: 'jsdom',
     coveragePathIgnorePatterns: [
       // Console
