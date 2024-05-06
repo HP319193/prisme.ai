@@ -38,7 +38,7 @@ test('list workspaces', async ({ page, baseURL }) => {
   ).toBeAttached();
 });
 
-test('create workspace', async ({ page, baseURL, request, context }) => {
+test('create workspace', async ({ page, baseURL, context }) => {
   await page.goto(`${baseURL}/workspaces`);
   await expect(page.getByText('Create a workspace')).toBeAttached();
   await page.getByText('Create a workspace').click();
@@ -73,11 +73,16 @@ test('create workspace', async ({ page, baseURL, request, context }) => {
   await expect(page.getByText('A test Workspace name')).toBeAttached();
 
   if (createdId) {
-    // Delete it
-    await request.delete(`${TESTS_E2E_API_URL}/workspaces/${createdId}`, {
-      headers: {
-        Authorization: `Bearer ${await getAccessToken(context)}`,
-      },
+    const token = await getAccessToken(context);
+    actionsOnEnd.push(async ({ request }) => {
+      const resp = await request.delete(
+        `${TESTS_E2E_API_URL}/workspaces/${createdId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     });
   }
 });
