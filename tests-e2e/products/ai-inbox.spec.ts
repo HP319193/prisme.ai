@@ -104,6 +104,11 @@ test.describe('Teams list', () => {
     });
 
     await page.goto(baseUrl);
+    await page.waitForFunction(() => {
+      // @ts-ignore
+      return window.Prisme.ai.events;
+    });
+
     await page.getByTestId('schema-form-field-values.search').focus();
     await page.getByTestId('schema-form-field-values.search').fill('équipe');
     await page.getByTestId('schema-form-field-values.search').focus();
@@ -127,6 +132,7 @@ test.describe('Teams list', () => {
 test.describe('Channels', () => {
   let createdId = '';
   test.beforeEach(async ({ page }) => {
+    await page.goto(baseUrl);
     await page.getByRole('button', { name: 'Créer une équipe' }).click();
 
     await page
