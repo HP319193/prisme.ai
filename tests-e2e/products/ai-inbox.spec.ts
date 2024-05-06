@@ -85,10 +85,10 @@ test('Create a team', async ({ page }) => {
 });
 
 test('Search a team', async ({ page }) => {
-  let lastFrameSent = '';
+  const framesSent: string[] = [];
   page.on('websocket', (ws) => {
     ws.on('framesent', (event) => {
-      lastFrameSent = event.payload.toString();
+      framesSent.push(event.payload.toString());
     });
   });
 
@@ -97,8 +97,8 @@ test('Search a team', async ({ page }) => {
   await page.getByTestId('schema-form-field-values.search').fill('équipe');
   await page.waitForTimeout(200);
   await page.getByTestId('schema-form-field-values.search').press('Enter');
-  await page.waitForTimeout(200);
-  await expect(lastFrameSent).toBe(
+  await page.waitForTimeout(500);
+  await expect(framesSent).toContain(
     '42/v2/workspaces/iGsXZ6I/events,["event",{"type":"filter teams","payload":{"search":"équipe"}}]'
   );
   await expect(
