@@ -88,6 +88,7 @@ test.describe('Insert instructions', () => {
     );
 
     await page.getByTestId('automation-builder-add-0').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-emit').click();
     await page.getByTestId('schema-form-field-values.event').click();
@@ -95,6 +96,7 @@ test.describe('Insert instructions', () => {
     await page.locator('.ace_content').click();
     await page.locator('textarea').fill('{"foo": "bar"}');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -114,6 +116,7 @@ test.describe('Insert instructions', () => {
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
     await page.getByTestId('automation-builder-add-0').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-wait').click();
     await page.getByLabel('One of these events:').click();
@@ -122,6 +125,7 @@ test.describe('Insert instructions', () => {
       .fill('wait for it');
     await page.getByTestId('schema-form-field-values.timeout').fill('30');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -140,6 +144,7 @@ test.describe('Insert instructions', () => {
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
     await page.getByTestId('automation-builder-add-0').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-set').click();
 
@@ -147,6 +152,7 @@ test.describe('Insert instructions', () => {
     await page.locator('textarea').fill('{{bar}}');
 
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -165,12 +171,14 @@ test.describe('Insert instructions', () => {
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
     await page.getByTestId('automation-builder-add-0').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-delete').click();
 
     await page.getByTestId('schema-form-field-values.name').fill('foo');
 
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -190,12 +198,14 @@ test.describe('Insert instructions', () => {
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
     await page.getByTestId('automation-builder-add-0').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-conditions').click();
 
     await page.getByRole('button', { name: 'Add condition' }).click();
     await page.getByTestId('schema-form-field-values').fill('{{foo}}');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -205,21 +215,25 @@ test.describe('Insert instructions', () => {
     await page.mouse.up();
 
     await page.getByTestId('automation-builder-add-undefined').first().click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-set').click();
     await page.getByTestId('schema-form-field-values.name').fill('foo');
     await page.getByTestId('panel').locator('textarea').fill('{{bar}}');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
 
     await page.getByTestId('automation-builder-add-undefined').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-set').click();
     await page.getByTestId('schema-form-field-values.name').fill('foo');
     await page.getByTestId('panel').locator('textarea').fill('{{bar}}');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -230,17 +244,20 @@ test.describe('Insert instructions', () => {
     await page.mouse.up();
 
     await page.getByRole('button', { name: 'Add condition' }).click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('schema-form-field-values').click();
     await page
       .getByTestId('schema-form-field-values')
       .fill('{{otherCondition}}');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
 
     await page.getByTestId('automation-builder-add-undefined').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-set').click();
     await page.getByTestId('schema-form-field-values.name').click();
@@ -251,6 +268,7 @@ test.describe('Insert instructions', () => {
       .locator('textarea')
       .fill('{{anotherValue}}');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -269,22 +287,26 @@ test.describe('Insert instructions', () => {
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
     await page.getByTestId('automation-builder-add-0').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-repeat').click();
 
     await page.getByTestId('schema-form-field-values.on').fill('{{list}}');
     await page.getByTestId('schema-form-field-values.until').fill('42');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
 
     await page.getByTestId('automation-builder-add-0').nth(1).click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-set').click();
     await page.getByTestId('schema-form-field-values.name').fill('foo');
     await page.locator('textarea').fill('{{bar}}');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -304,8 +326,10 @@ test.describe('Insert instructions', () => {
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
     await page.getByTestId('automation-builder-add-0').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-all').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -316,21 +340,25 @@ test.describe('Insert instructions', () => {
     await page.mouse.up();
 
     await page.getByTestId('automation-builder-add-0').nth(1).click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-set').click();
     await page.getByTestId('schema-form-field-values.name').fill('foo');
     await page.locator('textarea').fill('{{bar}}');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
 
     await page.getByTestId('automation-builder-add-1').first().click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-set').click();
     await page.getByTestId('schema-form-field-values.name').fill('bar');
     await page.locator('textarea').fill('{{foo}}');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -350,9 +378,11 @@ test.describe('Insert instructions', () => {
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
     await page.getByTestId('automation-builder-add-0').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-break').click();
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -363,12 +393,14 @@ test.describe('Insert instructions', () => {
     await page.mouse.up();
 
     await page.getByTestId('automation-builder-add-1').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-break').click();
 
     await page.getByLabel('Scope').click();
     await page.getByText('All', { exact: true }).click();
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -379,12 +411,14 @@ test.describe('Insert instructions', () => {
     await page.mouse.up();
 
     await page.getByTestId('automation-builder-add-2').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-break').click();
 
     await page.getByLabel('Scope').click();
     await page.getByText('This automation', { exact: true }).click();
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
@@ -404,6 +438,7 @@ test.describe('Insert instructions', () => {
       `${baseURL}/workspaces/${workspaceId}/automations/${automationSlug}`
     );
     await page.getByTestId('automation-builder-add-0').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).toHaveClass(/-translate-x-full/);
     await page.getByTestId('automation-builder-instruction-fetch').click();
 
@@ -415,6 +450,7 @@ test.describe('Insert instructions', () => {
     await page.getByTestId('schema-form-field-values.output').click();
     await page.getByTestId('schema-form-field-values.output').fill('output');
     await page.getByTestId('panel-close-btn').click();
+    await page.waitForTimeout(200);
     await expect(page.getByTestId('panel')).not.toHaveClass(
       /-translate-x-full/
     );
