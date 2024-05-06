@@ -100,6 +100,7 @@ export async function fetch(
       prismeaiSessionId:
         ctx?.session?.origin?.sessionId || ctx?.session?.sessionId,
       expiresIn: 10,
+      correlationId: ctx.correlationId,
     });
     headers['Authorization'] = `Bearer ${jwt}`;
   }

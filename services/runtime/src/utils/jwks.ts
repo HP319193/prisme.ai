@@ -102,10 +102,12 @@ export async function getAccessToken({
   userId,
   expiresIn,
   prismeaiSessionId,
+  correlationId,
 }: {
   userId: string;
   expiresIn: number;
   prismeaiSessionId: string;
+  correlationId?: string;
 }) {
   const expires = new Date(Date.now() + expiresIn * 1000);
   const token = {
@@ -115,6 +117,7 @@ export async function getAccessToken({
     aud: API_URL,
     iss: OIDC_PROVIDER_URL,
     prismeaiSessionId,
+    correlationId,
   };
   const jwt = await sign(token);
   return {

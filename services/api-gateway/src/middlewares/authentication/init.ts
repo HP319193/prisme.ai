@@ -211,6 +211,14 @@ async function initPassportStrategies(
           expires: new Date(token.exp * 1000).toISOString(),
           mfaValidated: false,
         };
+
+        // For better traceability, allow keeping same correlationId from internal HTTP calls
+        if (token.correlationId) {
+          req.context = {
+            ...req.context,
+            correlationId: token.correlationId,
+          };
+        }
         delete req.headers['authorization']; // Do not pass user JWT to backed services
         deserializeUser(token.sub, done as any);
       }

@@ -32,6 +32,16 @@ export function extractRequestIp(req: Request) {
   );
 }
 
+export function extractRequestCorrelationId(req: Request) {
+  if (req.context?.correlationId) {
+    return req.context.correlationId;
+  }
+  return syscfg.OVERWRITE_CORRELATION_ID_HEADER ||
+    !req.header(syscfg.CORRELATION_ID_HEADER)
+    ? uuid()
+    : (req.header(syscfg.CORRELATION_ID_HEADER) as string);
+}
+
 export function requestDecorator(
   req: Request,
   res: Response,
@@ -44,11 +54,8 @@ export function requestDecorator(
 
   const userId = req.user?.id as string;
   const sessionId = req.session.prismeaiSessionId;
-  const correlationId =
-    syscfg.OVERWRITE_CORRELATION_ID_HEADER ||
-    !req.header(syscfg.CORRELATION_ID_HEADER)
-      ? uuid()
-      : (req.header(syscfg.CORRELATION_ID_HEADER) as string);
+  const correlationId = extractRequestCorrelationId(req);
+
   const adminEmails = syscfg.SUPER_ADMIN_EMAILS?.split(',').map((email) =>
     email.trim()
   );
