@@ -231,3 +231,55 @@ test.describe('Channels', () => {
     ).toBeAttached();
   });
 });
+
+test.describe('Inbox', () => {
+  test.describe.configure({ mode: 'serial' });
+  let createdId = '';
+  test.beforeEach(async ({ page }) => {
+    await page.goto(baseUrl);
+    await page.getByRole('button', { name: 'Créer une équipe' }).click();
+
+    await page
+      .getByTestId('schema-form-field-values.name')
+      .fill('name testing channels');
+    await page
+      .getByTestId('schema-form-field-values.description')
+      .fill('description testing channels');
+    await page.getByTestId('schema-form-field-values.name').press('Enter');
+    createdId = '';
+    await page.waitForURL((url: URL) => {
+      if (url.pathname === '/fr/inbox') {
+        createdId = url.searchParams.get('team') || '';
+        return true;
+      }
+      return false;
+    });
+    // Add a new canal
+    await page.getByRole('button', { name: 'Canaux Canaux' }).click();
+    await page
+      .getByRole('button', { name: 'Ajouter un nouveau canal' })
+      .click();
+    await page.getByLabel('Projet AI Knowledge').click();
+    await page.getByText('Projet de test').click();
+    await page.getByRole('button', { name: 'Envoyer' }).click();
+    await expect(
+      page.getByRole('cell', { name: 'Projet de test' })
+    ).toBeAttached();
+    await expect(page.getByText('Le canal a bien été ajouté')).toBeAttached();
+  });
+  test.afterEach(async ({ page }) => {
+    if (!createdId) return;
+    await page.goto(`${baseUrl}/deleteTeam?team=${createdId}`);
+  });
+
+  test('Display inbox conversations', async ({ page }) => {
+    await page.goto(baseUrl);
+    await page.getByRole('link', { name: 'name testing channels' }).click();
+    await expect(
+      page.getByText('👈 Choisissez une conversation')
+    ).toBeAttached();
+    await expect(page.locator('a.conversation').first()).toBeAttached();
+    await page.locator('a.conversation').first().click();
+    await expect(page.locator('.pr-block-dialog-box')).toBeAttached();
+  });
+});
