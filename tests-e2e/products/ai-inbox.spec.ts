@@ -5,6 +5,7 @@ const { TESTS_E2E_BASE_LOGIN = '', TESTS_E2E_BASE_PASSWORD = '' } = process.env;
 const authFile = 'tests-e2e/.auth/user.json';
 const baseUrl = 'https://ai-knowledge-inbox.pages.prisme.ai/fr';
 
+test.describe.configure({ mode: 'serial' });
 test.beforeEach(async ({ page }) => {
   await page.goto(baseUrl);
 
@@ -130,6 +131,7 @@ test.describe('Teams list', () => {
 });
 
 test.describe('Channels', () => {
+  test.describe.configure({ mode: 'serial' });
   let createdId = '';
   test.beforeEach(async ({ page }) => {
     await page.goto(baseUrl);
