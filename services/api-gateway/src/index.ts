@@ -54,10 +54,11 @@ let gtwcfg: GatewayConfig, oidc;
     await jwks.init();
     // Keep runtime in sync with our signing JWK
     await publishJWKToRuntime(gtwcfg, jwks);
-    jwks.on(
-      'jwks.updated',
-      ({ fromLocal }) => fromLocal && publishJWKToRuntime(gtwcfg, jwks)
-    );
+    jwks.on('jwks.updated', ({ fromLocal }) => {
+      if (fromLocal) {
+        publishJWKToRuntime(gtwcfg, jwks);
+      }
+    });
 
     oidc = await initOidcProvider(broker, jwks);
 

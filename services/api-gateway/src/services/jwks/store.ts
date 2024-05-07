@@ -57,17 +57,19 @@ export class JWKStore extends EventEmitter {
           const fromLocal =
             event?.source?.host?.replica &&
             event?.source?.host?.replica === this.broker.consumer.name;
+
+          // Refresh other nodes from cache
+          if (!fromLocal) {
+            logger.info({
+              msg: `Reloading JWKS store`,
+            });
+            await this.init(false);
+          }
+
           this.emit('jwks.updated', {
             fromLocal,
           });
 
-          if (fromLocal) {
-            return true;
-          }
-          logger.info({
-            msg: `Reloading JWKS store`,
-          });
-          await this.init(false);
           return true;
         },
         {
