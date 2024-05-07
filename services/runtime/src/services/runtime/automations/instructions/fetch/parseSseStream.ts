@@ -8,22 +8,16 @@ export interface StreamChunk {
   data: any[];
   id?: string;
   retry?: number;
+  comment?: string;
 }
 
 export function processDataSse(chunkData: string): StreamChunk {
-  let unterminatedLine = '';
   const lines = chunkData.split('\n');
   const chunk: StreamChunk = { data: [] };
 
   lines.forEach((line, index) => {
     line = line.trim();
     if (!line) return; // Skip empty lines
-
-    // Check if it's the last line and it's not terminated
-    if (index === lines.length - 1 && !chunkData.endsWith('\n')) {
-      unterminatedLine = line;
-      return; // Skip processing this as normal line, it will be processed after the loop
-    }
 
     if (line.startsWith('data:')) {
       let content = line.slice(5).trim();
@@ -41,33 +35,19 @@ export function processDataSse(chunkData: string): StreamChunk {
       chunk.id = line.slice(3).trim();
     } else if (line.startsWith('retry:')) {
       chunk.retry = parseInt(line.slice(6));
+    } else if (line.startsWith(':')) {
+      chunk.comment = line.slice(1).trim();
     } else {
       logger.warn({ msg: 'Invalid SSE chunk line', line });
     }
   });
-
-  // Now process unterminated line if there was one
-  if (unterminatedLine) {
-    let content = unterminatedLine.slice(5).trim();
-    if (content[0] === '[' || content[0] === '{') {
-      try {
-        content = JSON.parse(content);
-      } catch (e) {
-        logger.warn({
-          msg: 'Failed to parse JSON data in unterminated line',
-          content,
-        });
-      }
-    }
-    chunk.data.push(content);
-  }
 
   return chunk;
 }
 
 export async function parseSseStream(
   stream: NodeJS.ReadableStream,
-  callback: (_: StreamChunk) => Promise<void> = async () => {},
+  callback: (_: StreamChunk) => Promise<void>,
   broker: Broker
 ) {
   let unterminatedLine = ''; // Buffer for unterminated lines across chunks

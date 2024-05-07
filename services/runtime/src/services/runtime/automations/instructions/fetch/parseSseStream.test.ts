@@ -8,6 +8,17 @@ describe('processDataSse function', () => {
     expect(output).toEqual({ data: ['simple test'] });
   });
 
+  test('should correctly process comments', () => {
+    const input =
+      ': Lines that start with a colon are comments, they will be distributed as such';
+    const output = processDataSse(input);
+    expect(output).toEqual({
+      data: [],
+      comment:
+        'Lines that start with a colon are comments, they will be distributed as such',
+    });
+  });
+
   test('should correctly parse JSON data', () => {
     const input = 'data: {"key": "value"}\n\n';
     const output = processDataSse(input);
