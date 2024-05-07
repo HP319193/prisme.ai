@@ -11,9 +11,17 @@ export default <Record<string, StorageOptions>>{
 
   // Persists session JWTs signing keys
   JWKS: {
-    driver: process.env.JWKS_STORAGE_TYPE || StorageDriverType.Mongodb,
-    host: process.env.JWKS_STORAGE_HOST || 'mongodb://localhost:27017/users',
-    driverOptions: extractOptsFromEnv('JWKS_STORAGE_OPT_'),
+    driver:
+      process.env.JWKS_STORAGE_TYPE ||
+      process.env.USERS_STORAGE_TYPE ||
+      StorageDriverType.Mongodb,
+    host:
+      process.env.JWKS_STORAGE_HOST ||
+      process.env.USERS_STORAGE_HOST ||
+      'mongodb://localhost:27017/users',
+    driverOptions: process.env.JWKS_STORAGE_HOST
+      ? extractOptsFromEnv('JWKS_STORAGE_OPT_')
+      : extractOptsFromEnv('USERS_STORAGE_OPT_'),
   },
 
   // Cache OIDC authentication states (not authenticated user/sessions/tokens, but current state of their authentication flow) + express-session
