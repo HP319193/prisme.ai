@@ -41,7 +41,7 @@ export async function init(app: Application) {
 
         if (err instanceof Error) {
           if ((info?.message || '').includes('No auth token')) {
-            req.authError = `Not authentication token found`;
+            req.authError = `No authentication token found`;
           } else if ((info?.message || '').includes('jwt malformed')) {
             req.authError = `Malformed authentication token`;
           } else if ((info?.message || '').includes('secret or public key')) {
