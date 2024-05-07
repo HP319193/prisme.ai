@@ -14,6 +14,7 @@ import { initAuthProviders } from './authProviders';
 import Provider from 'oidc-provider';
 import { GatewayConfig } from '../config';
 import fetch from 'node-fetch';
+import { JWKStore } from '../services/jwks/store';
 
 async function reAuthenticate(req: Request, res: Response, next: NextFunction) {
   if (!req.user?.email || !req.body?.currentPassword) {
@@ -326,7 +327,8 @@ function postUserPhotoHandler(workspaceServiceUrl: string) {
 
 export default function initIdentityRoutes(
   oidc: Provider,
-  gtwcfg: GatewayConfig
+  gtwcfg: GatewayConfig,
+  jwks: JWKStore
 ) {
   const app = express.Router();
 
@@ -339,7 +341,7 @@ export default function initIdentityRoutes(
   // From there, only routes restricted to users, forbidden to access tokens
   app.use(forbidAccessTokens);
 
-  initAuthProviders(app, oidc);
+  initAuthProviders(app, oidc, jwks);
   app.post(`/signup`, signupHandler);
 
   // User account

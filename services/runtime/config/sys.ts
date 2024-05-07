@@ -4,3 +4,5 @@ export const HEAPDUMPS_DIRECTORY =
 export const DEBUG = ['dev', 'development'].includes(
   process.env.NODE_ENV || 'production'
 );
+
+export const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY;

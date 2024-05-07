@@ -1,7 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
-import dotevn from 'dotenv';
+import dotenv from 'dotenv';
 
-dotevn.config();
+dotenv.config();
+dotenv.config({ path: `.env.local` });
 
 const { TESTS_E2E_BASE_URL = '' } = process.env;
 

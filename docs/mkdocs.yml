@@ -40,7 +40,7 @@ nav:
   - i18n.home: index.md
   - i18n.hosting:
       - i18n.index: hosting/index.md
-      - i18n.installation: 
+      - i18n.installation:
           - i18n.index: hosting/installation/index.md
           - i18n.local: hosting/installation/local/index.md
           - i18n.providers:
@@ -86,6 +86,7 @@ nav:
       - i18n.authentication_access_control: architecture/authentication_access_control.md
       - i18n.apiGateway:
           - i18n.specifications: architecture/technical/apiGateway/specifications.md
+          - i18n.tokens: architecture/technical/apiGateway/tokens.md
       - i18n.console:
           - i18n.specifications: architecture/technical/console/specifications.md
       - i18n.events:

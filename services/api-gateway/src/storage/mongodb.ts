@@ -36,10 +36,22 @@ export class MongodbDriver implements StorageDriver<any> {
     await this.client.connect();
     this.db = await this.client.db();
     this._collection = await this.db.collection(this.collectionName);
-    this.ensureIndexes(this.opts.indexes, this.opts?.ttlKey);
+    this.ensureIndexes({
+      indexes: this.opts.indexes,
+      uniqueIndexes: this.opts.uniqueIndexes,
+      ttlKey: this.opts?.ttlKey,
+    });
   }
 
-  private async ensureIndexes(indexes?: string[], ttlKey?: string) {
+  private async ensureIndexes({
+    indexes,
+    ttlKey,
+    uniqueIndexes,
+  }: {
+    indexes?: string[];
+    uniqueIndexes?: string[];
+    ttlKey?: string;
+  }) {
     try {
       if (indexes?.length) {
         await Promise.all(
@@ -47,6 +59,21 @@ export class MongodbDriver implements StorageDriver<any> {
             this._collection?.createIndex({
               [name]: 1,
             })
+          )
+        );
+      }
+
+      if (uniqueIndexes?.length) {
+        await Promise.all(
+          uniqueIndexes.map((name) =>
+            this._collection?.createIndex(
+              {
+                [name]: 1,
+              },
+              {
+                unique: true,
+              }
+            )
           )
         );
       }

@@ -2051,6 +2051,31 @@ components:
             user:
               $ref: '#/components/schemas/User'
 
+    UpdatedJWKS:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: gateway.jwks.updated
+          enum:
+            - gateway.jwks.updated
+        payload:
+          type: object
+          required:
+            - created
+            - deleted
+          properties:
+            created:
+              type: array
+              items:
+                type: string
+            deleted:
+              type: array
+              items:
+                type: string
     ########################## Events API events ##########################
 
     CleanedEvents:
