@@ -2406,6 +2406,17 @@ declare namespace Prismeai {
             }[];
         };
     }
+    export interface UpdatedJWKS {
+        /**
+         * example:
+         * gateway.jwks.updated
+         */
+        type: "gateway.jwks.updated";
+        payload: {
+            created: string[];
+            deleted: string[];
+        };
+    }
     export interface UpdatedPage {
         /**
          * example:

@@ -14,12 +14,14 @@ import { init as initAuthentication } from '../middlewares';
 import { initRoutes as initOidcRoutes } from '../services/oidc/provider';
 import { Broker } from '@prisme.ai/broker';
 import Provider from 'oidc-provider';
+import { JWKStore } from '../services/jwks/store';
 
 export default async function initRoutes(
   app: express.Application,
   gtwcfg: GatewayConfig,
   broker: Broker,
-  oidc: Provider
+  oidc: Provider,
+  jwks: JWKStore
 ) {
   // Drop legacy session cookies on logout as they would otherwise prevent from signing out
   app.use(
@@ -57,7 +59,7 @@ export default async function initRoutes(
     }),
     validationErrorMiddleware
   );
-  app.use('/v2/', initIdentityRoutes(oidc, gtwcfg));
+  app.use('/v2/', initIdentityRoutes(oidc, gtwcfg, jwks));
 
   app.use(errorHandler);
 }

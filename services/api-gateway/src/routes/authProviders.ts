@@ -7,12 +7,12 @@ import { authProviders, oidcCfg } from '../config';
 import { syscfg } from '../config';
 import { AuthenticationError, ConfigurationError } from '../types/errors';
 import { EventType } from '../eda';
-import { getAccessToken } from '../services/oidc/provider';
 import { AuthProvider } from '../services/msal/provider';
 import services from '../services';
 import { isAuthenticated } from '../middlewares';
 import { AuthProviders } from '../services/identity';
 import { logger } from '../logger';
+import { JWKStore } from '../services/jwks/store';
 
 async function mfaHandler(
   req: Request<any, any, PrismeaiAPI.MFA.RequestBody>,
@@ -34,73 +34,76 @@ async function mfaHandler(
   return res.send({ success: true });
 }
 
-async function anonymousLoginHandler(
-  req: Request<any, any, PrismeaiAPI.AnonymousAuth.RequestBody>,
-  res: Response<PrismeaiAPI.AnonymousAuth.Responses.$200>,
-  next: NextFunction
-) {
-  // Make sure our passport custom middleware will receive the expiration to ensure at database layer
-  if (!req.body.expiresAfter) {
-    req.body.expiresAfter = oidcCfg.ACCESS_TOKENS_MAX_AGE;
-  }
+const getAnonymousLoginHandler = (jwks: JWKStore) =>
+  async function anonymousLoginHandler(
+    req: Request<any, any, PrismeaiAPI.AnonymousAuth.RequestBody>,
+    res: Response<PrismeaiAPI.AnonymousAuth.Responses.$200>,
+    next: NextFunction
+  ) {
+    // Make sure our passport custom middleware will receive the expiration to ensure at database layer
+    if (!req.body.expiresAfter) {
+      req.body.expiresAfter = oidcCfg.ACCESS_TOKENS_MAX_AGE;
+    }
 
-  passport.authenticate(
-    'anonymous',
-    { session: true },
-    async (err, user, info) => {
-      if (err || !user) {
-        next(info || err);
-        await req.broker.send<Prismeai.FailedLogin['payload']>(
-          EventType.FailedLogin,
-          {
-            ip: req.context?.http?.ip,
-            provider: 'anonymous',
-          }
-        );
-        return;
-      }
-
-      req.logIn(user, async (err) => {
-        if (err) {
-          req.logger?.error(err);
-          return next(new AuthenticationError('Unknown authentication error'));
+    passport.authenticate(
+      'anonymous',
+      { session: true },
+      async (err, user, info) => {
+        if (err || !user) {
+          next(info || err);
+          await req.broker.send<Prismeai.FailedLogin['payload']>(
+            EventType.FailedLogin,
+            {
+              ip: req.context?.http?.ip,
+              provider: 'anonymous',
+            }
+          );
+          return;
         }
 
-        // Mimic OIDC emitted JWT tokens so we can validate / handle these anonymous session exactly like for OIDC tokens
-        const { token, jwt, expires } = await getAccessToken(
-          user.id,
-          req.body.expiresAfter
-        );
-        req.session.prismeaiSessionId = token.prismeaiSessionId;
-        req.session.expires = expires;
-        req.session.mfaValidated = false;
-        res.send({
-          ...user,
-          token: jwt,
-          sessionId: req.session.prismeaiSessionId,
-          expires,
-        });
-
-        await req.broker.send<Prismeai.SucceededLogin['payload']>(
-          EventType.SucceededLogin,
-          {
-            email: user.email,
-            ip: req.context?.http?.ip,
-            id: user.id,
-            authData: {
-              ['anonymous']: { id: user.id },
-            },
-            session: {
-              id: req.session.prismeaiSessionId,
-              expiresIn: syscfg.SESSION_COOKIES_MAX_AGE,
-              expires,
-            },
+        req.logIn(user, async (err) => {
+          if (err) {
+            req.logger?.error(err);
+            return next(
+              new AuthenticationError('Unknown authentication error')
+            );
           }
-        );
-      });
-    }
-  )(req, res, next);
-}
+
+          // Mimic OIDC emitted JWT tokens so we can validate / handle these anonymous session exactly like for OIDC tokens
+          const { token, jwt, expires } = await jwks.getAccessToken(
+            user.id,
+            req.body.expiresAfter
+          );
+          req.session.prismeaiSessionId = token.prismeaiSessionId;
+          req.session.expires = expires;
+          req.session.mfaValidated = false;
+          res.send({
+            ...user,
+            token: jwt,
+            sessionId: req.session.prismeaiSessionId,
+            expires,
+          });
+
+          await req.broker.send<Prismeai.SucceededLogin['payload']>(
+            EventType.SucceededLogin,
+            {
+              email: user.email,
+              ip: req.context?.http?.ip,
+              id: user.id,
+              authData: {
+                ['anonymous']: { id: user.id },
+              },
+              session: {
+                id: req.session.prismeaiSessionId,
+                expiresIn: syscfg.SESSION_COOKIES_MAX_AGE,
+                expires,
+              },
+            }
+          );
+        });
+      }
+    )(req, res, next);
+  };
 
 async function oauthHandler(
   req: Request<any, any, any, PrismeaiAPI.OauthInit.QueryParameters>,
@@ -125,9 +128,10 @@ async function oauthHandler(
 
 export async function initAuthProviders(
   app: express.Router,
-  provider: Provider
+  provider: Provider,
+  jwks: JWKStore
 ) {
-  app.post(`/login/anonymous`, anonymousLoginHandler);
+  app.post(`/login/anonymous`, getAnonymousLoginHandler(jwks));
   // TODO rewrite with OIDC
   app.post(`/login/mfa`, isAuthenticated, mfaHandler);
 

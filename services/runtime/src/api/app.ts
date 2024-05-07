@@ -17,11 +17,13 @@ import Runtime from '../services/runtime';
 import { Broker } from '@prisme.ai/broker';
 import { accessManagerMiddleware } from './middlewares/accessManager';
 import { AccessManager } from '../permissions';
+import { Cache } from '../cache';
 
 export function init(
   runtime: Runtime,
   broker: Broker,
-  accessManager: AccessManager
+  accessManager: AccessManager,
+  cache: Cache
 ) {
   const app = express();
 
@@ -68,7 +70,7 @@ export function init(
   /**
    * User routes
    */
-  initRoutes(app, runtime);
+  initRoutes(app, runtime, broker, cache);
 
   /**
    * ERROR HANDLING

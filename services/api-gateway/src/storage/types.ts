@@ -11,6 +11,7 @@ export interface StorageOptions {
     driver: CacheDriver;
   };
   indexes?: string[];
+  uniqueIndexes?: string[];
   ttlKey?: string;
 }
 
