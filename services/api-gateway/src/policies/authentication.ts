@@ -38,7 +38,7 @@ export async function init(params: Params) {
       req.headers[syscfg.USER_ID_HEADER] = req.user?.id;
     }
     if (!req.user && !optional) {
-      throw new AuthenticationError();
+      throw new AuthenticationError(req.authError || 'Unauthenticated');
     }
     if (enforceMFA && !optional) {
       return mfaMiddleware(req, res, next);
