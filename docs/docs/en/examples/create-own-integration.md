@@ -159,8 +159,8 @@ These are placeholders for dynamic input values that will be used in the `body` 
 
 ![Arguments](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/O_7pI8uh00gKy3-V5ychV.Screenshot-2024-05-13-at-22.59.08.png "Arguments")
 
- **Set Privacy**: set this automation to private so it won’t be visible from Workspace consumers.
- private: true
+**Configure Privacy Settings**: To ensure confidentiality, set this automation to private by enabling the `private: true` setting. This configuration will restrict visibility, preventing Workspace consumers from accessing the automation.
+
 
 #### Step 3: Version and Push Your Workspace
 
