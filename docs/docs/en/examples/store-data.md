@@ -79,6 +79,8 @@ blocks:
 
 1. Add a DataTable block to show the uploaded documents along with their classified categories.
 2. Configure columns for ID, description, category, and actions such as delete.
+3. Also, make sure your DataTable block listen to a given event thanks to the `updateOn` field, here we will choose `updateData`.  
+You can also add an `onInit` event which will be emitted when the block is loaded in the page by a user.
 
 ```yaml
   - slug: DataTable
@@ -106,6 +108,8 @@ blocks:
       title:
         fr: Uploaded Documents
         en: Uploaded Documents
+    updateOn: updateData
+    onInit: initData
     data:
       - {}
 ```
