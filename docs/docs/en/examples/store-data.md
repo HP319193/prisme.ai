@@ -215,7 +215,7 @@ This automation will handle requests to delete documents from your system, ensur
 3. Set up the automation to listen for the `deleteData` event and execute a deletion from your document collection.
 
 ```yaml
-slug: deleteData
+slug: delete-data
 name: Delete Data
 do:
   - conditions:
@@ -239,9 +239,9 @@ output: ''
 
 ### Version Control and Deployment:
 
-1. After setting up, pull the latest changes and create a version for easy updates or rollbacks.
+1. After setting up, push the latest changes and create a version for easy updates or rollbacks.
 
-![Pull](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/MRLovKFBFrNffCOz6gecZ.Screenshot-2024-04-09-at-23.15.59.png "Pull")
+![Push](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/MRLovKFBFrNffCOz6gecZ.Screenshot-2024-04-09-at-23.15.59.png "Push")
 Learn more about [Version Control](https://docs.eda.prisme.ai/en/workspaces/versioning/) and [RBAC](https://docs.eda.prisme.ai/en/workspaces/security/) to manage access and permissons.
 
 ## Step 4: Monitoring and Optimization
