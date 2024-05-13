@@ -160,7 +160,7 @@ do:
             value: '{{data.error.message}}'
             type: merge
   - Collection.insert:
-      data: '{{payload}}
+      data: '{{payload}}'
   - emit:
       target:
         currentSocket: true
