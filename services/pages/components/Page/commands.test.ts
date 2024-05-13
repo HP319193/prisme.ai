@@ -223,3 +223,43 @@ it('should not crash', () => {
     )
   ).not.toThrow();
 });
+
+it('should unshift item in list', () => {
+  expect(
+    applyCommands(
+      {
+        list: {
+          items: [
+            {
+              id: 1,
+            },
+            {
+              id: 2,
+            },
+          ],
+        },
+      },
+      {
+        $unshift: {
+          'list.items': {
+            id: 0,
+          },
+        },
+      }
+    )
+  ).toEqual({
+    list: {
+      items: [
+        {
+          id: 0,
+        },
+        {
+          id: 1,
+        },
+        {
+          id: 2,
+        },
+      ],
+    },
+  });
+});
