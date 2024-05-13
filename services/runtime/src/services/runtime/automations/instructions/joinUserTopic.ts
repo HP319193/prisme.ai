@@ -23,14 +23,19 @@ export async function joinUserTopic(
     );
   }
 
-  const exists = await cache.checkUserTopicExists(ctx.workspaceId, join.topic);
-  if (!exists) {
-    throw new PrismeError(
-      `Cannot join topic ${join.topic} as it does not exist`,
-      {
-        topic: join.topic,
-      }
+  if (join.create === false) {
+    const exists = await cache.checkUserTopicExists(
+      ctx.workspaceId,
+      join.topic
     );
+    if (!exists) {
+      throw new PrismeError(
+        `Cannot join topic ${join.topic} as it does not exist`,
+        {
+          topic: join.topic,
+        }
+      );
+    }
   }
   return await Promise.all(
     (join.userIds || []).map(async (userId) => {
