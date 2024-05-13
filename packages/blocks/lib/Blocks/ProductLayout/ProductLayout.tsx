@@ -210,6 +210,7 @@ const defaultStyles = `:block {
 }
 .product-layout-sidebar--open .product-layout-sidebar__item-button .product-layout-sidebar__item-label {
   opacity: 0;
+  white-space: nowrap;
 }
 .product-layout-content {
   display: flex;

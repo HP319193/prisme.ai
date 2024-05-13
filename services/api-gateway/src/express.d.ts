@@ -11,6 +11,7 @@ declare namespace Express {
           CustomSessionFields)
       | Omit<CustomSessionFields, 'passport'>;
     locals: any;
+    authError?: string;
   }
 
   interface CustomSessionFields {

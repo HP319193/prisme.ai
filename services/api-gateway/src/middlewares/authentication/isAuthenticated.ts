@@ -9,7 +9,7 @@ export function isAuthenticated(
   next: NextFunction
 ) {
   if (!req.user) {
-    throw new AuthenticationError();
+    throw new AuthenticationError(req.authError || 'Unauthenticated');
   }
 
   return next();

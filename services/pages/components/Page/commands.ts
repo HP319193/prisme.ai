@@ -70,9 +70,19 @@ export function remove(value: Value, _with: Value) {
   return newValue;
 }
 
+export function unshift(value: Value, _with: Value) {
+  let newValue = { ...value };
+  Object.entries(_with).forEach(([path, v]) => {
+    const _v = _get(newValue, path);
+    if (!Array.isArray(_v)) return;
+    newValue = _set(newValue, path, [v, ..._v]);
+  });
+  return newValue;
+}
+
 export function applyCommands(
   prev: any,
-  { $merge, $replace, $remove, ...next }: Next
+  { $merge, $replace, $remove, $unshift, ...next }: Next
 ) {
   let value = _cloneDeep({ ...prev, ...next });
   if ($merge) {
@@ -83,6 +93,9 @@ export function applyCommands(
   }
   if ($remove) {
     value = remove(value, $remove);
+  }
+  if ($unshift) {
+    value = unshift(value, $unshift);
   }
   return value;
 }

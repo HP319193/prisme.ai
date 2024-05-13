@@ -1828,6 +1828,10 @@ declare namespace Prismeai {
              * Subscribing user ids. If undefined, defaults to current user
              */
             userIds?: string[];
+            /**
+             * Automatically create userTopic if it does not exist. Defaults: true
+             */
+            create?: boolean;
         };
     }
     export interface JoinedUserTopic {
