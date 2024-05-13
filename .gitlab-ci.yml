@@ -68,9 +68,9 @@ backend_npm_install:
       when: manual
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG'
       changes: *BACKEND_DEPS_CHANGES
-  image: docker:stable
+  image: docker:25
   services:
-    - docker:stable-dind
+    - docker:25-dind
   script:
     - >
       if [ -n "$CI_COMMIT_TAG" ] ; then
@@ -111,9 +111,9 @@ backend_npm_install:
 
 .build_docker:
   stage: build_docker
-  image: docker:stable
+  image: docker:25
   services:
-    - docker:stable-dind
+    - docker:25-dind
   script:
     - echo "sha = $CI_COMMIT_SHORT_SHA"
     - echo "tag = $CI_COMMIT_TAG"
@@ -231,7 +231,7 @@ console_build_docker:
   stage: build_docker
   image: docker:25
   services:
-    - docker:stable-dind
+    - docker:25-dind
   rules: &CONSOLE_DEPLOY_RULES
     - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
       changes: *CONSOLE_CHANGES
@@ -342,9 +342,9 @@ workspaces_build_docker:
       optional: true
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
-  image: docker:stable
+  image: docker:25
   services:
-    - docker:stable-dind
+    - docker:25-dind
   rules: &WORKSPACES_DEPLOY_RULES
     - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
       changes: *WORKSPACES_CHANGES
@@ -391,9 +391,9 @@ runtime_build_docker:
       optional: true
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
-  image: docker:stable
+  image: docker:25
   services:
-    - docker:stable-dind
+    - docker:25-dind
   rules: &RUNTIME_DEPLOY_RULES
     - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
       changes: *RUNTIME_CHANGES
@@ -420,12 +420,12 @@ api-gateway_build_docker:
   extends: .build_docker
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
-  image: docker:stable
+  image: docker:25
   needs:
     - job: backend_npm_install
       optional: true
   services:
-    - docker:stable-dind
+    - docker:25-dind
   rules: &API_GATEWAY_DEPLOY_RULES
     - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
       changes: &API_GATEWAY_CHANGES
@@ -468,9 +468,9 @@ events_build_docker:
       optional: true
   interruptible: true # Stop this job if a new one has been triggered by the same branch
   stage: build_docker
-  image: docker:stable
+  image: docker:25
   services:
-    - docker:stable-dind
+    - docker:25-dind
   rules: &EVENTS_DEPLOY_RULES
     - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
       changes: &EVENTS_CHANGES
