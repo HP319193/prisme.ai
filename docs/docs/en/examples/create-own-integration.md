@@ -16,19 +16,19 @@ Creating custom apps on Prisme.ai offers significant advantages:
 
 - **Accelerated Roadmap Execution**: Custom apps allow for quicker deployment of new features and integrations, speeding up project timelines and delivering value faster.
 
-- **Enhanced Quality and Security**: By using a controlled development environment, apps can be thoroughly tested and secured before deployment, reducing the risk of errors and vulnerabilities.
+- **Enhanced Quality and Security**: By using a controlled building environment, apps can be thoroughly tested and secured before deployment, reducing the risk of errors and vulnerabilities.
 
-- **Governance and Control**: Prisme.ai provides governance features that restrict app development to authorized users such as developers, senior architects, or data engineers. This helps in maintaining high standards and ensuring that only approved changes are implemented.
+- **Governance and Control**: Prisme.ai provides governance features that restrict app building to authorized users such as developers, senior architects, or data engineers. This helps in maintaining high standards and ensuring that only approved changes are implemented.
 
 - **Increased Productivity**: By automating routine tasks and integrating various data sources and services, custom apps can significantly boost productivity. They allow users to focus on more strategic activities by reducing manual efforts.
 
-- **Reusable Components**: Once developed, these apps or components can be reused across different projects within the organization, saving time and resources in the long run.
+- **Reusable Components**: Once built, these apps or components can be reused across different projects within the organization, saving time and resources in the long run.
 
-By developing custom apps, businesses can tailor the Prisme.ai platform to their specific requirements, ensuring that their technological solutions are as effective and efficient as possible.
+By building custom apps, businesses can tailor the Prisme.ai platform to their specific requirements, ensuring that their technological solutions are as effective and efficient as possible.
 
-Below is a step-by-step tutorial on how to develop and deploy an application on Prisme.ai App Store, using Mailjet as an example.
+Below is a step-by-step tutorial on how to build and deploy an application on Prisme.ai App Store, using Mailjet as an example.
 
-## Tutorial: Developing and Deploying a Mailjet App on Prisme.ai
+## Tutorial: Building and Deploying a Mailjet App on Prisme.ai
 
 ### Prerequisites
 
@@ -43,12 +43,12 @@ Below is a step-by-step tutorial on how to develop and deploy an application on 
 1. **Name Your Workspace**: Start by naming your workspace 'Mailjet'.
 2. **Description and Icon**: Add a brief description and choose an icon that represents the Mailjet service.
 
-#### Step 2: Develop Automation
+#### Step 2: Build Automation
 
 1. **Create an Automation**: Define an automation named "SendEmail". 
 2. Copy/past this YAML on the "See Code" menu to configure your automation.
 
-   ```yaml
+```yaml
 slug: send-email
 name: SendMail
 do:
@@ -131,6 +131,7 @@ As you can see, this YAML  defines a workflow named `SendMail`, with a unique id
 
 ##### Actions
 The workflow consists of one main action (`fetch`), which configures and sends the HTTP POST request:
+
 - **emitErrors:** `true` - If the action encounters errors, it emits them.
 - **outputMode:** `body` - The output will include the response body from the HTTP request.
 - **headers:** 
@@ -149,6 +150,7 @@ The workflow consists of one main action (`fetch`), which configures and sends t
 
 ##### Arguments
 These are placeholders for dynamic input values that will be used in the `body` of the request:
+
 - **fromEmail, fromName, toEmail, toName, subject, body:**
   - Each of these arguments is of type `string`.
   - They come with a placeholder to suggest example values.
@@ -163,7 +165,7 @@ These are placeholders for dynamic input values that will be used in the `body` 
 #### Step 3: Version and Push Your Workspace
 
 1. Test your setup thoroughly to ensure everything works as expected.
-2. Navigate to your workspace settings, click on "Pull" to create a new version. This action automatically archives the current state, facilitating easy updates or rollbacks.
+2. Navigate to your workspace settings, click on "Push" to create a new version. This action automatically archives the current state, facilitating easy updates or rollbacks.
 
 ![Pull](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/MRLovKFBFrNffCOz6gecZ.Screenshot-2024-04-09-at-23.15.59.png "Pull")
 Learn more about [Version Control](https://docs.eda.prisme.ai/en/workspaces/versioning/) and [RBAC](https://docs.eda.prisme.ai/en/workspaces/security/) to manage access and permissons.
@@ -176,9 +178,9 @@ Learn more about [Version Control](https://docs.eda.prisme.ai/en/workspaces/vers
 
 #### Step 5: Install and Use the App
 1. **Install Mailjet App**: In a new or existing workspace, install the Mailjet app.
-2. **Start Using ‘SendEmail’**: Utilize the ‘SendEmail’ automation within your workflows.
+2. **Getting Started with 'SendEmail'**: Incorporate the 'SendEmail' instruction into your automation. Begin by creating a new automation in your workspace. Once you're in the automation editor, click on the "+" icon to add a new instruction. Search for and select the 'SendEmail' action, which is associated with Mailjet. This enables you to review and manage all previously defined arguments, ensuring that the data structure is correctly configured for optimal control and efficiency.
 
-### Configuration and Documentation
+### Advanced Configuration and Documentation
 
 #### Step 1: Set Configuration
 1. **base64_encoded_credentials**: Navigate to the configuration settings of your workspace Mailjet
@@ -249,7 +251,7 @@ styles: |-
 
 ### Monitoring and Logs
 
-1. **Logs**: Access logs to monitor the app’s usage and performance.
+1. **Logs**: Access logs on the Activity tab  to monitor the app’s usage and performance.
 2. **Monitoring**: Set up monitoring to ensure the app runs smoothly and efficiently.
 
 ### Conclusion
