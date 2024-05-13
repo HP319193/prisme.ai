@@ -229,7 +229,7 @@ console_build_docker:
     - console_test
     - console_check_translations
   stage: build_docker
-  image: docker:stable
+  image: docker:25
   services:
     - docker:stable-dind
   rules: &CONSOLE_DEPLOY_RULES
@@ -296,9 +296,9 @@ pages_build_docker:
     - pages_test
     - pages_check_translations
   stage: build_docker
-  image: docker:stable
+  image: docker:25
   services:
-    - docker:stable-dind
+    - docker:25-dind
   rules: &PAGES_DEPLOY_RULES
     - if: $CI_COMMIT_BRANCH =~ /^feature\/.*$/
       changes: &PAGES_CHANGES
