@@ -121,7 +121,7 @@ arguments:
     description:
       fr: Texte ou contenu enrichi au format HTML ou Markdown
       en: Text or rich text formated with HTML ou Markdown 
-   ```
+```
 
 As you can see, this YAML  defines a workflow named `SendMail`, with a unique identifier `slug` of `send-email`. The workflow involves sending an email through the Mailjet API (version 3.1) by executing an HTTP POST request. Here's a detailed breakdown of the script's sections:
 
