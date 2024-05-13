@@ -2101,6 +2101,7 @@ components:
             - sessionId
             - socketId
             - permissions
+            - targetTopic
           properties:
             workspaceId:
               type: string
@@ -2119,6 +2120,8 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/PermissionRule'
+            targetTopic:
+              type: string
             oldSocketId:
               type: string
 
@@ -2169,6 +2172,30 @@ components:
             inactiveDatastreams: {}
             emptyIndices: {}
             expiredEvents: {}
+
+    EventsWebsocketsMessage:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.websockets.message
+          enum:
+            - events.websockets.message
+        payload:
+          type: object
+          additionalProperties: true
+          required:
+            - rooms
+            - event
+          properties:
+            rooms:
+              type: array
+              items:
+                type: string
+            event: {}
 
     ########################## Apps events ##########################
     PublishedApp:

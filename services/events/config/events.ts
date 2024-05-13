@@ -37,4 +37,4 @@ export const EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS = parseInt(
 );
 
 export const EVENTS_SOCKETIO_ADAPTER =
-  process.env.EVENTS_SOCKETIO_ADAPTER || 'redis-streams';
+  process.env.EVENTS_SOCKETIO_ADAPTER || 'prisme';

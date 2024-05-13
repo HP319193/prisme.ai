@@ -28,6 +28,7 @@ export enum EventType {
 
   CreatedUserTopic = 'events.userTopics.created',
   JoinedUserTopic = 'events.userTopics.joined',
+  EventsWebsocketsMessage = 'events.websockets.message',
 
   TriggeredInteraction = 'runtime.interactions.triggered',
   ExecutedAutomation = 'runtime.automations.executed',

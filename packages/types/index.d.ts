@@ -1510,6 +1510,18 @@ declare namespace Prismeai {
             template?: string;
         };
     }
+    export interface EventsWebsocketsMessage {
+        /**
+         * example:
+         * events.websockets.message
+         */
+        type: "events.websockets.message";
+        payload: {
+            [name: string]: any;
+            rooms: string[];
+            event: any;
+        };
+    }
     export interface ExecutedAutomation {
         /**
          * example:
@@ -1864,6 +1876,7 @@ declare namespace Prismeai {
                 payloadQuery?: any;
             };
             permissions: PermissionRule[];
+            targetTopic: string;
             oldSocketId?: string;
         };
     }

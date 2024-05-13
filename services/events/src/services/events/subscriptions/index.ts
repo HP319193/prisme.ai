@@ -243,6 +243,7 @@ export class Subscriptions extends Readable {
       socketId: string;
       apiKey?: string;
       authData: any;
+      targetTopic: string;
     } & Pick<Subscriber, 'filters'>
   ): Promise<LocalSubscriber> {
     const workspaceUser = await getWorkspaceUser(
@@ -346,6 +347,7 @@ export class Subscriptions extends Readable {
       socketId: subscriber.socketId,
       filters: subscriber.filters,
       permissions: subscriber.permissions,
+      targetTopic: subscriber.targetTopic,
     });
     logger.debug({
       msg: 'Update existing subscriber',
@@ -354,12 +356,13 @@ export class Subscriptions extends Readable {
       socketId: existingSubscriber.socketId,
       previousSocketId,
       filters: existingSubscriber.filters,
+      targetTopic: existingSubscriber.targetTopic,
     });
 
     // Drop additional subscribers from our memory
     if (inactiveSubscribers.length) {
       inactiveSubscribers.forEach((cur) => {
-        // Simply unlink their socketId to avoid performance overhead of rebuilding the entire workspace + user subscribers list without these
+        // Simply unlink their socketId to avoid performance overhead of rebuilding the entire workspace + user subscribers list without them
         delete cur.socketId;
         delete cur.filters;
         delete (cur as any).permissions;
@@ -382,6 +385,7 @@ export class Subscriptions extends Readable {
       filters: subscriber.filters,
       permissions: subscriber.permissions.ability.rules,
       oldSocketId: oldSocketId,
+      targetTopic: subscriber.targetTopic,
     };
 
     let promises: Promise<any>[] = [];

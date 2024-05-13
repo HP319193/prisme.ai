@@ -11,6 +11,7 @@ import { PrismeError } from '../../../errors';
 import { extractSocketContext, getSocketioServer } from './socketioUtils';
 import { SocketCtx, WORKSPACE_NSP_PATTERN, getWorkspaceNsp } from './types';
 import { SocketHandler } from './SocketHandler';
+import { dispatchSubscribedEvents } from './dispatchSubscribedEvents';
 
 export async function initWebsockets(
   httpServer: http.Server,
@@ -20,21 +21,26 @@ export async function initWebsockets(
   const io = await getSocketioServer(httpServer);
   const workspaces = io.of(WORKSPACE_NSP_PATTERN);
 
-  // Listen to platform generated events & send to the listening sockets
-  subscriptions.start((event, subscribers) => {
-    const nsp = event?.source?.workspaceId
-      ? io.of(getWorkspaceNsp(event.source.workspaceId))
-      : workspaces;
-    const rooms = subscribers.map((cur) => cur.socketId);
-    if (rooms.length) {
-      nsp.to(rooms).emit(event.type, event);
+  const instanceId = process.env.HOSTNAME || Math.round(Math.random() * 100000);
+  const targetTopic = `events:websockets:${instanceId}`;
+  // Start dispatching subscribed events to websockets
+  dispatchSubscribedEvents(
+    broker,
+    subscriptions,
+    targetTopic,
+    (event, rooms) => {
+      const nsp = event?.source?.workspaceId
+        ? io.of(getWorkspaceNsp(event.source.workspaceId))
+        : workspaces;
+      nsp.to(rooms).emit(event?.type, event);
+      logger.debug({
+        msg: `Instance ${instanceId} forwarded event ${event?.type} to ${rooms.length} rooms`,
+        rooms,
+      });
     }
-    logger.debug({
-      msg: `Sending ${event.type} to ${rooms.length} rooms`,
-      rooms,
-    });
-  });
+  );
 
+  // Start listening to new subscribers
   workspaces.on('connection', async (socket) => {
     logger.debug({
       msg: `Handling websocket ${socket.id} connection ...`,
@@ -193,6 +199,7 @@ export async function initWebsockets(
         authData: socketHandler.authData,
         socketId: socketHandler.socketId,
         filters: cleanSearchQuery(socketHandler.query),
+        targetTopic,
       })
       .then((suscribed) => {
         socketHandler.subscriber = suscribed;

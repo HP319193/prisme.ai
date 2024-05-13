@@ -6,7 +6,13 @@ import {
   PrismeEvent,
   Topic,
 } from './events';
-import { driver, Driver, DriverOptions, SubscriptionOptions } from './drivers';
+import {
+  driver,
+  Driver,
+  DriverOptions,
+  SubscriptionOptions,
+  DriverSendOptions,
+} from './drivers';
 import { ValidatorOptions } from './events/validator';
 import { EventValidationError } from './errors';
 
@@ -15,7 +21,6 @@ export type EventSender = (
   payload: object,
   partialSource?: Partial<EventSource>
 ) => Promise<boolean>;
-
 export type CallbackContext = any;
 
 export type EventCallback<
@@ -27,10 +32,11 @@ export type EventCallback<
   ctx: CallbackContext
 ) => boolean | Promise<boolean>;
 
-export type SendOptions = FormatEventOptions & {
-  throwErrors?: boolean;
-  disableValidation?: boolean;
-};
+export type SendOptions = FormatEventOptions &
+  DriverSendOptions & {
+    throwErrors?: boolean;
+    disableValidation?: boolean;
+  };
 
 export interface ProcessedEventMetrics {
   pickupDelay: number;
@@ -185,6 +191,7 @@ export class Broker<CallbackContext = any> {
     const {
       throwErrors = false,
       disableValidation = false,
+      disableCatchAll = false,
       ...formatOpts
     } = (typeof opts === 'boolean' ? { throwErrors: opts } : opts) || {};
 
@@ -247,7 +254,9 @@ export class Broker<CallbackContext = any> {
       this._buffer.push(event);
       return { type: 'buffered event' } as PrismeEvent;
     }
-    return this.driver.send(event, event.source.serviceTopic);
+    return this.driver.send(event, event.source.serviceTopic, {
+      disableCatchAll,
+    });
   }
 
   async on<PayloadType extends object = object>(

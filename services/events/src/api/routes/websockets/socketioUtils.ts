@@ -44,7 +44,7 @@ export async function getSocketioServer(httpServer: http.Server) {
     const redisSubClient = redisWebsocketClient.duplicate();
     await redisSubClient.connect();
     adapter = createPubSubAdapter(redisWebsocketClient, redisSubClient) as any;
-  } else {
+  } else if (EVENTS_SOCKETIO_ADAPTER === 'redis-streams') {
     adapter = createAdapter(redisWebsocketClient) as any;
   }
 

@@ -27,11 +27,19 @@ export interface PendingEvents {
     pending: number;
   }[];
 }
+export interface DriverSendOptions {
+  // Redis driver specific option to avoid overhead of sending specific events to its catchall stream if not required (i.e events:websockets:* topics)
+  disableCatchAll?: boolean;
+}
 
 export interface Driver {
   ready: Promise<boolean>;
 
-  send: (event: Omit<PrismeEvent, 'id'>, topic: string) => Promise<PrismeEvent>;
+  send: (
+    event: Omit<PrismeEvent, 'id'>,
+    topic: string,
+    opts?: DriverSendOptions
+  ) => Promise<PrismeEvent>;
   on(
     topic: string | string[],
     cb: (event: PrismeEvent) => boolean | Promise<boolean>,

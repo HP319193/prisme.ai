@@ -25,6 +25,7 @@ process.on('uncaughtException', uncaughtExceptionHandler);
   async function exit() {
     await broker.close();
     httpServer.close();
+
     process.exit(0);
   }
 

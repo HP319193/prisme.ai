@@ -1,4 +1,9 @@
-import { Driver, DriverOptions, SubscriptionOptions } from '..';
+import {
+  Driver,
+  DriverOptions,
+  DriverSendOptions,
+  SubscriptionOptions,
+} from '..';
 import { ClientPool } from './clientPool';
 
 enum RedisKey {
@@ -63,9 +68,14 @@ export class RedisDriver implements Driver {
     }) as any as string[];
   }
 
-  async send(event: any, topic: string) {
+  async send(event: any, topic: string, opts?: DriverSendOptions) {
     const stream = this.getTopicStreams([topic])[0];
-    this.client.send(event, this.getTopicStreams([RedisKey.CatchAllStream])[0]);
+    if (!opts?.disableCatchAll) {
+      this.client.send(
+        event,
+        this.getTopicStreams([RedisKey.CatchAllStream])[0]
+      );
+    }
     const result = await this.client.send(event, stream);
 
     const [curTime] = (result?.id || '').split('-');
