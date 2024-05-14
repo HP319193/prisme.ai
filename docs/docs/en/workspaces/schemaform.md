@@ -52,9 +52,9 @@ The root object and all its children are made with the same structure:
 * `ui:widget`: You can set a different input with this attribute. Each type comes with some alternative inputs and you can pass a React component if you write your `Schema Form` as javascript.
     * string type:
         * `textarea`: Replaces the text input by a textarea for more space.
-        * `date`: Display a date input with a calendar picker. The value will be a stringfyed date.
+        * `date`: Display a date input with a calendar picker. The value will be a stringified date.
         * `color`: Display a color picker.
-        * `autocomplete`: Dispkay a text input with autocompletion.
+        * `autocomplete`: Display a text input with autocompletion.
         * `upload`: Display a file picker. Set the choose file as data-URI format as field value. You'll probably need to upload your file and replace it with a URI before submitting the form.
         * `radio`: works with `enum`, then display a list of radio box instead of a select.
         * `html`: Display a WYSIWYG editor to generate HTML content.
