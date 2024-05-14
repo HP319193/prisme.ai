@@ -71,6 +71,7 @@ export const LocalizedInput = ({
   className,
   initialLang = 'en',
   unmountOnLangChange = false,
+  iconMarginTop,
   ...props
 }: LocalizedInputProps) => {
   const [selectedLang, setSelectedLang] = useState(
