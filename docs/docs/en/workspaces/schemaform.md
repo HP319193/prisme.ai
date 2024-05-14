@@ -58,6 +58,7 @@ The root object and all its children are made with the same structure:
         * `upload`: Display a file picker. Set the choose file as data-URI format as field value. You'll probably need to upload your file and replace it with a URI before submitting the form.
         * `radio`: works with `enum`, then display a list of radio box instead of a select.
         * `html`: Display a WYSIWYG editor to generate HTML content.
+        * `password`: Displays a password field which hides the content, also adds a toggle to show the content.
     * localized string type:
         * `textarea`
     * any type:
