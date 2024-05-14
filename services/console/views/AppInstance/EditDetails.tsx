@@ -41,6 +41,10 @@ export const EditDetails = ({
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState(value);
 
+  useEffect(() => {
+    setValues(value);
+  }, [value]);
+
   const configSchema: Schema = useMemo(
     () => ({
       type: 'object',
