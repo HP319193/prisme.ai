@@ -82,11 +82,8 @@ test.describe('Teams list', () => {
     await expect(
       page.locator('span').filter({ hasText: 'name new team for test' })
     ).toBeAttached();
-    await page
-      .locator('div')
-      .filter({ hasText: /^Nname new team for test$/ })
-      .getByRole('link')
-      .click();
+    await page.locator('.product-layout-sidebar__header > button').click();
+    await page.locator('.product-layout-sidebar__header-link').first().click();
     await page.waitForURL(baseUrl);
     await expect(
       page.locator(`[href="/fr/inbox?team=${createdId}"]`)
@@ -281,5 +278,71 @@ test.describe('Inbox', () => {
     await expect(page.locator('a.conversation').first()).toBeAttached();
     await page.locator('a.conversation').first().click();
     await expect(page.locator('.pr-block-dialog-box')).toBeAttached();
+  });
+});
+
+test.describe('Settings', () => {
+  test.describe.configure({ mode: 'serial' });
+  let createdId = '';
+  test.beforeEach(async ({ page }) => {
+    await page.goto(baseUrl);
+    await page.getByRole('button', { name: 'Créer une équipe' }).click();
+
+    await page
+      .getByTestId('schema-form-field-values.name')
+      .fill('name testing settings');
+    await page
+      .getByTestId('schema-form-field-values.description')
+      .fill('description testing settings');
+    await page.getByTestId('schema-form-field-values.name').press('Enter');
+    createdId = '';
+    await page.waitForURL((url: URL) => {
+      if (url.pathname === '/fr/inbox') {
+        createdId = url.searchParams.get('team') || '';
+        return true;
+      }
+      return false;
+    });
+  });
+  test.afterEach(async ({ page }) => {
+    if (!createdId) return;
+    await page.goto(`${baseUrl}/deleteTeam?team=${createdId}`);
+  });
+
+  test('Change name', async ({ page }) => {
+    await page.goto(baseUrl);
+    await page.getByRole('link', { name: 'name testing settings' }).click();
+
+    await page.getByRole('button', { name: 'N', exact: true }).click();
+    await page
+      .locator('div')
+      .filter({ hasText: /^Nname testing settings$/ })
+      .getByRole('button')
+      .nth(1)
+      .click();
+
+    await page
+      .getByTestId('schema-form-field-values.name')
+      .fill('updated name');
+    await page
+      .getByTestId('schema-form-field-values.description')
+      .fill('updated description');
+    await page.getByRole('button', { name: "Mettre à jour l'équipe" }).click();
+    await page.waitForFunction(() => {
+      return (
+        (
+          document.querySelector('.product-layout-content-title') as HTMLElement
+        ).innerText.trim() === 'updated name'
+      );
+    });
+    await page.waitForFunction(() => {
+      return (
+        (
+          document.querySelector(
+            '.product-layout-content-description'
+          ) as HTMLElement
+        ).innerText.trim() === 'updated description'
+      );
+    });
   });
 });

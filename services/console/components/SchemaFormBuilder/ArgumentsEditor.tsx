@@ -39,7 +39,6 @@ export const ArgumentsEditor = ({
                 ...field.input.value,
                 properties: {
                   ...field.input.value.properties,
-                  '': {},
                 },
               })
             }

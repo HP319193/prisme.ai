@@ -96,11 +96,12 @@ nav:
       - i18n.workspaces:
           - i18n.specifications: architecture/technical/workspaces/specifications.md
   - i18n.examples:
-      - i18n.airouting: examples/form-genai.md
-      - i18n.website2gpt: examples/website-gpt.md
       - Effortless Data Storage & classification: examples/store-data.md
       - AI Webhook Builder: examples/api-webhook.md
+      - i18n.airouting: examples/form-genai.md
+      - i18n.website2gpt: examples/website-gpt.md
       - AI Knowledge - RAG : examples/start-rag.md
+      - Custom Integrations (App): examples/create-own-integration.md
       - Other examples : examples/index.md
   - i18n.contributing:
       - i18n.index: contributing/index.md

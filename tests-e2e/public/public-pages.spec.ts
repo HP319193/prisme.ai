@@ -14,7 +14,7 @@ test('Display prisme.ai home', async ({ page }) => {
     .filter({ hasText: /^Technologie$/ })
     .getByRole('button')
     .click();
-  await page.getByRole('button', { name: 'Low-code Builder' }).click();
+  await page.getByRole('button', { name: 'Builder' }).click();
   await page.getByRole('button', { name: 'AI knowledge' }).click();
   await page.getByRole('button', { name: 'AI store' }).click();
   await page.getByRole('button', { name: 'AI Inbox - AI Evaluate' }).click();
