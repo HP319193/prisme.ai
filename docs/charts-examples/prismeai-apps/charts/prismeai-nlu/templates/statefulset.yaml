@@ -68,8 +68,6 @@ spec:
               value: /app/bots/datas/clustering-models
             - name: TRAIN_ON_TALK_TIMEOUT
               value: "10"
-            - name: GUNICORN_ACCESS_LOGFILE
-              value: /var/log/httpd-access.log
             - name: DEBUG
               value: "false"
 
