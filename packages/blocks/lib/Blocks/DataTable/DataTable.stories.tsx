@@ -399,3 +399,83 @@ WithSchemaForm.args = {
     ],
   } as DataTableConfig,
 };
+
+export const WithMenus = Template.bind({});
+WithMenus.args = {
+  defaultConfig: {
+    data: [
+      {
+        _id: '62b1cc7ee806595bf47ed230',
+        title: 'Foo',
+        foo: {
+          bar: true,
+        },
+      },
+    ],
+    headerContextMenu: [
+      {
+        text: {
+          fr: 'Foo',
+        },
+        type: 'event',
+        value: 'foo event',
+      },
+    ],
+    contextMenu: [
+      {
+        text: {
+          fr: 'Foo',
+        },
+        type: 'event',
+        value: 'foo event',
+      },
+      {
+        text: {
+          fr: 'Bar',
+        },
+        children: [
+          {
+            text: {
+              fr: 'Bar 2',
+            },
+            children: [
+              {
+                text: {
+                  fr: 'Bar 3',
+                },
+                type: 'event',
+                value: 'bar event',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    columns: [
+      {
+        key: 'title',
+        label: 'Title',
+        schemaForm: {
+          type: 'string',
+          title: 'Title',
+          description: 'Title',
+          required: true,
+        },
+      },
+      {
+        key: 'foo',
+        label: 'Foo',
+        schemaForm: {
+          type: 'object',
+          title: 'Foo',
+          description: 'Foo',
+          properties: {
+            bar: {
+              type: 'boolean',
+            },
+          },
+        },
+      },
+    ],
+  } as DataTableConfig,
+};

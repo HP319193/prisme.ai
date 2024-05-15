@@ -20,7 +20,7 @@ export interface ActionConfig extends BaseBlockConfig {
   text: ReactNode | Prismeai.LocalizedText | Prismeai.Block['blocks'];
   payload?: any;
   popup?: boolean;
-  accept: string;
+  accept?: string;
   confirm?: {
     label?: string;
     yesLabel?: string;

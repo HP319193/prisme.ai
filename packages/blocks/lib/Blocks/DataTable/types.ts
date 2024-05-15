@@ -1,4 +1,5 @@
 import { Schema } from '@prisme.ai/design-system';
+import { ActionConfig } from '../Action';
 
 export const types = ['string', 'number', 'boolean', 'date', 'tags'] as const;
 
@@ -20,6 +21,10 @@ export type FormatNumber = Intl.NumberFormatOptions;
 export type OnEdit = {
   event: string;
   payload?: Record<string, any>;
+};
+
+export type MenuItem = ActionConfig & {
+  children?: MenuItem[];
 };
 
 export interface ColumnDefinition {

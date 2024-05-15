@@ -1,7 +1,7 @@
 :root {
   /* v2 */
   --layout-surface: #020b1a;
-  --layout-surface-secondary: #1A2537;
+  --layout-surface-secondary: #1a2537;
   --main-surface: #171c24;
   /* dark mode
   --main-element: #373737;*/
@@ -9,7 +9,7 @@
   --main-element: white;
   --main-element-text: #171c24;
   --main-link: #8eb7ff;
-  --secondary-text: #F9F9F9;
+  --secondary-text: #f9f9f9;
   --primary: #015dff;
   --primary-contrast: white;
   --button: #f8faff;
@@ -250,6 +250,9 @@ body .ant-modal-confirm-body .anticon {
 body .ant-modal-confirm-title {
   font-size: 1.4rem;
   padding: 0;
+}
+body .ant-dropdown-menu-submenu {
+  list-style: none;
 }
 
 .pr-form-error.pr-form-error--warning .ant-tooltip-inner,
