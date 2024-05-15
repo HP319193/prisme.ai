@@ -1,20 +1,25 @@
 import '../../i18n';
-import { Table } from '@prisme.ai/design-system';
+import { isLocalizedObject, Table } from '@prisme.ai/design-system';
 import { useBlock } from '../../Provider';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BlockTitle from '../Internal/BlockTitle';
 
 import EditableRow from './EditableRow';
 import EditableCell from './EditableCell';
-import { ColumnDefinition, DataType, OnEdit } from './types';
+import { ColumnDefinition, DataType, MenuItem, OnEdit } from './types';
 import RenderValue from './RenderValue';
 import useLocalizedText from '../../useLocalizedText';
-import { TableProps } from 'antd';
+import { Dropdown, Menu, TableProps } from 'antd';
 import { BaseBlock } from '../BaseBlock';
 import { BaseBlockConfig } from '../types';
 import { Events } from '@prisme.ai/sdk';
 import { toKebab } from '../../utils/toKebab';
+import {
+  ContextMenu,
+  ContextMenuDropDown,
+  useContextMenu,
+} from './ContextMenu';
 
 export interface DataTableConfig extends BaseBlockConfig {
   title?: Prismeai.LocalizedText;
@@ -34,7 +39,7 @@ export interface DataTableConfig extends BaseBlockConfig {
         event: string;
         payload?: Record<string, any>;
       };
-  bulkActions: {
+  bulkActions?: {
     onSelect?:
       | string
       | {
@@ -43,6 +48,8 @@ export interface DataTableConfig extends BaseBlockConfig {
         };
     label: Prismeai.LocalizedText;
   }[];
+  headerContextMenu?: MenuItem[];
+  contextMenu?: MenuItem[];
 }
 
 interface DataTableProps extends DataTableConfig {
@@ -73,6 +80,8 @@ export const DataTable = ({
   events,
   onSort,
   bulkActions,
+  contextMenu,
+  headerContextMenu,
   ...config
 }: DataTableProps) => {
   const {
@@ -86,6 +95,8 @@ export const DataTable = ({
   useEffect(() => {
     setDataSource(initDataSource(data));
   }, [data]);
+
+  const { contextMenuSpec, setContextMenu } = useContextMenu();
 
   const columns = useMemo(() => {
     const rawData = data;
@@ -146,6 +157,34 @@ export const DataTable = ({
               return 0;
             }
           : undefined,
+        onHeaderCell: (col: any) => ({
+          col,
+          onContextMenu: (e: MouseEvent) => {
+            if (!headerContextMenu) return;
+            e.preventDefault();
+            setContextMenu({
+              content: (
+                <ContextMenu
+                  items={headerContextMenu}
+                  onSelect={() =>
+                    setContextMenu((prev) => ({
+                      ...prev,
+                      visible: false,
+                    }))
+                  }
+                  payload={{
+                    column: col.key,
+                  }}
+                />
+              ),
+              visible: true,
+              position: {
+                x: e.clientX,
+                y: e.clientY,
+              },
+            });
+          },
+        }),
         onCell: (record: any) => ({
           record,
           dataIndex: key || '',
@@ -156,6 +195,29 @@ export const DataTable = ({
           validators,
           schemaForm,
           className: key && `pr-block-data-table__cell--${toKebab(key)}`,
+          onContextMenu: (e: MouseEvent) => {
+            if (!contextMenu) return;
+            e.preventDefault();
+            setContextMenu({
+              content: (
+                <ContextMenu
+                  items={contextMenu}
+                  onSelect={() => {
+                    setContextMenu((prev) => ({
+                      ...prev,
+                      visible: false,
+                    }));
+                  }}
+                  payload={{ record: { ...record, key } }}
+                />
+              ),
+              visible: true,
+              position: {
+                x: e.clientX,
+                y: e.clientY,
+              },
+            });
+          },
         }),
         render: (_: any, item: any) => (
           <RenderValue
@@ -290,6 +352,12 @@ export const DataTable = ({
           pagination={pagination}
           onChange={handleTableChange}
           {...config.customProps}
+        />
+        <ContextMenuDropDown
+          {...contextMenuSpec}
+          onClose={() =>
+            setContextMenu((prev) => ({ ...prev, visible: false }))
+          }
         />
       </div>
     </div>
