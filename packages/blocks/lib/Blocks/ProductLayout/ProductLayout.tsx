@@ -262,6 +262,8 @@ const defaultStyles = `:block {
 }
 .product-layout-content-additional-buttons {
   margin-right: -14px;
+  display: flex;
+  flex-direction: row;
 }
 .product-layout-content-panel {
   color: var(--main-element-text);
