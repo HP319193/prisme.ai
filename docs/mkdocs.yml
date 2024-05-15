@@ -60,6 +60,7 @@ nav:
                 - i18n.prismeai-functions: hosting/enterprise-features/configuration/prismeai-functions/index.md
                 - i18n.prismeai-llm: hosting/enterprise-features/configuration/prismeai-llm/index.md
                 - i18n.prismeai-crawler: hosting/enterprise-features/configuration/prismeai-crawler/index.md
+                - i18n.prismeai-nlu: hosting/enterprise-features/configuration/prismeai-nlu/index.md
   - Builder:
       - i18n.index: workspaces/index.md
       - Pages:

@@ -40,6 +40,10 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
   const [values, setValues] = useState(workspace);
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    setValues(workspace);
+  }, [workspace]);
+
   const displaySchema: Schema = useMemo(
     () => ({
       type: 'object',
@@ -99,6 +103,7 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
     }
   }, [trackEvent]);
 
+  const ignoreValueChange = useRef(false);
   const onChange = useCallback(
     (schema: Schema) => (changedValues: any) => {
       const {
@@ -111,7 +116,7 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
         updatedAt,
         registerWorkspace,
         ...newValues
-      } = { ...values } as Workspace;
+      } = values;
       Object.keys(schema?.properties || {}).forEach((k) => {
         newValues[k as keyof typeof newValues] = changedValues[k];
       });
@@ -122,6 +127,17 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
 
   const onConfigChanged = useCallback(
     (changed) => {
+      if (ignoreValueChange.current) {
+        ignoreValueChange.current = false;
+        setValues({
+          ...values,
+          config: {
+            ...values.config,
+            value: { ...(values.config?.value || {}) },
+          },
+        });
+        return;
+      }
       const {
         automations,
         pages,
@@ -132,7 +148,7 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
         updatedAt,
         registerWorkspace,
         ...newValues
-      } = { ...values } as Workspace;
+      } = values;
       if (
         !newValues.config?.schema ||
         newValues.config?.schema.additionalProperties
@@ -158,22 +174,11 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
 
   const onSchemaChanged = useCallback(
     (changed) => {
-      const {
-        automations,
-        pages,
-        blocks,
-        imports,
-        id,
-        createdAt,
-        updatedAt,
-        registerWorkspace,
-        ...newValues
-      } = { ...values } as Workspace;
-
+      ignoreValueChange.current = true;
       setValues({
-        ...newValues,
+        ...values,
         config: {
-          ...newValues.config,
+          ...values.config,
           schema: changed,
         },
       } as Workspace);
@@ -239,7 +244,7 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
           </div>
         )}
         destroyTooltipOnHide
-        content={({ setOpen }) => (
+        content={() => (
           <Tabs
             className="flex flex-1"
             items={[

@@ -36,6 +36,9 @@ This automation is triggered by a specific event and uses OpenAI's GPT-4 model t
 slug: generate-summary
 name: Generate Summary
 do:
+  - set:
+      name: stringifiedData
+      value: '{% json({{payload.data}}) %}'
   - OpenAI.chat-completion:
       stream:
         options:
@@ -45,13 +48,18 @@ do:
         - role: system
           content: Create a brief summary from a JSON object, focusing on key details and overarching information contained within, ensuring clarity and conciseness in the summary.
         - role: user
-          content: '{{payload.data}}'
+          content: '{{stringifiedData}}'
       output: genAIData
 when:
   events:
     - summary-event
 output: '{{genAIData.choices[0].message.content}}'
 ```
+
+!!! note "Special functions"
+
+    We first parse the JSON object as a string as the LLM awaits a string.
+    This is done by using an utilitary function available within "condition evaluation" ({% ... %}). [See the condition documentation to learn more about evaluation.](../workspaces/conditions.md#conditions)
 
 ### 2. Webhook Automation
 This endpoint automation receives data, processes it through a Custom Code function named `CleanData`, and emits the cleaned data along with the original payload to trigger the summary generation.

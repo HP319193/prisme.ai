@@ -94,47 +94,47 @@ Here is a few thing that should be considered:
 
 ## Microservice testing
 
-1. Create a function "workspace" (named `test` and containing a `hello` function):
+  1. Create a function "workspace" (named `test` and containing a `hello` function):
 
-```bash
-curl --location 'http://localhost:4000/v2/functions/test' \
---header 'Content-Type: application/json' \
---data '{
-    "functions": {
-        "hello": {
-            "code": "return \"Hello \" + name;",
-            "parameters": {
-                "name": {
-                    "type": "string"
+    ```bash
+    curl --location 'http://localhost:4000/v2/functions/test' \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "functions": {
+            "hello": {
+                "code": "return \"Hello \" + name;",
+                "parameters": {
+                    "name": {
+                        "type": "string"
+                    }
                 }
             }
         }
+    }'
+    ```
+
+    If successful, the same body should be returned in response.  
+
+  2. Run the function:  
+
+    ```bash
+    curl --location 'http://localhost:4000/v2/functions/test/run/hello' \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "parameters": {
+            "name": "world"
+        }
+    }'
+    ```
+
+    If successful, the answer should be similar to this:   
+    ```json
+    {
+        "result": "Hello world",
+        "logs": [],
+        "duration": 38
     }
-}'
-```
-
-If successful, the same body should be returned in response.  
-
-2. Run the function:  
-
-```bash
-curl --location 'http://localhost:4000/v2/functions/test/run/hello' \
---header 'Content-Type: application/json' \
---data '{
-    "parameters": {
-        "name": "world"
-    }
-}'
-```
-
-If successful, the answer should be similar to this:   
-```json
-{
-    "result": "Hello world",
-    "logs": [],
-    "duration": 38
-}
-```
+    ```
 
 Congratulations, you service is up and running!
 
