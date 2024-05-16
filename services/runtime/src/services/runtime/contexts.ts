@@ -514,6 +514,14 @@ export class ContextsManager {
       type?: Prismeai.ContextSetType;
     }
   ) {
+    if (typeof path !== 'string') {
+      throw new InvalidInstructionError(
+        'Invalid set instruction : path should be a string',
+        {
+          variable: path,
+        }
+      );
+    }
     try {
       const { ttl, persist = true } = opts || {};
       let type: Prismeai.ContextSetType = opts?.type || 'replace';
@@ -621,7 +629,6 @@ export class ContextsManager {
         await this.save(context, ttl);
       }
     } catch (error) {
-      this.logger.error(error);
       throw new InvalidInstructionError('Invalid set instruction', {
         variable: path,
         value,
