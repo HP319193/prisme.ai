@@ -1,4 +1,7 @@
-import { WAIT_DEFAULT_TIMEOUT } from '../../../../../config';
+import {
+  CONTEXT_RUN_EXPIRE_TIME,
+  WAIT_DEFAULT_TIMEOUT,
+} from '../../../../../config';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 import { AppContext } from '../../../workspaces';
@@ -41,7 +44,9 @@ export async function wait(
     .catch(console.error);
 
   // Make current run context last longer than usually permitted
-  ctx.save(ContextType.Run, timeout / 1000).catch(console.error);
+  ctx
+    .save(ContextType.Run, CONTEXT_RUN_EXPIRE_TIME + Math.ceil(timeout / 1000))
+    .catch(console.error);
 
   const event = await new Promise((resolve) => {
     ctx.observe(waitId, resolve);
