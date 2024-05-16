@@ -329,10 +329,18 @@ export class ContextsManager {
         continue;
       }
 
-      await this.set(update.fullPath, update.value, {
-        persist: false,
-        type: update.type,
-      });
+      try {
+        await this.set(update.fullPath, update.value, {
+          persist: false,
+          type: update.type,
+        });
+      } catch (err) {
+        logger.warn({
+          msg: `Failed applyUpdateOpLogs : workspace context might not been properly synchronized accross instances`,
+          workspaceId: this.workspaceId,
+          path: update.fullPath,
+        });
+      }
     }
   }
 
@@ -512,17 +520,22 @@ export class ContextsManager {
       ttl?: number;
       persist?: boolean;
       type?: Prismeai.ContextSetType;
+      emitErrors?: {
+        error?: string;
+        message?: string;
+      }; // Instead of throwing , emit set errors in current context
     }
   ) {
-    if (typeof path !== 'string') {
-      throw new InvalidInstructionError(
-        'Invalid set instruction : path should be a string',
-        {
-          variable: path,
-        }
-      );
-    }
     try {
+      if (typeof path !== 'string') {
+        throw new InvalidInstructionError(
+          'Invalid set instruction : variable name should be a string',
+          {
+            variable: path,
+          }
+        );
+      }
+
       const { ttl, persist = true } = opts || {};
       let type: Prismeai.ContextSetType = opts?.type || 'replace';
       if ((path || '').endsWith('[]')) {
@@ -629,6 +642,28 @@ export class ContextsManager {
         await this.save(context, ttl);
       }
     } catch (error) {
+      if (opts?.emitErrors) {
+        this.broker.send(
+          EventType.Error,
+          {
+            error: opts?.emitErrors?.error || 'InvalidInstructionError',
+            message:
+              opts?.emitErrors?.message ||
+              'Invalid set instruction, please make sure variable name is a string.',
+            details: {
+              variable: path,
+              error: (<any>error)?.message,
+              value,
+            },
+          },
+          {},
+          {},
+          {
+            disableValidation: true,
+          }
+        );
+        return;
+      }
       throw new InvalidInstructionError('Invalid set instruction', {
         variable: path,
         value,
