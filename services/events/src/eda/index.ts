@@ -35,6 +35,9 @@ export enum EventType {
 
   JoinedWorkspaceSubscriber = 'events.subscribers.joined',
   LeftWorkspaceSubscriber = 'events.subscribers.left',
+  JoinedEventsNode = 'events.nodes.joined',
+  PingEventsNode = 'events.nodes.ping',
+  LeftEventsNode = 'events.nodes.left',
   CleanedEvents = 'events.cleaned',
 }
 

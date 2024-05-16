@@ -21,24 +21,17 @@ export async function initWebsockets(
   const io = await getSocketioServer(httpServer);
   const workspaces = io.of(WORKSPACE_NSP_PATTERN);
 
-  const instanceId = process.env.HOSTNAME || Math.round(Math.random() * 100000);
-  const targetTopic = `events:websockets:${instanceId}`;
   // Start dispatching subscribed events to websockets
-  dispatchSubscribedEvents(
-    broker,
-    subscriptions,
-    targetTopic,
-    (event, rooms) => {
-      const nsp = event?.source?.workspaceId
-        ? io.of(getWorkspaceNsp(event.source.workspaceId))
-        : workspaces;
-      nsp.to(rooms).emit(event?.type, event);
-      logger.debug({
-        msg: `Instance ${instanceId} forwarded event ${event?.type} to ${rooms.length} rooms`,
-        rooms,
-      });
-    }
-  );
+  dispatchSubscribedEvents(broker, subscriptions, (event, rooms) => {
+    const nsp = event?.source?.workspaceId
+      ? io.of(getWorkspaceNsp(event.source.workspaceId))
+      : workspaces;
+    nsp.to(rooms).emit(event?.type, event);
+    logger.debug({
+      msg: `Instance ${broker.consumer?.name} forwarded event ${event?.type} to ${rooms.length} rooms`,
+      rooms,
+    });
+  });
 
   // Start listening to new subscribers
   workspaces.on('connection', async (socket) => {
@@ -199,7 +192,7 @@ export async function initWebsockets(
         authData: socketHandler.authData,
         socketId: socketHandler.socketId,
         filters: cleanSearchQuery(socketHandler.query),
-        targetTopic,
+        targetTopic: subscriptions.cluster.localTopic,
       })
       .then((suscribed) => {
         socketHandler.subscriber = suscribed;

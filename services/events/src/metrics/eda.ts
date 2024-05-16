@@ -49,7 +49,10 @@ export async function initEDAMetrics(registry: client.Registry) {
   broker.onProcessedEventCallback = (event, metrics) => {
     // Do not observe waits events as their serviceTopic is always different and cause high memory leaks + eventloop duration
     if (
-      (event?.source?.serviceTopic || '').startsWith('runtime.waits.fulfilled')
+      (event?.source?.serviceTopic || '').startsWith(
+        'runtime.waits.fulfilled'
+      ) ||
+      (event?.source?.serviceTopic || '').startsWith('events:websockets:*')
     ) {
       return;
     }

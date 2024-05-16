@@ -37,6 +37,10 @@ export interface Cache extends CacheDriver {
     socketId: string
   ): Promise<boolean>;
 
+  registerClusterNode(nodeId: string, node: object): Promise<any>;
+  unregisterClusterNode(nodeId: string): Promise<any>;
+  getClusterNodes(): Promise<Record<string, object>>;
+
   registerSubscriber(
     workspaceId: string,
     sessionId: string,
@@ -106,6 +110,34 @@ export function buildCache(opts: CacheOptions): Cache {
         getCacheKey(CacheKeyType.SessionSockets, { workspaceId, sessionId }),
         socketId
       );
+    }
+
+    async registerClusterNode(nodeId: string, node: object) {
+      return await this.hSet(
+        getCacheKey(CacheKeyType.ClusterNode, {}),
+        nodeId,
+        JSON.stringify(node)
+      );
+    }
+
+    async unregisterClusterNode(nodeId: string) {
+      return await this.hDel(getCacheKey(CacheKeyType.ClusterNode, {}), nodeId);
+    }
+
+    async getClusterNodes() {
+      const clusterNodes = await this.hGetAll(
+        getCacheKey(CacheKeyType.ClusterNode, {})
+      );
+      return Object.entries(clusterNodes).reduce((cluster, [k, v]) => {
+        try {
+          return {
+            ...cluster,
+            [k]: JSON.parse(v),
+          };
+        } catch {
+          return cluster;
+        }
+      }, {});
     }
 
     async registerSubscriber(

@@ -50,6 +50,8 @@ export interface Driver {
     subscriptionOpts?: Partial<SubscriptionOptions>
   ): Promise<boolean>;
 
+  setExpiration(topic: string, ttl: number): Promise<any>;
+
   pending(): Promise<PendingEvents>;
 
   close(): void;

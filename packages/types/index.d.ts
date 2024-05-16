@@ -1846,6 +1846,18 @@ declare namespace Prismeai {
             create?: boolean;
         };
     }
+    export interface JoinedEventsNode {
+        /**
+         * example:
+         * events.nodes.joined
+         */
+        type: "events.nodes.joined";
+        payload: {
+            [name: string]: any;
+            id: string;
+            targetTopic: string;
+        };
+    }
     export interface JoinedUserTopic {
         /**
          * example:
@@ -1878,6 +1890,18 @@ declare namespace Prismeai {
             permissions: PermissionRule[];
             targetTopic: string;
             oldSocketId?: string;
+        };
+    }
+    export interface LeftEventsNode {
+        /**
+         * example:
+         * events.nodes.left
+         */
+        type: "events.nodes.left";
+        payload: {
+            [name: string]: any;
+            id: string;
+            targetTopic: string;
         };
     }
     export interface LeftWorkspaceSubscriber {
@@ -2084,6 +2108,18 @@ declare namespace Prismeai {
         [name: string]: {
             role?: Role;
             policies?: Policies;
+        };
+    }
+    export interface PingEventsNode {
+        /**
+         * example:
+         * events.nodes.ping
+         */
+        type: "events.nodes.ping";
+        payload: {
+            [name: string]: any;
+            id: string;
+            targetTopic: string;
         };
     }
     export interface Policies {

@@ -238,4 +238,9 @@ export class RedisDriver implements Driver {
     this.closed = true;
     return await this.client.closeClients();
   }
+
+  async setExpiration(topic: string, ttl: number): Promise<boolean> {
+    const stream = this.getTopicStreams([topic])[0];
+    return await this.client.setExpiration(stream, ttl);
+  }
 }

@@ -6,12 +6,16 @@ import { EventType } from '../../../eda';
 export function dispatchSubscribedEvents(
   broker: Broker,
   subscriptions: Subscriptions,
-  targetTopic: string,
   dispatch: (event: PrismeEvent, rooms: string[]) => void
 ) {
+  // Make sure to release our queue topic memory soon after this instance is closed / crashed
+  setInterval(() => {
+    broker.setExpiration(subscriptions.cluster.localTopic, 3 * 60);
+  }, 60 * 1000);
+
   // Listen current instance queue & dispach event to corresponding websockets
   broker.on<Prismeai.EventsWebsocketsMessage['payload']>(
-    targetTopic,
+    subscriptions.cluster.localTopic,
     (event) => {
       const workspaceId = event.payload?.event?.source?.workspaceId;
       if (!workspaceId) {

@@ -336,4 +336,7 @@ export class Broker<CallbackContext = any> {
   async close() {
     return this.driver.close();
   }
+  async setExpiration(topic: string, ttl: number) {
+    return this.driver.setExpiration(topic, ttl);
+  }
 }

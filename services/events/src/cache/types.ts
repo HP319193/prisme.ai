@@ -42,6 +42,7 @@ export enum CacheKeyType {
   UserTopics = 'userTopics',
   SessionSockets = 'sessionSockets',
   WorkspaceSubscribers = 'workspaceSubscribers',
+  ClusterNode = 'clusterNode',
 }
 type CacheKeyArguments = {
   [CacheKeyType.UserTopics]: {
@@ -55,6 +56,7 @@ type CacheKeyArguments = {
   [CacheKeyType.WorkspaceSubscribers]: {
     workspaceId: string;
   };
+  [CacheKeyType.ClusterNode]: {};
 };
 
 export function getCacheKey<
@@ -76,6 +78,9 @@ export function getCacheKey<
       const { workspaceId } =
         opts as any as CacheKeyArguments[CacheKeyType.WorkspaceSubscribers];
       return `events:workspace:${workspaceId}:subscribers`;
+    }
+    case CacheKeyType.ClusterNode: {
+      return `events:nodes`;
     }
   }
 

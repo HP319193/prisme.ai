@@ -15,6 +15,7 @@ import {
   WorkspaceSubscribers,
 } from './types';
 import { updateSubscriberUserTopics } from './updateSubscriberUserTopics';
+import { ClusterNode, ClusterNodeState } from '../../cluster';
 
 export * from './types';
 
@@ -24,19 +25,123 @@ export class Subscriptions extends Readable {
   private subscribers: Record<WorkspaceId, WorkspaceSubscribers>;
   private cache: Cache;
 
-  constructor(broker: Broker, accessManager: AccessManager, cache: Cache) {
+  public cluster: ClusterNode;
+
+  constructor(
+    broker: Broker,
+    accessManager: AccessManager,
+    cache: Cache,
+    cluster: ClusterNode
+  ) {
     super({ objectMode: true });
     this.broker = broker;
     this.subscribers = {};
     this.accessManager = accessManager;
     this.cache = cache;
+    this.cluster = cluster;
   }
 
   _read(): void {
     return;
   }
 
-  async initSubscribersFromCache() {
+  async initClusterSynchronization() {
+    await this.initSubscribersSynchronization();
+
+    // When a node normally exits
+    this.cluster.on('left', (node: ClusterNodeState) => {
+      this.releaseAllSubscribersFromTopic(node.targetTopic);
+    });
+
+    // When an inactive node is detected, force cache cleanup as it might not have been done in case of a crash
+    this.cluster.on('inactive', (node: ClusterNodeState) => {
+      this.releaseAllSubscribersFromTopic(node.targetTopic, true);
+    });
+  }
+
+  private async releaseAllSubscribersFromTopic(
+    targetTopic: string,
+    clearCache?: boolean
+  ) {
+    const removeSubscribers: {
+      socketId: string;
+      sessionId: string;
+      workspaceId: string;
+    }[] = [];
+    for (let [workspaceId, { all }] of Object.entries(this.subscribers)) {
+      const currentSize = all.length;
+      this.subscribers[workspaceId].all = all.filter((cur) => {
+        // Remove subscribers which have been previously "unlinked"
+        if (!cur.socketId) {
+          return false;
+        }
+        if (cur.targetTopic === targetTopic) {
+          removeSubscribers.push({
+            socketId: cur.socketId,
+            sessionId: cur.sessionId,
+            workspaceId: cur.workspaceId,
+          });
+          // Unlink subscriber object so we don't need to rebuild each userIds lists ...
+          delete cur.socketId;
+          delete cur.filters;
+          delete (cur as any).permissions;
+          return false;
+        }
+        return true;
+      });
+      const filteredSize = this.subscribers[workspaceId].all.length;
+      if (filteredSize < currentSize) {
+        logger.info({
+          msg: `Removed ${
+            currentSize - filteredSize
+          } subscribers from left node topic ${targetTopic}`,
+        });
+      }
+
+      // Also clear from cache
+      if (clearCache && removeSubscribers.length) {
+        await Promise.all(
+          removeSubscribers.map((cur) =>
+            this.cache.unregisterSubscriber(
+              cur.workspaceId,
+              cur.sessionId,
+              cur.socketId
+            )
+          )
+        );
+        logger.info({
+          msg: `Cleared ${removeSubscribers.length} subscribers from inactive node from cache`,
+        });
+      }
+    }
+  }
+
+  async close() {
+    const localSubscribers = Object.entries(this.subscribers).reduce<
+      Record<string, Subscriber[]>
+    >(
+      (subscribers, [workspaceId, { all }]) => ({
+        ...subscribers,
+        [workspaceId]: all.filter((cur) => cur.local),
+      }),
+      {}
+    );
+
+    const deleted = await Promise.all(
+      Object.entries(localSubscribers).flatMap(([workspaceId, all]) =>
+        all.map((cur) =>
+          this.cache.unregisterSubscriber(
+            workspaceId,
+            cur.sessionId,
+            cur.socketId
+          )
+        )
+      )
+    );
+    logger.info({ msg: `Removed ${deleted.length} subscribers from cache.` });
+  }
+
+  private async initSubscribersSynchronization() {
     // Start subscribers cache synchronisation
     this.broker.on<
       | Prismeai.JoinedWorkspaceSubscriber['payload']
