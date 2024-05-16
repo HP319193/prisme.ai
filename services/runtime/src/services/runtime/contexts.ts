@@ -10,7 +10,7 @@ import {
 } from '../../../config';
 import { Cache } from '../../cache';
 import { InvalidInstructionError, TooManyCallError } from '../../errors';
-import { Logger, logger } from '../../logger';
+import { logger } from '../../logger';
 import { EventType } from '../../eda';
 import { parseVariableName, SplittedPath } from '../../utils/parseVariableName';
 import { AppContext, DetailedAutomation } from '../workspaces';
@@ -115,7 +115,6 @@ export class ContextsManager {
   public correlationId: string;
   public cache: Cache;
   private contexts: Contexts;
-  private logger: Logger;
   private broker: Broker;
 
   public payload: any;
@@ -163,11 +162,6 @@ export class ContextsManager {
         ip: ctx.ip,
       },
     };
-    this.logger = logger.child({
-      userId: session.userId,
-      workspaceId: ctx.workspaceId,
-      correlationId: ctx.correlationId,
-    });
 
     this.payload = {};
     this.broker = broker;

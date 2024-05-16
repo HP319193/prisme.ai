@@ -17,7 +17,6 @@ import { all } from './all';
 import { createUserTopic } from './createUserTopic';
 import { joinUserTopic } from './joinUserTopic';
 import { Cache } from '../../../../cache';
-import { EventType } from '../../../../eda';
 
 export class Break {
   constructor(public scope: Prismeai.Break['break']['scope'] = 'automation') {
