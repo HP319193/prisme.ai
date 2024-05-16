@@ -52,11 +52,15 @@ process.on('uncaughtException', uncaughtExceptionHandler);
   await subscriptions.initClusterSynchronization();
 
   async function exit() {
+    console.log('Closing cluster synchronization ...');
     await cluster.close();
+    console.log('Closing subscriptions ...');
     await subscriptions.close();
+    console.log('Closing broker ...');
     await broker.close();
+    console.log('Closing http server ...');
     httpServer.close();
-
+    console.log('Exit.');
     process.exit(0);
   }
 
