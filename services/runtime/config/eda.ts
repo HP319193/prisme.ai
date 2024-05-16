@@ -22,7 +22,7 @@ export const BROKER_WHITELIST_EVENT_PREFIXES = (
 export const BROKER_NAMESPACE = process.env.BROKER_NAMESPACE;
 
 export const BROKER_TOPIC_MAXLEN = parseInt(
-  process.env.BROKER_TOPIC_MAXLEN || '10000'
+  process.env.BROKER_TOPIC_MAXLEN || '1000'
 );
 
 export const BROKER_MAX_SOCKETS = parseInt(
