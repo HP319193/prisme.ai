@@ -39,6 +39,39 @@ export class Subscriptions extends Readable {
     this.accessManager = accessManager;
     this.cache = cache;
     this.cluster = cluster;
+
+    // cache workspaces in accessManager
+    const uncachedFetch = (this.accessManager as any).fetch.bind(
+      this.accessManager
+    );
+    const cachedWorkspaces: Record<
+      string,
+      {
+        updatedAt: number;
+        data: any;
+      }
+    > = {};
+    (this.accessManager as any).fetch = async (
+      subjectType: any,
+      id: string
+    ) => {
+      if (subjectType !== SubjectType.Workspace) {
+        return uncachedFetch(subjectType, id);
+      }
+
+      // Keep workspaces in cache for 5s so we avoid heavy database traffic on peak usage while keeping this cache simple
+      if (
+        !cachedWorkspaces[id] ||
+        Date.now() - cachedWorkspaces[id].updatedAt > 5000
+      ) {
+        cachedWorkspaces[id] = {
+          updatedAt: Date.now(),
+          data: await uncachedFetch(subjectType, id),
+        };
+      }
+
+      return cachedWorkspaces[id].data;
+    };
   }
 
   _read(): void {

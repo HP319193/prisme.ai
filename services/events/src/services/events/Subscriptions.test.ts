@@ -67,6 +67,10 @@ const getSubscriptions = (
     can() {
       return true;
     }
+
+    fetch() {
+      return {};
+    }
   }
 
   const subscriptions = new Subscriptions(
