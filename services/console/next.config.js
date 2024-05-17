@@ -39,6 +39,11 @@ module.exports = {
         .split(',')
         .map((name) => ({ name }))
     ),
+
+    // https://socket.io/docs/v3/client-initialization/#transports
+    WEBSOCKETS_DEFAULT_TRANSPORTS: (
+      process.env.WEBSOCKETS_DEFAULT_TRANSPORTS || 'polling,websocket'
+    ).split(','),
   },
   webpack(config) {
     config.module.rules.push({

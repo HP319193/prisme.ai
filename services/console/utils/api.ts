@@ -30,6 +30,9 @@ const api = new Api({
     clientIdHeader: publicRuntimeConfig.OIDC_CLIENT_ID_HEADER,
     redirectUri: getRedirectURI(),
   },
+  websockets: {
+    transports: publicRuntimeConfig.WEBSOCKETS_DEFAULT_TRANSPORTS,
+  },
 });
 api.token = Storage.get('access-token');
 const legacyToken = Storage.get('auth-token');
