@@ -45,6 +45,18 @@ export class Subscriptions extends Readable {
     return;
   }
 
+  metrics() {
+    const workspaceSubscriptions = Object.entries(this.subscribers);
+    const totalSubscribers = workspaceSubscriptions.reduce(
+      (total, [, { all }]) => total + all.length,
+      0
+    );
+    return {
+      workspacesNb: workspaceSubscriptions.length,
+      totalSubscribers,
+    };
+  }
+
   async initClusterSynchronization() {
     await this.initSubscribersSynchronization();
 

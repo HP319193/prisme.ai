@@ -79,7 +79,7 @@ export async function initAPI(
   /**
    * Metrics
    */
-  initMetrics(app, io);
+  initMetrics(app, io, subscriptions);
 
   /**
    * ERROR HANDLING
