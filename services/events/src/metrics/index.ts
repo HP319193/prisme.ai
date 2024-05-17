@@ -43,9 +43,16 @@ async function initSubscriberMetrics(
     labelNames,
   });
 
+  const totalWorkspaces = new client.Gauge({
+    name: 'subscriptions_workspaces_total',
+    help: 'Total count of workspaces with event subscribers in the cluster',
+    labelNames,
+  });
+
   setInterval(() => {
     const subscriptionMetrics = subscriptions.metrics();
     totalSubscribers.set(subscriptionMetrics.totalSubscribers || 0);
+    totalWorkspaces.set(subscriptionMetrics.workspacesNb || 0);
   }, 5000);
 }
 
