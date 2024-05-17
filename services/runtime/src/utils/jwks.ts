@@ -65,7 +65,7 @@ export async function initJWKStore(
       .setObject(JWK_CACHE_KEY, {
         key: jwks?.keys?.[0],
       })
-      .catch(logger.error);
+      .catch((err) => logger.error({ err }));
   } catch (err) {
     logger.error({
       msg: `Can't initiate JWKS from file at '${filepath}'`,
@@ -95,7 +95,7 @@ export async function updateRuntimeJWK(
         disableValidation: true,
       }
     )
-    .catch(logger.error);
+    .catch((err) => logger.error({ err }));
 }
 
 export async function getAccessToken({

@@ -291,7 +291,7 @@ export class ContextsManager {
           },
           true
         )
-        .catch(logger.error);
+        .catch((err) => logger.error({ err }));
     }
   }
 

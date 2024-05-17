@@ -25,7 +25,7 @@ export function initCleanupRoutes(store: EventsStore) {
           EventType.CleanedEvents,
           result
         )
-        .catch(logger.error);
+        .catch((err) => logger.error({ err }));
     }
     return res.status(200).send(result);
   }

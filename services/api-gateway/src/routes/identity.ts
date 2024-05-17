@@ -89,7 +89,7 @@ async function resetPasswordHandler(
           email,
         }
       )
-      .catch(req.logger.error);
+      .catch((err) => req.logger.error({ err }));
   } catch (error) {
     (req.logger || console).error(error);
   }
@@ -228,7 +228,7 @@ async function patchUserHandler(
         disableValidation: true,
       }
     )
-    .catch(logger.error);
+    .catch((err) => logger.error({ err }));
   return res.send(user);
 }
 

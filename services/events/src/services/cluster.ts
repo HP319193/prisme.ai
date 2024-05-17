@@ -70,7 +70,7 @@ export class ClusterNode extends EventEmitter {
           targetTopic: this.localTopic,
           lastActiveAt: Date.now(),
         })
-        .catch(logger.error);
+        .catch((err) => logger.error({ err }));
       this.broker
         .send<Prismeai.PingEventsNode['payload']>(
           EventType.PingEventsNode,
@@ -82,7 +82,7 @@ export class ClusterNode extends EventEmitter {
             serviceTopic: EVENTS_NODES_TOPIC,
           }
         )
-        .catch(logger.error);
+        .catch((err) => logger.error({ err }));
     }, EVENTS_NODES_PING_INTERVAL);
 
     // Listen to others nodes status
@@ -137,7 +137,9 @@ export class ClusterNode extends EventEmitter {
           });
 
           delete this.clusterNodes[cur.id];
-          this.cache.unregisterClusterNode(cur.id).catch(logger.error);
+          this.cache
+            .unregisterClusterNode(cur.id)
+            .catch((err) => logger.error({ err }));
 
           // Emit locally to allow custom cleanup not automatically done upon LeftEventsNode receival (i.e database/cache cleanup)
           this.emit('inactive', {
@@ -157,7 +159,7 @@ export class ClusterNode extends EventEmitter {
                 serviceTopic: EVENTS_NODES_TOPIC,
               }
             )
-            .catch(logger.error);
+            .catch((err) => logger.error({ err }));
         });
         return true;
       },
@@ -168,7 +170,9 @@ export class ClusterNode extends EventEmitter {
   }
 
   async close() {
-    this.cache.unregisterClusterNode(this.id).catch(logger.error);
+    this.cache
+      .unregisterClusterNode(this.id)
+      .catch((err) => logger.error({ err }));
     await this.broker.send<Prismeai.LeftEventsNode['payload']>(
       EventType.LeftEventsNode,
       {

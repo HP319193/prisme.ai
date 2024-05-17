@@ -162,7 +162,7 @@ export async function initAuthProviders(
                   ip: req.context?.http?.ip,
                   provider: req.session?.oauth?.provider,
                 })
-                .catch(logger.warn);
+                .catch((err) => logger.warn({ err }));
               try {
                 const loginInteraction = await provider.interactionDetails(
                   req,

@@ -61,7 +61,7 @@ export function buildStorage<Model>(
         .setObject(cacheKey, data, {
           ttl: this.opts?.cache?.ttl || 3600 * 24 * 7, // By default, cache 7 days
         })
-        .catch(logger.error);
+        .catch((err) => logger.error({ err }));
     }
 
     async save(data: any, opts: SaveOpts<any>) {
@@ -97,7 +97,7 @@ export function buildStorage<Model>(
       const cacheKey = this.getCacheKey(id as Partial<Model>);
       if (cacheKey && this.cache) {
         try {
-          this.cache.delete(cacheKey).catch(logger.error);
+          this.cache.delete(cacheKey).catch((err) => logger.error({ err }));
         } catch {}
       }
       return await super.delete(id);

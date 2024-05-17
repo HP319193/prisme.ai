@@ -482,13 +482,22 @@ export class Subscriptions extends Readable {
     subscriber: Subscriber,
     oldSocketId?: string
   ) {
+    if (!subscriber.permissions?.ability?.rules) {
+      logger.warn({
+        msg: `Trying to register a subscriber with undefined permissions`,
+        workspaceId: subscriber.workspaceId,
+        userId: subscriber.userId,
+        socketId: subscriber.socketId,
+      });
+    }
+
     const publishedSubscriber: WorkspaceSubscriber = {
       workspaceId: subscriber.workspaceId,
       userId: subscriber.userId,
       sessionId: subscriber.sessionId,
       socketId: subscriber.socketId,
       filters: subscriber.filters,
-      permissions: subscriber.permissions.ability.rules,
+      permissions: subscriber.permissions?.ability?.rules || [],
       oldSocketId: oldSocketId,
       targetTopic: subscriber.targetTopic,
     };
@@ -503,7 +512,7 @@ export class Subscriptions extends Readable {
           subscriber.sessionId,
           subscriber.socketId
         )
-        .catch(logger.error)
+        .catch((err) => logger.error({ err }))
     );
 
     // So future prismeai-events instances know when to emit events to this subscriber
@@ -515,7 +524,7 @@ export class Subscriptions extends Readable {
           subscriber.socketId,
           publishedSubscriber
         )
-        .catch(logger.error)
+        .catch((err) => logger.error({ err }))
     );
 
     // So current prismeai-events instances know when to emit events to this subscriber
@@ -535,7 +544,7 @@ export class Subscriptions extends Readable {
             disableValidation: true,
           }
         )
-        .catch(logger.error)
+        .catch((err) => logger.error({ err }))
     );
 
     // Finally, clear subscriber from previous socketId if we just changed it
@@ -547,7 +556,7 @@ export class Subscriptions extends Readable {
             subscriber.sessionId,
             oldSocketId
           )
-          .catch(logger.error)
+          .catch((err) => logger.error({ err }))
       );
     }
 
@@ -601,7 +610,7 @@ export class Subscriptions extends Readable {
           disableValidation: true,
         }
       )
-      .catch(logger.error);
+      .catch((err) => logger.error({ err }));
 
     this.cache
       .unregisterSubscriber(
@@ -609,7 +618,7 @@ export class Subscriptions extends Readable {
         subscriber.sessionId,
         subscriber.socketId
       )
-      .catch(logger.error);
+      .catch((err) => logger.error({ err }));
   }
 
   async updateLocalSubscriber(

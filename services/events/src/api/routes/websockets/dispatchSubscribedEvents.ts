@@ -78,7 +78,7 @@ export function dispatchSubscribedEvents(
             disableValidation: true,
           }
         )
-        .catch(logger.error);
+        .catch((err) => logger.error({ err }));
     }
     logger.debug({
       msg: `Sending ${event.type} to ${subscribers.length} subscribers accross ${targetTopicsNb} instances`,
