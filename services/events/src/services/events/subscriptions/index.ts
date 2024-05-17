@@ -375,6 +375,13 @@ export class Subscriptions extends Readable {
       },
       this.cache
     );
+    logger.trace({
+      msg: `Retrieved subscriber userTopics`,
+      userId: subscriber.userId,
+      sessionId: subscriber.sessionId,
+      socketId: subscriber.socketId,
+      workspaceId,
+    });
     const userAccessManager = await this.accessManager.as(
       workspaceUser,
       subscriber.apiKey
@@ -384,6 +391,13 @@ export class Subscriptions extends Readable {
       SubjectType.Workspace,
       workspaceId
     );
+    logger.trace({
+      msg: `Retrieved user's workspace permissions`,
+      userId: subscriber.userId,
+      sessionId: subscriber.sessionId,
+      socketId: subscriber.socketId,
+      workspaceId,
+    });
 
     // Small performance improvement : reduce casl overhead by removing all others rules
     const userPermissions = (<any>userAccessManager)

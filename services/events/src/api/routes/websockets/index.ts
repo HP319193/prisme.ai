@@ -126,10 +126,12 @@ export async function initWebsockets(
         processMessage(socketHandler, type, payload);
       }
     );
+    let disconnected = false;
     socket.on('disconnect', (reason) => {
       socketHandler.logger.info({
         msg: `Websocket disconnected (${reason})`,
       });
+      disconnected = true;
       if (socketHandler.subscriber) {
         socketHandler.subscriber.unsubscribe();
       }
@@ -195,6 +197,16 @@ export async function initWebsockets(
         targetTopic: subscriptions.cluster.localTopic,
       })
       .then((suscribed) => {
+        if (disconnected) {
+          socketHandler.logger.debug({
+            msg: `Websocket disconnected before subscriber readiness.`,
+          });
+          suscribed.unsubscribe();
+          return;
+        }
+        socketHandler.logger.debug({
+          msg: `Websocket's subscriber ready. Starting to process messages`,
+        });
         socketHandler.subscriber = suscribed;
         pendingMessages.forEach((cur) => {
           processMessage(socketHandler, cur.type, cur.payload);
