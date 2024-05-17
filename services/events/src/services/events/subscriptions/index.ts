@@ -48,7 +48,7 @@ export class Subscriptions extends Readable {
   metrics() {
     const workspaceSubscriptions = Object.entries(this.subscribers);
     const totalSubscribers = workspaceSubscriptions.reduce(
-      (total, [, { all }]) => total + all.length,
+      (total, [, { all }]) => total + all.filter((cur) => cur.socketId).length,
       0
     );
     return {
@@ -206,6 +206,10 @@ export class Subscriptions extends Readable {
       });
 
       for (let subscriber of subscribers) {
+        // Drop this subscriber if its hosting node is not up anymore
+        if (!this.cluster.clusterTopics.has(subscriber.targetTopic)) {
+          continue;
+        }
         // Do not update any existing subscriber already synced from events
         if (this.saveSubscriber(subscriber, { disableUpdate: true })) {
           totalSubscribersRestored += 1;

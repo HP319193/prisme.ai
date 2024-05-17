@@ -21,6 +21,7 @@ export class ClusterNode extends EventEmitter {
   public localTopic: string;
 
   private clusterNodes: Record<string, ClusterNodeState>;
+  public clusterTopics: Set<string>;
 
   constructor(broker: Broker, cache: Cache) {
     super();
@@ -31,14 +32,33 @@ export class ClusterNode extends EventEmitter {
       process.env.HOSTNAME ||
       `${Math.round(Math.random() * 100000)}`;
     this.localTopic = `events:websockets:${this.id}`;
-    this.clusterNodes = {};
+    this.clusterNodes = {
+      [this.id]: {
+        targetTopic: this.localTopic,
+        id: this.id,
+        lastActiveAt: Date.now(),
+      },
+    };
+    this.clusterTopics = new Set();
+  }
+
+  private updateClusterNodes(
+    clusterNodes: Record<string, ClusterNodeState | null>
+  ) {
+    for (let [nodeId, node] of Object.entries(clusterNodes)) {
+      if (node === null) {
+        delete this.clusterNodes[nodeId];
+      } else {
+        this.clusterNodes[nodeId] = node;
+      }
+    }
+    this.clusterTopics = new Set(Object.keys(this.clusterNodes));
   }
 
   async start() {
-    this.clusterNodes = (await this.cache.getClusterNodes()) as Record<
-      string,
-      ClusterNodeState
-    >;
+    this.updateClusterNodes(
+      (await this.cache.getClusterNodes()) as Record<string, ClusterNodeState>
+    );
     const ids = Object.keys(this.clusterNodes);
     logger.info({
       msg: `Discovered ${ids.length} other nodes`,
@@ -96,16 +116,20 @@ export class ClusterNode extends EventEmitter {
         ) {
           const { targetTopic, id } =
             event.payload as Prismeai.JoinedEventsNode['payload'];
-          this.clusterNodes[id] = {
-            id,
-            targetTopic,
-            lastActiveAt: Date.now(),
-          };
+          this.updateClusterNodes({
+            [id]: {
+              id,
+              targetTopic,
+              lastActiveAt: Date.now(),
+            },
+          });
         } else if (event.type === EventType.LeftEventsNode) {
           const { targetTopic, id } =
             event.payload as Prismeai.LeftEventsNode['payload'];
 
-          delete this.clusterNodes[id];
+          this.updateClusterNodes({
+            [id]: null,
+          });
           this.emit('left', {
             id,
             targetTopic,
@@ -136,7 +160,9 @@ export class ClusterNode extends EventEmitter {
             } ms.`,
           });
 
-          delete this.clusterNodes[cur.id];
+          this.updateClusterNodes({
+            [cur.id]: null,
+          });
           this.cache
             .unregisterClusterNode(cur.id)
             .catch((err) => logger.error({ err }));

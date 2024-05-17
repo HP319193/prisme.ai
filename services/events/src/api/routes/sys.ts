@@ -51,10 +51,12 @@ export function initSysRoutes(subscriptions: Subscriptions) {
     ).reduce(
       (workspaces, [wkId, { all }]) => ({
         ...workspaces,
-        [wkId]: all.map(({ permissions, ...cur }) => ({
-          ...cur,
-          permissionsRulesNb: permissions?.ability?.rules?.length,
-        })),
+        [wkId]: all.map(
+          ({ permissions, accessManager: _, authData: __, ...cur }) => ({
+            ...cur,
+            permissionsRulesNb: permissions?.ability?.rules?.length,
+          })
+        ),
       }),
       {}
     );
