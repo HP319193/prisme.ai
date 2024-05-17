@@ -2,6 +2,13 @@ import express, { Request, Response } from 'express';
 import { LogLevel } from '../../logger';
 import sysServices from '../../services/sys';
 import { asyncRoute } from '../utils/async';
+import { isInternallyAuthenticated } from '../middlewares/accessManager';
+import {
+  Subscriber,
+  Subscriptions,
+  WorkspaceId,
+  WorkspaceSubscribers,
+} from '../../services/events/subscriptions';
 
 async function healthcheckHandler(req: Request, res: Response) {
   const sys = sysServices(req.logger, req.context);
@@ -34,10 +41,44 @@ async function loggingHandler(
     .send({ msg: `Succesfully changed log level to ${level}` });
 }
 
-const app = express.Router();
+export function initSysRoutes(subscriptions: Subscriptions) {
+  async function getSubscriptionsHandler(req: Request, res: Response) {
+    const subscribers: Record<WorkspaceId, WorkspaceSubscribers> = (
+      subscriptions as any
+    ).subscribers;
+    const workspaces: Record<string, Subscriber[]> = Object.entries(
+      subscribers
+    ).reduce(
+      (workspaces, [wkId, { all }]) => ({
+        ...workspaces,
+        [wkId]: all.map(({ permissions, ...cur }) => ({
+          ...cur,
+          permissionsRulesNb: permissions?.ability?.rules?.length,
+        })),
+      }),
+      {}
+    );
+    return res.status(200).send({
+      workspacesNb: Object.keys(workspaces).length,
+      subscriptionsNb: Object.values(workspaces).reduce(
+        (total, all) => total + all.length,
+        0
+      ),
+      cluster: (subscriptions.cluster as any)?.clusterNodes,
+      workspaces,
+    });
+  }
 
-app.get(`/healthcheck`, asyncRoute(healthcheckHandler));
-app.get(`/heapdump`, asyncRoute(heapdumpHandler));
-app.put(`/logging`, asyncRoute(loggingHandler));
+  const app = express.Router();
 
-export default app;
+  app.get(`/healthcheck`, asyncRoute(healthcheckHandler));
+  app.get(`/heapdump`, isInternallyAuthenticated, asyncRoute(heapdumpHandler));
+  app.put(`/logging`, isInternallyAuthenticated, asyncRoute(loggingHandler));
+  app.get(
+    `/subscriptions`,
+    isInternallyAuthenticated,
+    asyncRoute(getSubscriptionsHandler)
+  );
+
+  return app;
+}

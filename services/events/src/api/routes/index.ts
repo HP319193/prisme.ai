@@ -1,7 +1,7 @@
 import http from 'http';
 import { Application } from 'express';
 
-import sys from './sys';
+import { initSysRoutes } from './sys';
 import { initEventsRoutes } from './events';
 import { initUsageRoutes } from './usage';
 import { initSearchRoutes } from './search';
@@ -22,7 +22,7 @@ export const init = async (
 
   const root = '/v2';
   app.use(`/sys/cleanup`, initCleanupRoutes(eventsStore));
-  app.use(`/sys`, sys);
+  app.use(`/sys`, initSysRoutes(subscriptions));
   app.use(
     `${root}/workspaces/:workspaceId/events`,
     initEventsRoutes(eventsStore)
