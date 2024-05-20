@@ -194,6 +194,11 @@ const defaultStyles = `:block {
 .product-layout-sidebar--open .product-layout-sidebar__item-button {
   margin-bottom: 10px;
 }
+.product-layout-sidebar__item-icon .icon-svg {
+  display: flex;
+  width: 20px;
+  height: 20px;
+}
 .product-layout-sidebar__item-label {
   text-align: left;
   align-self: flex-start;

@@ -81,6 +81,14 @@ function getIcon(name: Icons) {
     case 'charts':
       return <IconCharts />;
     default:
+      if (name.match(/^<svg/)) {
+        return (
+          <span
+            className="icon-svg"
+            dangerouslySetInnerHTML={{ __html: name }}
+          />
+        );
+      }
       return <img src={name} />;
   }
 }
