@@ -23,8 +23,8 @@ export interface ActionConfig extends BaseBlockConfig {
   accept?: string;
   confirm?: {
     label?: string;
-    yesLabel?: string;
-    noLabel?: string;
+    yesLabel?: string | Prismeai.LocalizedText;
+    noLabel?: string | Prismeai.LocalizedText;
     placement?: TooltipProps['placement'];
   };
   disabled?: boolean;
@@ -167,8 +167,21 @@ export const ActionButton = ({
   }
 };
 
+const defaultYesLabel = {
+  fr: 'Oui',
+  en: 'Yes',
+};
+const defaultNoLabel = {
+  fr: 'Non',
+  en: 'No',
+};
 export const ConfirmAction = ({
-  confirm: { label, yesLabel, noLabel, placement } = {},
+  confirm: {
+    label,
+    yesLabel = defaultYesLabel,
+    noLabel = defaultNoLabel,
+    placement,
+  } = {},
   events,
   onClick,
   ...props
