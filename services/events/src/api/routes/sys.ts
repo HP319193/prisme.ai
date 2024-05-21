@@ -49,9 +49,9 @@ export function initSysRoutes(subscriptions: Subscriptions) {
     const workspaces: Record<string, Subscriber[]> = Object.entries(
       subscribers
     ).reduce(
-      (workspaces, [wkId, { all }]) => ({
+      (workspaces, [wkId, { socketIds }]) => ({
         ...workspaces,
-        [wkId]: all.map(
+        [wkId]: Object.values(socketIds).map(
           ({ permissions, accessManager: _, authData: __, ...cur }) => ({
             ...cur,
             permissionsRulesNb: permissions?.ability?.rules?.length,

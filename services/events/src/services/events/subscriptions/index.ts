@@ -2,15 +2,16 @@ import { Broker, PrismeEvent } from '@prisme.ai/broker';
 import { Cache, WorkspaceSubscriber } from '../../../cache';
 import { EventType } from '../../../eda';
 import { AccessManager, SubjectType, ActionType } from '../../../permissions';
-import { SearchOptions } from '../store';
 import { getWorkspaceUser } from '../users';
 import { Permissions, Rules } from '@prisme.ai/permissions';
 import { logger } from '../../../logger';
 import { Readable } from 'stream';
-import { searchFilters } from './searchFilters';
+import { QueryEngine } from './filters/engine';
 import {
   LocalSubscriber,
+  SocketId,
   Subscriber,
+  TargetTopic,
   WorkspaceId,
   WorkspaceSubscribers,
 } from './types';
@@ -23,6 +24,8 @@ export class Subscriptions extends Readable {
   public broker: Broker;
   public accessManager: AccessManager;
   private subscribers: Record<WorkspaceId, WorkspaceSubscribers>;
+  private targetTopics: Record<TargetTopic, Record<WorkspaceId, Set<SocketId>>>;
+  private queries: Record<WorkspaceId, QueryEngine>;
   private cache: Cache;
 
   public cluster: ClusterNode;
@@ -35,6 +38,8 @@ export class Subscriptions extends Readable {
   ) {
     super({ objectMode: true });
     this.broker = broker;
+    this.targetTopics = {};
+    this.queries = {};
     this.subscribers = {};
     this.accessManager = accessManager;
     this.cache = cache;
@@ -81,13 +86,90 @@ export class Subscriptions extends Readable {
   metrics() {
     const workspaceSubscriptions = Object.entries(this.subscribers);
     const totalSubscribers = workspaceSubscriptions.reduce(
-      (total, [, { all }]) => total + all.filter((cur) => cur.socketId).length,
+      (total, [, { socketIds }]) => total + Object.values(socketIds).length,
       0
     );
     return {
       workspacesNb: workspaceSubscriptions.length,
       totalSubscribers,
     };
+  }
+
+  private setSubscriber(subscriber: Subscriber) {
+    const workspaceId = subscriber.workspaceId;
+    if (!(workspaceId in this.subscribers)) {
+      this.subscribers[workspaceId] = {
+        socketIds: {},
+        userIds: {},
+      };
+    }
+    if (!(subscriber.userId in this.subscribers[workspaceId].userIds)) {
+      this.subscribers[workspaceId].userIds[subscriber.userId] = new Set();
+    }
+
+    this.subscribers[workspaceId].socketIds[subscriber.socketId] = subscriber;
+    this.subscribers[workspaceId].userIds[subscriber.userId].add(
+      subscriber.socketId
+    );
+
+    if (!this.queries[workspaceId]) {
+      this.queries[workspaceId] = new QueryEngine();
+    }
+    this.queries[workspaceId].saveQuery(
+      subscriber.socketId,
+      subscriber.filters
+    );
+
+    if (subscriber.targetTopic) {
+      if (!this.targetTopics[subscriber.targetTopic]) {
+        this.targetTopics[subscriber.targetTopic] = {};
+      }
+      if (!this.targetTopics[subscriber.targetTopic][workspaceId]) {
+        this.targetTopics[subscriber.targetTopic][workspaceId] = new Set();
+      }
+      this.targetTopics[subscriber.targetTopic][workspaceId].add(
+        subscriber.socketId
+      );
+    }
+  }
+
+  private unsetSubscriber(workspaceId: string, socketId: string) {
+    if (!(workspaceId in this.subscribers)) {
+      this.subscribers[workspaceId] = {
+        socketIds: {},
+        userIds: {},
+      };
+    }
+    if (!this.queries[workspaceId]) {
+      this.queries[workspaceId] = new QueryEngine();
+    }
+
+    // Remove associated query
+    this.queries[workspaceId].removeQuery(socketId);
+
+    // Remove subscriber refs from this.subscribers
+    const subscriber = this.subscribers[workspaceId]?.socketIds?.[socketId];
+    if (!subscriber) {
+      return;
+    }
+
+    if (!(subscriber?.userId in this.subscribers[workspaceId].userIds)) {
+      this.subscribers[workspaceId].userIds[subscriber.userId] = new Set();
+    }
+
+    if (subscriber) {
+      delete this.subscribers[workspaceId].socketIds[socketId];
+      this.subscribers[workspaceId].userIds[subscriber.userId].delete(socketId);
+
+      const targetTopic =
+        subscriber.targetTopic &&
+        this.targetTopics[subscriber.targetTopic]?.[workspaceId];
+      if (targetTopic) {
+        targetTopic.delete(socketId);
+      }
+    }
+
+    return subscriber;
   }
 
   async initClusterSynchronization() {
@@ -113,28 +195,24 @@ export class Subscriptions extends Readable {
       sessionId: string;
       workspaceId: string;
     }[] = [];
-    for (let [workspaceId, { all }] of Object.entries(this.subscribers)) {
-      const currentSize = all.length;
-      this.subscribers[workspaceId].all = all.filter((cur) => {
-        // Remove subscribers which have been previously "unlinked"
-        if (!cur.socketId) {
-          return false;
-        }
-        if (cur.targetTopic === targetTopic) {
+    const targetWorkspaces: Record<WorkspaceId, Set<SocketId>> = this
+      .targetTopics[targetTopic] || {};
+
+    for (let [workspaceId, socketIds] of Object.entries(targetWorkspaces)) {
+      const currentSize = socketIds.size;
+      socketIds.forEach((socketId) => {
+        const subscriber = this.unsetSubscriber(workspaceId, socketId);
+        if (subscriber) {
           removeSubscribers.push({
-            socketId: cur.socketId,
-            sessionId: cur.sessionId,
-            workspaceId: cur.workspaceId,
+            socketId: subscriber.socketId,
+            sessionId: subscriber.sessionId,
+            workspaceId: subscriber.workspaceId,
           });
-          // Unlink subscriber object so we don't need to rebuild each userIds lists ...
-          delete cur.socketId;
-          delete cur.filters;
-          delete (cur as any).permissions;
-          return false;
         }
-        return true;
       });
-      const filteredSize = this.subscribers[workspaceId].all.length;
+
+      const filteredSize =
+        this.targetTopics?.[targetTopic]?.[workspaceId]?.size || 0;
       if (filteredSize < currentSize) {
         logger.info({
           msg: `Removed ${
@@ -142,48 +220,29 @@ export class Subscriptions extends Readable {
           } subscribers from left node topic ${targetTopic}`,
         });
       }
-
-      // Also clear from cache
-      if (clearCache && removeSubscribers.length) {
-        await Promise.all(
-          removeSubscribers.map((cur) =>
-            this.cache.unregisterSubscriber(
-              cur.workspaceId,
-              cur.sessionId,
-              cur.socketId
-            )
-          )
-        );
-        logger.info({
-          msg: `Cleared ${removeSubscribers.length} subscribers from inactive node from cache`,
-        });
-      }
     }
-  }
 
-  async close() {
-    const localSubscribers = Object.entries(this.subscribers).reduce<
-      Record<string, Subscriber[]>
-    >(
-      (subscribers, [workspaceId, { all }]) => ({
-        ...subscribers,
-        [workspaceId]: all.filter((cur) => cur.local),
-      }),
-      {}
-    );
+    delete this.targetTopics[targetTopic];
 
-    const deleted = await Promise.all(
-      Object.entries(localSubscribers).flatMap(([workspaceId, all]) =>
-        all.map((cur) =>
+    // Also clear from cache
+    if (clearCache && removeSubscribers.length) {
+      await Promise.all(
+        removeSubscribers.map((cur) =>
           this.cache.unregisterSubscriber(
-            workspaceId,
+            cur.workspaceId,
             cur.sessionId,
             cur.socketId
           )
         )
-      )
-    );
-    logger.info({ msg: `Removed ${deleted.length} subscribers from cache.` });
+      );
+      logger.info({
+        msg: `Cleared ${removeSubscribers.length} subscribers from node topic ${targetTopic}`,
+      });
+    }
+  }
+
+  async close() {
+    await this.releaseAllSubscribersFromTopic(this.cluster.localTopic, true);
   }
 
   private async initSubscribersSynchronization() {
@@ -261,46 +320,18 @@ export class Subscriptions extends Readable {
   ) {
     // Listen to events, find matching subscribers & pass to listener callback for websocket transmission
     this.on('data', async (event) => {
-      const matchingSubscribers: Subscriber[] = [];
-      let foundSocketSubscriber = event?.source?.socketId ? false : true;
-      const matchSubscriber = (subscriber: Subscriber) => {
-        // Test search filters first to avoid casl overhead if the event is not listened anyway
-        if (
-          !subscriber.filters ||
-          this.matchSearchFilters(
-            event,
-            subscriber.filters,
-            subscriber.socketId
-          )
-        ) {
-          const readable = subscriber.permissions.can(
-            ActionType.Read,
-            SubjectType.Event,
-            event
-          );
-          if (readable) {
-            matchingSubscribers.push(subscriber);
-          }
-        }
-      };
-
-      const candidateSubscribers =
-        this.subscribers[event.source.workspaceId]?.all || [];
-      (candidateSubscribers || []).forEach(async (subscriber) => {
-        if (!subscriber.socketId) {
-          return;
-        }
-        if (
-          event?.source?.socketId &&
-          subscriber.socketId === event?.source?.socketId
-        ) {
-          foundSocketSubscriber = true;
-        }
-        matchSubscriber(subscriber);
-      });
+      const workspaceId = event?.source?.workspaceId;
+      const queryEngine = this.queries[workspaceId];
+      const workspaceSubscribers = this.subscribers[workspaceId] || {};
+      if (!workspaceId || !queryEngine || !workspaceSubscribers) {
+        return;
+      }
 
       // If we do not have any subscriber corresponding to this event socketId, this means we are late on events.subscribers.* live synchronization & need to pull from cache
-      if (!foundSocketSubscriber) {
+      if (
+        event?.source?.socketId &&
+        !workspaceSubscribers.socketIds?.[event?.source?.socketId]
+      ) {
         const subscriberData = await this.cache.getWorkspaceSubscriber(
           event?.source?.workspaceId,
           event?.source?.sessionId,
@@ -316,7 +347,29 @@ export class Subscriptions extends Readable {
             permissions: Permissions.buildFrom(subscriberData.permissions),
           };
           this.saveSubscriber(subscriber);
-          matchSubscriber(subscriber);
+        }
+      }
+
+      const matchingSocketIds = queryEngine.matches(event);
+      const matchingSubscribers: Subscriber[] = [];
+
+      for (let socketId of matchingSocketIds) {
+        const subscriber = workspaceSubscribers?.socketIds[socketId];
+        if (!subscriber) {
+          logger.warn({
+            msg: `Query engine returned a matching socketId '${socketId}' but no known subscriber matches this socketId !`,
+            workspaceId,
+          });
+          continue;
+        }
+
+        const readable = subscriber.permissions.can(
+          ActionType.Read,
+          SubjectType.Event,
+          event
+        );
+        if (readable) {
+          matchingSubscribers.push(subscriber);
         }
       }
 
@@ -342,6 +395,10 @@ export class Subscriptions extends Readable {
         if (!topicName) {
           return true;
         }
+        const workspaceSubscribers = this.subscribers[workspaceId];
+        if (!workspaceSubscribers) {
+          return true;
+        }
         await Promise.all(
           userIds.map(async (userId) => {
             const result = await this.cache.joinUserTopic(
@@ -352,13 +409,14 @@ export class Subscriptions extends Readable {
 
             // Update permissions from corresponding subscribers & emit to the rest of the cluster
             const activeSubscribers =
-              this.subscribers[workspaceId]?.userIds?.[userId] || [];
-            await Promise.all(
-              activeSubscribers.map((subscriber) => {
+              this.subscribers[workspaceId]?.userIds?.[userId] || new Set();
+            activeSubscribers.forEach((socketId) => {
+              const subscriber = workspaceSubscribers?.socketIds?.[socketId];
+              if (subscriber) {
                 updateSubscriberUserTopics(subscriber, topicName);
                 this.registerSubscriber(subscriber);
-              })
-            );
+              }
+            });
             return result;
           })
         );
@@ -366,26 +424,6 @@ export class Subscriptions extends Readable {
         return true;
       }
     );
-  }
-
-  private matchSearchFilters(
-    data: PrismeEvent,
-    filters: SearchOptions,
-    socketId?: string
-  ) {
-    if (!filters || !Object.keys(filters).length) {
-      return true;
-    }
-
-    return Object.entries(filters)
-      .map(([k, v]) =>
-        (<any>searchFilters)[k]?.apply
-          ? searchFilters[k as keyof SearchOptions](data, v as any, {
-              socketId,
-            })
-          : true
-      )
-      .every(Boolean);
   }
 
   async subscribe(
@@ -462,61 +500,48 @@ export class Subscriptions extends Readable {
     subscriber: Subscriber,
     opts?: { oldSocketId?: string; disableUpdate?: boolean }
   ) {
-    if (!(subscriber.workspaceId in this.subscribers)) {
-      this.subscribers[subscriber.workspaceId] = {
-        all: [],
-        userIds: {},
-      };
-    }
-    if (
-      !(subscriber.userId in this.subscribers[subscriber.workspaceId].userIds)
-    ) {
-      this.subscribers[subscriber.workspaceId].userIds[subscriber.userId] = [];
-    }
+    const workspaceId = subscriber.workspaceId;
 
     // First check if this subscriber already exists to keep it updated without pushing it twice
-    const existingSubscribers = this.subscribers[
-      subscriber.workspaceId
-    ].userIds[subscriber.userId].filter(
-      (cur) =>
-        // If this event has been emitted by current instance, the Subscriber socketId has already been updated, so we must check existing subscribers with both socketId & oldSocketId
-        cur.socketId === subscriber.socketId ||
-        (opts?.oldSocketId && cur.socketId === opts?.oldSocketId)
-    );
-    if (!existingSubscribers.length) {
-      this.subscribers[subscriber.workspaceId].all.push(subscriber);
-      this.subscribers[subscriber.workspaceId].userIds[subscriber.userId].push(
-        subscriber
-      );
+    // If we were given an oldSocketId, keep the corresponding subscriber in priority so we don't reinstantiate Subscriber instance currently used by local websockets
+    const existingSubscriber =
+      (opts?.oldSocketId &&
+        this.subscribers[workspaceId]?.socketIds?.[opts.oldSocketId]) ||
+      this.subscribers[workspaceId]?.socketIds?.[subscriber.socketId];
+
+    const previousSocketId =
+      opts?.oldSocketId && existingSubscriber.socketId === opts?.oldSocketId
+        ? opts?.oldSocketId
+        : undefined;
+
+    if (opts?.oldSocketId) {
+      this.unsetSubscriber(workspaceId, opts.oldSocketId);
+    }
+
+    if (!existingSubscriber) {
+      this.setSubscriber(subscriber);
       logger.debug({
         msg: 'Adding new subscriber',
-        workspaceId: subscriber.workspaceId,
+        workspaceId: workspaceId,
         userId: subscriber.userId,
         socketId: subscriber.socketId,
         filters: subscriber.filters,
       });
       return true;
     }
+
     if (opts?.disableUpdate) {
       return false;
     }
-    // Make sure we never have more than 1 subscriber with the same socketId, as it would make us sending same events multiple times to the corresponding socket
-    const [existingSubscriber, ...inactiveSubscribers] = !opts?.oldSocketId
-      ? existingSubscribers
-      : // If we were given an oldSocketId, keep this old socket in priority so we don't remove some instance currently used by local websockets
-        existingSubscribers.sort((a) =>
-          a.socketId === opts?.oldSocketId ? -1 : 0
-        );
-    const previousSocketId =
-      opts?.oldSocketId && existingSubscriber.socketId === opts?.oldSocketId
-        ? opts?.oldSocketId
-        : undefined;
+
     Object.assign(existingSubscriber, {
       socketId: subscriber.socketId,
       filters: subscriber.filters,
       permissions: subscriber.permissions,
       targetTopic: subscriber.targetTopic,
     });
+    // Even on update we still setSubscriber since it could be a socketId update, which thus needs to be set again
+    this.setSubscriber(existingSubscriber);
     logger.debug({
       msg: 'Update existing subscriber',
       workspaceId: existingSubscriber.workspaceId,
@@ -526,16 +551,6 @@ export class Subscriptions extends Readable {
       filters: existingSubscriber.filters,
       targetTopic: existingSubscriber.targetTopic,
     });
-
-    // Drop additional subscribers from our memory
-    if (inactiveSubscribers.length) {
-      inactiveSubscribers.forEach((cur) => {
-        // Simply unlink their socketId to avoid performance overhead of rebuilding the entire workspace + user subscribers list without them
-        delete cur.socketId;
-        delete cur.filters;
-        delete (cur as any).permissions;
-      });
-    }
 
     return false;
   }
@@ -630,25 +645,7 @@ export class Subscriptions extends Readable {
     subscriber: Omit<Subscriber, 'permissions'>,
     emit?: boolean
   ) {
-    if (!(subscriber.workspaceId in this.subscribers)) {
-      this.subscribers[subscriber.workspaceId] = {
-        all: [],
-        userIds: {},
-      };
-    }
-    if (
-      !(subscriber.userId in this.subscribers[subscriber.workspaceId].userIds)
-    ) {
-      this.subscribers[subscriber.workspaceId].userIds[subscriber.userId] = [];
-    }
-
-    this.subscribers[subscriber.workspaceId].all = this.subscribers[
-      subscriber.workspaceId
-    ].all.filter((cur) => cur.socketId !== subscriber.socketId);
-    this.subscribers[subscriber.workspaceId].userIds[subscriber.userId] =
-      this.subscribers[subscriber.workspaceId].userIds[
-        subscriber.userId
-      ].filter((cur) => cur.socketId !== subscriber.socketId);
+    this.unsetSubscriber(subscriber.workspaceId, subscriber.socketId);
 
     if (!emit) {
       return;

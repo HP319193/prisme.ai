@@ -12,10 +12,12 @@ export type Subscriber = Omit<WorkspaceSubscriber, 'permissions'> & {
 export type LocalSubscriber = Omit<Subscriber, 'local' | 'unsubscribe'> &
   Required<Pick<Subscriber, 'local' | 'unsubscribe' | 'permissions'>>;
 
+export type TargetTopic = string;
 export type WorkspaceId = string;
+export type SocketId = string;
 export type UserId = string;
 
 export type WorkspaceSubscribers = {
-  all: Subscriber[];
-  userIds: Record<UserId, Subscriber[]>;
+  socketIds: Record<SocketId, Subscriber>;
+  userIds: Record<UserId, Set<SocketId>>;
 };
