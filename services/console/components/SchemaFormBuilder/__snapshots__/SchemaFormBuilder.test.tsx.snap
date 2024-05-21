@@ -47,13 +47,13 @@ Object {
     "props": Object {
       "children": Array [
         <div
-          className="flex flex-row"
+          className="flex flex-row my-2"
         >
           <div
             className="flex flex-1 flex-col mr-1"
           >
             <div
-              className="flex flex-row mb-2"
+              className="flex flex-row my-2"
             >
               <label
                 className="font-bold"
@@ -93,7 +93,7 @@ Object {
             className="flex flex-1 flex-col ml-1"
           >
             <div
-              className="flex flex-row mb-2"
+              className="flex flex-row my-2"
             >
               <label
                 className="font-bold"
@@ -161,7 +161,7 @@ Object {
         false,
         <div>
           <div
-            className="flex flex-row"
+            className="flex flex-row my-2"
           >
             <label
               className="font-bold"
@@ -176,7 +176,7 @@ Object {
         />,
         <div>
           <div
-            className="flex flex-row"
+            className="flex flex-row my-2"
           >
             <label
               className="font-bold"
@@ -202,7 +202,7 @@ Object {
         </div>,
         <div>
           <div
-            className="flex flex-row"
+            className="flex flex-row my-2"
           >
             <label
               className="font-bold"
@@ -340,7 +340,7 @@ Object {
           }
         />,
       ],
-      "className": "flex flex-1 flex-col space-y-5",
+      "className": "flex flex-1 flex-col",
     },
     "rendered": Array [
       Object {
@@ -352,7 +352,7 @@ Object {
               className="flex flex-1 flex-col mr-1"
             >
               <div
-                className="flex flex-row mb-2"
+                className="flex flex-row my-2"
               >
                 <label
                   className="font-bold"
@@ -392,7 +392,7 @@ Object {
               className="flex flex-1 flex-col ml-1"
             >
               <div
-                className="flex flex-row mb-2"
+                className="flex flex-row my-2"
               >
                 <label
                   className="font-bold"
@@ -457,7 +457,7 @@ Object {
               />
             </div>,
           ],
-          "className": "flex flex-row",
+          "className": "flex flex-row my-2",
         },
         "rendered": Array [
           Object {
@@ -466,7 +466,7 @@ Object {
             "props": Object {
               "children": Array [
                 <div
-                  className="flex flex-row mb-2"
+                  className="flex flex-row my-2"
                 >
                   <label
                     className="font-bold"
@@ -527,7 +527,7 @@ Object {
                       </button>
                     </Tooltip>,
                   ],
-                  "className": "flex flex-row mb-2",
+                  "className": "flex flex-row my-2",
                 },
                 "rendered": Array [
                   Object {
@@ -608,7 +608,7 @@ Object {
             "props": Object {
               "children": Array [
                 <div
-                  className="flex flex-row mb-2"
+                  className="flex flex-row my-2"
                 >
                   <label
                     className="font-bold"
@@ -697,7 +697,7 @@ Object {
                       </button>
                     </Tooltip>,
                   ],
-                  "className": "flex flex-row mb-2",
+                  "className": "flex flex-row my-2",
                 },
                 "rendered": Array [
                   Object {
@@ -808,7 +808,7 @@ Object {
         "nodeType": "host",
         "props": Object {
           "children": <div
-            className="flex flex-row"
+            className="flex flex-row my-2"
           >
             <label
               className="font-bold"
@@ -827,7 +827,7 @@ Object {
               >
                 schema.property.title
               </label>,
-              "className": "flex flex-row",
+              "className": "flex flex-row my-2",
             },
             "rendered": Array [
               Object {
@@ -878,7 +878,7 @@ Object {
         "props": Object {
           "children": Array [
             <div
-              className="flex flex-row"
+              className="flex flex-row my-2"
             >
               <label
                 className="font-bold"
@@ -926,7 +926,7 @@ Object {
                   </button>
                 </Tooltip>,
               ],
-              "className": "flex flex-row",
+              "className": "flex flex-row my-2",
             },
             "rendered": Array [
               Object {
@@ -1011,7 +1011,7 @@ Object {
         "props": Object {
           "children": Array [
             <div
-              className="flex flex-row"
+              className="flex flex-row my-2"
             >
               <label
                 className="font-bold"
@@ -1059,7 +1059,7 @@ Object {
                   </button>
                 </Tooltip>,
               ],
-              "className": "flex flex-row",
+              "className": "flex flex-row my-2",
             },
             "rendered": Array [
               Object {
@@ -1684,13 +1684,13 @@ Object {
                           "props": Object {
                             "children": Array [
                               <div
-                                className="flex flex-row"
+                                className="flex flex-row my-2"
                               >
                                 <div
                                   className="flex flex-1 flex-col mr-1"
                                 >
                                   <div
-                                    className="flex flex-row mb-2"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -1746,7 +1746,7 @@ Object {
                                   className="flex flex-1 flex-col ml-1"
                                 >
                                   <div
-                                    className="flex flex-row mb-2"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -1814,7 +1814,7 @@ Object {
                               false,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -1829,7 +1829,7 @@ Object {
                               />,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -1855,7 +1855,7 @@ Object {
                               </div>,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -1890,7 +1890,7 @@ Object {
                                 }
                               />,
                             ],
-                            "className": "flex flex-1 flex-col space-y-5",
+                            "className": "flex flex-1 flex-col",
                           },
                           "rendered": Array [
                             Object {
@@ -1902,7 +1902,7 @@ Object {
                                     className="flex flex-1 flex-col mr-1"
                                   >
                                     <div
-                                      className="flex flex-row mb-2"
+                                      className="flex flex-row my-2"
                                     >
                                       <label
                                         className="font-bold"
@@ -1958,7 +1958,7 @@ Object {
                                     className="flex flex-1 flex-col ml-1"
                                   >
                                     <div
-                                      className="flex flex-row mb-2"
+                                      className="flex flex-row my-2"
                                     >
                                       <label
                                         className="font-bold"
@@ -2023,7 +2023,7 @@ Object {
                                     />
                                   </div>,
                                 ],
-                                "className": "flex flex-row",
+                                "className": "flex flex-row my-2",
                               },
                               "rendered": Array [
                                 Object {
@@ -2032,7 +2032,7 @@ Object {
                                   "props": Object {
                                     "children": Array [
                                       <div
-                                        className="flex flex-row mb-2"
+                                        className="flex flex-row my-2"
                                       >
                                         <label
                                           className="font-bold"
@@ -2109,7 +2109,7 @@ Object {
                                             </button>
                                           </Tooltip>,
                                         ],
-                                        "className": "flex flex-row mb-2",
+                                        "className": "flex flex-row my-2",
                                       },
                                       "rendered": Array [
                                         Object {
@@ -2206,7 +2206,7 @@ Object {
                                   "props": Object {
                                     "children": Array [
                                       <div
-                                        className="flex flex-row mb-2"
+                                        className="flex flex-row my-2"
                                       >
                                         <label
                                           className="font-bold"
@@ -2295,7 +2295,7 @@ Object {
                                             </button>
                                           </Tooltip>,
                                         ],
-                                        "className": "flex flex-row mb-2",
+                                        "className": "flex flex-row my-2",
                                       },
                                       "rendered": Array [
                                         Object {
@@ -2406,7 +2406,7 @@ Object {
                               "nodeType": "host",
                               "props": Object {
                                 "children": <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -2425,7 +2425,7 @@ Object {
                                     >
                                       schema.property.title
                                     </label>,
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -2476,7 +2476,7 @@ Object {
                               "props": Object {
                                 "children": Array [
                                   <div
-                                    className="flex flex-row"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -2524,7 +2524,7 @@ Object {
                                         </button>
                                       </Tooltip>,
                                     ],
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -2609,7 +2609,7 @@ Object {
                               "props": Object {
                                 "children": Array [
                                   <div
-                                    className="flex flex-row"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -2657,7 +2657,7 @@ Object {
                                         </button>
                                       </Tooltip>,
                                     ],
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -2843,13 +2843,13 @@ Object {
                           "props": Object {
                             "children": Array [
                               <div
-                                className="flex flex-row"
+                                className="flex flex-row my-2"
                               >
                                 <div
                                   className="flex flex-1 flex-col mr-1"
                                 >
                                   <div
-                                    className="flex flex-row mb-2"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -2889,7 +2889,7 @@ Object {
                                   className="flex flex-1 flex-col ml-1"
                                 >
                                   <div
-                                    className="flex flex-row mb-2"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -2957,7 +2957,7 @@ Object {
                               false,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -2972,7 +2972,7 @@ Object {
                               />,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -2998,7 +2998,7 @@ Object {
                               </div>,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -3033,7 +3033,7 @@ Object {
                                 }
                               />,
                             ],
-                            "className": "flex flex-1 flex-col space-y-5",
+                            "className": "flex flex-1 flex-col",
                           },
                           "rendered": Array [
                             Object {
@@ -3045,7 +3045,7 @@ Object {
                                     className="flex flex-1 flex-col mr-1"
                                   >
                                     <div
-                                      className="flex flex-row mb-2"
+                                      className="flex flex-row my-2"
                                     >
                                       <label
                                         className="font-bold"
@@ -3085,7 +3085,7 @@ Object {
                                     className="flex flex-1 flex-col ml-1"
                                   >
                                     <div
-                                      className="flex flex-row mb-2"
+                                      className="flex flex-row my-2"
                                     >
                                       <label
                                         className="font-bold"
@@ -3150,7 +3150,7 @@ Object {
                                     />
                                   </div>,
                                 ],
-                                "className": "flex flex-row",
+                                "className": "flex flex-row my-2",
                               },
                               "rendered": Array [
                                 Object {
@@ -3159,7 +3159,7 @@ Object {
                                   "props": Object {
                                     "children": Array [
                                       <div
-                                        className="flex flex-row mb-2"
+                                        className="flex flex-row my-2"
                                       >
                                         <label
                                           className="font-bold"
@@ -3220,7 +3220,7 @@ Object {
                                             </button>
                                           </Tooltip>,
                                         ],
-                                        "className": "flex flex-row mb-2",
+                                        "className": "flex flex-row my-2",
                                       },
                                       "rendered": Array [
                                         Object {
@@ -3301,7 +3301,7 @@ Object {
                                   "props": Object {
                                     "children": Array [
                                       <div
-                                        className="flex flex-row mb-2"
+                                        className="flex flex-row my-2"
                                       >
                                         <label
                                           className="font-bold"
@@ -3390,7 +3390,7 @@ Object {
                                             </button>
                                           </Tooltip>,
                                         ],
-                                        "className": "flex flex-row mb-2",
+                                        "className": "flex flex-row my-2",
                                       },
                                       "rendered": Array [
                                         Object {
@@ -3501,7 +3501,7 @@ Object {
                               "nodeType": "host",
                               "props": Object {
                                 "children": <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -3520,7 +3520,7 @@ Object {
                                     >
                                       schema.property.title
                                     </label>,
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -3571,7 +3571,7 @@ Object {
                               "props": Object {
                                 "children": Array [
                                   <div
-                                    className="flex flex-row"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -3619,7 +3619,7 @@ Object {
                                         </button>
                                       </Tooltip>,
                                     ],
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -3704,7 +3704,7 @@ Object {
                               "props": Object {
                                 "children": Array [
                                   <div
-                                    className="flex flex-row"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -3752,7 +3752,7 @@ Object {
                                         </button>
                                       </Tooltip>,
                                     ],
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -3938,13 +3938,13 @@ Object {
                           "props": Object {
                             "children": Array [
                               <div
-                                className="flex flex-row"
+                                className="flex flex-row my-2"
                               >
                                 <div
                                   className="flex flex-1 flex-col mr-1"
                                 >
                                   <div
-                                    className="flex flex-row mb-2"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -3984,7 +3984,7 @@ Object {
                                   className="flex flex-1 flex-col ml-1"
                                 >
                                   <div
-                                    className="flex flex-row mb-2"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -4052,7 +4052,7 @@ Object {
                               false,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -4067,7 +4067,7 @@ Object {
                               />,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -4093,7 +4093,7 @@ Object {
                               </div>,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -4128,7 +4128,7 @@ Object {
                                 }
                               />,
                             ],
-                            "className": "flex flex-1 flex-col space-y-5",
+                            "className": "flex flex-1 flex-col",
                           },
                           "rendered": Array [
                             Object {
@@ -4140,7 +4140,7 @@ Object {
                                     className="flex flex-1 flex-col mr-1"
                                   >
                                     <div
-                                      className="flex flex-row mb-2"
+                                      className="flex flex-row my-2"
                                     >
                                       <label
                                         className="font-bold"
@@ -4180,7 +4180,7 @@ Object {
                                     className="flex flex-1 flex-col ml-1"
                                   >
                                     <div
-                                      className="flex flex-row mb-2"
+                                      className="flex flex-row my-2"
                                     >
                                       <label
                                         className="font-bold"
@@ -4245,7 +4245,7 @@ Object {
                                     />
                                   </div>,
                                 ],
-                                "className": "flex flex-row",
+                                "className": "flex flex-row my-2",
                               },
                               "rendered": Array [
                                 Object {
@@ -4254,7 +4254,7 @@ Object {
                                   "props": Object {
                                     "children": Array [
                                       <div
-                                        className="flex flex-row mb-2"
+                                        className="flex flex-row my-2"
                                       >
                                         <label
                                           className="font-bold"
@@ -4315,7 +4315,7 @@ Object {
                                             </button>
                                           </Tooltip>,
                                         ],
-                                        "className": "flex flex-row mb-2",
+                                        "className": "flex flex-row my-2",
                                       },
                                       "rendered": Array [
                                         Object {
@@ -4396,7 +4396,7 @@ Object {
                                   "props": Object {
                                     "children": Array [
                                       <div
-                                        className="flex flex-row mb-2"
+                                        className="flex flex-row my-2"
                                       >
                                         <label
                                           className="font-bold"
@@ -4485,7 +4485,7 @@ Object {
                                             </button>
                                           </Tooltip>,
                                         ],
-                                        "className": "flex flex-row mb-2",
+                                        "className": "flex flex-row my-2",
                                       },
                                       "rendered": Array [
                                         Object {
@@ -4596,7 +4596,7 @@ Object {
                               "nodeType": "host",
                               "props": Object {
                                 "children": <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -4615,7 +4615,7 @@ Object {
                                     >
                                       schema.property.title
                                     </label>,
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -4666,7 +4666,7 @@ Object {
                               "props": Object {
                                 "children": Array [
                                   <div
-                                    className="flex flex-row"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -4714,7 +4714,7 @@ Object {
                                         </button>
                                       </Tooltip>,
                                     ],
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -4799,7 +4799,7 @@ Object {
                               "props": Object {
                                 "children": Array [
                                   <div
-                                    className="flex flex-row"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -4847,7 +4847,7 @@ Object {
                                         </button>
                                       </Tooltip>,
                                     ],
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -5084,13 +5084,13 @@ Object {
                           "props": Object {
                             "children": Array [
                               <div
-                                className="flex flex-row"
+                                className="flex flex-row my-2"
                               >
                                 <div
                                   className="flex flex-1 flex-col mr-1"
                                 >
                                   <div
-                                    className="flex flex-row mb-2"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -5130,7 +5130,7 @@ Object {
                                   className="flex flex-1 flex-col ml-1"
                                 >
                                   <div
-                                    className="flex flex-row mb-2"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -5198,7 +5198,7 @@ Object {
                               false,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -5213,7 +5213,7 @@ Object {
                               />,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -5239,7 +5239,7 @@ Object {
                               </div>,
                               <div>
                                 <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -5349,7 +5349,7 @@ Object {
                                 }
                               />,
                             ],
-                            "className": "flex flex-1 flex-col space-y-5",
+                            "className": "flex flex-1 flex-col",
                           },
                           "rendered": Array [
                             Object {
@@ -5361,7 +5361,7 @@ Object {
                                     className="flex flex-1 flex-col mr-1"
                                   >
                                     <div
-                                      className="flex flex-row mb-2"
+                                      className="flex flex-row my-2"
                                     >
                                       <label
                                         className="font-bold"
@@ -5401,7 +5401,7 @@ Object {
                                     className="flex flex-1 flex-col ml-1"
                                   >
                                     <div
-                                      className="flex flex-row mb-2"
+                                      className="flex flex-row my-2"
                                     >
                                       <label
                                         className="font-bold"
@@ -5466,7 +5466,7 @@ Object {
                                     />
                                   </div>,
                                 ],
-                                "className": "flex flex-row",
+                                "className": "flex flex-row my-2",
                               },
                               "rendered": Array [
                                 Object {
@@ -5475,7 +5475,7 @@ Object {
                                   "props": Object {
                                     "children": Array [
                                       <div
-                                        className="flex flex-row mb-2"
+                                        className="flex flex-row my-2"
                                       >
                                         <label
                                           className="font-bold"
@@ -5536,7 +5536,7 @@ Object {
                                             </button>
                                           </Tooltip>,
                                         ],
-                                        "className": "flex flex-row mb-2",
+                                        "className": "flex flex-row my-2",
                                       },
                                       "rendered": Array [
                                         Object {
@@ -5617,7 +5617,7 @@ Object {
                                   "props": Object {
                                     "children": Array [
                                       <div
-                                        className="flex flex-row mb-2"
+                                        className="flex flex-row my-2"
                                       >
                                         <label
                                           className="font-bold"
@@ -5706,7 +5706,7 @@ Object {
                                             </button>
                                           </Tooltip>,
                                         ],
-                                        "className": "flex flex-row mb-2",
+                                        "className": "flex flex-row my-2",
                                       },
                                       "rendered": Array [
                                         Object {
@@ -5817,7 +5817,7 @@ Object {
                               "nodeType": "host",
                               "props": Object {
                                 "children": <div
-                                  className="flex flex-row"
+                                  className="flex flex-row my-2"
                                 >
                                   <label
                                     className="font-bold"
@@ -5836,7 +5836,7 @@ Object {
                                     >
                                       schema.property.title
                                     </label>,
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -5887,7 +5887,7 @@ Object {
                               "props": Object {
                                 "children": Array [
                                   <div
-                                    className="flex flex-row"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -5935,7 +5935,7 @@ Object {
                                         </button>
                                       </Tooltip>,
                                     ],
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -6020,7 +6020,7 @@ Object {
                               "props": Object {
                                 "children": Array [
                                   <div
-                                    className="flex flex-row"
+                                    className="flex flex-row my-2"
                                   >
                                     <label
                                       className="font-bold"
@@ -6068,7 +6068,7 @@ Object {
                                         </button>
                                       </Tooltip>,
                                     ],
-                                    "className": "flex flex-row",
+                                    "className": "flex flex-row my-2",
                                   },
                                   "rendered": Array [
                                     Object {
@@ -6567,13 +6567,13 @@ Object {
                                                 "props": Object {
                                                   "children": Array [
                                                     <div
-                                                      className="flex flex-row"
+                                                      className="flex flex-row my-2"
                                                     >
                                                       <div
                                                         className="flex flex-1 flex-col mr-1"
                                                       >
                                                         <div
-                                                          className="flex flex-row mb-2"
+                                                          className="flex flex-row my-2"
                                                         >
                                                           <label
                                                             className="font-bold"
@@ -6629,7 +6629,7 @@ Object {
                                                         className="flex flex-1 flex-col ml-1"
                                                       >
                                                         <div
-                                                          className="flex flex-row mb-2"
+                                                          className="flex flex-row my-2"
                                                         >
                                                           <label
                                                             className="font-bold"
@@ -6697,7 +6697,7 @@ Object {
                                                     false,
                                                     <div>
                                                       <div
-                                                        className="flex flex-row"
+                                                        className="flex flex-row my-2"
                                                       >
                                                         <label
                                                           className="font-bold"
@@ -6712,7 +6712,7 @@ Object {
                                                     />,
                                                     <div>
                                                       <div
-                                                        className="flex flex-row"
+                                                        className="flex flex-row my-2"
                                                       >
                                                         <label
                                                           className="font-bold"
@@ -6738,7 +6738,7 @@ Object {
                                                     </div>,
                                                     <div>
                                                       <div
-                                                        className="flex flex-row"
+                                                        className="flex flex-row my-2"
                                                       >
                                                         <label
                                                           className="font-bold"
@@ -6773,7 +6773,7 @@ Object {
                                                       }
                                                     />,
                                                   ],
-                                                  "className": "flex flex-1 flex-col space-y-5",
+                                                  "className": "flex flex-1 flex-col",
                                                 },
                                                 "rendered": Array [
                                                   Object {
@@ -6785,7 +6785,7 @@ Object {
                                                           className="flex flex-1 flex-col mr-1"
                                                         >
                                                           <div
-                                                            className="flex flex-row mb-2"
+                                                            className="flex flex-row my-2"
                                                           >
                                                             <label
                                                               className="font-bold"
@@ -6841,7 +6841,7 @@ Object {
                                                           className="flex flex-1 flex-col ml-1"
                                                         >
                                                           <div
-                                                            className="flex flex-row mb-2"
+                                                            className="flex flex-row my-2"
                                                           >
                                                             <label
                                                               className="font-bold"
@@ -6906,7 +6906,7 @@ Object {
                                                           />
                                                         </div>,
                                                       ],
-                                                      "className": "flex flex-row",
+                                                      "className": "flex flex-row my-2",
                                                     },
                                                     "rendered": Array [
                                                       Object {
@@ -6915,7 +6915,7 @@ Object {
                                                         "props": Object {
                                                           "children": Array [
                                                             <div
-                                                              className="flex flex-row mb-2"
+                                                              className="flex flex-row my-2"
                                                             >
                                                               <label
                                                                 className="font-bold"
@@ -6992,7 +6992,7 @@ Object {
                                                                   </button>
                                                                 </Tooltip>,
                                                               ],
-                                                              "className": "flex flex-row mb-2",
+                                                              "className": "flex flex-row my-2",
                                                             },
                                                             "rendered": Array [
                                                               Object {
@@ -7089,7 +7089,7 @@ Object {
                                                         "props": Object {
                                                           "children": Array [
                                                             <div
-                                                              className="flex flex-row mb-2"
+                                                              className="flex flex-row my-2"
                                                             >
                                                               <label
                                                                 className="font-bold"
@@ -7178,7 +7178,7 @@ Object {
                                                                   </button>
                                                                 </Tooltip>,
                                                               ],
-                                                              "className": "flex flex-row mb-2",
+                                                              "className": "flex flex-row my-2",
                                                             },
                                                             "rendered": Array [
                                                               Object {
@@ -7289,7 +7289,7 @@ Object {
                                                     "nodeType": "host",
                                                     "props": Object {
                                                       "children": <div
-                                                        className="flex flex-row"
+                                                        className="flex flex-row my-2"
                                                       >
                                                         <label
                                                           className="font-bold"
@@ -7308,7 +7308,7 @@ Object {
                                                           >
                                                             schema.property.title
                                                           </label>,
-                                                          "className": "flex flex-row",
+                                                          "className": "flex flex-row my-2",
                                                         },
                                                         "rendered": Array [
                                                           Object {
@@ -7359,7 +7359,7 @@ Object {
                                                     "props": Object {
                                                       "children": Array [
                                                         <div
-                                                          className="flex flex-row"
+                                                          className="flex flex-row my-2"
                                                         >
                                                           <label
                                                             className="font-bold"
@@ -7407,7 +7407,7 @@ Object {
                                                               </button>
                                                             </Tooltip>,
                                                           ],
-                                                          "className": "flex flex-row",
+                                                          "className": "flex flex-row my-2",
                                                         },
                                                         "rendered": Array [
                                                           Object {
@@ -7492,7 +7492,7 @@ Object {
                                                     "props": Object {
                                                       "children": Array [
                                                         <div
-                                                          className="flex flex-row"
+                                                          className="flex flex-row my-2"
                                                         >
                                                           <label
                                                             className="font-bold"
@@ -7540,7 +7540,7 @@ Object {
                                                               </button>
                                                             </Tooltip>,
                                                           ],
-                                                          "className": "flex flex-row",
+                                                          "className": "flex flex-row my-2",
                                                         },
                                                         "rendered": Array [
                                                           Object {
@@ -7753,13 +7753,13 @@ Object {
                                                 "props": Object {
                                                   "children": Array [
                                                     <div
-                                                      className="flex flex-row"
+                                                      className="flex flex-row my-2"
                                                     >
                                                       <div
                                                         className="flex flex-1 flex-col mr-1"
                                                       >
                                                         <div
-                                                          className="flex flex-row mb-2"
+                                                          className="flex flex-row my-2"
                                                         >
                                                           <label
                                                             className="font-bold"
@@ -7799,7 +7799,7 @@ Object {
                                                         className="flex flex-1 flex-col ml-1"
                                                       >
                                                         <div
-                                                          className="flex flex-row mb-2"
+                                                          className="flex flex-row my-2"
                                                         >
                                                           <label
                                                             className="font-bold"
@@ -7867,7 +7867,7 @@ Object {
                                                     false,
                                                     <div>
                                                       <div
-                                                        className="flex flex-row"
+                                                        className="flex flex-row my-2"
                                                       >
                                                         <label
                                                           className="font-bold"
@@ -7882,7 +7882,7 @@ Object {
                                                     />,
                                                     <div>
                                                       <div
-                                                        className="flex flex-row"
+                                                        className="flex flex-row my-2"
                                                       >
                                                         <label
                                                           className="font-bold"
@@ -7908,7 +7908,7 @@ Object {
                                                     </div>,
                                                     <div>
                                                       <div
-                                                        className="flex flex-row"
+                                                        className="flex flex-row my-2"
                                                       >
                                                         <label
                                                           className="font-bold"
@@ -7991,7 +7991,7 @@ Object {
                                                       }
                                                     />,
                                                   ],
-                                                  "className": "flex flex-1 flex-col space-y-5",
+                                                  "className": "flex flex-1 flex-col",
                                                 },
                                                 "rendered": Array [
                                                   Object {
@@ -8003,7 +8003,7 @@ Object {
                                                           className="flex flex-1 flex-col mr-1"
                                                         >
                                                           <div
-                                                            className="flex flex-row mb-2"
+                                                            className="flex flex-row my-2"
                                                           >
                                                             <label
                                                               className="font-bold"
@@ -8043,7 +8043,7 @@ Object {
                                                           className="flex flex-1 flex-col ml-1"
                                                         >
                                                           <div
-                                                            className="flex flex-row mb-2"
+                                                            className="flex flex-row my-2"
                                                           >
                                                             <label
                                                               className="font-bold"
@@ -8108,7 +8108,7 @@ Object {
                                                           />
                                                         </div>,
                                                       ],
-                                                      "className": "flex flex-row",
+                                                      "className": "flex flex-row my-2",
                                                     },
                                                     "rendered": Array [
                                                       Object {
@@ -8117,7 +8117,7 @@ Object {
                                                         "props": Object {
                                                           "children": Array [
                                                             <div
-                                                              className="flex flex-row mb-2"
+                                                              className="flex flex-row my-2"
                                                             >
                                                               <label
                                                                 className="font-bold"
@@ -8178,7 +8178,7 @@ Object {
                                                                   </button>
                                                                 </Tooltip>,
                                                               ],
-                                                              "className": "flex flex-row mb-2",
+                                                              "className": "flex flex-row my-2",
                                                             },
                                                             "rendered": Array [
                                                               Object {
@@ -8259,7 +8259,7 @@ Object {
                                                         "props": Object {
                                                           "children": Array [
                                                             <div
-                                                              className="flex flex-row mb-2"
+                                                              className="flex flex-row my-2"
                                                             >
                                                               <label
                                                                 className="font-bold"
@@ -8348,7 +8348,7 @@ Object {
                                                                   </button>
                                                                 </Tooltip>,
                                                               ],
-                                                              "className": "flex flex-row mb-2",
+                                                              "className": "flex flex-row my-2",
                                                             },
                                                             "rendered": Array [
                                                               Object {
@@ -8459,7 +8459,7 @@ Object {
                                                     "nodeType": "host",
                                                     "props": Object {
                                                       "children": <div
-                                                        className="flex flex-row"
+                                                        className="flex flex-row my-2"
                                                       >
                                                         <label
                                                           className="font-bold"
@@ -8478,7 +8478,7 @@ Object {
                                                           >
                                                             schema.property.title
                                                           </label>,
-                                                          "className": "flex flex-row",
+                                                          "className": "flex flex-row my-2",
                                                         },
                                                         "rendered": Array [
                                                           Object {
@@ -8529,7 +8529,7 @@ Object {
                                                     "props": Object {
                                                       "children": Array [
                                                         <div
-                                                          className="flex flex-row"
+                                                          className="flex flex-row my-2"
                                                         >
                                                           <label
                                                             className="font-bold"
@@ -8577,7 +8577,7 @@ Object {
                                                               </button>
                                                             </Tooltip>,
                                                           ],
-                                                          "className": "flex flex-row",
+                                                          "className": "flex flex-row my-2",
                                                         },
                                                         "rendered": Array [
                                                           Object {
@@ -8662,7 +8662,7 @@ Object {
                                                     "props": Object {
                                                       "children": Array [
                                                         <div
-                                                          className="flex flex-row"
+                                                          className="flex flex-row my-2"
                                                         >
                                                           <label
                                                             className="font-bold"
@@ -8710,7 +8710,7 @@ Object {
                                                               </button>
                                                             </Tooltip>,
                                                           ],
-                                                          "className": "flex flex-row",
+                                                          "className": "flex flex-row my-2",
                                                         },
                                                         "rendered": Array [
                                                           Object {
@@ -8960,13 +8960,13 @@ Object {
                                                           "props": Object {
                                                             "children": Array [
                                                               <div
-                                                                className="flex flex-row"
+                                                                className="flex flex-row my-2"
                                                               >
                                                                 <div
                                                                   className="flex flex-1 flex-col mr-1"
                                                                 >
                                                                   <div
-                                                                    className="flex flex-row mb-2"
+                                                                    className="flex flex-row my-2"
                                                                   >
                                                                     <label
                                                                       className="font-bold"
@@ -9006,7 +9006,7 @@ Object {
                                                                   className="flex flex-1 flex-col ml-1"
                                                                 >
                                                                   <div
-                                                                    className="flex flex-row mb-2"
+                                                                    className="flex flex-row my-2"
                                                                   >
                                                                     <label
                                                                       className="font-bold"
@@ -9074,7 +9074,7 @@ Object {
                                                               false,
                                                               <div>
                                                                 <div
-                                                                  className="flex flex-row"
+                                                                  className="flex flex-row my-2"
                                                                 >
                                                                   <label
                                                                     className="font-bold"
@@ -9089,7 +9089,7 @@ Object {
                                                               />,
                                                               <div>
                                                                 <div
-                                                                  className="flex flex-row"
+                                                                  className="flex flex-row my-2"
                                                                 >
                                                                   <label
                                                                     className="font-bold"
@@ -9115,7 +9115,7 @@ Object {
                                                               </div>,
                                                               <div>
                                                                 <div
-                                                                  className="flex flex-row"
+                                                                  className="flex flex-row my-2"
                                                                 >
                                                                   <label
                                                                     className="font-bold"
@@ -9192,7 +9192,7 @@ Object {
                                                                 }
                                                               />,
                                                             ],
-                                                            "className": "flex flex-1 flex-col space-y-5",
+                                                            "className": "flex flex-1 flex-col",
                                                           },
                                                           "rendered": Array [
                                                             Object {
@@ -9204,7 +9204,7 @@ Object {
                                                                     className="flex flex-1 flex-col mr-1"
                                                                   >
                                                                     <div
-                                                                      className="flex flex-row mb-2"
+                                                                      className="flex flex-row my-2"
                                                                     >
                                                                       <label
                                                                         className="font-bold"
@@ -9244,7 +9244,7 @@ Object {
                                                                     className="flex flex-1 flex-col ml-1"
                                                                   >
                                                                     <div
-                                                                      className="flex flex-row mb-2"
+                                                                      className="flex flex-row my-2"
                                                                     >
                                                                       <label
                                                                         className="font-bold"
@@ -9309,7 +9309,7 @@ Object {
                                                                     />
                                                                   </div>,
                                                                 ],
-                                                                "className": "flex flex-row",
+                                                                "className": "flex flex-row my-2",
                                                               },
                                                               "rendered": Array [
                                                                 Object {
@@ -9318,7 +9318,7 @@ Object {
                                                                   "props": Object {
                                                                     "children": Array [
                                                                       <div
-                                                                        className="flex flex-row mb-2"
+                                                                        className="flex flex-row my-2"
                                                                       >
                                                                         <label
                                                                           className="font-bold"
@@ -9379,7 +9379,7 @@ Object {
                                                                             </button>
                                                                           </Tooltip>,
                                                                         ],
-                                                                        "className": "flex flex-row mb-2",
+                                                                        "className": "flex flex-row my-2",
                                                                       },
                                                                       "rendered": Array [
                                                                         Object {
@@ -9460,7 +9460,7 @@ Object {
                                                                   "props": Object {
                                                                     "children": Array [
                                                                       <div
-                                                                        className="flex flex-row mb-2"
+                                                                        className="flex flex-row my-2"
                                                                       >
                                                                         <label
                                                                           className="font-bold"
@@ -9549,7 +9549,7 @@ Object {
                                                                             </button>
                                                                           </Tooltip>,
                                                                         ],
-                                                                        "className": "flex flex-row mb-2",
+                                                                        "className": "flex flex-row my-2",
                                                                       },
                                                                       "rendered": Array [
                                                                         Object {
@@ -9660,7 +9660,7 @@ Object {
                                                               "nodeType": "host",
                                                               "props": Object {
                                                                 "children": <div
-                                                                  className="flex flex-row"
+                                                                  className="flex flex-row my-2"
                                                                 >
                                                                   <label
                                                                     className="font-bold"
@@ -9679,7 +9679,7 @@ Object {
                                                                     >
                                                                       schema.property.title
                                                                     </label>,
-                                                                    "className": "flex flex-row",
+                                                                    "className": "flex flex-row my-2",
                                                                   },
                                                                   "rendered": Array [
                                                                     Object {
@@ -9730,7 +9730,7 @@ Object {
                                                               "props": Object {
                                                                 "children": Array [
                                                                   <div
-                                                                    className="flex flex-row"
+                                                                    className="flex flex-row my-2"
                                                                   >
                                                                     <label
                                                                       className="font-bold"
@@ -9778,7 +9778,7 @@ Object {
                                                                         </button>
                                                                       </Tooltip>,
                                                                     ],
-                                                                    "className": "flex flex-row",
+                                                                    "className": "flex flex-row my-2",
                                                                   },
                                                                   "rendered": Array [
                                                                     Object {
@@ -9863,7 +9863,7 @@ Object {
                                                               "props": Object {
                                                                 "children": Array [
                                                                   <div
-                                                                    className="flex flex-row"
+                                                                    className="flex flex-row my-2"
                                                                   >
                                                                     <label
                                                                       className="font-bold"
@@ -9911,7 +9911,7 @@ Object {
                                                                         </button>
                                                                       </Tooltip>,
                                                                     ],
-                                                                    "className": "flex flex-row",
+                                                                    "className": "flex flex-row my-2",
                                                                   },
                                                                   "rendered": Array [
                                                                     Object {
@@ -10155,13 +10155,13 @@ Object {
                                                                     "props": Object {
                                                                       "children": Array [
                                                                         <div
-                                                                          className="flex flex-row"
+                                                                          className="flex flex-row my-2"
                                                                         >
                                                                           <div
                                                                             className="flex flex-1 flex-col mr-1"
                                                                           >
                                                                             <div
-                                                                              className="flex flex-row mb-2"
+                                                                              className="flex flex-row my-2"
                                                                             >
                                                                               <label
                                                                                 className="font-bold"
@@ -10201,7 +10201,7 @@ Object {
                                                                             className="flex flex-1 flex-col ml-1"
                                                                           >
                                                                             <div
-                                                                              className="flex flex-row mb-2"
+                                                                              className="flex flex-row my-2"
                                                                             >
                                                                               <label
                                                                                 className="font-bold"
@@ -10269,7 +10269,7 @@ Object {
                                                                         false,
                                                                         <div>
                                                                           <div
-                                                                            className="flex flex-row"
+                                                                            className="flex flex-row my-2"
                                                                           >
                                                                             <label
                                                                               className="font-bold"
@@ -10284,7 +10284,7 @@ Object {
                                                                         />,
                                                                         <div>
                                                                           <div
-                                                                            className="flex flex-row"
+                                                                            className="flex flex-row my-2"
                                                                           >
                                                                             <label
                                                                               className="font-bold"
@@ -10310,7 +10310,7 @@ Object {
                                                                         </div>,
                                                                         <div>
                                                                           <div
-                                                                            className="flex flex-row"
+                                                                            className="flex flex-row my-2"
                                                                           >
                                                                             <label
                                                                               className="font-bold"
@@ -10381,7 +10381,7 @@ Object {
                                                                           }
                                                                         />,
                                                                       ],
-                                                                      "className": "flex flex-1 flex-col space-y-5",
+                                                                      "className": "flex flex-1 flex-col",
                                                                     },
                                                                     "rendered": Array [
                                                                       Object {
@@ -10393,7 +10393,7 @@ Object {
                                                                               className="flex flex-1 flex-col mr-1"
                                                                             >
                                                                               <div
-                                                                                className="flex flex-row mb-2"
+                                                                                className="flex flex-row my-2"
                                                                               >
                                                                                 <label
                                                                                   className="font-bold"
@@ -10433,7 +10433,7 @@ Object {
                                                                               className="flex flex-1 flex-col ml-1"
                                                                             >
                                                                               <div
-                                                                                className="flex flex-row mb-2"
+                                                                                className="flex flex-row my-2"
                                                                               >
                                                                                 <label
                                                                                   className="font-bold"
@@ -10498,7 +10498,7 @@ Object {
                                                                               />
                                                                             </div>,
                                                                           ],
-                                                                          "className": "flex flex-row",
+                                                                          "className": "flex flex-row my-2",
                                                                         },
                                                                         "rendered": Array [
                                                                           Object {
@@ -10507,7 +10507,7 @@ Object {
                                                                             "props": Object {
                                                                               "children": Array [
                                                                                 <div
-                                                                                  className="flex flex-row mb-2"
+                                                                                  className="flex flex-row my-2"
                                                                                 >
                                                                                   <label
                                                                                     className="font-bold"
@@ -10568,7 +10568,7 @@ Object {
                                                                                       </button>
                                                                                     </Tooltip>,
                                                                                   ],
-                                                                                  "className": "flex flex-row mb-2",
+                                                                                  "className": "flex flex-row my-2",
                                                                                 },
                                                                                 "rendered": Array [
                                                                                   Object {
@@ -10649,7 +10649,7 @@ Object {
                                                                             "props": Object {
                                                                               "children": Array [
                                                                                 <div
-                                                                                  className="flex flex-row mb-2"
+                                                                                  className="flex flex-row my-2"
                                                                                 >
                                                                                   <label
                                                                                     className="font-bold"
@@ -10738,7 +10738,7 @@ Object {
                                                                                       </button>
                                                                                     </Tooltip>,
                                                                                   ],
-                                                                                  "className": "flex flex-row mb-2",
+                                                                                  "className": "flex flex-row my-2",
                                                                                 },
                                                                                 "rendered": Array [
                                                                                   Object {
@@ -10849,7 +10849,7 @@ Object {
                                                                         "nodeType": "host",
                                                                         "props": Object {
                                                                           "children": <div
-                                                                            className="flex flex-row"
+                                                                            className="flex flex-row my-2"
                                                                           >
                                                                             <label
                                                                               className="font-bold"
@@ -10868,7 +10868,7 @@ Object {
                                                                               >
                                                                                 schema.property.title
                                                                               </label>,
-                                                                              "className": "flex flex-row",
+                                                                              "className": "flex flex-row my-2",
                                                                             },
                                                                             "rendered": Array [
                                                                               Object {
@@ -10919,7 +10919,7 @@ Object {
                                                                         "props": Object {
                                                                           "children": Array [
                                                                             <div
-                                                                              className="flex flex-row"
+                                                                              className="flex flex-row my-2"
                                                                             >
                                                                               <label
                                                                                 className="font-bold"
@@ -10967,7 +10967,7 @@ Object {
                                                                                   </button>
                                                                                 </Tooltip>,
                                                                               ],
-                                                                              "className": "flex flex-row",
+                                                                              "className": "flex flex-row my-2",
                                                                             },
                                                                             "rendered": Array [
                                                                               Object {
@@ -11052,7 +11052,7 @@ Object {
                                                                         "props": Object {
                                                                           "children": Array [
                                                                             <div
-                                                                              className="flex flex-row"
+                                                                              className="flex flex-row my-2"
                                                                             >
                                                                               <label
                                                                                 className="font-bold"
@@ -11100,7 +11100,7 @@ Object {
                                                                                   </button>
                                                                                 </Tooltip>,
                                                                               ],
-                                                                              "className": "flex flex-row",
+                                                                              "className": "flex flex-row my-2",
                                                                             },
                                                                             "rendered": Array [
                                                                               Object {
@@ -11338,13 +11338,13 @@ Object {
                                                                               "props": Object {
                                                                                 "children": Array [
                                                                                   <div
-                                                                                    className="flex flex-row"
+                                                                                    className="flex flex-row my-2"
                                                                                   >
                                                                                     <div
                                                                                       className="flex flex-1 flex-col mr-1"
                                                                                     >
                                                                                       <div
-                                                                                        className="flex flex-row mb-2"
+                                                                                        className="flex flex-row my-2"
                                                                                       >
                                                                                         <label
                                                                                           className="font-bold"
@@ -11400,7 +11400,7 @@ Object {
                                                                                       className="flex flex-1 flex-col ml-1"
                                                                                     >
                                                                                       <div
-                                                                                        className="flex flex-row mb-2"
+                                                                                        className="flex flex-row my-2"
                                                                                       >
                                                                                         <label
                                                                                           className="font-bold"
@@ -11468,7 +11468,7 @@ Object {
                                                                                   false,
                                                                                   <div>
                                                                                     <div
-                                                                                      className="flex flex-row"
+                                                                                      className="flex flex-row my-2"
                                                                                     >
                                                                                       <label
                                                                                         className="font-bold"
@@ -11483,7 +11483,7 @@ Object {
                                                                                   />,
                                                                                   <div>
                                                                                     <div
-                                                                                      className="flex flex-row"
+                                                                                      className="flex flex-row my-2"
                                                                                     >
                                                                                       <label
                                                                                         className="font-bold"
@@ -11509,7 +11509,7 @@ Object {
                                                                                   </div>,
                                                                                   <div>
                                                                                     <div
-                                                                                      className="flex flex-row"
+                                                                                      className="flex flex-row my-2"
                                                                                     >
                                                                                       <label
                                                                                         className="font-bold"
@@ -11544,7 +11544,7 @@ Object {
                                                                                     }
                                                                                   />,
                                                                                 ],
-                                                                                "className": "flex flex-1 flex-col space-y-5",
+                                                                                "className": "flex flex-1 flex-col",
                                                                               },
                                                                               "rendered": Array [
                                                                                 Object {
@@ -11556,7 +11556,7 @@ Object {
                                                                                         className="flex flex-1 flex-col mr-1"
                                                                                       >
                                                                                         <div
-                                                                                          className="flex flex-row mb-2"
+                                                                                          className="flex flex-row my-2"
                                                                                         >
                                                                                           <label
                                                                                             className="font-bold"
@@ -11612,7 +11612,7 @@ Object {
                                                                                         className="flex flex-1 flex-col ml-1"
                                                                                       >
                                                                                         <div
-                                                                                          className="flex flex-row mb-2"
+                                                                                          className="flex flex-row my-2"
                                                                                         >
                                                                                           <label
                                                                                             className="font-bold"
@@ -11677,7 +11677,7 @@ Object {
                                                                                         />
                                                                                       </div>,
                                                                                     ],
-                                                                                    "className": "flex flex-row",
+                                                                                    "className": "flex flex-row my-2",
                                                                                   },
                                                                                   "rendered": Array [
                                                                                     Object {
@@ -11686,7 +11686,7 @@ Object {
                                                                                       "props": Object {
                                                                                         "children": Array [
                                                                                           <div
-                                                                                            className="flex flex-row mb-2"
+                                                                                            className="flex flex-row my-2"
                                                                                           >
                                                                                             <label
                                                                                               className="font-bold"
@@ -11763,7 +11763,7 @@ Object {
                                                                                                 </button>
                                                                                               </Tooltip>,
                                                                                             ],
-                                                                                            "className": "flex flex-row mb-2",
+                                                                                            "className": "flex flex-row my-2",
                                                                                           },
                                                                                           "rendered": Array [
                                                                                             Object {
@@ -11860,7 +11860,7 @@ Object {
                                                                                       "props": Object {
                                                                                         "children": Array [
                                                                                           <div
-                                                                                            className="flex flex-row mb-2"
+                                                                                            className="flex flex-row my-2"
                                                                                           >
                                                                                             <label
                                                                                               className="font-bold"
@@ -11949,7 +11949,7 @@ Object {
                                                                                                 </button>
                                                                                               </Tooltip>,
                                                                                             ],
-                                                                                            "className": "flex flex-row mb-2",
+                                                                                            "className": "flex flex-row my-2",
                                                                                           },
                                                                                           "rendered": Array [
                                                                                             Object {
@@ -12060,7 +12060,7 @@ Object {
                                                                                   "nodeType": "host",
                                                                                   "props": Object {
                                                                                     "children": <div
-                                                                                      className="flex flex-row"
+                                                                                      className="flex flex-row my-2"
                                                                                     >
                                                                                       <label
                                                                                         className="font-bold"
@@ -12079,7 +12079,7 @@ Object {
                                                                                         >
                                                                                           schema.property.title
                                                                                         </label>,
-                                                                                        "className": "flex flex-row",
+                                                                                        "className": "flex flex-row my-2",
                                                                                       },
                                                                                       "rendered": Array [
                                                                                         Object {
@@ -12130,7 +12130,7 @@ Object {
                                                                                   "props": Object {
                                                                                     "children": Array [
                                                                                       <div
-                                                                                        className="flex flex-row"
+                                                                                        className="flex flex-row my-2"
                                                                                       >
                                                                                         <label
                                                                                           className="font-bold"
@@ -12178,7 +12178,7 @@ Object {
                                                                                             </button>
                                                                                           </Tooltip>,
                                                                                         ],
-                                                                                        "className": "flex flex-row",
+                                                                                        "className": "flex flex-row my-2",
                                                                                       },
                                                                                       "rendered": Array [
                                                                                         Object {
@@ -12263,7 +12263,7 @@ Object {
                                                                                   "props": Object {
                                                                                     "children": Array [
                                                                                       <div
-                                                                                        className="flex flex-row"
+                                                                                        className="flex flex-row my-2"
                                                                                       >
                                                                                         <label
                                                                                           className="font-bold"
@@ -12311,7 +12311,7 @@ Object {
                                                                                             </button>
                                                                                           </Tooltip>,
                                                                                         ],
-                                                                                        "className": "flex flex-row",
+                                                                                        "className": "flex flex-row my-2",
                                                                                       },
                                                                                       "rendered": Array [
                                                                                         Object {
