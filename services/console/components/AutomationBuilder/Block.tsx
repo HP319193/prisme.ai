@@ -66,12 +66,11 @@ const CLASSNAME_BLOCKS: Record<string, BlockClassName> = {
   },
 };
 
-// eslint-disable-next-line react/display-name
-const BlockUI = React.forwardRef(
-  (
-    { blockClassName, editSection, topContent, selected, onEdit }: BlockUI,
-    ref: LegacyRef<HTMLDivElement> | undefined
-  ) => (
+const BlockUI = React.forwardRef(function BlockUI(
+  { blockClassName, editSection, topContent, selected, onEdit }: BlockUI,
+  ref: LegacyRef<HTMLDivElement> | undefined
+) {
+  return (
     <div
       className={`
           flex
@@ -128,8 +127,8 @@ const BlockUI = React.forwardRef(
         {onEdit ? <EditOutlined className="!text-accent" /> : null}
       </button>
     </div>
-  )
-);
+  );
+});
 
 export const Block: FC<NodeProps & BlockProps> = ({
   data,
@@ -151,42 +150,82 @@ export const Block: FC<NodeProps & BlockProps> = ({
       let displayedValue = '';
       switch (label) {
         case 'emit':
-          displayedValue =
-            typeof value === 'string' ? value : (value && value.event) || '';
-          break;
-        case 'repeat':
-          if (value.on && value.until) {
-            return t('automations.instruction.label', {
-              context: 'repeat_on_until',
-              on: value.on,
-              count: +value.until,
-            });
+          if (value.event) return <strong>{value.event}</strong>;
+          return '…';
+        case 'wait': {
+          const events: string[] = (value.oneOf || []).flatMap(
+            ({ event }: { event: string }) => (event ? [event] : [])
+          );
+          if (value.timeout !== undefined) {
+            if (events.length)
+              return (
+                <strong>
+                  {t('automations.instruction.label_wait_for_until', {
+                    timeout: value.timeout,
+                    events: events.join(', '),
+                    count: events.length,
+                  })}
+                </strong>
+              );
+            return (
+              <strong>
+                {t('automations.instruction.label_wait_until', {
+                  timeout: value.timeout,
+                })}
+              </strong>
+            );
           }
+          if (events.length)
+            return (
+              <strong>
+                {t('automations.instruction.label_wait_for', {
+                  events: events.join(', '),
+                  count: events.length,
+                })}
+              </strong>
+            );
+          return '…';
+        }
+        case 'set':
+          if (value.name) {
+            return (
+              <strong>
+                {value.name} ={' '}
+                {truncate(JSON.stringify(value.value), 10, '…') || ''}
+              </strong>
+            );
+          } else {
+            return '…';
+          }
+        case 'delete':
+          if (value.name) {
+            return <strong>{value.name}</strong>;
+          }
+          return '…';
+        case 'repeat': {
+          const values = [];
           if (value.on) {
-            return t('automations.instruction.label', {
-              context: 'repeat_on',
-              on: value.on,
-            });
+            values.push(
+              t('automations.instruction.label', {
+                context: 'repeat_on',
+                on: value.on,
+              })
+            );
           }
           if (value.until) {
-            return t('automations.instruction.label', {
-              context: 'repeat_until',
-              count: +value.until,
-            });
+            values.push(
+              t('automations.instruction.label', {
+                context: 'repeat_until',
+                count: +value.until,
+              })
+            );
           }
-          displayedValue = '?';
-          break;
-        case 'set':
-          displayedValue =
-            value &&
-            `${value.name} = ${truncate(JSON.stringify(value.value), 10, '…')}`;
-          break;
-        case 'delete':
-          displayedValue = (value && value.name) || '?';
-          break;
-        case 'wait':
-          displayedValue = (value && value.event) || '?';
-          break;
+          if (values.length > 0) {
+            return <strong>{values.join(', ')}</strong>;
+          } else {
+            return '…';
+          }
+        }
         case 'comment':
           const actualValue =
             typeof value === 'string'
@@ -227,16 +266,29 @@ export const Block: FC<NodeProps & BlockProps> = ({
           displayedValue =
             typeof value === 'string' ? value : (value && value.event) || '';
       }
-      return t('automations.node.label', {
-        instruction: t('automations.instruction.label', {
-          context: localize(instructionName) || label,
-        }),
-        value: displayedValue,
-        display: ':',
-        interpolation: {
-          skipOnVariables: true,
-        },
-      });
+      return (
+        <div>
+          <Trans
+            t={t}
+            i18nKey="automations.node.label"
+            components={{
+              strong: <strong />,
+            }}
+            values={{
+              instruction: t('automations.instruction.label', {
+                context: localize(instructionName) || label,
+              }),
+              value: displayedValue,
+              display: ':',
+              interpolation: {
+                skipOnVariables: true,
+              },
+            }}
+          >
+            output
+          </Trans>
+        </div>
+      );
     },
     [t, localize, instructionName]
   );
