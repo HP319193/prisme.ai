@@ -175,10 +175,10 @@ export const SchemaFormBuilder = ({
   }, [t, value]);
 
   return (
-    <div className="flex flex-1 flex-col space-y-5">
-      <div className="flex flex-row">
+    <div className="flex flex-1 flex-col">
+      <div className="flex flex-row my-2">
         <div className="flex flex-1 flex-col mr-1">
-          <div className="flex flex-row mb-2">
+          <div className="flex flex-row my-2">
             <label className="font-bold">
               {t('schema.property.widget.label')}
             </label>
@@ -203,7 +203,7 @@ export const SchemaFormBuilder = ({
         </div>
 
         <div className="flex flex-1 flex-col ml-1">
-          <div className="flex flex-row mb-2">
+          <div className="flex flex-row my-2">
             <label className="font-bold">
               {t('schema.property.type.label')}
             </label>
@@ -238,13 +238,13 @@ export const SchemaFormBuilder = ({
         </div>
       )}
       <div>
-        <div className="flex flex-row">
+        <div className="flex flex-row my-2">
           <label className="font-bold">{t('schema.property.title')}</label>
         </div>
       </div>
       <LocalizedInput value={value.title || ''} onChange={update('title')} />
       <div>
-        <div className="flex flex-row">
+        <div className="flex flex-row my-2">
           <label className="font-bold">
             {t('schema.property.description.label')}
           </label>
@@ -264,7 +264,7 @@ export const SchemaFormBuilder = ({
       </div>
       {value.type && (
         <div>
-          <div className="flex flex-row">
+          <div className="flex flex-row my-2">
             <label className="font-bold">
               {t('schema.property.placeholder.label')}
             </label>

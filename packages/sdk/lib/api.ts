@@ -39,6 +39,9 @@ export interface ApiOptions {
     clientIdHeader?: string;
     redirectUri: string;
   };
+  websockets?: {
+    transports?: string[];
+  };
 }
 
 export interface AccessToken {
@@ -95,6 +98,10 @@ export class Api extends Fetcher {
         clientId: 'local-client-id',
         redirectUri: 'http://studio.local.prisme.ai:3000/signin',
         ...opts.oidc,
+      },
+      websockets: {
+        ...opts.websockets,
+        transports: opts.websockets?.transports || ['polling', 'websocket'],
       },
     };
   }
@@ -497,6 +504,7 @@ export class Api extends Fetcher {
       apiHost: this.host,
       filters,
       api: this,
+      transports: this.opts?.websockets?.transports,
     });
     return new Promise((resolve, reject) => {
       const off = events.once('connect_error', () => {

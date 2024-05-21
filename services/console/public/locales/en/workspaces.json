@@ -299,14 +299,17 @@
       "label_emit": "Emit event",
       "label_repeat": "Repeat",
       "label_repeat_on": "on {{on}}",
-      "label_repeat_on_until": "on {{on}}, {{count}} time",
-      "label_repeat_on_until_other": "on {{on}}, {{count}} times",
       "label_repeat_until": "{{count}} time",
       "label_repeat_until_other": "{{count}} times",
       "label_all": "All instructions",
       "label_wait": "Wait",
-      "label_set": "Set var",
-      "label_delete": "Delete var",
+      "label_wait_until": "{{timeout}}s",
+      "label_wait_for": "the event {{events}}",
+      "label_wait_for_other": "the events {{events}}",
+      "label_wait_for_until": "{{timeout}}s or event {{events}}",
+      "label_wait_for_until_other": "{{timeout}}s or events {{events}}",
+      "label_set": "Set",
+      "label_delete": "Delete",
       "label_conditions": "Conditions",
       "label_conditions_default": "Else",
       "label_conditions_add": "Add condition",
@@ -668,8 +671,10 @@
     "config": "Configuration"
   },
   "pages": {
-    "private": "Private",
-    "public": "Public",
+    "publicAccess": {
+      "enabled": "enabled",
+      "disabled": "disabled"
+    },
     "link": "Pages",
     "preview": "Preview",
     "edit": "Edit",
@@ -732,7 +737,7 @@
     },
     "share": {
       "label": "Share this page",
-      "access": "Access",
+      "access": "Public access?",
       "access_private": "Users",
       "copy": "Copy the public address of the page",
       "copied": "The address is copied into your clipboard",

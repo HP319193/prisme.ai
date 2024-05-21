@@ -24,9 +24,7 @@ export function processDataSse(chunkData: string): StreamChunk {
       if (content[0] === '[' || content[0] === '{') {
         try {
           content = JSON.parse(content);
-        } catch (e) {
-          logger.warn({ msg: 'Failed to parse JSON data', content });
-        }
+        } catch {}
       }
       chunk.data.push(content);
     } else if (line.startsWith('event:')) {

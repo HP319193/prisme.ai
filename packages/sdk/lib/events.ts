@@ -30,6 +30,7 @@ export class Events {
     apiHost = 'https://api.eda.prisme.ai',
     filters,
     api,
+    transports,
   }: {
     workspaceId: string;
     token: string;
@@ -38,6 +39,7 @@ export class Events {
     apiHost?: string;
     filters?: Record<string, any>;
     api: Api;
+    transports?: string[];
   }) {
     this.workspaceId = workspaceId;
     const queryString = new URLSearchParams(filters || {}).toString();
@@ -57,8 +59,17 @@ export class Events {
       {
         extraHeaders,
         withCredentials: true,
+        transports: transports || ['polling', 'websocket'],
       }
     );
+
+    this.client.on('connect_error', (err) => {
+      // revert to classic upgrade
+      this.client.io.opts.transports = ['polling', 'websocket'];
+    });
+    this.client.on('error', (err) => {
+      this.client.io.opts.transports = ['polling', 'websocket'];
+    });
 
     const onConnect = () => {
       // First connection

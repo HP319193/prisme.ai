@@ -76,6 +76,9 @@ export const Form = ({
   const formRef: SchemaFormProps['formRef'] = useRef<any>();
   const containerEl = useRef<HTMLDivElement>(null);
   const [hasError, setHasError] = useState(false);
+  const [values, setValues] = useState<Record<string, any> | undefined>(
+    initialValues
+  );
 
   useEffect(
     () =>
@@ -84,6 +87,10 @@ export const Form = ({
       ),
     []
   );
+
+  useEffect(() => {
+    setValues(config.values);
+  }, [config.values]);
 
   const mergeValuesWithPayload = useCallback(
     (values: any = {}, payload?: any) => {
@@ -102,6 +109,7 @@ export const Form = ({
 
   const onChange = useCallback(
     (values: any) => {
+      setValues(values);
       if (!config.onChange || !events) return;
       const { event, payload = {} } =
         typeof config.onChange === 'string'
@@ -173,10 +181,20 @@ export const Form = ({
 
   const customButtons = useMemo(
     () =>
-      (buttons || []).map((button, key) => (
-        <Action key={key} {...button} events={events} Link={Link} />
-      )),
-    [buttons, events, Link]
+      (buttons || []).map((button, key) => {
+        const payload = { values, ...button.payload };
+        return (
+          <Action
+            key={key}
+            {...button}
+            className={`pr-block-form__button ${button.className || ''}`}
+            payload={payload}
+            events={events}
+            Link={Link}
+          />
+        );
+      }),
+    [buttons, events, Link, values]
   );
 
   useEffect(() => {
@@ -253,6 +271,10 @@ const defaultStyles = `:block {
   justify-content: flex-end;
   margin-top: 0.5rem;
   padding-top: 1rem;
+}
+
+:block .pr-block-form__buttons-container .pr-block-form__button {
+  margin-left: 1rem;
 }
 
 :block .pr-block-form__button {

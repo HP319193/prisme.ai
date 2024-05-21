@@ -7,6 +7,7 @@ global:
     driver: redis # Driver used
     url: redis://localhost:6379/1 # URL to the broker
     password: "" # Broker password
+    maxLen: "700" # Default redis streams maxlen (how many events per stream stay in cache before being dropped, whether they have been read or not)
 
   apiUrl: "" # Public API URL, should contain the "/v2", example : https://api.prisme.ai/v2
   consoleUrl: "" # Public Console URL, example : https://studio.prisme.ai
@@ -309,9 +310,9 @@ rbac:
 
 # Proxying, balancing, TLS
 ingresses: [] # Comment this line and uncomment below if you want to use our ingress example
-# ingresses:    
+# ingresses:
 #   - name: core-ingress
-#     annotations: 
+#     annotations:
 #       kubernetes.io/elb.id: "..."
 #       kubernetes.io/elb.ip: "..."
 #       cert-manager.io/cluster-issuer: "core-issuer"
@@ -347,7 +348,7 @@ ingresses: [] # Comment this line and uncomment below if you want to use our ing
 #             - path: "/"
 #               backend:
 #                 serviceName: core-prismeai-pages
-#                 servicePort: 80        
+#                 servicePort: 80
 
 #       - host: '*.pages.prisme.ai' # This wildcard allows acces to workspaces pages
 #         http: *PAGES_SERVICE

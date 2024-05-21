@@ -276,6 +276,7 @@ export const DataTable = ({
     sorter
   ) => {
     if (!onSort) return;
+    if (!prevTableSort.current && Object.keys(sorter).length === 0) return;
     if (JSON.stringify(sorter) === prevTableSort.current) return;
     prevTableSort.current = JSON.stringify(sorter);
     const { event, payload } =

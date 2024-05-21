@@ -63,7 +63,13 @@ export async function runCustomAutomation(
   const payload = instruction[automationSlug] || {};
   const result = await executeAutomation(calledAutomation, payload);
   if (typeof result !== 'undefined' && (<any>payload).output!!) {
-    ctx.set((<any>payload).output, result);
+    ctx.set((<any>payload).output, result, {
+      emitErrors: {
+        error: 'InvalidOutputError',
+        message:
+          "Cannot set instruction output, please make sure your instruction's output indicates a variable name as a string",
+      },
+    });
   }
 }
 
@@ -183,7 +189,13 @@ export async function runInstruction(
   }
 
   if (typeof result !== 'undefined' && (<any>payload).output!!) {
-    ctx.set((<any>payload).output, result);
+    ctx.set((<any>payload).output, result, {
+      emitErrors: {
+        error: 'InvalidOutputError',
+        message:
+          "Cannot set instruction output, please make sure your instruction's output indicates a variable name as a string",
+      },
+    });
   }
 
   return true;

@@ -77,7 +77,9 @@ Array [
         }
       }
     >
-      automations.node.label
+      <strong>
+        the event
+      </strong>
     </button>
   </div>,
   ");",
@@ -156,7 +158,9 @@ Array [
         }
       }
     >
-      automations.instruction.label
+      <strong>
+        automations.instruction.label
+      </strong>
     </button>
   </div>,
   ");",
@@ -235,7 +239,12 @@ Array [
         }
       }
     >
-      automations.node.label
+      <strong>
+        foo
+         =
+         
+        "bar"
+      </strong>
     </button>
   </div>,
   ");",
@@ -314,7 +323,9 @@ Array [
         }
       }
     >
-      automations.node.label
+      <strong>
+        foo
+      </strong>
     </button>
   </div>,
   ");",
@@ -393,7 +404,7 @@ Array [
         }
       }
     >
-      automations.node.label
+      …
     </button>
   </div>,
   ");",
@@ -472,7 +483,9 @@ Array [
         }
       }
     >
-      automations.node.label
+      <div>
+        output
+      </div>
     </button>
   </div>,
   ");",

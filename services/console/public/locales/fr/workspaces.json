@@ -299,14 +299,17 @@
       "label_emit": "Émet l'événement",
       "label_repeat": "Répète",
       "label_repeat_on": "sur {{on}}",
-      "label_repeat_on_until": "sur {{on}}, {{count}} fois",
-      "label_repeat_on_until_other": "sur {{on}}, {{count}} fois",
       "label_repeat_until": "{{count}} fois",
       "label_repeat_until_other": "{{count}} fois",
       "label_all": "Toutes les instructions",
       "label_wait": "Attend",
-      "label_set": "Définit var",
-      "label_delete": "Supprime var",
+      "label_wait_until": "{{timeout}}s",
+      "label_wait_for": "l'évènement {{events}}",
+      "label_wait_for_other": "les évènements {{events}}",
+      "label_wait_for_until": "{{timeout}}s ou l'évènement {{events}}",
+      "label_wait_for_until_other": "{{timeout}}s ou les évènements {{events}}",
+      "label_set": "Définit",
+      "label_delete": "Supprime",
       "label_conditions": "Conditions",
       "label_conditions_default": "Sinon",
       "label_conditions_add": "Ajouter condition",
@@ -668,8 +671,10 @@
     "config": "Configuration"
   },
   "pages": {
-    "private": "Privé",
-    "public": "Public",
+    "publicAccess": {
+      "enabled": "activé",
+      "disabled": "désactivé"
+    },
     "link": "Pages",
     "preview": "Prévisualiser",
     "edit": "Éditer",
@@ -732,7 +737,7 @@
     },
     "share": {
       "label": "Partager cette page",
-      "access": "Accès",
+      "access": "Accès public ?",
       "access_private": "Utilisateurs",
       "copy": "Copier l'adresse publique de la page",
       "copied": "L'adresse est copiée dans votre presse papier",

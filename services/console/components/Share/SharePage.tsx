@@ -155,77 +155,76 @@ const SharePage = ({ pageId, pageSlug, workspaceId }: SharePageProps) => {
   return (
     <div className="w-[44rem] space-y-5">
       <div className="flex flex-row">
-        <div className="flex flex-row">
-          <Space className="flex flex-row">
-            <Text>{t('pages.share.access')}</Text>
+        <div className="flex flex-col flex-1">
+          <ShareButton link={link} />
+          <label className="flex flex-row mx-4 mt-4">
+            <Text className="mr-2 font-bold">{t('pages.share.access')}</Text>
             <Switch
               checked={isPublic}
               onChange={togglePublic}
-              checkedChildren={t('pages.public')}
-              unCheckedChildren={t('pages.private')}
+              checkedChildren={t('pages.publicAccess.enabled')}
+              unCheckedChildren={t('pages.publicAccess.disabled')}
             />
-          </Space>
+          </label>
         </div>
-        <ShareButton link={link} />
       </div>
-      {!isPublic && (
-        <>
-          <Form onSubmit={onSubmit} initialValues={{ email: '' }}>
-            {({ handleSubmit }) => (
-              <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-                <div className="font-semibold">
-                  {t('pages.share.access', {
-                    context: 'private',
-                  })}
-                </div>
-                <div className="flex flex-row flex-1 items-end">
-                  <FieldContainer
-                    name="email"
-                    containerClassName="flex-1 !ml-0 !mb-0 !mt-[0.635rem] flex-row"
-                  >
-                    {({ input }) => (
-                      <>
-                        <Input label={t('share.emailOrRole')} {...input} />
-                      </>
-                    )}
-                  </FieldContainer>
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="flex items-center justify-center !w-[9.375rem] !h-[2.5rem] !rounded-[0.94rem]"
-                  >
-                    {t('add', { ns: 'common' })}
-                  </Button>
-                </div>
-              </form>
-            )}
-          </Form>
-          <Table
-            dataSource={dataSource}
-            columns={[
-              {
-                title: t('share.displayName'),
-                dataIndex: 'displayName',
-                key: 'displayName',
-              },
-              {
-                title: t('share.actions'),
-                dataIndex: 'actions',
-                key: 'actions',
-                width: '15%',
-              },
-            ]}
-            bordered
-            pagination={{
-              defaultPageSize: 10,
-              position: ['bottomRight'],
-              responsive: true,
-              pageSizeOptions: [10, 20, 50],
-            }}
-            scroll={{ y: 500 }}
-          />
-        </>
-      )}
+
+      <div className="p-4">
+        <Form onSubmit={onSubmit} initialValues={{ email: '' }}>
+          {({ handleSubmit }) => (
+            <form onSubmit={handleSubmit} className="flex flex-1 flex-col mb-4">
+              <div className="font-semibold">
+                {t('pages.share.access', {
+                  context: 'private',
+                })}
+              </div>
+              <div className="flex flex-row flex-1 items-end">
+                <FieldContainer
+                  name="email"
+                  containerClassName="flex-1 !ml-0 !mb-0 !mt-[0.635rem] flex-row"
+                >
+                  {({ input }) => (
+                    <>
+                      <Input label={t('share.emailOrRole')} {...input} />
+                    </>
+                  )}
+                </FieldContainer>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="flex items-center justify-center !w-[9.375rem] !h-[2.5rem] !rounded-[0.94rem]"
+                >
+                  {t('add', { ns: 'common' })}
+                </Button>
+              </div>
+            </form>
+          )}
+        </Form>
+        <Table
+          dataSource={dataSource}
+          columns={[
+            {
+              title: t('share.displayName'),
+              dataIndex: 'displayName',
+              key: 'displayName',
+            },
+            {
+              title: t('share.actions'),
+              dataIndex: 'actions',
+              key: 'actions',
+              width: '15%',
+            },
+          ]}
+          bordered
+          pagination={{
+            defaultPageSize: 10,
+            position: ['bottomRight'],
+            responsive: true,
+            pageSizeOptions: [10, 20, 50],
+          }}
+          scroll={{ y: 500 }}
+        />
+      </div>
     </div>
   );
 };

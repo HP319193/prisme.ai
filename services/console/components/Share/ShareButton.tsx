@@ -24,7 +24,7 @@ export const ShareButton = ({ link }: ShareButtonProps) => {
   }, [link, t, trackEvent]);
   return (
     <div className="flex flex-row ml-2 min-w-0 border border-transparent hover:border-ultra-light-accent rounded">
-      <Button className="!rounded-r-[0] !pl-2 overflow-hidden !min-w-0">
+      <Button className="flex-1 !rounded-r-[0] !pl-2 overflow-hidden !min-w-0">
         <a
           href={link}
           target="_blank"
