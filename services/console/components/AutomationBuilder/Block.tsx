@@ -150,13 +150,13 @@ export const Block: FC<NodeProps & BlockProps> = ({
       let displayedValue = '';
       switch (label) {
         case 'emit':
-          if (value.event) return <strong>{value.event}</strong>;
+          if (value?.event) return <strong>{value.event}</strong>;
           return '…';
         case 'wait': {
-          const events: string[] = (value.oneOf || []).flatMap(
+          const events: string[] = (value?.oneOf || []).flatMap(
             ({ event }: { event: string }) => (event ? [event] : [])
           );
-          if (value.timeout !== undefined) {
+          if (value?.timeout !== undefined) {
             if (events.length)
               return (
                 <strong>
@@ -187,7 +187,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
           return '…';
         }
         case 'set':
-          if (value.name) {
+          if (value?.name) {
             return (
               <strong>
                 {value.name} ={' '}
@@ -198,13 +198,13 @@ export const Block: FC<NodeProps & BlockProps> = ({
             return '…';
           }
         case 'delete':
-          if (value.name) {
+          if (value?.name) {
             return <strong>{value.name}</strong>;
           }
           return '…';
         case 'repeat': {
           const values = [];
-          if (value.on) {
+          if (value?.on) {
             values.push(
               t('automations.instruction.label', {
                 context: 'repeat_on',
@@ -212,7 +212,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
               })
             );
           }
-          if (value.until) {
+          if (value?.until) {
             values.push(
               t('automations.instruction.label', {
                 context: 'repeat_until',
