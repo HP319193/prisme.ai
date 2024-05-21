@@ -47,6 +47,9 @@ export class QueryEngine {
     };
 
     for (let [queryType, processorParams] of Object.entries(queryOpts)) {
+      if (!processorParams) {
+        continue;
+      }
       const queryProcessor = this.processors[queryType as QueryType];
       if (!queryProcessor) {
         logger.error({

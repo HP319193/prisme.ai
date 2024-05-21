@@ -1,4 +1,4 @@
-import { extractObjectsByPath } from '@prisme.ai/permissions/lib/utils';
+import { extractObjectsByPath } from '../../../../utils';
 import { OrQuery } from '../../store/types';
 import {
   QueryId,

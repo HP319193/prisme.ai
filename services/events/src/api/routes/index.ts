@@ -18,11 +18,15 @@ export const init = async (
   broker: Broker,
   subscriptions: Subscriptions
 ) => {
-  const io = await initWebsockets(httpServer, broker, subscriptions);
+  const { io, workspacesNs } = await initWebsockets(
+    httpServer,
+    broker,
+    subscriptions
+  );
 
   const root = '/v2';
   app.use(`/sys/cleanup`, initCleanupRoutes(eventsStore));
-  app.use(`/sys`, initSysRoutes(subscriptions));
+  app.use(`/sys`, initSysRoutes(subscriptions, io));
   app.use(
     `${root}/workspaces/:workspaceId/events`,
     initEventsRoutes(eventsStore)
@@ -37,6 +41,6 @@ export const init = async (
   );
   app.use(`${root}/search`, initSearchRoutes(eventsStore));
 
-  return { io };
+  return { io: workspacesNs };
 };
 export default init;

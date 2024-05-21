@@ -224,5 +224,5 @@ export async function initWebsockets(
       });
   });
 
-  return workspaces as any as Server;
+  return { io, workspacesNs: workspaces as any as Server };
 }
