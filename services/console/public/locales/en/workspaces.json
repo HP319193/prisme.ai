@@ -671,8 +671,10 @@
     "config": "Configuration"
   },
   "pages": {
-    "private": "Private",
-    "public": "Public",
+    "publicAccess": {
+      "enabled": "enabled",
+      "disabled": "disabled"
+    },
     "link": "Pages",
     "preview": "Preview",
     "edit": "Edit",
@@ -735,7 +737,7 @@
     },
     "share": {
       "label": "Share this page",
-      "access": "Access",
+      "access": "Public access?",
       "access_private": "Users",
       "copy": "Copy the public address of the page",
       "copied": "The address is copied into your clipboard",

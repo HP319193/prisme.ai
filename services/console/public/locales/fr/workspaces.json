@@ -671,8 +671,10 @@
     "config": "Configuration"
   },
   "pages": {
-    "private": "Privé",
-    "public": "Public",
+    "publicAccess": {
+      "enabled": "activé",
+      "disabled": "désactivé"
+    },
     "link": "Pages",
     "preview": "Prévisualiser",
     "edit": "Éditer",
@@ -735,7 +737,7 @@
     },
     "share": {
       "label": "Partager cette page",
-      "access": "Accès",
+      "access": "Accès public ?",
       "access_private": "Utilisateurs",
       "copy": "Copier l'adresse publique de la page",
       "copied": "L'adresse est copiée dans votre presse papier",
