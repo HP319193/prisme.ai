@@ -52,11 +52,23 @@ export const FieldAutocomplete = ({
   const filterOptions = useCallback(
     (v: string) => {
       if (v.length < minChars) return setFilteredOptions([]);
-      setFilteredOptions(
-        options.filter(({ label, value }) =>
-          `${label} ${value}`.toLowerCase().includes(v.toLowerCase())
-        )
-      );
+      function filterOptions(
+        options: typeof filteredOptions
+      ): typeof filteredOptions {
+        return options.reduce<any>((prev, option) => {
+          const { label, value, options } = option;
+          const matchItem = `${label} ${value}`
+            .toLowerCase()
+            .includes(v.toLowerCase());
+          if (matchItem) return [...prev, option];
+          const filteredChildren = options ? filterOptions(options) : [];
+          const match = filteredChildren.length;
+          if (match) return [...prev, { ...option, options: filteredChildren }];
+          return prev;
+        }, []);
+      }
+
+      setFilteredOptions(filterOptions(options));
     },
     [options]
   );
