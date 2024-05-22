@@ -23,7 +23,14 @@ export default class RedisCache implements CacheDriver {
   }
 
   async listKeys(pattern: string): Promise<string[]> {
-    return await this.client.keys(pattern);
+    const results = [];
+    for await (const key of this.client.scanIterator({
+      MATCH: pattern,
+      COUNT: 100,
+    })) {
+      results.push(key);
+    }
+    return results;
   }
 
   async get(key: string) {

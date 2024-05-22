@@ -52,7 +52,9 @@ export class ClusterNode extends EventEmitter {
         this.clusterNodes[nodeId] = node;
       }
     }
-    this.clusterTopics = new Set(Object.keys(this.clusterNodes));
+    this.clusterTopics = new Set(
+      Object.values(this.clusterNodes).map((cur) => cur.targetTopic)
+    );
   }
 
   async start() {
