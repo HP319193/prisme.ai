@@ -557,5 +557,39 @@ describe('Expressions can be evaluated with {% %}', () => {
         max: 32,
       })
     ).toEqual(true);
+
+    expect(
+      interpolate(
+        '{% date({{run[{{key}}]}}).date  < date({{run[date2]}}).date %}',
+        {
+          key: 'date',
+          run: {
+            date: '2023-03-28T16:38:51.190Z',
+            date2: '2023-03-31T16:38:51.190Z',
+          },
+        }
+      )
+    ).toEqual(true);
+
+    // Also works with multiple {% expressions %}
+    expect(
+      interpolate(
+        '{% date({{run[{{key}}]}}, "l", "fr") %} at {% date({{run[date2]}}, "LT", "fr") %}',
+        {
+          key: 'date',
+          run: {
+            date: '2023-03-31T16:38:51.190Z',
+            date2: '2023-03-31T16:38:51.190Z',
+          },
+        }
+      )
+    ).toEqual('31/3/2023 at 18:38');
+
+    expect(
+      interpolate('{{un}} et {{deux}}', {
+        un: 'un+{{deux}}',
+        deux: 'trois',
+      })
+    ).toEqual('un+trois et trois');
   });
 });
