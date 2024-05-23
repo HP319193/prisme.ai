@@ -276,6 +276,7 @@ const defaultStyles = `:block {
   flex: 1;
   flex-direction: column;
   height: 1px;
+  max-width: 100%;
 }
 .product-layout-content-panel > * {
   overflow: auto;
