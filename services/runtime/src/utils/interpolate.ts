@@ -52,11 +52,56 @@ const evaluate = (
   return value;
 };
 
+function findExpressions(str: string) {
+  const expressions: { startsAt: number; endsAt: number; text: string }[] = [];
+  const variables: { startsAt: number; endsAt: number; text: string }[] = [];
+  let openedExpression = null;
+  let match;
+  const pattern = /\{\%|\%\}|(\{\{[^{}]*?\}\})/g;
+  while ((match = pattern.exec(str)) !== null) {
+    if (match[0].startsWith('{{')) {
+      if (openedExpression) {
+        continue;
+      }
+      variables.push({
+        startsAt: match.index,
+        endsAt: match.index + match[0].length,
+        text: match[0],
+      });
+      continue;
+    }
+
+    if (match[0] == '{%') {
+      if (!openedExpression) {
+        openedExpression = {
+          index: match.index,
+          nested: 0,
+        };
+      } else {
+        openedExpression.nested++;
+      }
+    }
+
+    if (match[0] == '%}') {
+      if (openedExpression && openedExpression.nested === 0) {
+        expressions.push({
+          startsAt: openedExpression.index,
+          endsAt: match.index + 2,
+          text: str.slice(openedExpression.index, match.index + 2),
+        });
+        openedExpression = null;
+      } else if (openedExpression && openedExpression.nested > 0) {
+        openedExpression.nested--;
+      }
+    }
+  }
+  return { expressions, variables };
+}
+
 export const interpolate = (
   target: any,
   context = {},
-  opts: InterpolateOptions = {},
-  patterns = [/(\{\%.+\%\})/, /(\{\{[^{}]*?\}\})/g]
+  opts: InterpolateOptions = {}
 ): any => {
   const { exclude = [] } = opts;
   if (!context) {
@@ -66,64 +111,49 @@ export const interpolate = (
     // As we do not want to stringify variables inside an {% %} expression,
     // we need to first match & evaluate these outer most expressions before
     // injecting others regular {{variables}}
-    for (let [patternIdx, pattern] of Object.entries(patterns)) {
-      try {
-        // First replace nested variables
-        let replaceAgain = true;
-        do {
-          replaceAgain = false;
-          target = target.replace(
-            pattern,
-            (fullMatch: any, expr: any, index: number, fullStr: string) => {
-              // Do not replace the last & full string variable as it would break objects into "[object Object]"
-              if (index == 0 && fullMatch.length === fullStr.length) {
-                replaceAgain = false;
-                return fullStr;
-              }
-              const evaluated = evaluate(expr, context, {
-                asString: true,
-                ...opts,
-              });
-              // The only reason for which evaluate might return a "{{expression}}"" again is that var is undefined & opts.undefinedVars == 'leave'
-              // Without setting replaceAgain to false in that case, it would end in an infinite loop !!
-              // Also, we dont want to reprocess the result of some evalExpr (allowing to prevent some {{variable}} from being interpolated : {% '{{var}}' %})
-              replaceAgain =
-                (!evaluated.startsWith('{{') && !fullMatch.startsWith('{%')) ||
-                opts.undefinedVars !== 'leave';
-              return evaluated;
-            }
-          );
-        } while (replaceAgain);
-        // If remaining variable name spans the whole string, we can return the variable itself as it is
-        if (
-          (patternIdx == '0' &&
-            target.startsWith('{%') &&
-            target.endsWith('%}')) ||
-          (patternIdx == '1' &&
-            target.startsWith('{{') &&
-            target.endsWith('}}'))
-        ) {
-          return evaluate(target, context, opts);
+    try {
+      let replaceAgain = true;
+      do {
+        const { expressions, variables } = findExpressions(target);
+        if (!expressions.length && !variables.length) {
+          break;
         }
-      } catch (e) {
-        if (e instanceof PrismeError) {
-          throw e;
+        for (let expr of expressions.concat(variables)) {
+          // Do not replace the last & full string variable as it would break objects into "[object Object]"
+          if (expr.startsAt === 0 && expr.text.length === target.length) {
+            return evaluate(target, context, opts);
+          }
+          const evaluated = evaluate(expr.text, context, {
+            asString: true,
+            ...opts,
+          });
+          target = target.replace(expr.text, evaluated);
+
+          // The only reason for which evaluate might return a "{{expression}}"" again is that var is undefined & opts.undefinedVars == 'leave'
+          // Without setting replaceAgain to false in that case, it would end in an infinite loop !!
+          // Also, we dont want to reprocess the result of some evalExpr (allowing to prevent some {{variable}} from being interpolated : {% '{{var}}' %})
+          replaceAgain =
+            (!evaluated.startsWith('{{') && !expr.text.startsWith('{%')) ||
+            opts.undefinedVars !== 'leave';
         }
-        throw new Error(`Could not interpolate string "${target}": ${e}`);
+      } while (replaceAgain);
+    } catch (e) {
+      if (e instanceof PrismeError) {
+        throw e;
       }
+      throw new Error(`Could not interpolate string "${target}": ${e}`);
     }
+
     return target;
   } else if (Array.isArray(target)) {
-    return target.map((value: any) =>
-      interpolate(value, context, opts, patterns)
-    );
+    return target.map((value: any) => interpolate(value, context, opts));
   } else if (target && typeof target === 'object') {
     return Object.entries(target).reduce(
       (acc, [key, value]) => ({
         ...acc,
         [key]: exclude.includes(key)
           ? value
-          : interpolate(value, context, opts, patterns),
+          : interpolate(value, context, opts),
       }),
       {}
     );
