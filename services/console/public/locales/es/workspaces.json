@@ -1088,6 +1088,7 @@
     "type_workspaces.versions.published": "Se ha creado la versión <tooltip title=\"{{event.payload.version.description}}\">{{event.payload.version.name}}</tooltip>. <rollback>Volver a esta versión<rollback>",
     "type_workspaces.versions.rollback": "Se ha recuperado la versión {{event.payload.version.name}}",
     "type_apps.published": "La aplicación {{appName}} ha sido publicada",
+    "type_apps.deleted": "La aplicación {{appName}} ha sido eliminada",
     "type_runtime.automations.executed": "Se ha ejecutado la automatización <automation>{{automation}}</automation>",
     "type_runtime.webhooks.triggered": "La <automation>{{automation}}</automation> fue activada por la URL",
     "type_runtime.waits.pending": "Automatización <automation>{{automation}}</automation> está pendiente {{waits}}",

@@ -1703,6 +1703,7 @@
     "type_workspaces.permissions.shared": "The Workspace has been shared with {{share}}",
     "type_workspaces.permissions.deleted": "The Workspace is no longer shared with {{share}}",
     "type_apps.published": "The app {{appName}} has been published",
+    "type_apps.deleted": "The app {{appName}} has been deleted",
     "type_runtime.automations.executed": "The automation <automation>{{automation}}</automation> has been executed",
     "type_runtime.interactions.triggered": "Interaction triggered from a {{event.payload.trigger.type}} {{event.payload.trigger.value}} on automation <automation>{{event.payload.automation}}</automation>",
     "type_runtime.automations.scheduled": "The automation <automation>{{automation}}</automation> has been scheduled",

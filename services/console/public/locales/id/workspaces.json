@@ -1689,6 +1689,7 @@
     "type_workspaces.permissions.shared": "Area kerja telah dibagikan dengan {{share}}",
     "type_workspaces.permissions.deleted": "Area kerja tidak magi digunakan bersama {{share}}",
     "type_apps.published": "Aplikasi {{appName}} telah diterbitkan",
+    "type_apps.deleted": "Aplikasi {{appName}} telah dihapus",
     "type_runtime.automations.executed": "Otomation <automation>{{automation}}</automation> telah dieksekusi",
     "type_runtime.interactions.triggered": "Interaksi dipicu dari sebuah {{event.payload.trigger.type}} {{event.payload.trigger.value}} pada otomatisasi <automation>{{event.payload.automation}}</automation>",
     "type_runtime.automations.scheduled": "Otomatisasi <automation>{{automation}}</automation> telah dijadwalkan",

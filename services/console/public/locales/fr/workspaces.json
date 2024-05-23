@@ -1873,6 +1873,7 @@
     "type_workspaces.permissions.shared": "Le Workspace a été partagé avec {{share}}",
     "type_workspaces.permissions.deleted": "Le Workspace n'est plus partagé avec {{share}}",
     "type_apps.published": "L'app {{appName}} a été publiée",
+    "type_apps.deleted": "L'app {{appName}} a été supprimée",
     "type_runtime.automations.executed": "L'automatisation <automation>{{automation}}</automation> a été exécutée",
     "type_runtime.interactions.triggered": "Interaction déclenchée depuis un(e) {{event.payload.trigger.type}} {{event.payload.trigger.value}} sur l'automatisation <automation>{{event.payload.automation}}</automation>",
     "type_runtime.automations.scheduled": "L'automatisation <automation>{{automation}}</automation> a été planifiée",
