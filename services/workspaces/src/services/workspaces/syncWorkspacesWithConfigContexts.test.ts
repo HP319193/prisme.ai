@@ -5,7 +5,6 @@ import { AppInstances, Workspaces } from '.';
 import { DSULType } from '../DSULStorage';
 import { EventType } from '../../eda';
 
-jest.mock('heapdump', () => () => ({}));
 jest.mock(
   '../apps/crud/apps',
   () =>
