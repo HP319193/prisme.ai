@@ -1,20 +1,20 @@
 import Cookie from 'js-cookie';
 import localStorage from './localStorage';
+import sessionStorage from './sessionStorage';
 
-const checkLocalStorage = () => {
+function checkStorage(storage: Storage) {
   try {
-    if (!localStorage) throw new Error();
-    localStorage.setItem('__test', '1');
-    localStorage.removeItem('__test');
+    if (!storage) throw new Error();
+    storage.setItem('__test', '1');
+    storage.removeItem('__test');
     return true;
   } catch (e) {
     return false;
   }
-};
+}
 
-const IS_LOCAL_STORAGE_AVAILABLE = checkLocalStorage();
-
-if (IS_LOCAL_STORAGE_AVAILABLE) {
+if (checkStorage(localStorage!)) {
+  // This prevents page devs from accessing the localStorage
   Object.defineProperty(window, 'localStorage', {
     value: sessionStorage,
     configurable: true,
@@ -22,32 +22,41 @@ if (IS_LOCAL_STORAGE_AVAILABLE) {
 }
 const ls = localStorage!;
 
-export const Storage = {
-  get: (k: string) => {
-    if (IS_LOCAL_STORAGE_AVAILABLE) {
-      const v = ls.getItem(k);
-      try {
-        return JSON.parse(v || '');
-      } catch (e) {
-        return v;
-      }
-    }
+export class StoragePolyfill {
+  private storage: Storage | null = ls;
 
-    return Cookie.get(k);
-  },
-  set: (k: string, v: any) => {
+  constructor(storage?: Storage) {
+    if (storage) {
+      this.storage = storage;
+    }
+    if (this.storage && !checkStorage(this.storage)) {
+      this.storage = null;
+    }
+  }
+
+  get(k: string) {
+    if (!this.storage) return Cookie.get(k);
+    const v = this.storage.getItem(k);
+    try {
+      return JSON.parse(v || '');
+    } catch (e) {
+      return v;
+    }
+  }
+  set(k: string, v: any) {
     const value = typeof v === 'object' ? JSON.stringify(v) : v;
-    if (IS_LOCAL_STORAGE_AVAILABLE) {
-      return ls.setItem(k, value);
+    if (this.storage) {
+      return this.storage.setItem(k, value);
     }
     return Cookie.set(k, value);
-  },
-  remove: (k: string) => {
-    if (IS_LOCAL_STORAGE_AVAILABLE) {
-      return ls.removeItem(k);
+  }
+  remove(k: string) {
+    if (this.storage) {
+      return this.storage.removeItem(k);
     }
     Cookie.remove(k);
-  },
-};
+  }
+}
 
-export default Storage;
+export const SessionStorage = new StoragePolyfill(sessionStorage);
+export default new StoragePolyfill();
