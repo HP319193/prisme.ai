@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useWorkspace, WorkspaceContext } from '../../providers/Workspace';
-import Storage from '../../utils/Storage';
+import { SessionStorage } from '../../utils/Storage';
 import { stringToHexaColor } from '../../utils/strings';
 import { ReplaceStateEvent } from '../../utils/urls';
 import useLocalizedText from '../../utils/useLocalizedText';
@@ -17,7 +17,7 @@ import { useTracking } from '../../components/Tracking';
 
 function getTabsFromStorage(workspaceId: string) {
   try {
-    return Storage.get(`__tabs_${workspaceId}`);
+    return SessionStorage.get(`__tabs_${workspaceId}`);
   } catch (e) {
     console.error(e);
     return [];
@@ -203,7 +203,7 @@ export const Tabs = () => {
 
     setTabs((prev) => {
       const newTabs = [...Array.from(prev), tab];
-      Storage.set(`__tabs_${workspace.id}`, newTabs);
+      SessionStorage.set(`__tabs_${workspace.id}`, newTabs);
       return new Set(newTabs);
     });
   }, [asPath, workspace, workspaceLinks]);
@@ -219,7 +219,7 @@ export const Tabs = () => {
         const prevTabs = Array.from(prev);
         const tabIndex = prevTabs.indexOf(tab);
         const newTabs = prevTabs.filter((t) => t !== tab);
-        Storage.set(`__tabs_${workspace.id}`, newTabs);
+        SessionStorage.set(`__tabs_${workspace.id}`, newTabs);
         if (tab === asPath) {
           if (newTabs.length === 0) {
             push(`/workspaces/${workspace.id}`);
@@ -242,7 +242,7 @@ export const Tabs = () => {
       action: 'click',
     });
     setTabs(new Set());
-    Storage.remove(`__tabs_${workspace.id}`);
+    SessionStorage.remove(`__tabs_${workspace.id}`);
     push(`/workspaces/${workspace.id}`);
   }, [push, trackEvent, workspace.id]);
 
