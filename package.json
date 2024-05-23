@@ -109,7 +109,7 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.1",
     "rollup-plugin-svg": "^2.0.0",
-    "rollup-plugin-typescript2": "^0.30.0",
+    "rollup-plugin-typescript2": "^0.31.0",
     "sass": "^1.42.1",
     "shelljs": "^0.8.5",
     "shelljs-live": "^0.0.5",
@@ -123,6 +123,7 @@
 
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@next/swc-darwin-arm64": "^14.2.3",
     "@playwright/test": "^1.43.0",
     "@types/marked": "^4.0.8",
     "antd": "^4.23.0",
