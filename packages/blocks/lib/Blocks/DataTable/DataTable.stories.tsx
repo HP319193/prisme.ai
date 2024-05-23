@@ -31,6 +31,11 @@ const Template: Story<any> = ({ defaultConfig }) => {
       onAppConfigUpdate={setAppConfig}
       events={events as Events}
     >
+      <style>{`
+      .sticky-height {
+        max-height: 90vh;
+      }
+      `}</style>
       <DataTable />
     </BlockProvider>
   );
@@ -478,4 +483,29 @@ WithMenus.args = {
       },
     ],
   } as DataTableConfig,
+};
+
+export const Sticky = Template.bind({});
+Sticky.args = {
+  defaultConfig: {
+    className: 'sticky-height',
+    data: Array.from(new Array(200), (v, k) => k).map((v) =>
+      Array.from(new Array(40), (v, k) => k).reduce(
+        (prev, k) => ({
+          ...prev,
+          [`column ${k}`]: `some text value for ${k} cell`,
+        }),
+        {
+          id: v,
+        }
+      )
+    ),
+    pagination: {
+      event: 'test',
+      pageSize: 100,
+      page: 1,
+      itemCount: 200,
+    },
+    sticky: true,
+  },
 };

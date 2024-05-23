@@ -1,8 +1,8 @@
 import '../../i18n';
-import { isLocalizedObject, Table } from '@prisme.ai/design-system';
+import { Table } from '@prisme.ai/design-system';
 import { useBlock } from '../../Provider';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import BlockTitle from '../Internal/BlockTitle';
 
 import EditableRow from './EditableRow';
@@ -10,7 +10,7 @@ import EditableCell from './EditableCell';
 import { ColumnDefinition, DataType, MenuItem, OnEdit } from './types';
 import RenderValue from './RenderValue';
 import useLocalizedText from '../../useLocalizedText';
-import { Dropdown, Menu, TableProps } from 'antd';
+import { TableProps } from 'antd';
 import { BaseBlock } from '../BaseBlock';
 import { BaseBlockConfig } from '../types';
 import { Events } from '@prisme.ai/sdk';
@@ -39,6 +39,10 @@ export interface DataTableConfig extends BaseBlockConfig {
         event: string;
         payload?: Record<string, any>;
       };
+  initialSort?: {
+    by: string;
+    order: 'ascend' | 'descend';
+  };
   bulkActions?: {
     onSelect?:
       | string
@@ -50,6 +54,7 @@ export interface DataTableConfig extends BaseBlockConfig {
   }[];
   headerContextMenu?: MenuItem[];
   contextMenu?: MenuItem[];
+  sticky?: boolean;
 }
 
 interface DataTableProps extends DataTableConfig {
@@ -82,6 +87,8 @@ export const DataTable = ({
   bulkActions,
   contextMenu,
   headerContextMenu,
+  initialSort,
+  sticky,
   ...config
 }: DataTableProps) => {
   const {
@@ -146,6 +153,8 @@ export const DataTable = ({
         title: localize(label),
         dataIndex: key,
         key,
+        defaultSortOrder:
+          key === initialSort?.by ? initialSort?.order : undefined,
         sorter: onSort
           ? true
           : key
@@ -329,6 +338,11 @@ export const DataTable = ({
     [events, bulkActions, localize, selection]
   );
 
+  const containerRef = useRef<any>(null);
+  const offsetheight =
+    containerRef?.current?.offsetHeight -
+    containerRef?.current?.querySelector('.ant-pagination')?.offsetHeight -
+    containerRef?.current?.querySelector('.ant-table-thead')?.offsetHeight;
   return (
     <div
       className={`pr-block-data-table ${className} ${
@@ -336,6 +350,7 @@ export const DataTable = ({
           ? 'pr-block-data-table--has-bulk-selection'
           : ''
       }                  block-data-table`}
+      ref={containerRef}
     >
       {config.title && <BlockTitle value={localize(config.title)} />}
       <div className="pr-block-data-table__table-container                 block-data-table__table-container table-container">
@@ -352,6 +367,11 @@ export const DataTable = ({
           components={components}
           pagination={pagination}
           onChange={handleTableChange}
+          scroll={
+            sticky && offsetheight
+              ? { x: columns.length * 250, y: offsetheight }
+              : undefined
+          }
           {...config.customProps}
         />
         <ContextMenuDropDown
