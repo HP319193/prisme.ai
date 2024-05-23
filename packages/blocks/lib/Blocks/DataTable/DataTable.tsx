@@ -99,9 +99,16 @@ export const DataTable = ({
 
   const [dataSource, setDataSource] = useState<any>(initDataSource(data));
 
+  // When table is sticky, to force re-calculate the table height, it needs to
+  // unmount the component
+  const [mountedTable, setMountedTable] = useState(true);
   useEffect(() => {
+    if (sticky) {
+      setMountedTable(false);
+      setTimeout(() => setMountedTable(true));
+    }
     setDataSource(initDataSource(data));
-  }, [data]);
+  }, [data, sticky]);
 
   const { contextMenuSpec, setContextMenu } = useContextMenu();
 
@@ -339,10 +346,19 @@ export const DataTable = ({
   );
 
   const containerRef = useRef<any>(null);
-  const offsetheight =
-    containerRef?.current?.offsetHeight -
-    containerRef?.current?.querySelector('.ant-pagination')?.offsetHeight -
-    containerRef?.current?.querySelector('.ant-table-thead')?.offsetHeight;
+  const [offsetHeight, setOffsetHeight] = useState(0);
+  useEffect(() => {
+    const offsetHeight =
+      (containerRef?.current?.offsetHeight || 0) -
+      (containerRef?.current?.querySelector('.ant-pagination')?.offsetHeight ||
+        0) -
+      (containerRef?.current?.querySelector('.ant-table-thead')?.offsetHeight ||
+        0);
+    if (offsetHeight) {
+      setOffsetHeight(offsetHeight);
+    }
+  });
+
   return (
     <div
       className={`pr-block-data-table ${className} ${
@@ -354,26 +370,28 @@ export const DataTable = ({
     >
       {config.title && <BlockTitle value={localize(config.title)} />}
       <div className="pr-block-data-table__table-container                 block-data-table__table-container table-container">
-        <Table
-          rowSelection={
-            bulkActions && {
-              type: 'checkbox',
-              ...rowSelection,
+        {mountedTable && (
+          <Table
+            rowSelection={
+              bulkActions && {
+                type: 'checkbox',
+                ...rowSelection,
+              }
             }
-          }
-          dataSource={dataSource}
-          columns={columns}
-          locale={locales}
-          components={components}
-          pagination={pagination}
-          onChange={handleTableChange}
-          scroll={
-            sticky && offsetheight
-              ? { x: columns.length * 250, y: offsetheight }
-              : undefined
-          }
-          {...config.customProps}
-        />
+            dataSource={dataSource}
+            columns={columns}
+            locale={locales}
+            components={components}
+            pagination={pagination}
+            onChange={handleTableChange}
+            scroll={
+              sticky && offsetHeight
+                ? { x: columns.length * 250, y: offsetHeight }
+                : undefined
+            }
+            {...config.customProps}
+          />
+        )}
         <ContextMenuDropDown
           {...contextMenuSpec}
           onClose={() =>
@@ -398,7 +416,7 @@ const defaultStyles = `
   text-align: left;
 }
 .ant-table-selection-extra {
-  right: 0;
+  left: 1.5rem;
   opacity: 0;
   transition: opacity .2s ease-in;
 }
