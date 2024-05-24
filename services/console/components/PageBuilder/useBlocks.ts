@@ -32,7 +32,7 @@ const builtInBlocksOrder = [
   'TabsView',
 ];
 
-const ignoredBlocks = ['ProductLayout'];
+const ignoredBlocks = ['ProductLayout', 'Tooltip'];
 
 export const useBlocks = () => {
   const { t } = useTranslation('workspaces');
