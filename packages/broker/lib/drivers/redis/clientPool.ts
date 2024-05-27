@@ -302,4 +302,8 @@ export class ClientPool {
   async pendingMessages(stream: string, group: string) {
     return this.nonblocking.client.xPending(stream, group);
   }
+
+  async setExpiration(stream: string, ttl: number) {
+    return this.nonblocking.client.expire(stream, ttl);
+  }
 }

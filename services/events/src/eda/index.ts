@@ -28,10 +28,16 @@ export enum EventType {
 
   CreatedUserTopic = 'events.userTopics.created',
   JoinedUserTopic = 'events.userTopics.joined',
+  EventsWebsocketsMessage = 'events.websockets.message',
 
   TriggeredInteraction = 'runtime.interactions.triggered',
   ExecutedAutomation = 'runtime.automations.executed',
 
+  JoinedWorkspaceSubscriber = 'events.subscribers.joined',
+  LeftWorkspaceSubscriber = 'events.subscribers.left',
+  JoinedEventsNode = 'events.nodes.joined',
+  PingEventsNode = 'events.nodes.ping',
+  LeftEventsNode = 'events.nodes.left',
   CleanedEvents = 'events.cleaned',
 }
 

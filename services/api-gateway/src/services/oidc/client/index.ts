@@ -168,7 +168,7 @@ async function emitClientId(
         workspaceId,
       }
     )
-    .catch(logger.warn);
+    .catch((err) => logger.warn({ err }));
 }
 
 async function saveOAuthClient(

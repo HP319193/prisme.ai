@@ -5,17 +5,55 @@ import { httpMetricMiddleware, initHttpMetric } from './http';
 //@ts-ignore
 import { Server } from 'socket.io';
 import { initSocketioMetrics } from './socketio';
+import { Subscriptions } from '../services/events/subscriptions';
 
-export async function initMetrics(app: Application, io: Server) {
+export async function initMetrics(
+  app: Application,
+  io: Server,
+  subscriptions: Subscriptions
+) {
   app.use('/metrics', metricsMiddleware);
   app.use(httpMetricMiddleware);
+
+  const labels: Record<string, string> = process.env.HOSTNAME
+    ? {
+        pod: process.env.HOSTNAME,
+      }
+    : {};
   initSocketioMetrics(io, {
-    labels: process.env.HOSTNAME
-      ? {
-          pod: process.env.HOSTNAME,
-        }
-      : {},
+    labels,
   });
+
+  // Init some subscriptions
+  initSubscriberMetrics(subscriptions, {
+    labels,
+  });
+}
+
+async function initSubscriberMetrics(
+  subscriptions: Subscriptions,
+  opts: { labels: Record<string, any> }
+) {
+  const labels = opts.labels || {};
+  const labelNames = Object.keys(labels);
+
+  const totalSubscribers = new client.Gauge({
+    name: 'subscriptions_total',
+    help: 'Total count of event subscribers in the cluster',
+    labelNames,
+  });
+
+  const totalWorkspaces = new client.Gauge({
+    name: 'subscriptions_workspaces_total',
+    help: 'Total count of workspaces with event subscribers in the cluster',
+    labelNames,
+  });
+
+  setInterval(() => {
+    const subscriptionMetrics = subscriptions.metrics();
+    totalSubscribers.set(subscriptionMetrics.totalSubscribers || 0);
+    totalWorkspaces.set(subscriptionMetrics.workspacesNb || 0);
+  }, 5000);
 }
 
 async function metricsMiddleware(req: Request, res: Response) {

@@ -35,3 +35,6 @@ export const EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS = parseInt(
 export const EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS = parseInt(
   process.env.EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS || '100'
 );
+
+export const EVENTS_SOCKETIO_ADAPTER =
+  process.env.EVENTS_SOCKETIO_ADAPTER || 'prisme';

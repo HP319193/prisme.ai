@@ -107,7 +107,7 @@ export const initOidcProvider = async (
           expires: new Date(Date.now() + token.expiresIn * 1000).toISOString(),
         },
       })
-      .catch(logger.warn);
+      .catch((err) => logger.warn({ err }));
   });
   provider.proxy = true;
 

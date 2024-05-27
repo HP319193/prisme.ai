@@ -101,7 +101,7 @@ export function initRoutes(broker: Broker, provider: Provider) {
             email: login,
             ip: req.ip || req.context?.http?.ip,
           })
-          .catch(logger.warn);
+          .catch((err) => logger.warn({ err }));
         throw err;
       }
     }
