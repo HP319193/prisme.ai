@@ -124,6 +124,7 @@ export class ContextsManager {
   private automationSlug?: string;
   public additionalGlobals?: Record<string, any>;
   public secrets: Set<string>;
+  public throttled?: number; // Only if current automation execution has been throttled due to workspace rate limits
 
   private opLogs: ContextUpdateOpLog[];
   private alreadyProcessedUpdateIds: Set<string>;
@@ -415,6 +416,7 @@ export class ContextsManager {
       },
       trigger: opts.trigger || this.trigger,
       opLogs: [],
+      throttled: 0,
     });
 
     Object.setPrototypeOf(child, ContextsManager.prototype);

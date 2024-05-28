@@ -2946,6 +2946,8 @@ components:
               $ref: '#/components/schemas/AnyValue'
             duration:
               type: number
+            throttled:
+              type: number
             startedAt:
               type: string
             break:

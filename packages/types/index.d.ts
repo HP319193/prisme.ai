@@ -1539,6 +1539,7 @@ declare namespace Prismeai {
             };
             output: AnyValue;
             duration: number;
+            throttled?: number;
             startedAt: string;
             break: boolean;
         };
