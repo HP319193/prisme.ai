@@ -32,3 +32,5 @@ COPY --from=build /www/package*.json /www/
 COPY --from=build /www/dtsgen.json /www/
 COPY --from=build /www/node_modules/ /www/node_modules/
 COPY --from=build /www/specifications/ /www/specifications
+
+COPY --from=build /www/services/runtime/node_modules/ /www/services/runtime/node_modules/
