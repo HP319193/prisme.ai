@@ -70,8 +70,8 @@ Studio will be available at the defined **CONSOLE_URL**, by default http://studi
 
 **Dependencies :**  
 
-* NodeJS 16+
-* npm 8+
+* NodeJS 20+
+* npm 10+
 * git 
 * Docker 20+
 * docker-compose

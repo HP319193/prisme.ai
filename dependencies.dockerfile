@@ -1,5 +1,5 @@
 ## Install dependencies
-FROM node:16 as build
+FROM node:20 as build
 
 WORKDIR /www
 COPY package*.json /www/
@@ -25,7 +25,7 @@ RUN BUILD_PACKAGES=0 npm ci
 # Build packages && replace their node_modules symlinks with themselves
 RUN npm run build:types && npm run build:packages && rm -rf node_modules/@prisme.ai && mv packages/ node_modules/@prisme.ai
 
-FROM node:16-alpine as node_modules
+FROM node:20-alpine as node_modules
 
 WORKDIR /www
 COPY --from=build /www/package*.json /www/
