@@ -9,14 +9,12 @@ COPY services/runtime/ /www/services/runtime
 COPY jwks.json /www/jwks.json
 
 # If we do not move node_modules @prisme.ai/ as ./packages, npm prune --production broke them trying to recreate usual symlinks
-RUN npm run build:runtime && mv node_modules/@prisme.ai packages/ && npm prune --production
+RUN npm i --production services/runtime && npm run build:runtime && mv node_modules/@prisme.ai packages/ && npm prune --production
 
 EXPOSE 3003
 ENV OPENAPI_FILEPATH /www/specifications/swagger.yml
 ENV NODE_ENV production
 ENV JWKS_FILEPATH /www/jwks.json
-
-
 
 CMD [ "node", "--abort-on-uncaught-exception", "services/runtime/dist/index.js"]
 
