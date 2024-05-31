@@ -46,7 +46,7 @@ export class Events {
     const fullQueryString = queryString ? `?${queryString}` : '';
     const extraHeaders: any = token
       ? {
-          Authorization: `Bearer ${token}`,
+          authorization: `Bearer ${token}`,
         }
       : { 'x-prismeai-token': legacyToken };
     this.lastReceivedEventDate = new Date();
@@ -60,14 +60,18 @@ export class Events {
         extraHeaders,
         withCredentials: true,
         transports: transports || ['polling', 'websocket'],
+        // Browser websockets cannot send extraHeaders, so we use socketio-client auth instead
+        auth: transports && transports[0] === 'websocket' ? extraHeaders : {},
       }
     );
 
     this.client.on('connect_error', (err) => {
+      console.error(`Failed websocket connection : `, err);
       // revert to classic upgrade
       this.client.io.opts.transports = ['polling', 'websocket'];
     });
     this.client.on('error', (err) => {
+      console.error(err);
       this.client.io.opts.transports = ['polling', 'websocket'];
     });
 

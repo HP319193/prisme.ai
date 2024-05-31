@@ -63,14 +63,6 @@ export const getAuthenticationMiddleware = (broker: Broker) =>
       // When connecting directly with websocket & not HTTP polling first, we find token here as browser's websockets cannot send headers
       // https://socket.io/docs/v4/client-options/#extraheaders
       socket.handshake?.auth?.authorization;
-    console.log(
-      'got ',
-      authorizationHeader,
-      ' from ',
-      socket.handshake.headers,
-      ' or ',
-      socket.handshake?.auth
-    );
     if (!authorizationHeader) {
       return next(new Error('Missing authentication credentials'));
     }
