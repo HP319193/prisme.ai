@@ -1,54 +1,28 @@
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { createClient } from '@redis/client';
-//@ts-ignore Dunno why, but typings not found in CI
-import { createAdapter } from '@socket.io/redis-streams-adapter';
-import { createAdapter as createPubSubAdapter } from '@socket.io/redis-adapter';
 import {
   API_KEY_HEADER,
-  APP_NAME,
   AUTH_DATA_HEADER,
-  EVENTS_SOCKETIO_ADAPTER,
   SESSION_ID_HEADER,
   SOCKETIO_COOKIE_MAX_AGE,
-  SOCKETIO_REDIS_HOST,
-  SOCKETIO_REDIS_PASSWORD,
   USER_ID_HEADER,
 } from '../../../../config';
 import { SocketCtx, WORKSPACE_NSP_PATTERN } from './types';
 import { logger } from '../../../logger';
+import { SocketHandler } from './SocketHandler';
+import { Subscriptions } from '../../../services/events/subscriptions';
+import { SearchOptions } from '../../../services/events/store';
+import { sendEvent } from '../../../services/events';
+import { PrismeError } from '../../../errors';
+import { ExtendedError } from 'socket.io/dist/namespace';
+import { fetchMe } from '@prisme.ai/permissions';
+import { Broker } from '@prisme.ai/broker';
 
+type SocketData = {
+  handler: SocketHandler;
+};
 export async function getSocketioServer(httpServer: http.Server) {
-  const redisWebsocketClient = createClient({
-    url: SOCKETIO_REDIS_HOST,
-    password: SOCKETIO_REDIS_PASSWORD,
-    name: `${APP_NAME}-websockets`,
-    pingInterval: 4 * 1000 * 60,
-  });
-  redisWebsocketClient.on('error', (err: Error) => {
-    console.error(`Error occured with websockets redis pub client : ${err}`);
-  });
-  redisWebsocketClient.on('connect', () => {
-    console.info('Websockets redis pub client connected.');
-  });
-  redisWebsocketClient.on('reconnecting', () => {
-    console.info('Websockets redis pub client reconnecting ...');
-  });
-  redisWebsocketClient.on('ready', () => {
-    console.info('Websockets redis pub client is ready.');
-  });
-  await redisWebsocketClient.connect();
-
-  let adapter: any;
-  if (EVENTS_SOCKETIO_ADAPTER === 'redis') {
-    const redisSubClient = redisWebsocketClient.duplicate();
-    await redisSubClient.connect();
-    adapter = createPubSubAdapter(redisWebsocketClient, redisSubClient) as any;
-  } else if (EVENTS_SOCKETIO_ADAPTER === 'redis-streams') {
-    adapter = createAdapter(redisWebsocketClient) as any;
-  }
-
-  const io = new Server(httpServer, {
+  const io = new Server<any, any, any, SocketData>(httpServer, {
     cors: {
       origin: true,
       credentials: true,
@@ -57,11 +31,85 @@ export async function getSocketioServer(httpServer: http.Server) {
       name: 'io',
       maxAge: SOCKETIO_COOKIE_MAX_AGE,
     },
-    adapter,
   });
 
   return io;
 }
+
+export const getAuthenticationMiddleware = (broker: Broker) =>
+  async function authenticationMiddleware(
+    socket: Socket,
+    next: (err?: ExtendedError) => void
+  ) {
+    logger.debug({
+      msg: `Handling websocket ${socket.id} connection ...`,
+    });
+    const socketHandler = new SocketHandler(
+      socket,
+      extractSocketContext(socket) as Required<SocketCtx>,
+      broker
+    );
+    socket.data = {
+      handler: socketHandler,
+    };
+
+    if (socketHandler.userId) {
+      return next();
+    }
+
+    // api-gateway HTTP authentication middlewares are never called when websocket are directly opened without a first http req, so we have to fetch /me with received token in order to authenticate user
+    const authorizationHeader =
+      socket.handshake.headers?.authorization ||
+      // When connecting directly with websocket & not HTTP polling first, we find token here as browser's websockets cannot send headers
+      // https://socket.io/docs/v4/client-options/#extraheaders
+      socket.handshake?.auth?.authorization;
+    console.log(
+      'got ',
+      authorizationHeader,
+      ' from ',
+      socket.handshake.headers,
+      ' or ',
+      socket.handshake?.auth
+    );
+    if (!authorizationHeader) {
+      return next(new Error('Missing authentication credentials'));
+    }
+
+    try {
+      const user = await fetchMe({
+        authorization: authorizationHeader,
+      });
+      if (user?.id!) {
+        socketHandler.update({
+          userId: user?.id,
+          authData: user.authData || {},
+          sessionId: user.sessionId,
+        });
+
+        return next();
+      }
+
+      if ((<any>user).message) {
+        return next(new Error('AuthenticationError: ' + (<any>user).message));
+      }
+    } catch (err) {
+      socketHandler.logger.error({
+        msg: 'Failed verifying provided authentication',
+        err,
+      });
+      return next(
+        new Error(
+          (<Error>err).message ||
+            'Could not verify provided credentials, please try again later or initiate a new session.'
+        )
+      );
+    }
+
+    socketHandler.logger.error(
+      'Disconnect socket with invalid authentication credentials'
+    );
+    return next(new Error(`Invalid authentication credentials`));
+  };
 
 export function extractSocketContext(socket: Socket): Partial<SocketCtx> {
   const [, workspaceId] = socket.nsp.name.match(WORKSPACE_NSP_PATTERN) || [];
@@ -84,10 +132,14 @@ export function extractSocketContext(socket: Socket): Partial<SocketCtx> {
   const socketId = socket.id;
   let authData: Prismeai.User['authData'];
   try {
-    authData = JSON.parse(socket.handshake.headers[AUTH_DATA_HEADER] as string);
+    authData = socket.handshake.headers[AUTH_DATA_HEADER]
+      ? JSON.parse(socket.handshake.headers[AUTH_DATA_HEADER] as string)
+      : undefined;
   } catch {
     logger.error({
       msg: `Could not parse JSON from authData header '${AUTH_DATA_HEADER}'`,
+      userId,
+      socketId,
       authData: socket.handshake.headers[AUTH_DATA_HEADER],
     });
   }
@@ -101,4 +153,65 @@ export function extractSocketContext(socket: Socket): Partial<SocketCtx> {
     query,
     authData,
   };
+}
+
+export async function processMessage(
+  socketHandler: SocketHandler,
+  subscriptions: Subscriptions,
+  type: string,
+  payload: Prismeai.PrismeEvent | SearchOptions
+) {
+  const subscriber = socketHandler.subscriber!;
+  const socket = socketHandler.socket!;
+  try {
+    if (type === 'event') {
+      await sendEvent(
+        socketHandler.workspaceId,
+        payload as Prismeai.PrismeEvent,
+        subscriber.accessManager,
+        socketHandler.broker,
+        {
+          ip: socketHandler.userIp,
+        }
+      );
+    } else if (type === 'filters') {
+      await subscriptions.updateLocalSubscriber(subscriber, {
+        filters: payload as SearchOptions,
+      });
+    } else if (
+      type === 'reconnection' &&
+      (<any>payload)?.socketId &&
+      socketHandler.sessionId
+    ) {
+      const previousSocketId = subscriber.socketId;
+      const allowed = await subscriptions.updateLocalSubscriber(subscriber, {
+        socketId: (<any>payload).socketId,
+      });
+      if (!allowed) {
+        socketHandler.logger.warn({
+          msg: `Detected an attempt to reconnect with a forbidden socketId !`,
+          askedSocketId: (<any>payload).socketId,
+        });
+        return;
+      }
+
+      socketHandler.update({
+        socketId: (<any>payload).socketId,
+      });
+      socket.leave(previousSocketId);
+      socket.join((<any>payload).socketId);
+
+      socketHandler.logger.info({
+        msg: 'Websocket reconnected with its previous socketId.',
+        previousSocketId,
+      });
+    }
+  } catch (err) {
+    socketHandler.logger.error({
+      msg: 'An error raised while trying to send event from websocket',
+      event: payload,
+      err,
+    });
+    socket.emit('error', PrismeError.prototype.toJSON.apply(err));
+  }
 }
