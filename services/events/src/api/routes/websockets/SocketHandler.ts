@@ -1,8 +1,16 @@
 import { Broker } from '@prisme.ai/broker';
-import { LocalSubscriber } from '../../../services/events/subscriptions';
+import {
+  LocalSubscriber,
+  Subscriber,
+} from '../../../services/events/subscriptions';
 import { SocketCtx } from './types';
 import { Logger, logger } from '../../../logger';
 import { Socket } from 'socket.io';
+
+export type SocketMetrics = {
+  connectedAt: number;
+  authenticatedAt: number;
+};
 
 export class SocketHandler implements SocketCtx {
   public socket: Socket;
@@ -22,6 +30,8 @@ export class SocketHandler implements SocketCtx {
 
   public disconnected: boolean;
 
+  public metrics: SocketMetrics;
+
   constructor(socket: Socket, ctx: SocketCtx, broker: Broker) {
     this.socket = socket;
 
@@ -37,6 +47,10 @@ export class SocketHandler implements SocketCtx {
     this.broker = broker;
 
     this.disconnected = false;
+    this.metrics = {
+      connectedAt: Date.now(),
+      authenticatedAt: 0,
+    };
 
     this.update(ctx);
     this.attachSocketListeners(socket);
@@ -73,6 +87,11 @@ export class SocketHandler implements SocketCtx {
         msg: `Websocket could not reconnect`,
       });
     });
+  }
+
+  setSubscriber(subscriber: LocalSubscriber) {
+    this.subscriber = subscriber;
+    this.metrics.authenticatedAt = Date.now();
   }
 
   update(ctx: Partial<SocketCtx>) {

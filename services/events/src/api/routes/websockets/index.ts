@@ -55,7 +55,7 @@ export async function initWebsockets(
       socketHandler.logger.debug({
         msg: `Websocket's subscriber ready. Starting to process messages`,
       });
-      socketHandler.subscriber = subscribed;
+      socketHandler.setSubscriber(subscribed);
       next();
     } catch (err) {
       next(new Error('Internal error : please try again later.'));

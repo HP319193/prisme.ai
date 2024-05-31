@@ -1,4 +1,4 @@
-import promClient from 'prom-client';
+import promClient, { Histogram } from 'prom-client';
 import { Server } from 'socket.io';
 
 // Forked from https://github.com/shamil/socket.io-prometheus/blob/master/index.js
@@ -81,6 +81,13 @@ function initializeMetrics(opts: SocketioMetricsOptions) {
       help: 'Total socket.io bytes transmitted',
       labelNames,
     }),
+
+    connectionDuration: new Histogram({
+      name: 'socket_io_connection_duration',
+      help: 'Total time taken to authenticate incoming socket.io clients before processing their messages',
+      labelNames,
+      buckets: [10, 50, 100, 300, 500, 700, 1000, 2000, 4000],
+    }),
   };
 }
 
@@ -108,9 +115,22 @@ export function initSocketioMetrics(io: Server, opts: SocketioMetricsOptions) {
   const eventsSentTotal = metrics.eventsSentTotal;
   const bytesReceived = metrics.bytesReceived;
   const bytesTransmitted = metrics.bytesTransmitted;
+  const connectionDuration = metrics.connectionDuration;
 
   // listen to new connection events
   io.on('connect', (socket) => {
+    const socketHandler = socket.data?.handler;
+    if (
+      socketHandler?.metrics?.connectedAt &&
+      socketHandler?.metrics?.authenticatedAt
+    ) {
+      connectionDuration
+        .labels(labels)
+        .observe(
+          socketHandler?.metrics?.authenticatedAt -
+            socketHandler?.metrics?.connectedAt
+        );
+    }
     connectTotal.inc(labels);
     connectedSockets.inc(labels);
     socket.on('disconnect', () => {
