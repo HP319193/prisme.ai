@@ -4,7 +4,6 @@ import { Server } from 'socket.io';
 import { logger } from '../../../logger';
 import { SearchOptions } from '../../../services/events/store';
 import { Subscriptions } from '../../../services/events/subscriptions';
-import { cleanSearchQuery } from '../events';
 import {
   getAuthenticationMiddleware,
   getSocketioServer,
@@ -30,6 +29,30 @@ export async function initWebsockets(
       return next(new Error(`Received a socket without authenticated handler`));
     }
 
+    // Handle previous socketId reuse
+    if (socketHandler.reuseSocketId) {
+      const allowed = await subscriptions.isAllowedSubscriberSocketId(
+        socketHandler.workspaceId,
+        socketHandler.sessionId,
+        socketHandler.reuseSocketId
+      );
+      if (allowed) {
+        socketHandler.logger.info({
+          msg: 'Websocket reconnected with its previous socketId during authentication.',
+          previousSocketId: socketHandler.reuseSocketId,
+        });
+        socketHandler.update({
+          socketId: socketHandler.reuseSocketId,
+        });
+      } else {
+        socketHandler.logger.info({
+          msg: 'Websocket tried to reconnect with a forbidden/invalid previous socketId during authentication.',
+          askedSocketId: socketHandler.reuseSocketId,
+        });
+      }
+      delete socketHandler.reuseSocketId;
+    }
+
     try {
       const subscribed = await subscriptions.subscribe(
         socketHandler.workspaceId,
@@ -40,7 +63,7 @@ export async function initWebsockets(
           apiKey: socketHandler.apiKey as string,
           authData: socketHandler.authData,
           socketId: socketHandler.socketId,
-          filters: cleanSearchQuery(socketHandler.query),
+          filters: socketHandler.filters,
           targetTopic: subscriptions.cluster.localTopic,
         }
       );
@@ -53,7 +76,7 @@ export async function initWebsockets(
       }
 
       socketHandler.logger.debug({
-        msg: `Websocket's subscriber ready. Starting to process messages`,
+        msg: `Websocket's subscriber ready.`,
       });
       socketHandler.setSubscriber(subscribed);
       next();
@@ -91,8 +114,13 @@ export async function initWebsockets(
     }
     socketHandler.logger.info({
       msg:
-        'Websocket connected.' +
-        ((<any>socket).recovered ? ' (RECOVERED)' : ''),
+        'Websocket authenticated ' +
+        ((<any>socket).recovered ? ' (RECOVERED) : ' : ' : ') +
+        'Starting to process messages',
+      ...socketHandler.metrics,
+      connectionDuration:
+        socketHandler.metrics.authenticatedAt -
+        socketHandler.metrics.connectedAt,
     });
 
     // Listen to incoming message

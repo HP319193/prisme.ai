@@ -17,10 +17,18 @@ import { PrismeError } from '../../../errors';
 import { ExtendedError } from 'socket.io/dist/namespace';
 import { fetchMe } from '@prisme.ai/permissions';
 import { Broker } from '@prisme.ai/broker';
+import { cleanSearchQuery } from '../events';
 
 type SocketData = {
   handler: SocketHandler;
 };
+
+type SocketAuthParams = {
+  filters?: SearchOptions;
+  reuseSocketId?: string;
+  extraHeaders?: Record<string, string>;
+};
+
 export async function getSocketioServer(httpServer: http.Server) {
   const io = new Server<any, any, any, SocketData>(httpServer, {
     cors: {
@@ -44,11 +52,8 @@ export const getAuthenticationMiddleware = (broker: Broker) =>
     logger.debug({
       msg: `Handling websocket ${socket.id} connection ...`,
     });
-    const socketHandler = new SocketHandler(
-      socket,
-      extractSocketContext(socket) as Required<SocketCtx>,
-      broker
-    );
+    const socketCtx = extractSocketContext(socket) as Required<SocketCtx>;
+    const socketHandler = new SocketHandler(socket, socketCtx, broker);
     socket.data = {
       handler: socketHandler,
     };
@@ -62,7 +67,7 @@ export const getAuthenticationMiddleware = (broker: Broker) =>
       socket.handshake.headers?.authorization ||
       // When connecting directly with websocket & not HTTP polling first, we find token here as browser's websockets cannot send headers
       // https://socket.io/docs/v4/client-options/#extraheaders
-      socket.handshake?.auth?.authorization;
+      (socket.handshake?.auth as SocketAuthParams)?.extraHeaders?.authorization;
     if (!authorizationHeader) {
       return next(new Error('Missing authentication credentials'));
     }
@@ -105,16 +110,6 @@ export const getAuthenticationMiddleware = (broker: Broker) =>
 
 export function extractSocketContext(socket: Socket): Partial<SocketCtx> {
   const [, workspaceId] = socket.nsp.name.match(WORKSPACE_NSP_PATTERN) || [];
-  const query = Object.entries(socket.handshake.query || {}).reduce(
-    (obj, [k, v]) =>
-      ['EIO', 'transport', 't', 'b64'].includes(k)
-        ? obj
-        : {
-            ...obj,
-            [k]: v,
-          },
-    {}
-  ) as PrismeaiAPI.EventsLongpolling.QueryParameters;
   let userId = socket.handshake.headers[USER_ID_HEADER] as string;
   const userIp = Array.isArray(socket.handshake.headers?.['x-forwarded-for'])
     ? socket.handshake.headers?.['x-forwarded-for'][0]
@@ -135,14 +130,32 @@ export function extractSocketContext(socket: Socket): Partial<SocketCtx> {
       authData: socket.handshake.headers[AUTH_DATA_HEADER],
     });
   }
+
+  const authParams: SocketAuthParams = socket.handshake?.auth;
+  const filters = authParams?.filters
+    ? (socket.handshake.auth.filters as SearchOptions)
+    : cleanSearchQuery(
+        Object.entries(socket.handshake.query || {}).reduce(
+          (obj, [k, v]) =>
+            ['EIO', 'transport', 't', 'b64'].includes(k)
+              ? obj
+              : {
+                  ...obj,
+                  [k]: v,
+                },
+          {}
+        ) as PrismeaiAPI.EventsLongpolling.QueryParameters
+      );
+
   return {
     workspaceId,
     userId: userId,
     sessionId,
     apiKey,
     socketId,
+    reuseSocketId: authParams.reuseSocketId,
     userIp,
-    query,
+    filters,
     authData,
   };
 }
@@ -175,7 +188,6 @@ export async function processMessage(
       (<any>payload)?.socketId &&
       socketHandler.sessionId
     ) {
-      const previousSocketId = subscriber.socketId;
       const allowed = await subscriptions.updateLocalSubscriber(subscriber, {
         socketId: (<any>payload).socketId,
       });
@@ -187,15 +199,12 @@ export async function processMessage(
         return;
       }
 
-      socketHandler.update({
-        socketId: (<any>payload).socketId,
-      });
-      socket.leave(previousSocketId);
-      socket.join((<any>payload).socketId);
-
       socketHandler.logger.info({
         msg: 'Websocket reconnected with its previous socketId.',
-        previousSocketId,
+        previousSocketId: (<any>payload).socketId,
+      });
+      socketHandler.update({
+        socketId: (<any>payload).socketId,
       });
     }
   } catch (err) {

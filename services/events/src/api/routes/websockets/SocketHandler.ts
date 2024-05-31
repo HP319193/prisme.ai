@@ -1,11 +1,9 @@
 import { Broker } from '@prisme.ai/broker';
-import {
-  LocalSubscriber,
-  Subscriber,
-} from '../../../services/events/subscriptions';
+import { LocalSubscriber } from '../../../services/events/subscriptions';
 import { SocketCtx } from './types';
 import { Logger, logger } from '../../../logger';
 import { Socket } from 'socket.io';
+import { SearchOptions } from '../../../services/events/store';
 
 export type SocketMetrics = {
   connectedAt: number;
@@ -19,8 +17,9 @@ export class SocketHandler implements SocketCtx {
   public userId: string;
   public sessionId: string;
   public socketId: string;
+  public reuseSocketId?: string;
   public userIp: string;
-  public query: Record<string, any>;
+  public filters: SearchOptions;
   public apiKey?: string;
   public authData?: Record<string, any>;
 
@@ -39,8 +38,11 @@ export class SocketHandler implements SocketCtx {
     this.userId = ctx.userId;
     this.sessionId = ctx.sessionId;
     this.socketId = ctx.socketId;
+    if (ctx.reuseSocketId) {
+      this.reuseSocketId = ctx.reuseSocketId;
+    }
     this.userIp = ctx.userIp;
-    this.query = ctx.query;
+    this.filters = ctx.filters;
     this.apiKey = ctx.apiKey;
     this.authData = ctx.authData;
     this.logger = logger;
@@ -95,6 +97,13 @@ export class SocketHandler implements SocketCtx {
   }
 
   update(ctx: Partial<SocketCtx>) {
+    if (ctx.socketId && ctx.socketId !== this.socketId) {
+      if (this.socketId) {
+        this.socket.leave(this.socketId);
+      }
+      this.socket.join(ctx.socketId);
+    }
+
     Object.assign(this, ctx);
 
     this.broker = this.broker.child({

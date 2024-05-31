@@ -681,6 +681,14 @@ export class Subscriptions extends Readable {
       .catch((err) => logger.error({ err }));
   }
 
+  async isAllowedSubscriberSocketId(
+    workspaceId: string,
+    sessionId: string,
+    socketId: string
+  ) {
+    return await this.cache.isKnownSocketId(workspaceId, sessionId, socketId);
+  }
+
   async updateLocalSubscriber(
     subscriber: LocalSubscriber,
     update: { socketId?: string; filters?: any }
@@ -688,7 +696,7 @@ export class Subscriptions extends Readable {
     if (update?.socketId) {
       // Allow keeping same socketIds accross reconnection
       // in order to make runtime socket context persistent through reconnections
-      const allowed = await this.cache.isKnownSocketId(
+      const allowed = await this.isAllowedSubscriberSocketId(
         subscriber.workspaceId,
         subscriber.sessionId as string,
         update.socketId

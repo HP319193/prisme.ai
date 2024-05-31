@@ -53,6 +53,8 @@ export class Events {
     if (apiKey) {
       extraHeaders['x-prismeai-api-key'] = apiKey;
     }
+    this.filters = [filters || {}];
+    this.listenedUserTopics = new Map();
 
     this.client = io(
       `${apiHost}/workspaces/${workspaceId}/events${fullQueryString}`,
@@ -60,8 +62,19 @@ export class Events {
         extraHeaders,
         withCredentials: true,
         transports: transports || ['polling', 'websocket'],
-        // Browser websockets cannot send extraHeaders, so we use socketio-client auth instead
-        auth: transports && transports[0] === 'websocket' ? extraHeaders : {},
+        auth: (cb) => {
+          cb({
+            // Browser websockets cannot send extraHeaders, so we use socketio-client auth instead
+            extraHeaders:
+              transports && transports[0] === 'websocket' ? extraHeaders : {},
+
+            filters: {
+              payloadQuery: this.filters,
+            },
+
+            reuseSocketId: this.socketId,
+          });
+        },
       }
     );
 
@@ -71,7 +84,6 @@ export class Events {
       this.client.io.opts.transports = ['polling', 'websocket'];
     });
     this.client.on('error', (err) => {
-      console.error(err);
       this.client.io.opts.transports = ['polling', 'websocket'];
     });
 
@@ -82,11 +94,7 @@ export class Events {
         return;
       }
 
-      // Reconnection : Reset last filters, retrieve lost history & sent previous socketId
-      this.client.emit('reconnection', { socketId: this.socketId });
-      this.updateFilters({
-        payloadQuery: this.filters,
-      });
+      // Retrieve lost history on reconnection
       setTimeout(async () => {
         const events = await api.getEvents(workspaceId, {
           ...this.filters[this.filters.length - 1],
@@ -105,12 +113,17 @@ export class Events {
       if (!this.lastReceivedEventDate) {
         this.lastReceivedEventDate = new Date();
       }
+      // Make sure we reconnect with current filters & socketId
+      this.client.auth = {
+        ...this.client.auth,
+        filters: {
+          payloadQuery: this.filters,
+        },
+        reuseSocketId: this.socketId,
+      };
       this.client.off('connect', onConnect);
       this.client.on('connect', onConnect);
     });
-
-    this.filters = [filters || {}];
-    this.listenedUserTopics = new Map();
   }
 
   get socket() {
