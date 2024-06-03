@@ -8,6 +8,10 @@ function jsonParse(env, dft = {}) {
   }
 }
 
+function booleanParse(env) {
+  return ['true', 'y', '1'].includes((env || '').toLowerCase());
+}
+
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
@@ -39,7 +43,7 @@ module.exports = {
         .split(',')
         .map((name) => ({ name }))
     ),
-    DISABLE_SSR: process.env.DISABLE_SSR,
+    DISABLE_SSR: booleanParse(process.env.DISABLE_SSR),
 
     // https://socket.io/docs/v3/client-initialization/#transports
     WEBSOCKETS_DEFAULT_TRANSPORTS: (
