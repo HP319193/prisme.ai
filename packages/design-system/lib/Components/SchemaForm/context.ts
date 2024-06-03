@@ -1,5 +1,6 @@
 import { UiOptionsSelect, Schema } from '@prisme.ai/design-system';
 import { createContext, FC, ReactElement, useContext } from 'react';
+import { FieldRenderProps } from 'react-final-form';
 import { SelectProps, TagsOption } from '../Select';
 import { Field } from './Field';
 import { DefaultFieldContainer } from './FieldContainer';
@@ -12,7 +13,7 @@ import {
 } from './types';
 
 export type FieldComponent<T = {}> = (
-  props: FieldProps & T
+  props: FieldProps & { field?: FieldRenderProps<any, HTMLElement, any> } & T
 ) => ReactElement | null;
 export type InputComponent<T = {}> = (
   props: T & {
