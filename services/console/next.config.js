@@ -39,6 +39,7 @@ module.exports = {
         .split(',')
         .map((name) => ({ name }))
     ),
+    DISABLE_SSR: process.env.DISABLE_SSR,
 
     // https://socket.io/docs/v3/client-initialization/#transports
     WEBSOCKETS_DEFAULT_TRANSPORTS: (
