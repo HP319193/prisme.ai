@@ -447,7 +447,7 @@ components:
           properties:
             id:
               type: string
-              description: "Source or dest repository id as described in workspace configuration"
+              description: 'Source or dest repository id as described in workspace configuration'
 
     WorkspaceRepository:
       type: object
@@ -502,8 +502,6 @@ components:
                   path:
                     type: string
 
-
-
     DSUL:
       type: object
       additionalProperties: false
@@ -539,9 +537,9 @@ components:
           description: 'If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}'
         repositories:
           type: object
-          description: "Remote versioning repositories"
+          description: 'Remote versioning repositories'
           additionalProperties:
-            $ref: "#/components/schemas/WorkspaceRepository"
+            $ref: '#/components/schemas/WorkspaceRepository'
 
     RuntimeModel:
       allOf:
@@ -790,7 +788,14 @@ components:
               appInstance:
                 type: string
               onInit:
-                type: string
+                oneOf:
+                  - type: string
+                  - type: object
+                    properties:
+                      event:
+                        type: string
+                      payload:
+                        $ref: '#/components/schemas/AnyValue'
               updateOn:
                 type: string
               automation:
@@ -875,7 +880,14 @@ components:
               appInstance:
                 type: string
               onInit:
-                type: string
+                oneOf:
+                  - type: string
+                  - type: object
+                    properties:
+                      event:
+                        type: string
+                      payload:
+                        $ref: '#/components/schemas/AnyValue'
               updateOn:
                 type: string
               automation:
@@ -891,7 +903,14 @@ components:
         styles:
           type: string
         onInit:
-          type: string
+          oneOf:
+            - type: string
+            - type: object
+              properties:
+                event:
+                  type: string
+                payload:
+                  $ref: '#/components/schemas/AnyValue'
         updateOn:
           type: string
         notifyOn:
@@ -1057,7 +1076,7 @@ components:
               description: Subscribing user ids. If undefined, defaults to current user
             create:
               type: boolean
-              description: "Automatically create userTopic if it does not exist. Defaults: true"
+              description: 'Automatically create userTopic if it does not exist. Defaults: true'
 
     Wait:
       type: object
@@ -2400,7 +2419,7 @@ components:
               items:
                 type: string
             version:
-              $ref: "#/components/schemas/WorkspaceVersion"
+              $ref: '#/components/schemas/WorkspaceVersion'
             errors:
               type: array
               items:
@@ -3264,7 +3283,7 @@ paths:
               properties:
                 expiresAfter:
                   type: number
-                  description: "Optional session expiration in seconds"
+                  description: 'Optional session expiration in seconds'
 
       responses:
         '200': &LoginResponse
@@ -7092,7 +7111,7 @@ paths:
 
   /v2/workspaces/{workspaceId}/files/{id}/share:
     post:
-      description: "Generate a temporary file share url"
+      description: 'Generate a temporary file share url'
       operationId: shareFile
       tags:
         - 'Prisme.ai Workspaces'
@@ -7118,7 +7137,7 @@ paths:
               properties:
                 expiresIn:
                   type: number
-                  description: "Returned share url will expire in N seconds"
+                  description: 'Returned share url will expire in N seconds'
       responses:
         '200':
           description: Success Response

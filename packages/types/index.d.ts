@@ -1057,7 +1057,10 @@ declare namespace Prismeai {
             [name: string]: any;
             slug: string;
             appInstance?: string;
-            onInit?: string;
+            onInit?: string | {
+                event?: string;
+                payload?: AnyValue;
+            };
             updateOn?: string;
             automation?: string | {
                 slug?: string;
@@ -1435,7 +1438,10 @@ declare namespace Prismeai {
             [name: string]: any;
             slug: string;
             appInstance?: string;
-            onInit?: string;
+            onInit?: string | {
+                event?: string;
+                payload?: AnyValue;
+            };
             updateOn?: string;
             automation?: string | {
                 slug?: string;
@@ -1451,7 +1457,10 @@ declare namespace Prismeai {
         permissions?: PermissionsMap;
         customDomains?: string[];
         styles?: string;
-        onInit?: string;
+        onInit?: string | {
+            event?: string;
+            payload?: AnyValue;
+        };
         updateOn?: string;
         notifyOn?: string;
         automation?: string | {
@@ -1947,7 +1956,10 @@ declare namespace Prismeai {
             [name: string]: any;
             slug: string;
             appInstance?: string;
-            onInit?: string;
+            onInit?: string | {
+                event?: string;
+                payload?: AnyValue;
+            };
             updateOn?: string;
             automation?: string | {
                 slug?: string;
@@ -1963,7 +1975,10 @@ declare namespace Prismeai {
         permissions?: PermissionsMap;
         customDomains?: string[];
         styles?: string;
-        onInit?: string;
+        onInit?: string | {
+            event?: string;
+            payload?: AnyValue;
+        };
         updateOn?: string;
         notifyOn?: string;
         automation?: string | {
