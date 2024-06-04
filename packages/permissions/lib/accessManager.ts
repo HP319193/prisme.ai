@@ -31,8 +31,6 @@ type Model<DocumentT> = mongoose.Model<
   AccessibleRecordModel<DocumentT, {}, DocumentMethods>
 >;
 
-type RoleModel = Model<CustomRole<string>>;
-
 export interface AccessManagerOptions<SubjectType extends string = string> {
   appName?: string;
   storage: {
@@ -302,11 +300,7 @@ export class AccessManager<
       });
     }
 
-    await this.throwUnlessCan(
-      ActionType.Read,
-      subjectType,
-      subject.toJSON({ flattenMaps: false })
-    );
+    await this.throwUnlessCan(ActionType.Read, subjectType, subject.toJSON());
     return subject.filterFields(permissions);
   }
 
@@ -578,9 +572,9 @@ export class AccessManager<
     const modelSubject = subject as Document<SubjectInterfaces[returnType]>;
     const subjectJson =
       typeof modelSubject.toJSON === 'function'
-        ? modelSubject.toJSON({ flattenMaps: false })
+        ? modelSubject.toJSON()
         : subject;
-    await this.pullRoleFromSubject(subjectType, subjectJson);
+    await this.pullRoleFromSubject(subjectType, subjectJson as any); // TODO fix ts
     permissions.throwUnlessCan(
       actionType,
       subjectType,
@@ -772,7 +766,7 @@ export class AccessManager<
       }
     );
 
-    return savedRole.toJSON({ flattenMaps: false });
+    return savedRole.toJSON();
   }
 
   async deleteRole(id: string): Promise<boolean> {
@@ -784,7 +778,7 @@ export class AccessManager<
     if (!doc) {
       throw new ObjectNotFoundError();
     }
-    const role = doc.toJSON({ flattenMaps: false });
+    const role = doc.toJSON();
     await this.throwUnlessCan(
       ActionType.ManagePermissions,
       role.subjectType,

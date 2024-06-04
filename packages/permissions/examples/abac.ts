@@ -65,6 +65,15 @@ const config: PermissionsConfig<SubjectType, Role> = {
         public: true,
       },
     },
+
+    {
+      // Hardcode owner permissions for testing
+      action: [ActionType.Manage, ActionType.ManagePermissions],
+      subject: [SubjectType.Workspace, SubjectType.Page],
+      conditions: {
+        'permissions.${user.id}.role': 'owner',
+      },
+    },
   ],
 };
 
