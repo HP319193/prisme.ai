@@ -143,6 +143,10 @@ export class AccessManager<
     });
   }
 
+  async close() {
+    await mongoose.connection.close();
+  }
+
   async as(
     user: User,
     apiKey?: string
