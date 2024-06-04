@@ -45,11 +45,56 @@ export default class Cache implements CacheDriver {
     throw new Error('Not implemented');
   }
 
+  listKeys(pattern: string): Promise<string[]> {
+    return Promise.resolve([]);
+  }
+
+  hSet(
+    key: string,
+    field: string,
+    value: any,
+    opts?: SetOptions | undefined
+  ): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+
+  hDel(key: string, field: string): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+
+  hGet(key: string, field: string): Promise<any> {
+    return Promise.resolve({});
+  }
+
+  hGetAll(key: string): Promise<Record<string, any>> {
+    return Promise.resolve({});
+  }
+
   listUserTopics() {
     return Promise.resolve([]);
   }
 
   joinUserTopic() {
     return Promise.resolve(1);
+  }
+
+  registerSocketId() {
+    return Promise.resolve(true);
+  }
+
+  isKnownSocketId() {
+    return Promise.resolve(true);
+  }
+
+  registerSubscriber() {
+    return Promise.resolve(true);
+  }
+
+  unregisterSubscriber() {
+    return Promise.resolve(true);
+  }
+
+  getWorkspaceSubscriber() {
+    return Promise.resolve({});
   }
 }

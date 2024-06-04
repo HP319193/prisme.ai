@@ -32,16 +32,12 @@ export const Page = ({ page }: PageProps) => {
   }, [events]);
 
   const blocksListConfig = useMemo(() => {
-    const blocks = (page.blocks || []).map(
-      ({ config: oldSchoolConfig, ...config }) => {
-        const { className = '', ...consolidatedConfig } = {
-          ...oldSchoolConfig,
-          ...config,
-        };
-        consolidatedConfig.className = `${className} block-${consolidatedConfig.slug}`;
-        return consolidatedConfig;
-      }
-    );
+    const blocks = (page.blocks || []).map((config) => {
+      return {
+        ...config,
+        className: `${config.className || ''} block-${config.slug}`,
+      };
+    });
     const {
       appInstances,
       id,

@@ -15,26 +15,29 @@ The architecture can be reviewed [here](../../architecture/index.md).
 ### Provision required cloud provider resources :
 - A load balancer with ingress controller capabilities. Other load balancing methods might be used but are not documented here
 - A minimal Kubernetes cluster for Prisme.ai should have **at least** **3 nodes 4vCPU / 16GB**, this configuration is suitable to run a smooth **core** installation. If your installation includes microservices from the [enterprise features](../enterprise-features/installation/index.md#prerequisites) you may need more depending on the additional microservices. 
-- External services such as Elasticsearch, Redis or MongoDB can either be self-hosted or managed. We recommend using a managed solution, if you want to self-host those services, please check their official documentation.
+- Databases : Elasticsearch 7+ , Redis 5+, MongoDB 4+
+  - We recommend using a managed solution, if you want to self-host those services, please check their official documentation.
+- For [enterprise features](./enterprise-features/installation/) :
+  - a Redis with SEARCH and JSON modules is needed (included by `redis/redis-stack-server` docker image)
+  - a RWX Kubernetes volume (50GB minimum, we do not recommend using NFS)
 - Services workspaces and runtime requires one of these document/object storage :  
-    - Filesystem (either through a local directory or a Kubernetes PVC)  
+    - Filesystem (Kubernetes PVC that supports RWX, 50GB minimum)  
     - S3 compatible object storage  
     - Azure Blob storage  
     <!-- - Google Storage -->
+- Workspaces pages routing require a **wildcard dns**  
+- Cluster machines date must remain synchronized within 10 seconds of each other
 
 ### Offline environments
 If the installation environment does not have access to internet, ensure that the following prerequisites are always met :  
 
-* If using [app microservices](../enterprise-features/installation/), `prismeai-functions` need access to a NPM registry. If the default https://registry.npmjs.org/ is not available, you must configure your own npm registry using **NPM_CONFIG_REGISTRY** environment variable inside `prismeai-functions` microservice
+* If using [app microservices](./enterprise-features/installation/), `prismeai-functions` need access to a NPM registry. If the default https://registry.npmjs.org/ is not available, you must configure your own npm registry using **NPM_CONFIG_REGISTRY** environment variable inside `prismeai-functions` microservice
     * Depending on your NPM proxy, it might require additional configuration for authentication
 * If using internal / self-signed TLS certificates, they must be configured inside almost all microservices to avoid HTTPS errors
     * `prismeai-searchengine` and `prismeai-crawler` are Python microservices : once mounted, the certificate file location can be configured with [REQUESTS_CA_BUNDLE](https://requests.readthedocs.io/en/latest/user/advanced/#ssl-cert-verification)
     * `prismeai-llm` does not need the custom certificate
     * Every other `prismeai-*` services are NodeJS : once mounted, the certificate file location can be configured with [NODE_EXTRA_CA_CERTS](https://nodejs.org/docs/latest-v4.x/api/cli.html#cli_node_extra_ca_certs_file)
-* While importing our workspaces and apps ([enterprise installation](../enterprise-features/installation/)) some assets can be missing as for the moment those are only registered as URL.   
-  We are working into streamlining this process, however, here is a workaround for the time being:
-    * Blocks : some workspaces can contain their own custom blocks (Custom Code, Popover, Dialog Box, Charts) you will have to replace the blocks url and upload yourself the blocks (which are JavaScript files) from the Prisme.ai interface. The files shall be provided by the Prisme.ai team.
-    * Images : workspaces images will be unreachable, you might want to replace them with your own using the Prisme.ai interface.
+
   
 ## Available guides
 

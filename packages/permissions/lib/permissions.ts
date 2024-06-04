@@ -67,6 +67,21 @@ export class Permissions<SubjectType extends string> {
     this.subjectRelations = buildSubjectRelations(config);
   }
 
+  static buildFrom<SubjectType extends string>(rules: Rules) {
+    const ability = new Ability(rules);
+    const lightPermissions = {
+      ability,
+      can: (
+        action: string,
+        subjectType: SubjectType,
+        subject?: Subject<Role>
+      ) =>
+        ability.can(action, subject ? an(subjectType, subject) : subjectType),
+    };
+
+    return lightPermissions as Permissions<SubjectType>;
+  }
+
   public loadRoles(roles: RoleTemplates<SubjectType, Role>) {
     const newRolesMapping = roles.reduce<
       Record<string, RoleTemplate<SubjectType, Role>>

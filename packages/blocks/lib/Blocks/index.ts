@@ -19,3 +19,4 @@ export { default as Signin } from './Signin';
 export { default as Head } from './Head';
 export { default as ProductLayout } from './ProductLayout';
 export { default as Toast } from './Toast';
+export { default as Tooltip } from './Tooltip';

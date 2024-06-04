@@ -178,9 +178,14 @@ const runLocal = (services: Service[]) => {
     (prev, name) => `${prev} ${name}=${env[name]}`,
     'API_URL="http://studio.local.prisme.ai:3001/v2"'
   );
-  shell(`${prefix} ./node_modules/.bin/npm-run-all -p ${command.join(' ')}`, {
-    async: true,
-  });
+  shell(
+    `${prefix} ./node_modules/.bin/npm-run-all -p ${command
+      .filter((cur) => cur != 'dev:events')
+      .join(' ')}`,
+    {
+      async: true,
+    }
+  );
 };
 
 const init = async () => {

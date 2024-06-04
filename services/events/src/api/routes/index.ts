@@ -1,28 +1,32 @@
 import http from 'http';
 import { Application } from 'express';
 
-import sys from './sys';
+import { initSysRoutes } from './sys';
 import { initEventsRoutes } from './events';
 import { initUsageRoutes } from './usage';
 import { initSearchRoutes } from './search';
 import { initWebsockets } from './websockets';
 import { initCleanupRoutes } from './cleanup';
-import { Subscriptions } from '../../services/events/Subscriptions';
 import { EventsStore } from '../../services/events/store';
-import { Cache } from '../../cache';
+import { Broker } from '@prisme.ai/broker';
+import { Subscriptions } from '../../services/events/subscriptions';
 
-export const init = (
+export const init = async (
   app: Application,
   httpServer: http.Server,
-  eventsSubscription: Subscriptions,
   eventsStore: EventsStore,
-  cache: Cache
+  broker: Broker,
+  subscriptions: Subscriptions
 ) => {
-  const io = initWebsockets(httpServer, eventsSubscription, cache);
+  const { io, workspacesNs } = await initWebsockets(
+    httpServer,
+    broker,
+    subscriptions
+  );
 
   const root = '/v2';
   app.use(`/sys/cleanup`, initCleanupRoutes(eventsStore));
-  app.use(`/sys`, sys);
+  app.use(`/sys`, initSysRoutes(subscriptions, io));
   app.use(
     `${root}/workspaces/:workspaceId/events`,
     initEventsRoutes(eventsStore)
@@ -37,6 +41,6 @@ export const init = (
   );
   app.use(`${root}/search`, initSearchRoutes(eventsStore));
 
-  return { io };
+  return { io: workspacesNs };
 };
 export default init;

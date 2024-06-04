@@ -203,51 +203,64 @@ export const BlockLoader: TBlockLoader = ({
   const redirect = useRedirect();
   const automationLoadingState = useRef(-1);
   const { query } = useRouter();
-  const initWithAutomation = useCallback(async () => {
-    if (
-      !user ||
-      !page ||
-      !page.workspaceId ||
-      automationLoadingState.current > -1 ||
-      !events
-    )
-      return;
+  const initWithAutomation = useRef(() => {});
+  useEffect(() => {
+    initWithAutomation.current = async () => {
+      if (
+        !user ||
+        !page ||
+        !page.workspaceId ||
+        automationLoadingState.current > -1 ||
+        !events
+      )
+        return;
 
-    try {
-      automationLoadingState.current = 0;
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const query = {
-        pageSlug: page.slug,
-        ...Object.fromEntries(urlSearchParams.entries()),
-        ...computedConfig,
-      };
+      try {
+        automationLoadingState.current = 0;
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const query = {
+          pageSlug: page.slug,
+          ...Object.fromEntries(urlSearchParams.entries()),
+          ...computedConfig,
+        };
 
-      delete query.blocks;
-
-      const newConfig = await callAutomation(
-        page.workspaceId,
-        automation,
-        query
-      );
-      redirect(newConfig);
-      setConfig(({ [original]: ignore = null, ...prev } = {}) => ({
-        ...prev,
-        ...newConfig,
-      }));
-      if (updateOn && newConfig.userTopics) {
-        events.listenTopics({ event: updateOn, topics: newConfig.userTopics });
-      }
-    } catch {}
-    automationLoadingState.current = 1;
+        delete query.blocks;
+        const newConfig = await callAutomation(
+          page.workspaceId,
+          automation,
+          query
+        );
+        redirect(newConfig);
+        setConfig(({ [original]: ignore = null, ...prev } = {}) => ({
+          ...prev,
+          ...newConfig,
+        }));
+        if (updateOn && newConfig.userTopics) {
+          events.listenTopics({
+            event: updateOn,
+            topics: newConfig.userTopics,
+          });
+        }
+      } catch {}
+      automationLoadingState.current = 1;
+    };
   }, [automation, computedConfig, events, page, redirect, updateOn, user]);
 
   // This is needed to re-init block when page navigate without reloading
   // by changing query string
+  const unmount = useRef(false);
+  useEffect(() => {
+    return () => {
+      unmount.current = true;
+    };
+  }, []);
   const refetch = useRef(() => {
-    if (automation) {
-      automationLoadingState.current = -1;
-      initWithAutomation();
-    }
+    setTimeout(() => {
+      if (automation && !unmount.current) {
+        automationLoadingState.current = -1;
+        initWithAutomation.current();
+      }
+    });
   });
   useEffect(() => {
     refetch.current();
@@ -281,7 +294,7 @@ export const BlockLoader: TBlockLoader = ({
     setListening(true);
 
     if (automation) {
-      initWithAutomation();
+      initWithAutomation.current();
     }
 
     return () => {

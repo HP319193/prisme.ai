@@ -8,6 +8,7 @@ import { redirect } from './redirect';
 import BUILTIN_PAGES from '../builtinPages';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { NextParsedUrlQuery } from 'next/dist/server/request-meta';
+import getConfig from 'next/config';
 
 const cache = new Map();
 async function getPage(host: string, pageSlug: string) {
@@ -24,11 +25,26 @@ async function getPage(host: string, pageSlug: string) {
   return cache.get(key) || null;
 }
 
+const {
+  publicRuntimeConfig: { DISABLE_SSR = false },
+} = getConfig();
+
 export const getPageServerSideProps =
   (
     getSlug: (params: NextParsedUrlQuery | undefined) => string | null
   ): GetServerSideProps<PageProps> =>
   async ({ req, res, locale = '', query, params }) => {
+    if (DISABLE_SSR)
+      return {
+        props: {
+          page: null,
+          ...(await serverSideTranslations(locale, [
+            'common',
+            'sign',
+            'pages',
+          ])),
+        },
+      };
     const pageSlug = getSlug(params);
     if (pageSlug === null) {
       return {

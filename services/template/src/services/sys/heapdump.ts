@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { default as dump } from 'heapdump';
+import { writeHeapSnapshot } from 'v8';
 import { HEAPDUMPS_DIRECTORY } from '../../../config';
 import { logger, Logger } from '../../logger';
 import { throttle } from '../../utils/throttle';
@@ -15,12 +15,9 @@ try {
 }
 
 export const unthrottledHeapdump = (logger: Logger) => async () => {
-  dump.writeSnapshot(
-    `${heapdumpsDirectory}/heapdump-${Date.now()}`,
-    (err, filename) => {
-      logger.info('Heapdump written to', filename);
-    }
-  );
+  const filepath = `${heapdumpsDirectory}/heapdump-${Date.now()}`;
+  writeHeapSnapshot(filepath);
+  logger.info('Heapdump written to', filepath);
 };
 
 export const heapdump = throttle(unthrottledHeapdump, 60 * 1000, {

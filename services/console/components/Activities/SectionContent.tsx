@@ -78,10 +78,16 @@ export const SectionContent = ({
       page: event?.payload?.page?.name && localize(event.payload.page.name),
       eventType: event?.payload?.event?.type,
       waits: getWaits(),
-      appSlug: event?.payload?.appInstance?.appSlug,
+      appSlug:
+        event?.payload?.appInstance?.appSlug ||
+        event?.payload?.appSlug ||
+        event?.payload?.app?.slug,
       appName:
         event?.payload?.appInstance?.appName ||
-        event?.payload?.appInstance?.slug,
+        event?.payload?.appInstance?.slug ||
+        event?.payload?.appInstance?.appSlug ||
+        event?.payload?.appSlug ||
+        event?.payload?.app?.name,
       share: event?.payload?.target?.displayName || event?.payload?.target?.id,
     };
   }, [event, imports, localize, t]);

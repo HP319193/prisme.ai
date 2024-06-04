@@ -20,6 +20,7 @@ import { getAccessToken } from '../../../../../utils/jwks';
 import { InvalidInstructionError } from '../../../../../errors';
 import { ReadableStream } from '../../../../../utils';
 import { StreamChunk, parseSseStream } from './parseSseStream';
+import { rateLimiter } from '../../../../rateLimits/rateLimiter';
 
 const keepaliveAgent = new Agent({
   keepAlive: true,
@@ -51,6 +52,8 @@ export async function fetch(
   if (!fetchParams.url) {
     throw new InvalidInstructionError(`Invalid fetch instruction : empty url`);
   }
+  await rateLimiter.workspace(ctx.workspaceId).fetch(ctx);
+
   const maxRetries =
     typeof opts?.maxRetries !== 'undefined' ? opts.maxRetries : 2;
   let {

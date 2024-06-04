@@ -111,7 +111,7 @@ async function oauthHandler(
   next: NextFunction
 ) {
   const { query } = req;
-  const oauthConfig = authProviders.oauth?.[query.provider].config;
+  const oauthConfig = authProviders.oauth?.[query.provider]?.config;
   if (!query.provider || !oauthConfig) {
     throw new ConfigurationError(
       `Unknown or missing auth provider '${query.provider}'`,
@@ -162,7 +162,7 @@ export async function initAuthProviders(
                   ip: req.context?.http?.ip,
                   provider: req.session?.oauth?.provider,
                 })
-                .catch(logger.warn);
+                .catch((err) => logger.warn({ err }));
               try {
                 const loginInteraction = await provider.interactionDetails(
                   req,

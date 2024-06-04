@@ -1,4 +1,4 @@
-FROM node:16 as build
+FROM node:20 as build
 WORKDIR /www
 
 COPY ./package.json ./package-lock.json ./rollup.config.js ./dtsgen.json /www/
@@ -18,7 +18,7 @@ RUN npm run build:packages && \
     npm run build:console && \
     npm prune --production
 
-FROM node:16-alpine as runtime
+FROM node:20-alpine as runtime
 
 WORKDIR /www
 COPY --from=build /www/packages /www/packages

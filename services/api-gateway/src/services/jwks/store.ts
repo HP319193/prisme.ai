@@ -158,7 +158,7 @@ export class JWKStore extends EventEmitter {
             disableValidation: true,
           }
         )
-        .catch(logger.error);
+        .catch((err) => logger.error({ err }));
     }
   }
 

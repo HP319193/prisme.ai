@@ -5,6 +5,7 @@ import { Cache } from '../../../../cache';
 import { Workspace } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
 import { Readable } from 'stream';
+import { rateLimiter } from '../../../rateLimits/rateLimiter';
 
 type RepeatOn = Extract<Prismeai.Repeat['repeat'], { on: string }>;
 type RepeatUntil = Extract<Prismeai.Repeat['repeat'], { until: number }>;
@@ -74,6 +75,15 @@ export async function repeat(
       ? until
       : (<any>values)?.length || 0;
   for (let i = 0; i < maxIterations; i++) {
+    // Check throttle every 500 iterations
+    const throttleBy = 500;
+    if (i > 0 && i % throttleBy === 0) {
+      const throttleIterations = Math.min(throttleBy, maxIterations - i);
+      await rateLimiter
+        .workspace(ctx.workspaceId)
+        .repeat(ctx, throttleIterations);
+    }
+
     ctx.set(REPEAT_ITEM_VAR_NAME, values?.length ? values[i] : i);
     ctx.set(REPEAT_INDEX_VAR_NAME, i);
     await runInstructions(doInstructions, {

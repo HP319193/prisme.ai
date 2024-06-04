@@ -2081,6 +2081,79 @@ components:
                 type: string
     ########################## Events API events ##########################
 
+    JoinedWorkspaceSubscriber:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.subscribers.joined
+          enum:
+            - events.subscribers.joined
+        payload:
+          type: object
+          additionalProperties: true
+          required:
+            - workspaceId
+            - userId
+            - sessionId
+            - socketId
+            - permissions
+            - targetTopic
+          properties:
+            workspaceId:
+              type: string
+            userId:
+              type: string
+            sessionId:
+              type: string
+            socketId:
+              type: string
+            filters:
+              type: object
+              additionalProperties: true
+              properties:
+                payloadQuery: {}
+            permissions:
+              type: array
+              items:
+                $ref: '#/components/schemas/PermissionRule'
+            targetTopic:
+              type: string
+            oldSocketId:
+              type: string
+
+    LeftWorkspaceSubscriber:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.subscribers.left
+          enum:
+            - events.subscribers.left
+        payload:
+          type: object
+          additionalProperties: true
+          required:
+            - workspaceId
+            - userId
+            - sessionId
+            - socketId
+          properties:
+            workspaceId:
+              type: string
+            userId:
+              type: string
+            sessionId:
+              type: string
+            socketId:
+              type: string
+
     CleanedEvents:
       type: object
       required:
@@ -2099,6 +2172,99 @@ components:
             inactiveDatastreams: {}
             emptyIndices: {}
             expiredEvents: {}
+
+    EventsWebsocketsMessage:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.websockets.message
+          enum:
+            - events.websockets.message
+        payload:
+          type: object
+          additionalProperties: true
+          required:
+            - rooms
+            - event
+          properties:
+            rooms:
+              type: array
+              items:
+                type: string
+            event: {}
+
+    JoinedEventsNode:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.nodes.joined
+          enum:
+            - events.nodes.joined
+        payload:
+          type: object
+          additionalProperties: true
+          required:
+            - id
+            - targetTopic
+          properties:
+            id:
+              type: string
+            targetTopic:
+              type: string
+
+    PingEventsNode:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.nodes.ping
+          enum:
+            - events.nodes.ping
+        payload:
+          type: object
+          additionalProperties: true
+          required:
+            - id
+            - targetTopic
+          properties:
+            id:
+              type: string
+            targetTopic:
+              type: string
+
+    LeftEventsNode:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: events.nodes.left
+          enum:
+            - events.nodes.left
+        payload:
+          type: object
+          additionalProperties: true
+          required:
+            - id
+            - targetTopic
+          properties:
+            id:
+              type: string
+            targetTopic:
+              type: string
 
     ########################## Apps events ##########################
     PublishedApp:
@@ -2779,6 +2945,8 @@ components:
             output:
               $ref: '#/components/schemas/AnyValue'
             duration:
+              type: number
+            throttled:
               type: number
             startedAt:
               type: string

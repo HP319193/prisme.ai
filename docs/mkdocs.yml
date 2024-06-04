@@ -94,6 +94,7 @@ nav:
           - i18n.specifications: architecture/technical/events/specifications.md
       - i18n.runtime:
           - i18n.specifications: architecture/technical/runtime/specifications.md
+          - Rate limits: architecture/technical/runtime/rateLimits.md
       - i18n.workspaces:
           - i18n.specifications: architecture/technical/workspaces/specifications.md
   - i18n.examples:

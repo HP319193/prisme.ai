@@ -2,6 +2,14 @@ import express, { Request, Response } from 'express';
 import { LogLevel } from '../../logger';
 import sysServices from '../../services/sys';
 import { asyncRoute } from '../utils/async';
+import { isInternallyAuthenticated } from '../middlewares/accessManager';
+import {
+  Subscriber,
+  Subscriptions,
+  WorkspaceId,
+  WorkspaceSubscribers,
+} from '../../services/events/subscriptions';
+import { Server } from 'socket.io';
 
 async function healthcheckHandler(req: Request, res: Response) {
   const sys = sysServices(req.logger, req.context);
@@ -34,10 +42,53 @@ async function loggingHandler(
     .send({ msg: `Succesfully changed log level to ${level}` });
 }
 
-const app = express.Router();
+export function initSysRoutes(subscriptions: Subscriptions, socketio: Server) {
+  async function getSubscriptionsHandler(req: Request, res: Response) {
+    const subscribers: Record<WorkspaceId, WorkspaceSubscribers> = (
+      subscriptions as any
+    ).subscribers;
+    const workspaces: Record<string, Subscriber[]> = Object.entries(
+      subscribers
+    ).reduce(
+      (workspaces, [wkId, { socketIds }]) => ({
+        ...workspaces,
+        [wkId]: Object.values(socketIds).map(
+          ({ permissions, accessManager: _, authData: __, ...cur }) => ({
+            ...cur,
+            permissionsRulesNb: permissions?.ability?.rules?.length,
+          })
+        ),
+      }),
+      {}
+    );
 
-app.get(`/healthcheck`, asyncRoute(healthcheckHandler));
-app.get(`/heapdump`, asyncRoute(heapdumpHandler));
-app.put(`/logging`, asyncRoute(loggingHandler));
+    const sockets = [...socketio.sockets.server._nsps.values()].flatMap(
+      (cur) => [...cur.sockets.keys()]
+    );
+    return res.status(200).send({
+      localTopic: subscriptions.cluster.localTopic,
+      clusterWorkspacesNb: Object.keys(workspaces).length,
+      clusterSubscriptionsNb: Object.values(workspaces).reduce(
+        (total, all) => total + all.length,
+        0
+      ),
+      localSocketsNb: sockets.length,
+      localSocketIds: sockets,
+      cluster: (subscriptions.cluster as any)?.clusterNodes,
+      workspaces,
+    });
+  }
 
-export default app;
+  const app = express.Router();
+
+  app.get(`/healthcheck`, asyncRoute(healthcheckHandler));
+  app.get(`/heapdump`, isInternallyAuthenticated, asyncRoute(heapdumpHandler));
+  app.put(`/logging`, isInternallyAuthenticated, asyncRoute(loggingHandler));
+  app.get(
+    `/subscriptions`,
+    isInternallyAuthenticated,
+    asyncRoute(getSubscriptionsHandler)
+  );
+
+  return app;
+}

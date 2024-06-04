@@ -10,7 +10,6 @@ const USER_ID = 'myUserId';
 const WORKSPACE_ID = 'workspaceId';
 const WORKSPACE_SLUG = 'workspaceSlug';
 jest.mock('nanoid', () => ({ nanoid: () => WORKSPACE_ID }));
-jest.mock('heapdump', () => () => ({}));
 
 const getMockedAccessManager = (get?: any) => {
   const accessManager: any = {

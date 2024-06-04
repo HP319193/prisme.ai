@@ -13,19 +13,21 @@ import {
   validationErrorMiddleware,
   validationMiddleware,
 } from './middlewares/validation';
-import { Subscriptions } from '../services/events/Subscriptions';
 import { EventsStore } from '../services/events/store';
 import { AccessManager } from '../permissions';
 import { accessManagerMiddleware } from './middlewares/accessManager';
 import { Cache } from '../cache';
+import { Broker } from '@prisme.ai/broker';
+import { Subscriptions } from '../services/events/subscriptions';
 
-export function initAPI(
+export async function initAPI(
   app: Application,
   httpServer: http.Server,
-  eventsSubscription: Subscriptions,
   eventsStore: EventsStore,
+  broker: Broker,
   accessManager: AccessManager,
-  cache: Cache
+  cache: Cache,
+  subscriptions: Subscriptions
 ) {
   /**
    * Get NODE_ENV from environment and store in Express.
@@ -66,18 +68,18 @@ export function initAPI(
   /**
    * User routes
    */
-  const { io } = initRoutes(
+  const { io } = await initRoutes(
     app,
     httpServer,
-    eventsSubscription,
     eventsStore,
-    cache
+    broker,
+    subscriptions
   );
 
   /**
    * Metrics
    */
-  initMetrics(app, io);
+  initMetrics(app, io, subscriptions);
 
   /**
    * ERROR HANDLING

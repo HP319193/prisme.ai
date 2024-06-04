@@ -3,6 +3,7 @@ import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../../config';
 import { InvalidEventError } from '../../../../errors';
 import { AppContext } from '../../../workspaces';
 import { ContextsManager } from '../../contexts';
+import { rateLimiter } from '../../../rateLimits/rateLimiter';
 
 export async function emit(
   { event, payload, target, options }: Prismeai.Emit['emit'],
@@ -10,6 +11,7 @@ export async function emit(
   ctx: ContextsManager,
   appContext?: AppContext
 ) {
+  await rateLimiter.workspace(ctx.workspaceId).emit(ctx);
   const emitSourceContext: Partial<EventSource> = {
     ...appContext,
     userId: undefined, // Only custom events sent from API or Websocket have their source userId sent

@@ -67,7 +67,7 @@ export async function parseSseStream(
             message: 'Could not parse JSON chunk from fetch streamed response',
             chunk: str,
           })
-          .catch(logger.error);
+          .catch((err) => logger.error({ err }));
       }
       continue;
     }

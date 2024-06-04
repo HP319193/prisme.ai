@@ -79,7 +79,7 @@ export const Field = ({ components, ...props }: FieldComponentProps) => {
 
   if (props.schema.hidden || !Component) return null;
 
-  return <Component {...props} />;
+  return <Component {...props} field={field} />;
 };
 
 const LinkedField = (props: FieldProps) => {

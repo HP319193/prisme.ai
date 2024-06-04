@@ -6,6 +6,7 @@ import { interpolate } from '../../../utils';
 import { DetailedAutomation, Workspace } from '../../workspaces';
 import { ContextsManager } from '../contexts';
 import { runInstruction, InstructionType, Break } from './instructions';
+import { rateLimiter } from '../../rateLimits/rateLimiter';
 
 export async function executeAutomation(
   workspace: Workspace,
@@ -17,6 +18,7 @@ export async function executeAutomation(
   rootAutomation?: boolean
 ) {
   await ctx.securityChecks();
+  await rateLimiter.workspace(workspace.id).executeAutomation(ctx);
   const startedAt = Date.now();
 
   let breakThisAutomation: false | Break = false,
@@ -49,13 +51,15 @@ export async function executeAutomation(
 
   const output = evaluateOutput(automation, ctx);
   delete ctx?.payload?.headers?.['authorization'];
+  const { $http: __, ...automationPayload } = ctx.payload;
   broker.send<Prismeai.ExecutedAutomation['payload']>(
     EventType.ExecutedAutomation,
     {
       slug: automation.slug!,
-      payload: ctx.payload,
+      payload: automationPayload,
       output,
       duration: Date.now() - startedAt,
+      throttled: ctx.throttled ? ctx.throttled : undefined,
       startedAt: new Date(startedAt).toISOString(),
       trigger: ctx.trigger!,
       break: breakRaised,
