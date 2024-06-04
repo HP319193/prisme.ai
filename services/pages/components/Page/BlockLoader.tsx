@@ -339,8 +339,9 @@ export const BlockLoader: TBlockLoader = ({
         {}
       );
     }
-
-    events.emit(onInit, payload);
+    const { event, payload: staticPayload = {} } =
+      typeof onInit === 'string' ? { event: onInit } : onInit;
+    events.emit(event, { ...staticPayload, ...payload });
   }, [events, initialConfig, language, listening, onInit, page, user]);
 
   const onAppConfigUpdate = useCallback(
