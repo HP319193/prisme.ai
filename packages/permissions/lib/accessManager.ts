@@ -20,11 +20,18 @@ import { validateRules } from './rulesBuilder';
 import { buildSubjectRelations, getParentSubjectIds } from './utils';
 import { InvalidAPIKey, ObjectNotFoundError, PrismeError } from './errors';
 
-type Document<T = any> = Omit<mongoose.Document<T>, 'toJSON'> &
-  BaseSubject & {
-    filterFields: (permissions: Permissions<any>) => T & BaseSubject;
-    toJSON: () => T & BaseSubject;
-  };
+type Document<T = any> = mongoose.Document<any, any, T>;
+interface DocumentMethods<T = any> {
+  filterFields: (permissions: Permissions<any>) => T & BaseSubject;
+  toJSON: () => T & BaseSubject;
+}
+
+type Model<DocumentT> = mongoose.Model<
+  DocumentT,
+  AccessibleRecordModel<DocumentT, {}, DocumentMethods>
+>;
+
+type RoleModel = Model<CustomRole<string>>;
 
 export interface AccessManagerOptions<SubjectType extends string = string> {
   appName?: string;
@@ -65,7 +72,7 @@ export class AccessManager<
   Role extends string = string
 > {
   private opts: AccessManagerOptions<SubjectType>;
-  private models: Record<SubjectType, AccessibleRecordModel<Document>>;
+  private models: Record<SubjectType, Model<SubjectInterfaces[any]>>;
   private permissionsConfig: PermissionsConfig<SubjectType, Role>;
   private permissions?: Permissions<SubjectType>;
   public user?: User;
@@ -80,6 +87,7 @@ export class AccessManager<
     this.opts = opts;
     this.permissionsConfig = permissionsConfig;
 
+    mongoose.plugin(accessibleRecordsPlugin);
     const schemas: Record<SubjectType, mongoose.Schema | false> =
       Object.entries({
         ...opts.schemas,
@@ -93,13 +101,9 @@ export class AccessManager<
             ? schemaDef
             : new mongoose.Schema(schemaDef as Record<string, object>);
 
-        (schema as mongoose.Schema).plugin(accessibleRecordsPlugin);
-        (schema as mongoose.Schema).add(BaseSchema);
+        schema.add(BaseSchema);
 
-        (schema as mongoose.Schema).method(
-          'filterFields',
-          buildFilterFieldsMethod(name as any)
-        );
+        schema.method({ filterFields: buildFilterFieldsMethod(name as any) });
 
         return {
           ...schemas,
@@ -114,7 +118,9 @@ export class AccessManager<
       schemas
     );
 
-    this.models = Object.entries(schemas).reduce((models, [name, schema]) => {
+    this.models = Object.entries(schemas).reduce<
+      Record<SubjectType, Model<SubjectInterfaces[SubjectType]>>
+    >((models, [name, schema]) => {
       if (schema === false) {
         return models;
       }
@@ -122,7 +128,7 @@ export class AccessManager<
         ...models,
         [name]: mongoose.model(name, schema as mongoose.Schema),
       };
-    }, {} as Record<SubjectType, AccessibleRecordModel<Document>>);
+    }, {} as Record<SubjectType, Model<SubjectInterfaces[SubjectType]>>);
 
     this.alreadyPulledSubjectFieldRefs = new Set();
     this.subjectRelations = buildSubjectRelations(permissionsConfig);
@@ -219,7 +225,7 @@ export class AccessManager<
   private async fetch<returnType extends SubjectType>(
     subjectType: returnType,
     id: string | FilterQuery<SubjectInterfaces[returnType], Role>
-  ): Promise<Document<SubjectInterfaces[returnType]> | null> {
+  ) {
     if (!id) {
       return null;
     }
@@ -231,7 +237,7 @@ export class AccessManager<
 
   public model<returnType extends SubjectType>(
     subjectType: returnType
-  ): AccessibleRecordModel<Document<SubjectInterfaces[returnType]>> {
+  ): Model<SubjectInterfaces[returnType]> {
     if (!(subjectType in this.models)) {
       throw new Error(
         `Unknown model ${subjectType}. Did you provide a persistance schema for this subjectType ?`
@@ -261,11 +267,14 @@ export class AccessManager<
       await this.pullRoleFromSubject(subjectType, <any>additionalQuery);
     }
     const { permissions } = this.checkAsUser();
-    const Model = this.model(subjectType);
-    const mongoQuery = Model.accessibleBy(permissions.ability, ActionType.Read);
+    const SubjectModel = this.model(subjectType);
+    // TODO check that
+    const mongoQuery = (
+      SubjectModel as any as AccessibleRecordModel<any>
+    ).accessibleBy(permissions.ability, ActionType.Read);
 
     const { page = 0, limit = DEFAULT_FIND_PAGE_SIZE } = opts?.pagination || {};
-    const accessibleSubjects = await Model.find({
+    const accessibleSubjects = await SubjectModel.find({
       ...additionalQuery,
       ...mongoQuery.getQuery(),
     })
@@ -293,7 +302,11 @@ export class AccessManager<
       });
     }
 
-    await this.throwUnlessCan(ActionType.Read, subjectType, subject.toJSON());
+    await this.throwUnlessCan(
+      ActionType.Read,
+      subjectType,
+      subject.toJSON({ flattenMaps: false })
+    );
     return subject.filterFields(permissions);
   }
 
@@ -354,7 +367,7 @@ export class AccessManager<
     object.id = subject.id || object._id!!.toString();
     await object.save();
     permissions.pullRoleFromSubject(subjectType, object.toJSON());
-    return object.filterFields(permissions);
+    return (object as any).filterFields(permissions);
   }
 
   async update<returnType extends SubjectType>(
@@ -416,7 +429,7 @@ export class AccessManager<
     }
 
     await this.throwUnlessCan(ActionType.Delete, subjectType, subject.toJSON());
-    await subject.delete();
+    await subject.deleteOne();
   }
 
   async deleteMany<returnType extends SubjectType>(
@@ -562,14 +575,16 @@ export class AccessManager<
       });
     }
 
-    await this.pullRoleFromSubject(
-      subjectType,
-      typeof subject.toJSON === 'function' ? subject.toJSON() : subject
-    );
+    const modelSubject = subject as Document<SubjectInterfaces[returnType]>;
+    const subjectJson =
+      typeof modelSubject.toJSON === 'function'
+        ? modelSubject.toJSON({ flattenMaps: false })
+        : subject;
+    await this.pullRoleFromSubject(subjectType, subjectJson);
     permissions.throwUnlessCan(
       actionType,
       subjectType,
-      typeof subject.toJSON === 'function' ? subject.toJSON() : subject,
+      subjectJson,
       includeErrorSubject
     );
 
@@ -711,9 +726,7 @@ export class AccessManager<
       role.subjectId
     );
 
-    const RolesModel = (await this.model(
-      <any>NativeSubjectType.Roles
-    )) as any as AccessibleRecordModel<Document<CustomRole<SubjectType>>>;
+    const RolesModel = await this.model(<any>NativeSubjectType.Roles); //as any as AccessibleRecordModel<Document<CustomRole<SubjectType>>>;
 
     // Validate role
     if (typeof role.rules === 'object') {
@@ -759,13 +772,11 @@ export class AccessManager<
       }
     );
 
-    return savedRole.toJSON();
+    return savedRole.toJSON({ flattenMaps: false });
   }
 
   async deleteRole(id: string): Promise<boolean> {
-    const RolesModel = (await this.model(
-      <any>NativeSubjectType.Roles
-    )) as any as AccessibleRecordModel<Document<CustomRole<SubjectType>>>;
+    const RolesModel = await this.model(<any>NativeSubjectType.Roles);
 
     // Check that authenticated user has the expected permissions
     const doc = await RolesModel.findOne({ id });
@@ -773,7 +784,7 @@ export class AccessManager<
     if (!doc) {
       throw new ObjectNotFoundError();
     }
-    const role = doc.toJSON();
+    const role = doc.toJSON({ flattenMaps: false });
     await this.throwUnlessCan(
       ActionType.ManagePermissions,
       role.subjectType,
@@ -796,9 +807,7 @@ export class AccessManager<
       );
     }
 
-    const RolesModel = (await this.model(
-      <any>NativeSubjectType.Roles
-    )) as any as AccessibleRecordModel<Document<CustomRole<SubjectType>>>;
+    const RolesModel = await this.model(<any>NativeSubjectType.Roles);
 
     const docs = await RolesModel.find(query);
     const roles = docs
@@ -819,7 +828,7 @@ export class AccessManager<
               (obj, [provider, config]) => ({
                 ...obj,
                 [provider]: {
-                  ...config,
+                  ...(config as any),
                   conditions: (<any>config).conditions
                     ? JSON.parse((<any>config).conditions)
                     : undefined,

@@ -12,7 +12,7 @@ export enum ActionType {
 
 export type UserId = string;
 
-export type UserSubject = Record<string, any>;
+export type UserSubject = any;
 export type SubjectCollaborator = {
   role?: string;
   policies?: Partial<Record<ActionType, boolean>>;
