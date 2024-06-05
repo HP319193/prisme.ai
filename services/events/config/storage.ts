@@ -30,6 +30,7 @@ export const EVENTS_STORAGE_ES_OPTIONS: StoreDriverOptions = {
   user: EVENTS_STORAGE_ES_USER,
   password: EVENTS_STORAGE_ES_PASSWORD,
   driverOptions: extractOptsFromEnv('EVENTS_STORAGE_ES_OPT_'),
+  namespace: EVENTS_STORAGE_NAMESPACE,
 };
 
 export const EVENTS_STORAGE_ES_BULK_REFRESH = ['true', 'yes', 'y'].includes(

@@ -37,7 +37,7 @@ export class ElasticsearchStore implements EventsStore {
         : undefined,
       ...opts.driverOptions,
     });
-    this.namespace = namespace;
+    this.namespace = opts?.namespace || namespace;
     this.initializeConfiguration();
   }
 
