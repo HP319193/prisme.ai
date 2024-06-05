@@ -626,7 +626,7 @@ export class Workspaces extends DsulCrud {
     try {
       await this.storage.delete({ workspaceId, parentFolder: true });
     } catch (err) {
-      logger.err(err);
+      logger.warn(err);
     }
 
     // Delete pages db entries
@@ -635,7 +635,7 @@ export class Workspaces extends DsulCrud {
         workspaceId,
       });
     } catch (err) {
-      logger.err(err);
+      logger.warn(err);
     }
 
     return { id: workspaceId };
