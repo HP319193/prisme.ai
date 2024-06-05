@@ -42,18 +42,18 @@ export class ElasticsearchStore implements EventsStore {
   }
 
   private async initializeConfiguration() {
-    const policyName = `policy-events${
-      this.namespace ? '-' + this.namespace : ''
-    }`;
-    const deletionScheduledPolicyName = `policy-events-deletion-scheduled${
-      this.namespace ? '-' + this.namespace : ''
-    }`;
-    const templateName = `template-events${
-      this.namespace ? '-' + this.namespace : ''
-    }`;
-    const indexTemplateName = `index-template-events${
-      this.namespace ? '-' + this.namespace : ''
-    }`;
+    const policyName = `${
+      this.namespace ? this.namespace + '-' : ''
+    }policy-events`;
+    const deletionScheduledPolicyName = `${
+      this.namespace ? this.namespace + '-' : ''
+    }policy-events-deletion-scheduled`;
+    const templateName = `${
+      this.namespace ? this.namespace + '-' : ''
+    }template-events`;
+    const indexTemplateName = `${
+      this.namespace ? this.namespace + '-' : ''
+    }index-template-events`;
 
     await this.client.ilm.putLifecycle({
       policy: policyName,
@@ -120,9 +120,9 @@ export class ElasticsearchStore implements EventsStore {
     if (typeof workspaceId === 'undefined') {
       workspaceId = 'platform';
     }
-    return `events${
-      this.namespace ? '-' + this.namespace : ''
-    }-${workspaceId}`.toLocaleLowerCase();
+    return `${
+      this.namespace ? this.namespace + '-' : ''
+    }events-${workspaceId}`.toLocaleLowerCase();
   }
 
   private buildSearchBody(options: SearchOptions) {
@@ -758,9 +758,9 @@ export class ElasticsearchStore implements EventsStore {
 
   async closeWorkspace(workspaceId: string): Promise<any> {
     const index = this.getWorkspaceEventsIndexName(workspaceId);
-    const scheduledDeletionPolicy = `policy-events-deletion-scheduled${
-      this.namespace ? '-' + this.namespace : ''
-    }`;
+    const scheduledDeletionPolicy = `${
+      this.namespace ? this.namespace + '-' : ''
+    }policy-events-deletion-scheduled`;
     // 1. Delete current ilm policy
     await this.client.ilm.removePolicy({
       index,
