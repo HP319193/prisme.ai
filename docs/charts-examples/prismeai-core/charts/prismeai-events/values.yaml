@@ -54,7 +54,7 @@ global:
       #       name: core-es-elastic-user
       #       key: elastic
 
-  internalApiKey: ""
+  internalApiKey: {}
 
 restartPolicy: Always
 

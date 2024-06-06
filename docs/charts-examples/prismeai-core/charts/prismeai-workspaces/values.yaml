@@ -41,7 +41,7 @@ global:
       s3_like_endpoint: ""
       s3_like_secretKey: ""
 
-  internalApiKey: ""
+  internalApiKey: {}
 
 restartPolicy: Always
 

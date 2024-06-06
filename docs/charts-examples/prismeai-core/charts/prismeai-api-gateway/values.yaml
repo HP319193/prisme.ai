@@ -43,7 +43,7 @@ global:
       driver:
       url:
 
-  internalApiKey: ""
+  internalApiKey: {}
 
   oidc:
     clientRegistrationToken: 'oidc-client-registration'
@@ -64,7 +64,7 @@ storage:
   permissions:
     driver:
     url:
-    
+
 restartPolicy: Always
 
 image:

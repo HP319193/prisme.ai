@@ -13,6 +13,29 @@ global:
   consoleUrl: "" # Public Console URL, example : https://studio.prisme.ai
   pagesHost: "" # Public Pages host, every single pages built on the platform will be served this way "page-slug.<pagesHost>", example : .pages.prisme.ai
 
+  oidc:
+    clientRegistrationToken:
+      valueFrom:
+        secretKeyRef:
+          name: oidc-provider
+          key: clientRegistrationToken
+    studioClientId:
+      valueFrom:
+        secretKeyRef:
+          name: oidc-provider
+          key: studioClientId
+    studioClientSecret:
+      valueFrom:
+        secretKeyRef:
+          name: oidc-provider
+          key: studioClientSecret
+    cookiesSignSecret:
+      valueFrom:
+        secretKeyRef:
+          name: oidc-provider
+          key: cookiesSignSecret
+
+
   internalApiKey: &INTERNAL_API_KEY
     valueFrom:
       secretKeyRef:
@@ -372,4 +395,13 @@ generateSecrets:
   - name: internal-security
     data:
       apiKey:
+        generate: true
+  - name: oidc-provider
+    data:
+      clientRegistrationToken:
+        generate: true
+      studioClientId: 'prismeai-studio-client'
+      studioClientSecret:
+        generate: true
+      cookiesSignSecret:
         generate: true
