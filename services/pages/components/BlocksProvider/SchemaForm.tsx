@@ -10,11 +10,15 @@ import { CodeEditorInline } from '../../../console/components/CodeEditor/lazy';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useField } from 'react-final-form';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { SchemaFormContext } from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
+import {
+  SchemaFormContext,
+  useSchemaForm,
+} from '@prisme.ai/design-system/lib/Components/SchemaForm/context';
 import { FieldComponentProps } from '@prisme.ai/design-system/lib/Components/SchemaForm/Field';
 import { useBlock } from '@prisme.ai/blocks';
 import { get } from 'lodash';
 import equal from 'fast-deep-equal';
+import { useTranslation } from 'next-i18next';
 
 const FieldCode: SchemaFormContext['components']['FieldCode'] = ({
   schema,

@@ -17,5 +17,16 @@
   "duplicate": "Duplicate",
   "schemaForm": {
     "uploadLabel": "Choose a file"
+  },
+  "form": {
+    "addItem": "Add an item",
+    "removeItem": "Remove item",
+    "addProperty": "Add a property",
+    "removeProperty": "Remove property",
+    "propertyKey": "Property",
+    "propertyValue": "Value",
+    "uploadLabel": "Choose a file",
+    "uploadingLabel": "Uploading…",
+    "uploadRemove": "Remove file"
   }
 }

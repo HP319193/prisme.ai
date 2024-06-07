@@ -236,20 +236,22 @@ export const Form = ({
           config.hideSubmit
             ? []
             : [
-                <div
-                  key={0}
-                  className="pr-block-form__buttons-container        block-form__buttons-container buttons-container"
-                >
-                  {customButtons}
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="pr-block-form__button        buttons-container__button button"
-                    disabled={!!config.disabledSubmit || hasError}
+                ({ disabled }: any) => (
+                  <div
+                    key={0}
+                    className="pr-block-form__buttons-container        block-form__buttons-container buttons-container"
                   >
-                    {localize(config.submitLabel) || t('form.submit')}
-                  </Button>
-                </div>,
+                    {customButtons}
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      className="pr-block-form__button        buttons-container__button button"
+                      disabled={disabled || !!config.disabledSubmit || hasError}
+                    >
+                      {localize(config.submitLabel) || t('form.submit')}
+                    </Button>
+                  </div>
+                ),
               ]
         }
         formRef={formRef}

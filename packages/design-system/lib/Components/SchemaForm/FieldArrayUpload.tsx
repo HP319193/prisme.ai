@@ -15,6 +15,7 @@ import { SchemaFormContext, useSchemaForm } from './context';
 import { Label } from './Label';
 import InfoBubble from './InfoBubble';
 import FieldContainer from './FieldContainer';
+import Loading from '../Loading';
 
 const Preview = ({ src }: { src: string[] }) => {
   return (
@@ -35,6 +36,8 @@ export const FieldArrayUpload = ({
   uploadFile: SchemaFormContext['utils']['uploadFile'];
 }) => {
   const field = useField(props.name);
+  const [uploading, setUploading] = useState(false);
+  const { setState } = useSchemaForm();
   const { 'ui:options': uiOptions = { upload: {} } } = props.schema as {
     'ui:options': UiOptionsUpload;
   };
@@ -64,6 +67,11 @@ export const FieldArrayUpload = ({
         reader.onload = async ({ target }) => {
           if (!target || typeof target.result !== 'string') return;
 
+          setState((prev) => ({
+            ...prev,
+            loading: true,
+          }));
+          setUploading(true);
           try {
             const value = await uploadFile(
               target.result.replace(
@@ -105,6 +113,11 @@ export const FieldArrayUpload = ({
           } catch (error) {
             setError(true);
           }
+          setState((prev) => ({
+            ...prev,
+            loading: false,
+          }));
+          setUploading(false);
         };
         reader.readAsDataURL(file);
       }
@@ -139,9 +152,12 @@ export const FieldArrayUpload = ({
       >
         <div className="pr-form-upload__placeholder">
           <div className="pr-form-upload__preview pr-form-upload__multi-preview">
-            {field.input.value ? preview : defaultPreview}
+            {!uploading && (field.input.value ? preview : defaultPreview)}
+            {uploading && <Loading />}
           </div>
-          {previewLabel || locales.uploadLabel || 'Choose files'}
+          {!uploading &&
+            (previewLabel || locales.uploadLabel || 'Choose files')}
+          {uploading && (locales.uploadingLabel || 'Loading')}
         </div>
 
         <input
