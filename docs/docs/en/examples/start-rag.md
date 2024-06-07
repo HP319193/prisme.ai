@@ -33,14 +33,14 @@ First, familiarize yourself with the AI Knowledge product's architecture. It inc
 
 - **Analytics**: some KPI to monitor your AI usage: tokens, generated answers, daily usage... 
 
-- **Help**: Embeded product documentation.
+- **Help**: Embedded product documentation.
 
 ### Step 2: Setting up your knowledge base
 
 Create a new project in AI Knowledge to organize your documents effectively.
 
 1. **Log into AI Knowledge**: Access your dashboard.
-2. **Create a wew Project**: Navigate to the project management area and create a new project to start building your AI.
+2. **Create a new Project**: Navigate to the project management area and create a new project to start building your AI.
 
 ![Create project](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/8Th-fkX-OgPCEtflsr2kU.Screenshot-2024-05-03-at-17.42.00.png "Create project")
 
@@ -71,7 +71,7 @@ With your documents integrated, you can begin querying your knowledge base using
 
 ![Chat](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/Qi2YYaz5DXouem8lqcvdm.Screenshot-2024-05-03-at-17.57.12.png "Chat")
 
-![Source and chuncks](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/Jfx8GgfNuAGJuzUYmgvPC.Screenshot-2024-05-03-at-18.08.25.png "Source and chuncks")
+![Source and chunks](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/Jfx8GgfNuAGJuzUYmgvPC.Screenshot-2024-05-03-at-18.08.25.png "Source and chunks")
 
 !!! info "Control"
 
@@ -156,7 +156,7 @@ You can link your AI Knowledge project to your externally hosted code using a We
 
 ### Step 8: Personally Identifiable Information and safety controls
 
-Additionally, regarding PII (Personally Identifiable Information) and safety controls, buidlers have the ability to implement specific measures through the Webhook functionality. This enables the detection of personal data within the information processed by the AI. Depending on the use case, you can choose to anonymize this data or not. Furthermore, you can integrate custom safety controls tailored to their specific solutions, enhancing the security and compliance of the system. This capability ensures that the handling of sensitive data is both flexible and aligned with organizational needs and regulatory requirements.
+Additionally, regarding PII (Personally Identifiable Information) and safety controls, builders have the ability to implement specific measures through the Webhook functionality. This enables the detection of personal data within the information processed by the AI. Depending on the use case, you can choose to anonymize this data or not. Furthermore, you can integrate custom safety controls tailored to their specific solutions, enhancing the security and compliance of the system. This capability ensures that the handling of sensitive data is both flexible and aligned with organizational needs and regulatory requirements.
 
 
 ### Step 9: Monitoring and Maintenance
@@ -181,7 +181,7 @@ For Gen.AI projects, focus on developing a robust knowledge architecture and mai
 
 ### Additional Resources
 
-For further guidance, refer to AI Knowledge's embeded documentation sections:
+For further guidance, refer to AI Knowledge's embedded documentation sections:
 
 - **API References**: Learn how to interact with your knowledge base programmatically.
 

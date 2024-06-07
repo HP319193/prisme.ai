@@ -168,7 +168,7 @@ These are placeholders for dynamic input values that will be used in the `body` 
 2. Navigate to your workspace settings, click on "Push" to create a new version. This action automatically archives the current state, facilitating easy updates or rollbacks.
 
 ![Pull](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/MRLovKFBFrNffCOz6gecZ.Screenshot-2024-04-09-at-23.15.59.png "Pull")
-Learn more about [Version Control](https://docs.eda.prisme.ai/en/workspaces/versioning/) and [RBAC](https://docs.eda.prisme.ai/en/workspaces/security/) to manage access and permissons.
+Learn more about [Version Control](https://docs.eda.prisme.ai/en/workspaces/versioning/) and [RBAC](https://docs.eda.prisme.ai/en/workspaces/security/) to manage access and permissions.
 
 
 #### Step 4: Publish the Workspace as an App

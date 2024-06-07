@@ -92,7 +92,7 @@ To retrieve the link to your automation's endpoint, follow these steps:
 
 1. **Access the Automation Settings:** Navigate to the automation you've set up in your workspace.
 2. **Trigger Configuration:** Click on the 'Triggered when' section to view the trigger options.
-![Get Wehbook Endpoint](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/jF_CA6f6453WAWQQ_a8T6.Screenshot-2024-04-24-at-00.08.37.png "Get Wehbook Endpoint")
+![Get Webhook Endpoint](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/zDIzJgZ/jF_CA6f6453WAWQQ_a8T6.Screenshot-2024-04-24-at-00.08.37.png "Get Wehbook Endpoint")
 3. **Retrieve the URL:** Find and click the blue button labeled 'Get the link'. This action will display the URL, which will look something like this:
 
    ```
@@ -149,7 +149,7 @@ Version control is a crucial component in managing your automations over time, a
 3. **Change Management:** Track changes between versions. This is useful for auditing and understanding modifications, helping you manage the development lifecycle of your automations effectively.
 
 ![Pull](https://prismeai-uploads-prod.oss.eu-west-0.prod-cloud-ocb.orange-business.com/v-bucRV/MRLovKFBFrNffCOz6gecZ.Screenshot-2024-04-09-at-23.15.59.png "Pull")
-Learn more about [Version Control](https://docs.eda.prisme.ai/en/workspaces/versioning/) and [RBAC](https://docs.eda.prisme.ai/en/workspaces/security/) to manage access and permissons.
+Learn more about [Version Control](https://docs.eda.prisme.ai/en/workspaces/versioning/) and [RBAC](https://docs.eda.prisme.ai/en/workspaces/security/) to manage access and permissions.
 
 ### Best Practices for Deployment
 
