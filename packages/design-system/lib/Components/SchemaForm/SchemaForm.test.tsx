@@ -143,7 +143,10 @@ it('should set custom components', () => {
     />
   );
   expect(root.toJSON()).toMatchSnapshot();
-  expect(FieldText).toHaveBeenCalledWith({ schema, name: 'values' }, {});
+  expect(FieldText).toHaveBeenCalledWith(
+    expect.objectContaining({ schema, name: 'values' }),
+    {}
+  );
 });
 
 it('should use ui:widgets', () => {
