@@ -1,6 +1,7 @@
 import {
   Children,
   cloneElement,
+  FunctionComponent,
   HTMLAttributes,
   MutableRefObject,
   ReactElement,
@@ -8,6 +9,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import { Form } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
@@ -37,7 +39,7 @@ export interface SchemaFormProps
   onSubmit?: (
     values: any
   ) => void | Record<string, any> | Promise<Record<string, any>>;
-  buttons?: ReactElement[];
+  buttons?: (ReactElement | FunctionComponent<{ disabled: boolean }>)[];
   onChange?: (values: any, previous: any) => void;
   initialValues?: any;
   locales?: SchemaFormContext['locales'];
@@ -68,6 +70,7 @@ export const SchemaForm = ({
   if (!schema) return null;
   const values = useRef({ values: initialValues });
   const formElRef = useRef<HTMLFormElement>(null);
+  const [state, setState] = useState<SchemaFormContext['state']>({});
 
   const onSubmitHandle = useCallback(
     async (values: any) => {
@@ -120,6 +123,8 @@ export const SchemaForm = ({
         locales,
         components: componentsWithDefault,
         utils: utilsWithDefault,
+        state,
+        setState,
       }}
     >
       <Form
@@ -148,18 +153,30 @@ export const SchemaForm = ({
               )}
               <Field schema={schema} name={root} />
               {buttons ? (
-                Children.map(buttons, (button, key) =>
-                  cloneElement(button, {
-                    key: button.key || key,
-                  })
+                Children.map(
+                  buttons.map((Button) =>
+                    typeof Button === 'function' ? (
+                      <Button
+                        disabled={!!(hasValidationErrors || state.loading)}
+                      />
+                    ) : (
+                      Button
+                    )
+                  ),
+                  (button, key) =>
+                    cloneElement(button, {
+                      key: button.key || key,
+                      disabled: hasValidationErrors || state.loading,
+                    })
                 )
               ) : (
                 <Button
                   type="submit"
                   className="pr-form-submit"
-                  disabled={hasValidationErrors}
+                  disabled={hasValidationErrors || state.loading}
                   data-testid="schema-form-submit-button"
                 >
+                  {state.loading}
                   {locales.submit || 'Submit'}
                 </Button>
               )}
