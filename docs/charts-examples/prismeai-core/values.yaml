@@ -327,10 +327,6 @@ extraObjects:
 ########################################
 # External/infra services configs
 
-# Default rbac rules
-rbac:
-  create: false
-
 # Proxying, balancing, TLS
 ingresses: [] # Comment this line and uncomment below if you want to use our ingress example
 # ingresses:
