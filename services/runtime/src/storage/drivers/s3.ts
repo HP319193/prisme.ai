@@ -30,7 +30,8 @@ export default class S3Like implements IStorage {
         CacheControl: this.options.cacheControl,
       },
       region: this.options.region,
-      endpoint: this.options.endpoint,
+      endpoint:
+        this.options.endpoint === '' ? undefined : this.options.endpoint,
     });
   }
 

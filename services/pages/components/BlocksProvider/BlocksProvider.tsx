@@ -78,10 +78,32 @@ export const BlocksProvider: FC = ({ children }) => {
     };
   }, []);
 
+  const { t } = useTranslation('common');
+  const locales = useMemo(
+    () => ({
+      addItem: t('form.addItem'),
+      addProperty: t('form.addProperty'),
+      propertyKey: t('form.propertyKey'),
+      propertyValue: t('form.propertyValue'),
+      removeItem: t('form.removeItem'),
+      removeProperty: t('form.removeProperty'),
+      uploadLabel: t('form.uploadLabel'),
+      uploadingLabel: t('form.uploadingLabel'),
+      uploadRemove: t('form.uploadRemove'),
+    }),
+    [t]
+  );
+
   return (
     <Provider
       externals={externals}
-      components={{ Link, Loading, DownIcon, SchemaForm, Head: HeadFromString }}
+      components={{
+        Link,
+        Loading,
+        DownIcon,
+        SchemaForm: (props: any) => <SchemaForm {...props} locales={locales} />,
+        Head: HeadFromString,
+      }}
       utils={{ uploadFile, BlockLoader, auth, changeBlockConfig }}
       language={language}
     >

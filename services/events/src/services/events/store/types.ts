@@ -9,6 +9,7 @@ export interface StoreDriverOptions {
   user?: string;
   password?: string;
   driverOptions: any;
+  namespace?: string;
 }
 
 export type PayloadQuery = Record<string, string | string[]>;

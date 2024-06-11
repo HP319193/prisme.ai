@@ -2,7 +2,7 @@ import { CloseCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import { Loading, Popover, Schema, Tooltip } from '@prisme.ai/design-system';
 import { Trans, useTranslation } from 'next-i18next';
 import Link from 'next/link';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAutomation } from '../../providers/Automation';
 import { useWorkspace } from '../../providers/Workspace';
 import api from '../../utils/api';
@@ -127,42 +127,44 @@ const PlayView = () => {
     setRunning(false);
   }, [automation.slug, trackEvent, values, wId]);
 
-  const schema = useMemo(
-    () =>
-      localizeSchemaForm({
-        type: 'object',
-        properties: {
-          ...automation.arguments,
-          ...(automation.when?.endpoint
-            ? {
-                query: {
-                  title: t('automations.play.query.label'),
-                  description: t('automations.play.query.description'),
-                },
-                body: {
-                  title: t('automations.play.body.label'),
-                  description: t('automations.play.body.description'),
-                },
-              }
-            : {}),
-          ...(automation.when?.events?.length || 0 > 0
-            ? {
-                payload: {
-                  title: t('automations.play.payload.label'),
-                  description: t('automations.play.payload.description'),
-                },
-              }
-            : {}),
-        },
-      } as Schema),
-    [
-      automation.arguments,
-      automation.when?.endpoint,
-      automation.when?.events?.length,
-      localizeSchemaForm,
-      t,
-    ]
-  );
+  const schema = useMemo(() => {
+    const schema = localizeSchemaForm({
+      type: 'object',
+      properties: {
+        ...automation.arguments,
+        ...(automation.when?.endpoint
+          ? {
+              query: {
+                title: t('automations.play.query.label'),
+                description: t('automations.play.query.description'),
+              },
+              body: {
+                title: t('automations.play.body.label'),
+                description: t('automations.play.body.description'),
+              },
+            }
+          : {}),
+        ...(automation.when?.events?.length || 0 > 0
+          ? {
+              payload: {
+                title: t('automations.play.payload.label'),
+                description: t('automations.play.payload.description'),
+              },
+            }
+          : {}),
+      },
+    } as Schema);
+    if (Object.keys(schema.properties || {}).length === 0) {
+      setValues({});
+    }
+    return schema;
+  }, [
+    automation.arguments,
+    automation.when?.endpoint,
+    automation.when?.events?.length,
+    localizeSchemaForm,
+    t,
+  ]);
 
   const hasParam = Object.keys(schema.properties || {}).length > 0;
 

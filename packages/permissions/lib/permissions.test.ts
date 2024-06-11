@@ -68,7 +68,9 @@ describe('Access management', () => {
   it('Guests cannot read any event if not explicitly authorized', () => {
     const eventA = {
       type: 'apps.someApp.A',
-      createdBy: 'erg',
+      permissions: {
+        erg: { role: 'owner' },
+      },
     } as any as Subject;
     const permsGuest = new Permissions(
       { id: 'myUserId', role: Role.Guest },
@@ -120,7 +122,9 @@ describe('Access management', () => {
     expect(
       permsCollaborator.can(ActionType.Read, SubjectType.Page, <any>{
         id: 'blabla',
-        createdBy: 'pageAuthorId',
+        permissions: {
+          pageAuthorId: { role: 'owner' },
+        },
       })
     ).toBe(false);
   });
@@ -136,8 +140,10 @@ describe('ABAC > Some custom attribute based authorization', () => {
     );
     const page: Subject = {
       id: 'somePage',
-      createdBy: 'someRandomGuy',
       public: true,
+      permissions: {
+        someRandomGuy: { role: 'owner' },
+      },
     } as any as Subject;
     expect(permsGuest.can(ActionType.Read, SubjectType.Page, page)).toBe(true);
 
@@ -174,15 +180,20 @@ describe('ABAC > Owner permissions', () => {
       { id: 'myUserId', role: Role.Collaborator },
       config
     );
+    const workspace = <any>{
+      permissions: {
+        myUserId: {
+          role: 'owner',
+        },
+      },
+    };
     expect(
-      collabPerms.can(ActionType.Update, SubjectType.Workspace, <any>{
-        createdBy: 'myUserId',
+      collabPerms.can(ActionType.Update, SubjectType.Workspace, {
+        ...workspace,
       })
     ).toBe(true);
     expect(
-      collabPerms.can(ActionType.Update, SubjectType.Page, <any>{
-        createdBy: 'myUserId',
-      })
+      collabPerms.can(ActionType.Update, SubjectType.Page, { ...workspace })
     ).toBe(true);
 
     const adminPerms = new Permissions(
@@ -190,14 +201,10 @@ describe('ABAC > Owner permissions', () => {
       config
     );
     expect(
-      adminPerms.can(ActionType.Update, SubjectType.Workspace, <any>{
-        createdBy: 'myUserId',
-      })
+      adminPerms.can(ActionType.Update, SubjectType.Workspace, { ...workspace })
     ).toBe(true);
     expect(
-      adminPerms.can(ActionType.Update, SubjectType.Page, <any>{
-        createdBy: 'myUserId',
-      })
+      adminPerms.can(ActionType.Update, SubjectType.Page, { ...workspace })
     ).toBe(true);
   });
 
@@ -206,26 +213,34 @@ describe('ABAC > Owner permissions', () => {
     expect(
       perms.can(ActionType.Read, SubjectType.Workspace, <any>{
         id: 'gneuh',
-        createdBy: 'someOtherUserId',
+        permissions: {
+          someOtherUserId: { role: 'owner' },
+        },
       })
     ).toBe(false);
     expect(
       perms.can(ActionType.Read, SubjectType.Page, <any>{
         id: 'gneuh',
-        createdBy: 'someOtherUserId',
+        permissions: {
+          someOtherUserId: { role: 'owner' },
+        },
       })
     ).toBe(false);
 
     expect(
       perms.can(ActionType.Update, SubjectType.Workspace, <any>{
         id: 'gneuh',
-        createdBy: 'someOtherUserId',
+        permissions: {
+          someOtherUserId: { role: 'owner' },
+        },
       })
     ).toBe(false);
     expect(
       perms.can(ActionType.Update, SubjectType.Page, <any>{
         id: 'gneuh',
-        createdBy: 'someOtherUserId',
+        permissions: {
+          someOtherUserId: { role: 'owner' },
+        },
       })
     ).toBe(false);
   });
@@ -233,6 +248,7 @@ describe('ABAC > Owner permissions', () => {
   it('Anyone should be able to read/update a page wih public read/update policies', () => {
     const perms = new Permissions({ id: 'myUserId', role: Role.Owner }, config);
     const publicPermissions = {
+      someOtherUserId: { role: 'owner' },
       [PublicAccess]: {
         policies: {
           [ActionType.Read]: true,
@@ -243,7 +259,6 @@ describe('ABAC > Owner permissions', () => {
     expect(
       perms.can(ActionType.Read, SubjectType.Page, <any>{
         id: 'gneuh',
-        createdBy: 'someOtherUserId',
         permissions: publicPermissions,
       })
     ).toBe(true);
@@ -251,7 +266,6 @@ describe('ABAC > Owner permissions', () => {
     expect(
       perms.can(ActionType.Update, SubjectType.Page, <any>{
         id: 'gneuh',
-        createdBy: 'someOtherUserId',
         permissions: publicPermissions,
       })
     ).toBe(true);
@@ -259,7 +273,6 @@ describe('ABAC > Owner permissions', () => {
     expect(
       perms.can(ActionType.Manage, SubjectType.Page, <any>{
         id: 'gneuh',
-        createdBy: 'someOtherUserId',
         permissions: publicPermissions,
       })
     ).toBe(false);
@@ -321,7 +334,7 @@ describe('ABAC > Grant permissions', () => {
     const adminPerms = new Permissions(adminUser, config);
     const adminWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: adminUser.id,
+      permissions: { adminUserId: { role: 'owner' } },
     } as Subject;
 
     // The collaborator initially can't read this workspace !
@@ -363,7 +376,7 @@ describe('ABAC > Grant permissions', () => {
     const adminPerms = new Permissions(adminUser, config);
     const adminWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: adminUser.id,
+      permissions: { adminUserId: { role: 'owner' } },
     } as Subject;
 
     // The collaborator initially can't read this workspace !
@@ -414,7 +427,7 @@ describe('ABAC > Grant permissions', () => {
     const adminPerms = new Permissions(adminUser, config);
     const adminWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: adminUser.id,
+      permissions: { adminUserId: { role: 'owner' } },
     } as Subject;
 
     // The collaborator initially can't read nor delete this workspace !
@@ -493,7 +506,7 @@ describe('ABAC > Grant permissions', () => {
     const adminPerms = new Permissions(adminUser, config);
     const adminWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: adminUser.id,
+      permissions: { adminUserId: { role: 'owner' } },
     } as Subject;
 
     // The first collaborator initially can't share this workspace !
@@ -563,8 +576,8 @@ describe('ABAC > Grant permissions', () => {
     const adminPerms = new Permissions(adminUser, config);
     const adminWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: adminUser.id,
       permissions: {
+        [adminUser.id]: { role: 'owner' },
         [collaboratorUser.id]: {
           policies: {
             [ActionType.Read]: true,
@@ -602,37 +615,53 @@ describe('ABAC > Grant permissions', () => {
     ).toBe(false);
   });
 
-  it('No admin can update collaborators field without manage_permissions permission', () => {
-    const adminPerms = new Permissions(
-      { id: 'myUserId', role: Role.Owner },
-      config
-    );
-    const workspace = {
-      id: 'workspaceId',
-      createdBy: 'someOtherGuy',
-      permissions: {
-        myUserId: {
-          policies: {
-            [ActionType.Update]: true,
-          },
-        },
-      },
-    };
+  /* To reintroduce this layer, we would need a better alternative to this abac native rule :
 
-    // He can update this workspace
-    expect(
-      adminPerms.can(ActionType.Update, SubjectType.Workspace, <any>workspace)
-    ).toBe(true);
-    // But he cannot update permissions field !
-    expect(
-      adminPerms.can(
-        ActionType.Update,
-        SubjectType.Workspace,
-        <any>workspace,
-        'permissions'
-      )
-    ).toBe(false);
-  });
+    {
+      inverted: true,
+      action: ActionType.Update,
+      subject: "all",
+      fields: ["collaborators"],
+      conditions: {
+        [`collaborators.\${user.id}.permissions.manage_collaborators`]: {
+          $ne: true,
+        },
+        createdBy: { $ne: "${user.id}" },
+      }
+    }
+  */
+
+  // it('No admin can update collaborators field without manage_permissions permission', () => {
+  //   const adminPerms = new Permissions(
+  //     { id: 'myUserId', role: Role.Owner },
+  //     config
+  //   );
+  //   const workspace = {
+  //     id: 'workspaceId',
+  //     permissions: {
+  //       someOtherGuy: { role: 'owner' },
+  //       myUserId: {
+  //         policies: {
+  //           [ActionType.Update]: true,
+  //         },
+  //       },
+  //     },
+  //   };
+
+  //   // He can update this workspace
+  //   expect(
+  //     adminPerms.can(ActionType.Update, SubjectType.Workspace, <any>workspace)
+  //   ).toBe(true);
+  //   // But he cannot update permissions field !
+  //   expect(
+  //     adminPerms.can(
+  //       ActionType.Update,
+  //       SubjectType.Workspace,
+  //       <any>workspace,
+  //       'permissions'
+  //     )
+  //   ).toBe(false);
+  // });
 });
 
 describe('Subject-attached Roles', () => {
@@ -646,8 +675,8 @@ describe('Subject-attached Roles', () => {
     const adminPerms = new Permissions(adminUser, config);
     const workspace = {
       id: 'hisWorkspaceId',
-      createdBy: 'someOtherAdminId',
       permissions: {
+        someOtherAdminId: { role: 'owner' },
         [adminUser.id]: {
           role: Role.Owner,
         },
@@ -667,8 +696,8 @@ describe('Subject-attached Roles', () => {
     const adminPerms = new Permissions(adminUser, config);
     const hisWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: 'someOtherAdminId',
       permissions: {
+        someOtherAdminId: { role: 'owner' },
         [adminUser.id]: {
           role: Role.Owner,
         },
@@ -682,7 +711,6 @@ describe('Subject-attached Roles', () => {
 
     const anotherWorkspace = {
       id: 'anotherWorkspaceId',
-      createdBy: 'someOtherAdminId',
       permissions: {
         someOtherAdminId: {
           role: Role.Owner,
@@ -704,8 +732,8 @@ describe('Subject-attached Roles', () => {
     const collaboratorPerms = new Permissions(collaboratorUser, config);
     const workspace = {
       id: 'hisWorkspaceId',
-      createdBy: 'someAdminId',
       permissions: {
+        someAdminId: { role: 'owner' },
         [collaboratorUser.id]: {
           role: Role.Collaborator,
         },
@@ -736,8 +764,8 @@ describe('Subject-attached Roles', () => {
     const adminPerms = new Permissions(adminUser, config);
     const hisWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: 'someOtherAdminId',
       permissions: {
+        someOtherAdminId: { role: 'owner' },
         [adminUser.id]: {
           role: Role.Owner,
         },
@@ -770,8 +798,8 @@ describe('Subject-attached Roles', () => {
     const adminPerms = new Permissions(adminUser, config);
     const hisWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: 'someOtherAdminId',
       permissions: {
+        someOtherAdminId: { role: 'owner' },
         [adminUser.id]: {
           role: Role.Owner,
         },
@@ -804,8 +832,8 @@ describe('Subject-attached Roles', () => {
     );
     const adminWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: 'someOtherGuy',
       permissions: {
+        someOtherGuy: { role: 'owner' },
         [adminUser.id]: {
           role: Role.Owner,
         },
@@ -857,8 +885,8 @@ describe('Custom Roles', () => {
     ]);
     const hisWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: 'someOtherAdminId',
       permissions: {
+        someOtherAdminId: { role: 'owner' },
         [user.id]: {
           role: 'agent' as any,
         },
@@ -915,8 +943,8 @@ describe('Custom Roles', () => {
     ]);
     const hisWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: 'someOtherAdminId',
       permissions: {
+        someOtherAdminId: { role: 'owner' },
         [user.id]: {
           role: 'agent' as any,
         },
@@ -967,8 +995,8 @@ describe('Custom Roles', () => {
     userPerms.loadRoles([role]);
     const hisWorkspace = {
       id: 'hisWorkspaceId',
-      createdBy: 'someOtherAdminId',
       permissions: {
+        someOtherAdminId: { role: 'owner' },
         [user.id]: {
           role: 'agent' as any,
         },

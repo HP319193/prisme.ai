@@ -1,5 +1,6 @@
 import waitForExpect from 'wait-for-expect';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
 import Runtime from '.';
 import { Broker } from '@prisme.ai/broker/lib/__mocks__';
 import { EventSource } from '@prisme.ai/broker';
@@ -1396,8 +1397,13 @@ describe('Automations execution permissions', () => {
 });
 
 afterAll(async () => {
-  brokers.forEach((broker) => broker.close());
+  console.log('CLOSE ROKRS');
+  await Promise.all(brokers.map((broker) => broker.close()));
+  console.log('done');
   if (mongod) {
+    console.log('close mongod');
     await mongod.stop();
   }
+  await mongoose.connection.close();
+  console.log('end');
 });

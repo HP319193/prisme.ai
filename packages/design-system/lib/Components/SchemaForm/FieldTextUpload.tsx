@@ -15,6 +15,7 @@ import { SchemaFormContext, useSchemaForm } from './context';
 import { Label } from './Label';
 import InfoBubble from './InfoBubble';
 import FieldContainer from './FieldContainer';
+import Loading from '../Loading';
 
 interface FieldTextUploadProps extends FieldProps {
   options: UiOptionsUpload;
@@ -33,6 +34,8 @@ export const FieldTextUpload = ({
   uploadFile: SchemaFormContext['utils']['uploadFile'];
 }) => {
   const field = useField(props.name);
+  const [uploading, setUploading] = useState(false);
+  const { setState } = useSchemaForm();
 
   const [preview, setPreview] = useState<ReactElement | null>(
     field.input.value ? <Preview src={field.input.value} /> : null
@@ -55,11 +58,16 @@ export const FieldTextUpload = ({
       reader.onload = async ({ target }) => {
         if (!target || typeof target.result !== 'string') return;
 
+        setState((prev) => ({
+          ...prev,
+          loading: true,
+        }));
+        setUploading(true);
         try {
           const value = await uploadFile(
             target.result.replace(
               /base64/,
-              `filename:${file.name.replace(/[;\s]/g, '-')}; base64`
+              `filename:${file.name.replace(/[;,\s]/g, '-')}; base64`
             )
           );
           setPreviewLabel('');
@@ -87,10 +95,15 @@ export const FieldTextUpload = ({
         } catch (error) {
           setError(true);
         }
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+        }));
+        setUploading(false);
       };
       reader.readAsDataURL(file);
     },
-    [setPreviewLabel, setPreview, preview, uploadFile]
+    [setPreviewLabel, setPreview, preview, uploadFile, setState]
   );
 
   const defaultPreview = useMemo(() => {
@@ -119,10 +132,13 @@ export const FieldTextUpload = ({
         }`}
       >
         <div className="pr-form-upload__placeholder">
-          <div className="pr-form-upload__preview">
-            {field.input.value ? preview : defaultPreview}
+          <div className="pr-form-upload__preview pr-form-upload__multi-preview">
+            {!uploading && (field.input.value ? preview : defaultPreview)}
+            {uploading && <Loading />}
           </div>
-          {previewLabel || locales.uploadLabel || 'Choose file'}
+          {!uploading &&
+            (previewLabel || locales.uploadLabel || 'Choose files')}
+          {uploading && (locales.uploadingLabel || 'Loading')}
         </div>
 
         <input

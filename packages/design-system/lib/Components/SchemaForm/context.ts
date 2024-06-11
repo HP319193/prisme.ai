@@ -1,5 +1,12 @@
 import { UiOptionsSelect, Schema } from '@prisme.ai/design-system';
-import { createContext, FC, ReactElement, useContext } from 'react';
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactElement,
+  SetStateAction,
+  useContext,
+} from 'react';
 import { FieldRenderProps } from 'react-final-form';
 import { SelectProps, TagsOption } from '../Select';
 import { Field } from './Field';
@@ -33,6 +40,7 @@ export interface SchemaFormContext {
     removeItem?: string;
     oneOfOption?: string;
     uploadLabel?: string;
+    uploadingLabel?: string;
     uploadRemove?: string;
     freeAdditionalPropertiesLabel?: string;
   };
@@ -77,6 +85,10 @@ export interface SchemaFormContext {
       string | { value: string; preview: string | ReactElement; label?: string }
     >;
   } & Record<string, any>;
+  state: {
+    loading?: boolean;
+  };
+  setState: Dispatch<SetStateAction<{}>>;
 }
 
 export const FieldContainer = DefaultFieldContainer;
@@ -91,6 +103,8 @@ export const context = createContext<SchemaFormContext>({
     extractAutocompleteOptions: () => [],
     uploadFile: async () => '',
   },
+  state: {},
+  setState: () => null,
 });
 
 export const useSchemaForm = () => useContext(context);

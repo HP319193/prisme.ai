@@ -1,7 +1,7 @@
 import { Document, Schema, Types } from 'mongoose';
 import { ActionType, Permissions, RoleTemplate, Rules, Subject } from '..';
 
-export const Roles = new Schema({
+export const Roles = new Schema<CustomRole<string>>({
   id: { type: String, index: true },
   name: String,
   type: String,
@@ -38,6 +38,7 @@ export type CustomRole<SubjectType extends string> = RoleTemplate<
       value?: string;
     };
   };
+  casl?: object;
 };
 
 export type ApiKey<SubjectType extends string> = {
