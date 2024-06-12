@@ -150,7 +150,8 @@ export const Block: FC<NodeProps & BlockProps> = ({
       let displayedValue = '';
       switch (label) {
         case 'emit':
-          if (value?.event) return <strong>{value.event}</strong>;
+          if (value?.event && typeof value.name === 'string')
+            return <strong>{value.event}</strong>;
           return '…';
         case 'wait': {
           const events: string[] = (value?.oneOf || []).flatMap(
@@ -187,7 +188,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
           return '…';
         }
         case 'set':
-          if (value?.name) {
+          if (value?.name && typeof value.name === 'string') {
             return (
               <strong>
                 {value.name} ={' '}
@@ -198,7 +199,7 @@ export const Block: FC<NodeProps & BlockProps> = ({
             return '…';
           }
         case 'delete':
-          if (value?.name) {
+          if (value?.name && typeof value.name === 'string') {
             return <strong>{value.name}</strong>;
           }
           return '…';
