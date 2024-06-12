@@ -2,6 +2,7 @@ import getConfig from 'next/config';
 import { Api } from '@prisme.ai/sdk';
 import Storage from './Storage';
 import isServerSide from './isServerSide';
+import cookie from 'js-cookie';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -34,7 +35,7 @@ const api = new Api({
     transports: publicRuntimeConfig.WEBSOCKETS_DEFAULT_TRANSPORTS,
   },
 });
-api.token = Storage.get('access-token');
+api.token = cookie.get('access-token') || null;
 const legacyToken = Storage.get('auth-token');
 if (!api.token && legacyToken) {
   api.legacyToken = legacyToken;

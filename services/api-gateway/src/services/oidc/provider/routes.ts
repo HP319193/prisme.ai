@@ -107,6 +107,21 @@ export function initRoutes(broker: Broker, provider: Provider) {
     }
   );
 
+  // Add post-processing middleware to native OIDC routes
+  provider.use(async (ctx, next) => {
+    await next();
+    /** post-processing */
+    if (ctx?.oidc?.route === 'token' && ctx?.response?.body?.access_token) {
+      ctx?.cookies?.set('access-token', ctx.response.body.access_token, {
+        secure: process.env.NODE_ENV === 'production',
+      });
+    }
+
+    if (ctx?.oidc?.route === 'end_session') {
+      ctx?.cookies?.set('access-token', '');
+    }
+  });
+
   // Implement native OIDC routes : /auth, /token, /token/introspection, ...
   app.use(provider.callback());
 

@@ -25,6 +25,14 @@ import { extractRequestIp } from '../traceability';
 import { initOidcStrategy } from './initOidcStrategy';
 import { initSamlStrategy } from './initSamlStrategy';
 
+const cookieExtractor = (req: Request) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies['access-token'];
+  }
+  return token;
+};
+
 export async function init(app: Application) {
   app.use(cookieParser());
   initPassportStrategies(services.identity());
@@ -185,7 +193,10 @@ async function initPassportStrategies(
         audience: ResourceServer,
         issuer: oidcCfg.PROVIDER_URL,
         algorithms: ['RS256'],
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        jwtFromRequest: ExtractJWT.fromExtractors([
+          cookieExtractor,
+          ExtractJWT.fromAuthHeaderAsBearerToken(),
+        ]),
         passReqToCallback: true,
       },
       async (req: Request, token: any, done: any) => {

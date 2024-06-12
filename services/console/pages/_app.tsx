@@ -3,6 +3,7 @@ import { appWithTranslation, useTranslation } from 'next-i18next';
 import UserProvider from '../components/UserProvider';
 import { NextPage } from 'next';
 import React, { ReactElement, ReactNode } from 'react';
+import cookie from 'js-cookie';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
@@ -14,7 +15,6 @@ import 'react-quill/dist/quill.snow.css';
 import QueryStringProvider from '../providers/QueryStringProvider';
 import { PublicBlocksProvider } from '../components/BlocksProvider';
 import Tracking from '../components/Tracking';
-import Storage from '../utils/Storage';
 import UserSpace from '../components/UserSpace/UserSpace';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
@@ -48,7 +48,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     }
     const accessToken = currentURL.searchParams.get('access-token');
     if (accessToken) {
-      Storage.set('access-token', accessToken);
+      cookie.set('access-token', accessToken); // Can only be used in localhost for debugging purpose
     }
   }
 
