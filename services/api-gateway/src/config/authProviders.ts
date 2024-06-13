@@ -51,7 +51,6 @@ function validateSamlConfig(name: string, authProviders: AuthProvidersConfig) {
         ...parsedXml,
         ...config,
       };
-      console.log('===> ', authProviders[name].config);
     }
   } catch (err) {
     delete authProviders[name];

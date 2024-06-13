@@ -19,7 +19,8 @@ import {
 } from '../../types/errors';
 import { comparePasswords, hashPassword } from './utils';
 import { EmailTemplate, sendMail } from '../../utils/email';
-import { syscfg, mails as mailConfig } from '../../config';
+import { extractObjectsByPath } from '../../utils/extractObjectsByPath';
+import { syscfg, mails as mailConfig, authProviders } from '../../config';
 import { logger, Logger } from '../../logger';
 import { AuthProviders, User } from '.';
 
@@ -399,15 +400,30 @@ export const externalLoginOrSignup = (
     let user: Prismeai.User = users[0];
     let newAccount = false;
 
+    const attrMapping =
+      authProviders.providers?.[provider]?.attributesMapping || {};
+    // Allow hydrating some native fields based on configured mapping for auth data
+    const nativeAttributes = {
+      email: extractObjectsByPath(authData, attrMapping.email || 'email'),
+      firstName: extractObjectsByPath(
+        authData,
+        attrMapping.firstName || 'firstName'
+      ),
+      lastName: extractObjectsByPath(
+        authData,
+        attrMapping.lastName || 'lastName'
+      ),
+    };
+
     if (!users.length) {
-      // is there another account matching the same email ?
+      // First time this user signs in with that authProvider
       const usersByEmail = authData.email
         ? await Users.find({
             email: authData.email,
           })
         : [];
-      // Another account exists with the same email, merges authData
       if (usersByEmail?.length) {
+        // but another account exists with the same email, merges authData
         user = await Users.save({
           ...usersByEmail[0],
           authData: {
@@ -423,9 +439,7 @@ export const externalLoginOrSignup = (
       } else {
         // Sign up
         user = await Users.save({
-          firstName: authData.firstName || 'Guest',
-          lastName: authData.lastName,
-          email: authData.email,
+          ...nativeAttributes,
           authData: {
             [provider]: authData,
           },
@@ -434,18 +448,30 @@ export const externalLoginOrSignup = (
         });
         newAccount = true;
       }
-    }
+    } else {
+      // Keep native attributes in sync on each sign in
+      const nativeFieldUpdates = Object.entries(nativeAttributes).reduce(
+        (fieldUpdates, [k, v]) =>
+          v && v !== (user as any)[k as any]
+            ? {
+                ...fieldUpdates,
+                [k]: v,
+              }
+            : fieldUpdates,
+        {}
+      );
+      console.log('==> ', nativeFieldUpdates);
 
-    // Keep emails in sync
-    if (user.email && authData.email && user.email !== authData.email) {
+      const id = user.id;
       user = await Users.save({
         ...user,
-        email: authData.email,
+        ...nativeFieldUpdates,
         authData: {
           ...user.authData,
           [provider]: authData,
         },
       });
+      user.id = id;
     }
 
     if (user.status && user.status !== UserStatus.Validated) {

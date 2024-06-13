@@ -87,11 +87,31 @@ You can now proceed with [generic auth providers configuration](#generic-auth-pr
 
 When connecting an external OIDC or SAML IdP, the same steps apply after configuring the `authProviders.config.yml`
 
-**1. Mount this configuration file to `prismeai-api-gateaway`**  
+**1. Common auth configuration**  
+
+All providers defined in `authProviders.config.yml` support the  **attributesMapping** option :  
+
+```yaml
+providers:
+  <ProviderName>:
+  okta-saml:
+    type: '...'
+    attributesMapping:
+      firstName: 'someCompanyProvidedFirstNameField'
+      lastName: 'lastNameField'
+      email: 'emailField'
+```
+This option lets you map native fields (keys on the left) from provided auth data (keys on the right).  
+Here, we fill-in Prismeai user email from `authData.emailField`, lastName from `authData.lastNameField` ...  
+You can inspect what auth data is available by looking at `gateway.login.succeeded` events, or by reading `{{user}}` variable from a test automation.  
+
+**firstName**, **lastName**, **email** are the 3 only supported native fields.  
+
+**2. Mount this configuration file to `prismeai-api-gateaway`**  
 Mount this file as a volume inside `prismeai-api-gateway` container at `/www/services/api-gateway/authProviders.config.yml`  
 You can customize this file location with `AUTH_PROVIDERS_CONFIG` environment variable  
 
-**2. Enable the provider within console & pages**  
+**3. Enable the provider within console & pages**  
 In order to display & customize sign in buttons connecting to our freshly configured auth provider, add the following environment variable to **prismeai-console** and **prismeai-pages** microservices :  
 
 ```

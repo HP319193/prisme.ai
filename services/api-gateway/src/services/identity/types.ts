@@ -52,5 +52,6 @@ export type AuthProvidersConfig = {
   [name: string]: {
     type?: AuthProviderType;
     config: OidcProviderConfig | SamlProviderConfig;
+    attributesMapping: Record<string, string>;
   };
 };
