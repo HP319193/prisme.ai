@@ -3,8 +3,7 @@ import Provider from 'oidc-provider';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import { URL } from 'url';
-import { authProviders, oidcCfg } from '../config';
-import { syscfg } from '../config';
+import { authProviders, oidcCfg, syscfg } from '../config';
 import { AuthenticationError, ConfigurationError } from '../types/errors';
 import { EventType } from '../eda';
 import { AuthProvider } from '../services/msal/provider';
@@ -77,6 +76,15 @@ const getAnonymousLoginHandler = (jwks: JWKStore) =>
           req.session.prismeaiSessionId = token.prismeaiSessionId;
           req.session.expires = expires;
           req.session.mfaValidated = false;
+          res.cookie(
+            oidcCfg.ACCESS_TOKENS_NAME,
+            jwt.toString(),
+            oidcCfg.ACCESS_TOKENS_OPTIONS
+          );
+          res.cookie(oidcCfg.ACCESS_TOKENS_NAME, jwt.toString(), {
+            ...oidcCfg.ACCESS_TOKENS_OPTIONS,
+            domain: req?.hostname,
+          });
           res.send({
             ...user,
             token: jwt,

@@ -7,6 +7,7 @@ import { PrismeError } from '../../../types/errors';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { logger } from '../../../logger';
+import { oidcCfg } from '../../../config';
 
 export function initRoutes(broker: Broker, provider: Provider) {
   const app = express.Router();
@@ -112,13 +113,41 @@ export function initRoutes(broker: Broker, provider: Provider) {
     await next();
     /** post-processing */
     if (ctx?.oidc?.route === 'token' && ctx?.response?.body?.access_token) {
-      ctx?.cookies?.set('access-token', ctx.response.body.access_token, {
-        secure: process.env.NODE_ENV === 'production',
-      });
+      const expires = new Date(
+        new Date().valueOf() + ctx.response.body.expires_in * 1000
+      );
+      ctx.cookies.set(
+        oidcCfg.ACCESS_TOKENS_NAME,
+        ctx.response.body.access_token,
+        {
+          ...oidcCfg.ACCESS_TOKENS_OPTIONS,
+          expires,
+        }
+      );
+      ctx.cookies.set(
+        oidcCfg.ACCESS_TOKENS_NAME,
+        ctx.response.body.access_token,
+        {
+          ...oidcCfg.ACCESS_TOKENS_OPTIONS,
+          domain: ctx.request.hostname,
+          expires,
+        }
+      );
     }
-
-    if (ctx?.oidc?.route === 'end_session') {
-      ctx?.cookies?.set('access-token', '');
+    if (
+      ['end_session', 'end_session_success', 'end_session_confirm'].includes(
+        ctx?.oidc?.route
+      )
+    ) {
+      ctx.cookies.set(
+        oidcCfg.ACCESS_TOKENS_NAME,
+        '',
+        oidcCfg.ACCESS_TOKENS_OPTIONS
+      );
+      ctx.cookies.set(oidcCfg.ACCESS_TOKENS_NAME, '', {
+        ...oidcCfg.ACCESS_TOKENS_OPTIONS,
+        domain: ctx.request.hostname,
+      });
     }
   });
 
