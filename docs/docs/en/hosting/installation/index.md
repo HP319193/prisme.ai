@@ -18,8 +18,8 @@ The architecture can be reviewed [here](../../architecture/index.md).
 - Databases : Elasticsearch 7+ , Redis 5+, MongoDB 4+
   - We recommend using a managed solution, if you want to self-host those services, please check their official documentation.
 - For [enterprise features](./enterprise-features/installation/) :
-  - a Redis with SEARCH and JSON modules is needed (included by `redis/redis-stack-server` docker image)
-  - a RWX Kubernetes volume (50GB minimum, we do not recommend using NFS)
+    - a Redis with SEARCH and JSON modules is needed (included by `redis/redis-stack-server` docker image)
+    - a RWX Kubernetes volume (50GB minimum, we do not recommend using NFS)
 - Services workspaces and runtime requires one of these document/object storage :  
     - Filesystem (Kubernetes PVC that supports RWX, 50GB minimum)  
     - S3 compatible object storage  

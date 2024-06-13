@@ -8,7 +8,7 @@ Prisme.ai is compatible with any OIDC provider like Google.
 First access your OIDC IdP back-office in order to register a **Web** OAuth2 client/app.  
 Configure the following **authorized redirect URI** :  
 ```
-https://api.studio.prisme.ai/v2/login/callback
+https://API_URL/v2/login/callback
 ```
 
 Once created, note the following client informations :  
@@ -47,18 +47,59 @@ You must replace `<ProviderName>` by the actual name of your provider.
 An optional `config.scopes` field allow customizing requested scopes (& retrieved used claims by extension), which defaults to `openid email` and must at least include `openid` and `email`.   
 You have to add the `profile` scope if you wish to retrieve informations such as the first name and last name of your users.  
 
-**3. Mount this configuration file to `prismeai-api-gateaway`**  
+You can now proceed with [generic auth providers configuration](#generic-auth-providers) to finish OIDC integration.  
+
+
+## Generic SAML
+
+Prisme.ai also provides SAML integration with the following limitations :  
+- ACS endpoint currently **only supports HTTP-POST binding**  to receive final authentication assertion
+- No support for **IdP initiated login**. An IdP initiated login would simply be redirected to Prisme.ai sign in page, letting the user initiate the SAML authentication himself.  
+
+
+**1. Register the SAML Service Provider**  
+First, Prisme.ai Service Provider must be registered on IdP side :  
+- **ACS Endpoint :** `https://API_URL/v2/login/callback`
+- **SP EntityId** : Defaults to `https://studio.prisme.ai/sp` can be configured with `config.audience` parameter in authConfig (see below)
+- **Name ID format :** `unspecified`, however all formats are supported
+
+The IdP metadata .xml file should be exported from there, notably including the signing certificate.  
+If this .xml file is not available, parameters can still be individually configured.  
+
+**2. Create & configure a `authProviders.config.yml` file**  
+
+```yaml
+providers:
+  <ProviderName>:
+    type: saml
+    config:
+      idp_metadata_filepath: "/path/towards/idp-saml-metadata.xml"
+      issuer: "IDP entity id"  
+```
+
+If no xml file is available, the following config fields should be configured instead :  `config.entryPoint` and `config.idpCert`.  
+
+See https://github.com/node-saml/node-saml for full SAML configuration documentation.
+
+You can now proceed with [generic auth providers configuration](#generic-auth-providers) to finish SAML integration.  
+
+## Generic auth providers
+
+When connecting an external OIDC or SAML IdP, the same steps apply after configuring the `authProviders.config.yml`
+
+**1. Mount this configuration file to `prismeai-api-gateaway`**  
 Mount this file as a volume inside `prismeai-api-gateway` container at `/www/services/api-gateway/authProviders.config.yml`  
 You can customize this file location with `AUTH_PROVIDERS_CONFIG` environment variable  
 
-**4. Enable the provider within console & pages**  
-In order to display & customize sign in buttons connecting to our freshly configured OIDC provider, add the following environment variable to **prismeai-console** and **prismeai-pages** microservices :  
+**2. Enable the provider within console & pages**  
+In order to display & customize sign in buttons connecting to our freshly configured auth provider, add the following environment variable to **prismeai-console** and **prismeai-pages** microservices :  
 
 ```
 ENABLED_AUTH_PROVIDERS='[{"name": "local"}, {"name": "google", "label": "Google", "icon": "https://cdn.iconscout.com/icon/free/png-256/free-google-1772223-1507807.png"}]'
 ```
 
 Configure `name`, `label` and `icon` with the desired provider name, its display label & icon url.  
+`name` must match with the `ProviderName` configured in `authProviders.config.yml`.  
 
 If the `local` provider is omitted, the standard user / password sign in form will not appear.  
 If you do not want the same IdP to be available between Prismai studio & workspaces pages, these 2 variables can also be differently configured between `prismeai-console` and `prismeai-pages`.  
@@ -71,7 +112,6 @@ If you do not want the same IdP to be available between Prismai studio & workspa
 
     While installing your platform you might change the value of `PAGES_HOST` multiple time.  
     So, whenever you change your `PAGES_HOST`, make sure to trigger a workspace update (example: change the description of the workspace and save) in order to trigger a new registration as client with the new `PAGES_HOST` value.   
-
 
 ## Configuring Microsoft SSO
 

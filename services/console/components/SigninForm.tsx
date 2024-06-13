@@ -98,7 +98,7 @@ export const SigninForm = ({ show403 }: SigninFormProps) => {
             ? `${API_URL}${rest?.url}`
             : rest?.url ||
               providerDetails?.url ||
-              `${API_URL}/login/oauth?provider=${name}`;
+              `${API_URL}/login?provider=${name}`;
         return {
           name,
           ...providerDetails,

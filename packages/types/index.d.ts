@@ -3352,6 +3352,18 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace GenericAuthInit {
+        namespace Parameters {
+            export type Provider = string;
+        }
+        export interface QueryParameters {
+            provider: Parameters.Provider;
+        }
+        namespace Responses {
+            export interface $302 {
+            }
+        }
+    }
     namespace GetApp {
         namespace Parameters {
             export type AppSlug = string;
@@ -3924,18 +3936,6 @@ declare namespace PrismeaiAPI {
             code?: Parameters.Code;
             scope?: Parameters.Scope;
             query?: Parameters.Query;
-        }
-        namespace Responses {
-            export interface $302 {
-            }
-        }
-    }
-    namespace OauthInit {
-        namespace Parameters {
-            export type Provider = string;
-        }
-        export interface QueryParameters {
-            provider: Parameters.Provider;
         }
         namespace Responses {
             export interface $302 {

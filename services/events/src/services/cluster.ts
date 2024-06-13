@@ -81,6 +81,11 @@ export class ClusterNode extends EventEmitter {
       },
       {
         serviceTopic: EVENTS_NODES_TOPIC,
+      },
+      {
+        options: {
+          persist: false,
+        },
       }
     );
 
@@ -102,6 +107,11 @@ export class ClusterNode extends EventEmitter {
           },
           {
             serviceTopic: EVENTS_NODES_TOPIC,
+          },
+          {
+            options: {
+              persist: false,
+            },
           }
         )
         .catch((err) => logger.error({ err }));
@@ -185,6 +195,11 @@ export class ClusterNode extends EventEmitter {
               },
               {
                 serviceTopic: EVENTS_NODES_TOPIC,
+              },
+              {
+                options: {
+                  persist: false,
+                },
               }
             )
             .catch((err) => logger.error({ err }));
@@ -209,6 +224,11 @@ export class ClusterNode extends EventEmitter {
       },
       {
         serviceTopic: EVENTS_NODES_TOPIC,
+      },
+      {
+        options: {
+          persist: false,
+        },
       }
     );
   }

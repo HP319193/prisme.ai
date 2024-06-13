@@ -22,7 +22,7 @@ declare namespace Express {
       user: string;
     };
     authData?: Prismeai.AuthData;
-    oauth?: {
+    auth?: {
       provider?: string;
     };
   }

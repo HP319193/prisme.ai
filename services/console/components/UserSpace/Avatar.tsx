@@ -37,7 +37,9 @@ export const Avatar = ({ size = '2.4rem' }: AvatarProps) => {
   const { user } = useUser();
   const initials = useMemo(() => {
     if (!user) return '';
-    return user?.firstName?.charAt(0) + user?.lastName?.charAt(0);
+    return (
+      (user?.firstName || '')?.charAt(0) + (user?.lastName || '')?.charAt(0)
+    );
   }, [user]);
   if (!user) return null;
   return user.photo ? (

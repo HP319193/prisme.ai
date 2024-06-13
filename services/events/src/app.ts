@@ -84,13 +84,14 @@ process.on('uncaughtException', uncaughtExceptionHandler);
   // Centralize here events persistence + websockets so we avoid having 2 separate redis sockets (& corresponding overhead)
   broker.all(async (event, broker, { logger }) => {
     logger.trace({ msg: 'Received event', event });
-    if (!event.source.workspaceId) return true;
 
     // TODO should not we stop listening to events when hitting BatchExecStream highWaterMark ? But only for persistence, so keeping listening to events for socketio transmission from a separate broker socket ?
     // Or, rather store pending events in a persistence queue to keep this single & central broker socket ?
     saveEvent(event);
 
-    subscriptions.push(event);
+    if (!event.source.workspaceId) {
+      subscriptions.push(event);
+    }
 
     return true;
   });

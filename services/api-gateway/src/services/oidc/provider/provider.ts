@@ -97,16 +97,26 @@ export const initOidcProvider = async (
     }
 
     broker
-      .send<Prismeai.SucceededLogin['payload']>(EventType.SucceededLogin, {
-        id: token.accountId,
-        email,
-        authData,
-        session: {
-          id: token.sessionUid,
-          expiresIn: token.expiresIn,
-          expires: new Date(Date.now() + token.expiresIn * 1000).toISOString(),
+      .send<Prismeai.SucceededLogin['payload']>(
+        EventType.SucceededLogin,
+        {
+          id: token.accountId,
+          email,
+          authData,
+          session: {
+            id: token.sessionUid,
+            expiresIn: token.expiresIn,
+            expires: new Date(
+              Date.now() + token.expiresIn * 1000
+            ).toISOString(),
+          },
         },
-      })
+        {},
+        {},
+        {
+          disableValidation: true,
+        }
+      )
       .catch((err) => logger.warn({ err }));
   });
   provider.proxy = true;
