@@ -53,15 +53,17 @@ You can now proceed with [generic auth providers configuration](#generic-auth-pr
 ## Generic SAML
 
 Prisme.ai also provides SAML integration with the following limitations :  
-- ACS endpoint currently **only supports HTTP-POST binding**  to receive final authentication assertion
-- No support for **IdP initiated login**. An IdP initiated login would simply be redirected to Prisme.ai sign in page, letting the user initiate the SAML authentication himself.  
+
+* ACS endpoint currently **only supports HTTP-POST binding**  to receive final authentication assertion
+* No support for **IdP initiated login**. An IdP initiated login would simply be redirected to Prisme.ai sign in page, letting the user initiate the SAML authentication himself.  
 
 
 **1. Register the SAML Service Provider**  
-First, Prisme.ai Service Provider must be registered on IdP side :  
-- **ACS Endpoint :** `https://API_URL/v2/login/callback`
-- **SP EntityId** : Defaults to `https://studio.prisme.ai/sp` can be configured with `config.audience` parameter in authConfig (see below)
-- **Name ID format :** `unspecified`, however all formats are supported
+First, Prisme.ai Service Provider must be registered on IdP side :   
+
+* **ACS Endpoint :** `https://API_URL/v2/login/callback`
+* **SP EntityId** : Defaults to `https://studio.prisme.ai/sp` can be configured with `config.audience` parameter in authConfig (see below)
+* **Name ID format :** `unspecified`, however all formats are supported
 
 The IdP metadata .xml file should be exported from there, notably including the signing certificate.  
 If this .xml file is not available, parameters can still be individually configured.  
