@@ -1397,13 +1397,9 @@ describe('Automations execution permissions', () => {
 });
 
 afterAll(async () => {
-  console.log('CLOSE ROKRS');
   await Promise.all(brokers.map((broker) => broker.close()));
-  console.log('done');
   if (mongod) {
-    console.log('close mongod');
     await mongod.stop();
   }
   await mongoose.connection.close();
-  console.log('end');
 });
