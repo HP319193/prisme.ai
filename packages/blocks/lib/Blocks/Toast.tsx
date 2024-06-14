@@ -57,7 +57,7 @@ export const Toast = ({ className, toastOn }: ToastProps) => {
   }, [toastOn, events]);
 
   return (
-    <div className={className}>
+    <div className={`pr-block-toast ${className || ''}`}>
       {messages.map((message) => (
         <div
           key={message.key}
