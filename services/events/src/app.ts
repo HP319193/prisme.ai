@@ -89,7 +89,7 @@ process.on('uncaughtException', uncaughtExceptionHandler);
     // Or, rather store pending events in a persistence queue to keep this single & central broker socket ?
     saveEvent(event);
 
-    if (!event.source.workspaceId) {
+    if (event.source.workspaceId) {
       subscriptions.push(event);
     }
 
