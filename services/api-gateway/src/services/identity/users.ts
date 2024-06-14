@@ -460,7 +460,6 @@ export const externalLoginOrSignup = (
             : fieldUpdates,
         {}
       );
-      console.log('==> ', nativeFieldUpdates);
 
       const id = user.id;
       user = await Users.save({
