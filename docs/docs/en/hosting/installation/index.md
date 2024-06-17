@@ -16,7 +16,7 @@ The architecture can be reviewed [here](../../architecture/index.md).
 - A load balancer with ingress controller capabilities. Other load balancing methods might be used but are not documented here
 - A minimal Kubernetes cluster for Prisme.ai should have **at least** **3 nodes 4vCPU / 16GB**, this configuration is suitable to run a smooth **core** installation. If your installation includes microservices from the [enterprise features](../enterprise-features/installation/index.md#prerequisites) you may need more depending on the additional microservices. 
 - Databases : Elasticsearch 7+ , Redis 5+, MongoDB 4+
-  - We recommend using a managed solution, if you want to self-host those services, please check their official documentation.
+    - We recommend using a managed solution, if you want to self-host those services, please check their official documentation.
 - For [enterprise features](./enterprise-features/installation/) :
     - a Redis with SEARCH and JSON modules is needed (included by `redis/redis-stack-server` docker image)
     - a RWX Kubernetes volume (50GB minimum, we do not recommend using NFS)

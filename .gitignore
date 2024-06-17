@@ -4,6 +4,7 @@ coverage
 services/*/dist
 **/.DS_STORE
 **/.env
+services/*/.env
 services/workspaces/heapdumps
 data/
 **/**/dist/

@@ -95,3 +95,5 @@ The same amount of time is also included in the corresponding `payload.duration`
 
 </table>
 
+* Setting one of the above environment variables to 0 disable the corresponding rate limit.  
+* Rate limits can be entirely disabled with `RATE_LIMIT_DISABLED=true` environment variable.
