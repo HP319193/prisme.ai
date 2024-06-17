@@ -19,3 +19,7 @@ export const RATE_LIMIT_REPEATS: RateLimits = {
   rate: parseInt(process.env.RATE_LIMIT_REPEATS || '1000'),
   burstRate: parseInt(process.env.RATE_LIMIT_REPEATS_BURST || '4000'),
 };
+
+export const RATE_LIMIT_DISABLED = ['true', 'yes', 'y', '1'].includes(
+  (process.env.RATE_LIMIT_DISABLED || 'false').toLowerCase()
+);
