@@ -47,11 +47,7 @@ it('should call /login/anonymous', async () => {
   const api = new Api({ host: '/fake/' });
   api.post = jest.fn();
   const user = await api.createAnonymousSession();
-  expect(api.post).toHaveBeenCalledWith(
-    '/login/anonymous',
-    {},
-    { credentials: 'omit' }
-  );
+  expect(api.post).toHaveBeenCalledWith('/login/anonymous');
   expect(api.user).toBe(user);
 });
 
