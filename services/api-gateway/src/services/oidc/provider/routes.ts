@@ -2,6 +2,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import Provider, { InteractionResults } from 'oidc-provider';
 import bodyParser from 'body-parser';
+import { URL } from 'url';
 import services from '../..';
 import { PrismeError } from '../../../types/errors';
 import { Broker } from '@prisme.ai/broker';
@@ -124,15 +125,28 @@ export function initRoutes(broker: Broker, provider: Provider) {
           expires,
         }
       );
-      ctx.cookies.set(
-        oidcCfg.ACCESS_TOKENS_NAME,
-        ctx.response.body.access_token,
-        {
-          ...oidcCfg.ACCESS_TOKENS_OPTIONS,
-          domain: ctx.request.hostname,
-          expires,
+
+      const origin = ctx.request.headers.origin;
+      if (origin) {
+        try {
+          // Set specific domain cookie
+          ctx.cookies.set(
+            oidcCfg.ACCESS_TOKENS_NAME,
+            ctx.response.body.access_token,
+            {
+              ...oidcCfg.ACCESS_TOKENS_OPTIONS,
+              domain: new URL(origin).hostname,
+              expires,
+            }
+          );
+        } catch (error) {
+          logger.warn({
+            msg: 'Failed adding origin domain',
+            error,
+            origin,
+          });
         }
-      );
+      }
     }
     if (
       ['end_session', 'end_session_success', 'end_session_confirm'].includes(
@@ -144,10 +158,22 @@ export function initRoutes(broker: Broker, provider: Provider) {
         '',
         oidcCfg.ACCESS_TOKENS_OPTIONS
       );
-      ctx.cookies.set(oidcCfg.ACCESS_TOKENS_NAME, '', {
-        ...oidcCfg.ACCESS_TOKENS_OPTIONS,
-        domain: ctx.request.hostname,
-      });
+      const origin = ctx.request.headers.origin;
+      if (origin) {
+        try {
+          // Delete specific domain cookie
+          ctx.cookies.set(oidcCfg.ACCESS_TOKENS_NAME, '', {
+            ...oidcCfg.ACCESS_TOKENS_OPTIONS,
+            domain: new URL(origin).hostname,
+          });
+        } catch (error) {
+          logger.warn({
+            msg: 'Failed deleting specific origin domain',
+            error,
+            origin,
+          });
+        }
+      }
     }
   });
 
