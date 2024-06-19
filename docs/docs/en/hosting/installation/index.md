@@ -25,7 +25,10 @@ The architecture can be reviewed [here](../../architecture/index.md).
     - S3 compatible object storage  
     - Azure Blob storage  
     <!-- - Google Storage -->
-- Workspaces pages routing require a **wildcard dns**  
+- DNS :  
+    - Workspaces pages routing require a **wildcard dns** like :  `*.pages.prismeai.customer.com`
+    - API entrypoint require a dedicated DNS like :  `api.prismeai.customer.com`
+    - Studio require a dedicated DNS like :  `studio.prismeai.customer.com`    
 - Cluster machines date must remain synchronized within 10 seconds of each other
 
 ### Offline environments

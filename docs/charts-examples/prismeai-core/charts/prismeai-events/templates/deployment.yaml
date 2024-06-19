@@ -64,7 +64,7 @@ spec:
               port: http
               scheme: HTTP
             failureThreshold: 1
-            initialDelaySeconds: 1
+            initialDelaySeconds: 5
             periodSeconds: 5
             successThreshold: 1
             timeoutSeconds: 1
@@ -128,6 +128,10 @@ spec:
 
             - name: EVENTS_RETENTION_DAYS
               value: '{{ .Values.events.retention }}'
+            - name: EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS
+              value: '{{ .Values.events.workspaceInactivityDays }}'
+            - name: EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS
+              value: '{{ .Values.events.workspaceMaxEvents }}'
 
             {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
@@ -179,4 +183,41 @@ spec:
           restartPolicy: OnFailure
 
 
+{{ end }}
+
+{{ if .Values.events.cleanupjob }}
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cleanup-es-indices
+  namespace: core
+spec:
+  schedule: '0 0 * * 0' # Every sunday at 0AM
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            sidecar.istio.io/inject: 'false'
+        spec:
+          containers:
+            - name: cleanup-es-indices
+              image: alpine/curl:latest
+              command:
+                - /bin/sh
+                - -c
+                - 'sleep 1 && curl -H "x-prismeai-api-key: $INTERNAL_API_KEY" -X POST http://core-prismeai-events.core.svc/sys/cleanup/indices?dryRun=false'
+
+              env:
+                - name: INTERNAL_API_KEY
+                  {{- if kindIs "map" .Values.global.internalApiKey }}
+                  {{- toYaml .Values.global.internalApiKey | nindent 18 }}
+                  {{ else }}
+                  value: {{ .Values.global.internalApiKey }}
+                  {{- end }}
+
+          restartPolicy: Never
 {{ end }}
