@@ -77,9 +77,7 @@ Array [
         }
       }
     >
-      <strong>
-        the event
-      </strong>
+      …
     </button>
   </div>,
   ");",

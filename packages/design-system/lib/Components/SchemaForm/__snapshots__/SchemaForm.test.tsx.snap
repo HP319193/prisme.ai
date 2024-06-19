@@ -293,9 +293,9 @@ exports[`should use ui:widgets 1`] = `
                   className="pr-form-upload__placeholder"
                 >
                   <div
-                    className="pr-form-upload__preview"
+                    className="pr-form-upload__preview pr-form-upload__multi-preview"
                   />
-                  Choose file
+                  Choose files
                 </div>
                 <input
                   accept="image/jpeg"
