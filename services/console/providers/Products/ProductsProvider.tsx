@@ -10,6 +10,7 @@ import {
 import { useContext } from '../../utils/useContext';
 import consoleIcon from '../../public/images/icon-console.svg';
 import getConfig from 'next/config';
+import { Loading } from '@prisme.ai/design-system';
 
 const {
   publicRuntimeConfig: { PRODUCTS_ENDPOINT = '' },
@@ -24,6 +25,12 @@ export interface Product {
   highlighted?: boolean;
 }
 
+export interface ProductsEndpointResponse {
+  list: Product[];
+  total: number;
+  page: number;
+}
+
 export interface ProductsContext {
   products: Map<string, Product>;
   highlighted: Map<string, Product>;
@@ -32,7 +39,9 @@ export interface ProductsContext {
     highlighted?: true;
     page?: number;
     limit?: number;
-  }) => Promise<{ list: Map<string, Product>; total: number; page: number }>;
+  }) => Promise<
+    Omit<ProductsEndpointResponse, 'list'> & { list: Map<string, Product> }
+  >;
   canSearch: boolean;
   searchProducts: (query: { query?: string }) => Promise<Product[]>;
 }
@@ -65,7 +74,8 @@ export const ProductsProvider = ({
   const [products, setProducts] = useState<ProductsContext['products']>(
     new Map([['workspaces', builderProduct]])
   );
-  const loading = useRef(false);
+  const fetching = useRef(false);
+  const [loading, setLoading] = useState(true);
   const highlighted = useMemo(
     () =>
       new Map(
@@ -75,10 +85,10 @@ export const ProductsProvider = ({
   );
   const fetchProducts: ProductsContext['fetchProducts'] = useCallback(
     async (query) => {
-      if (!PRODUCTS_ENDPOINT || loading.current)
+      if (!PRODUCTS_ENDPOINT || fetching.current)
         return { list: new Map(), total: 0, page: query?.page || 1 };
-      loading.current = true;
-      async function fetchResults() {
+      fetching.current = true;
+      async function fetchResults(): Promise<ProductsEndpointResponse> {
         try {
           const results = await fetch(PRODUCTS_ENDPOINT, {
             method: 'GET',
@@ -93,7 +103,8 @@ export const ProductsProvider = ({
             await results.json();
           return res;
         } catch {
-          return { list: [], total: 0, page: query?.page || 1 };
+          const res = { list: [], total: 0, page: query?.page || 1 };
+          return res;
         }
       }
       const { list = [], ...rest } = await fetchResults();
@@ -119,7 +130,7 @@ export const ProductsProvider = ({
         });
         return newList;
       });
-      loading.current = false;
+      fetching.current = false;
       return {
         list: fetched,
         ...rest,
@@ -143,7 +154,9 @@ export const ProductsProvider = ({
   );
 
   useEffect(() => {
+    setLoading(true);
     fetchProducts({ highlighted: true });
+    setLoading(false);
   }, [fetchProducts]);
 
   return (
@@ -156,7 +169,7 @@ export const ProductsProvider = ({
         searchProducts,
       }}
     >
-      {children}
+      {loading ? <Loading /> : children}
     </productsContext.Provider>
   );
 };
