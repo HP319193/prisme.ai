@@ -11,7 +11,7 @@ global:
 
   apiUrl: "" # Public API URL, should contain the "/v2", example : https://api.prisme.ai/v2 # REQUIRED
   consoleUrl: "" # Public Console URL, example : https://studio.prisme.ai  # REQUIRED
-  pagesHost: "" # Public Pages host, every single pages built on the platform will be served this way "page-slug.<pagesHost>", example : .pages.prisme.ai # REQUIRED
+  pagesHost: "" # Public Pages host, must begin with a dot. Every single pages built on the platform will be served this way "page-slug<pagesHost>", example : ".pages.prisme.ai" # REQUIRED
 
   oidc:
     clientRegistrationToken:
