@@ -338,6 +338,10 @@ prismeai-api-gateway:
 
     - name: EMAIL_FROM
       value: '"Prisme.ai" <no-reply@mg.prisme.ai>'
+
+    # - name: EMAIL_VALIDATION_ENABLED # REQUIRED uncomment in order to create local accounts without providers.mailgun.apiKey configured
+    #   value: false
+
   hpa: *CORE_CPU_HPA
 
 extraObjects:
@@ -392,7 +396,7 @@ ingresses:
                     number: 80
 
 
-      - host: studio.grand-nancy.prisme.ai # Studio URL
+      - host: studio.customer.prisme.ai # Studio URL
         http: &CONSOLE_SERVICE
           paths:
             - path: "/"
@@ -403,7 +407,7 @@ ingresses:
                   port:
                     number: 80
 
-      - host: '*.pages.grand-nancy.prisme.ai'
+      - host: '*.pages.customer.prisme.ai'
         http:
           paths:
             - path: "/"

@@ -21,7 +21,7 @@ prismeai-functions:
     create: true
 
   persistence:
-    existingClaim: apps-prismeai-functions-sfsturbo
+    existingClaim: apps-prismeai-sfsturbo
     type: pvc
 
   env:
@@ -30,7 +30,7 @@ prismeai-functions:
       value: "--max-old-space-size=2200"
     - name: REQUEST_MAX_SIZE
       value: 10mb
-    - name: KERNEL_POOL_SIZE
+    - name: KERNEL_POOL_SIZE # For python functions only : Number of jupyter processes per functions instance
       value: '2'
 
   hpa:
@@ -69,7 +69,7 @@ prismeai-nlu:
       "helm.sh/resource-policy": "keep"
 
   hpa:
-    create: true
+    create: false
     minReplicas: 1
     maxReplicas: 4
 
@@ -137,7 +137,7 @@ prismeai-llm:
     create: true
 
   persistence:
-    existingClaim: apps-prismeai-functions-sfsturbo
+    existingClaim: apps-prismeai-sfsturbo
     type: pvc
 
   env: []
@@ -170,13 +170,13 @@ extraObjects:
         helm.sh/resource-policy: keep
       finalizers:
         - kubernetes.io/pvc-protection
-      name: apps-prismeai-functions-sfsturbo
+      name: apps-prismeai-sfsturbo
       namespace: apps
     spec:
       accessModes:
         - ReadWriteMany
       resources:
         requests:
-          storage: 500Gi
-      storageClassName: '' # Secify your storageClassName
+          storage: 100Gi
+      storageClassName: '' # Secify your storageClassName, must support RWX
 
