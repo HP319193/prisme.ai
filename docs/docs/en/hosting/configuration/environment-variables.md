@@ -392,6 +392,16 @@
     <td></td>
   </tr>   
 
+
+  <!-- Console & Pages -->
+  
+  <tr>
+    <td>WEBSOCKETS_DEFAULT_TRANSPORTS</td>
+    <td>console,pages</td>
+    <td><a href="https://socket.io/docs/v3/client-initialization/#transports">Default socketio transport method</a></td>
+    <td>polling,websocket</td>
+  </tr>  
+
   <!-- Console -->    
   <tr>
     <td>PORT</td>

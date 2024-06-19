@@ -268,6 +268,12 @@ prismeai-console:
   hpa: *CORE_CPU_HPA
   tracking: ''
 
+  env:
+    # Use websocket first since default socketio settings would require sticky sessions between api-gateway & prismeai-events : https://socket.io/docs/v4/using-multiple-nodes
+    - name: WEBSOCKETS_DEFAULT_TRANSPORTS
+      value: &WEBSOCKETS_DEFAULT_TRANSPORTS
+            'websocket,polling'
+
 prismeai-pages:
   enabled: true
 
@@ -287,9 +293,12 @@ prismeai-pages:
   hpa: *CORE_CPU_HPA
 
 
-  # env:
-  #   - name: DISABLE_SSR
-  #     value: 'true' # Disabling SSR tend to significantly improve pages performances & scaling
+  env:
+    # Use websocket first since default socketio settings would require sticky sessions between api-gateway & prismeai-events : https://socket.io/docs/v4/using-multiple-nodes
+    - name: WEBSOCKETS_DEFAULT_TRANSPORTS
+      value: *WEBSOCKETS_DEFAULT_TRANSPORTS
+#   - name: DISABLE_SSR
+#     value: 'true' # Disabling SSR tend to significantly improve pages performances & scaling
 
 prismeai-api-gateway:
   enabled: true
