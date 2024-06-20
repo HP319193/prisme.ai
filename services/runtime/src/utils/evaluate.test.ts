@@ -742,3 +742,138 @@ describe('Should handle URL search parameters parsing & manipulation', () => {
     ).toEqual(undefined);
   });
 });
+
+describe('Should handle advanced MongoDB syntax json conditions', () => {
+  it('Basic equality test', () => {
+    expect(
+      evaluate('jsonmatch({{obj}}, {{cond}})', {
+        obj: {
+          foo: 'bar',
+          one: 'two',
+        },
+        cond: {
+          foo: 'bar',
+        },
+      })
+    ).toBe(true);
+
+    expect(
+      evaluate('jsonmatch({{obj}}, {{cond}})', {
+        obj: {
+          foo: 'bar',
+          one: 'two',
+        },
+        cond: {
+          foo: 'bar',
+          one: 'two',
+        },
+      })
+    ).toBe(true);
+
+    expect(
+      evaluate('jsonmatch({{obj}}, {{cond}})', {
+        obj: {
+          foo: 'bar',
+          one: 'two',
+        },
+        cond: {
+          foo: 'bar',
+          one: 'three',
+        },
+      })
+    ).toBe(false);
+  });
+
+  it('Or condition', () => {
+    expect(
+      evaluate('jsonmatch({{obj}}, {{cond}})', {
+        obj: {
+          foo: 'bar',
+          one: 'two',
+        },
+        cond: {
+          $or: [
+            {
+              test: 'unknown',
+            },
+            {
+              one: {
+                $eq: 'two',
+              },
+            },
+          ],
+        },
+      })
+    ).toBe(true);
+
+    expect(
+      evaluate('jsonmatch({{obj}}, {{cond}})', {
+        obj: {
+          foo: 'bar',
+          one: 'two',
+        },
+        cond: {
+          $or: [
+            {
+              test: 'unknown',
+            },
+            {
+              one: {
+                $eq: 'three',
+              },
+            },
+          ],
+        },
+      })
+    ).toBe(false);
+  });
+
+  it('Or + and complex conditions', () => {
+    expect(
+      evaluate('jsonmatch({{obj}}, {{cond}})', {
+        obj: {
+          foo: 'bar',
+          one: 'two',
+        },
+        cond: {
+          $or: [
+            {
+              test: 'unknown',
+            },
+            {
+              one: {
+                $eq: 'two',
+              },
+            },
+          ],
+        },
+      })
+    ).toBe(true);
+
+    expect(
+      evaluate('jsonmatch({{obj}}, {{cond}})', {
+        obj: {
+          foo: 'bar',
+          one: 'two',
+        },
+        cond: {
+          $or: [
+            {
+              test: 'unknown',
+            },
+            {
+              $and: [
+                {
+                  foo: 'bar',
+                },
+                {
+                  one: 'two',
+                },
+              ],
+            },
+          ],
+        },
+      })
+    ).toBe(true);
+  });
+});

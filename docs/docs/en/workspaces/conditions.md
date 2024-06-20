@@ -86,6 +86,33 @@ When using the `match` operator, a **RegExp** can also be provided with the `reg
 "luke.skywalker@gmail.com" matches regex(luke)
 `
 
+## MongoDB-like conditional matches
+
+Allows complex JSON object using MongoDB query syntax :  
+
+`jsonmatch({{object}}, {{condition}})` 
+
+Example of conditions :  
+
+```json
+{
+  "$or": [
+    {
+      "test": "unknown",
+    },
+    {
+      "one": {
+        "$eq": "three",
+      },
+    },
+  ]
+}
+```
+
+This would match both objects `{"test": "unknown"}` and `{"one": "three", "someOtherField": "..."}`
+
+See https://github.com/stalniy/ucast/tree/master/packages/mongo2js  
+
 ## Dates
 ### Parsing
 As long as they are ISO8601 dates, dates can be tested directly within conditions :  

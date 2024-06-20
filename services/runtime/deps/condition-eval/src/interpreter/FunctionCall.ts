@@ -3,6 +3,7 @@ import Evaluatable from '../Evaluatable';
 import DateExpression from './DateExpression';
 import get from 'lodash/get';
 import URLSearchParamsExpression from './URLSearchParamsExpression';
+import { guard } from '@ucast/mongo2js';
 
 const mathFloorRoundCeil = (
   number: number,
@@ -147,6 +148,19 @@ class FunctionCall extends Evaluatable {
           );
         }
         return inputArr.slice(start, end);
+
+      case 'jsonmatch':
+        const [obj, jsonCond] = functionArgs;
+        if (typeof jsonCond !== 'object') {
+          throw new InvalidExpressionSyntax(
+            `Bad jsonmatch() arguments. Ex usage : slice({{someObjectToTest}}, {{someJsonConditions}})`
+          );
+        }
+        if (typeof obj !== 'object') {
+          return false;
+        }
+
+        return guard(jsonCond)(obj);
 
       default:
         throw new InvalidExpressionSyntax(
