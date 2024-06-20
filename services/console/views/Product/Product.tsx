@@ -62,7 +62,14 @@ export const Product = memo(function Product() {
   }, [productSlug, productUrl, push, replace]);
 
   if (!productUrl) return null;
-  return <iframe ref={iframe} src={productUrl} className="h-full" allow="*" />;
+  return (
+    <iframe
+      ref={iframe}
+      src={productUrl}
+      className="h-full"
+      allow="clipboard-write; camera; geolocation; microphone; speaker"
+    />
+  );
 });
 
 export default Product;
