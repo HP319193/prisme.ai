@@ -76,8 +76,10 @@ providers:
     type: saml
     config:
       idp_metadata_filepath: "/path/towards/idp-saml-metadata.xml"
-      issuer: "IDP entity id"  
+      issuer: "Service Provider entity id"  
 ```
+
+The `config.issuer` is specific to the platform itself and must match the service provider EntityID expected by the IdP.  
 
 If no xml file is available, the following config fields should be configured instead :  `config.entryPoint` and `config.idpCert`.  
 

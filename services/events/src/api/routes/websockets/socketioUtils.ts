@@ -64,10 +64,12 @@ export const getAuthenticationMiddleware = (broker: Broker) =>
 
     // api-gateway HTTP authentication middlewares are never called when websocket are directly opened without a first http req, so we have to fetch /me with received token in order to authenticate user
     const authorizationHeader =
-      socket.handshake.headers?.authorization ||
       // When connecting directly with websocket & not HTTP polling first, we find token here as browser's websockets cannot send headers
       // https://socket.io/docs/v4/client-options/#extraheaders
-      (socket.handshake?.auth as SocketAuthParams)?.extraHeaders?.authorization;
+      (socket.handshake?.auth as SocketAuthParams)?.extraHeaders
+        ?.authorization ||
+      socket.handshake?.auth?.authorization ||
+      socket.handshake.headers?.authorization;
     if (!authorizationHeader) {
       return next(new Error('Missing authentication credentials'));
     }

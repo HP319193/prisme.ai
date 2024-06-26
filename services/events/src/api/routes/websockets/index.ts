@@ -109,6 +109,8 @@ export async function initWebsockets(
       logger.error({
         msg: `Received a socket without authenticated user or subscriber`,
         socketId: socket.id,
+        userId: socketHandler?.userId,
+        hasSubscriber: !!socketHandler.subscriber,
       });
       return;
     }
