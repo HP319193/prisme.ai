@@ -78,18 +78,19 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
   const { asPath, replace } = useRouter();
   const [userSpaceConfig, setUserSpaceConfig] = useState<UserSpaceConfig>();
 
-  useEffect(async () => {
+  useEffect(() => {
     /**
      * Some elements can be hide or changed by calling a user contextualised
      * endpoint. This endpoint must return an object following the
      * UserSpaceConfig interface.
      */
     if (!user) return;
-    try {
-      if (!USER_SPACE_ENDPOINT) {
-        throw new Error('USER_SPACE_ENDPOINT not set');
-      }
-      const fetchUserSpaceConfig = async () => {
+    if (!USER_SPACE_ENDPOINT) {
+      setUserSpaceConfig({});
+      return;
+    }
+    const fetchUserSpaceConfig = async () => {
+      try {
         const res = await fetch(USER_SPACE_ENDPOINT, {
           method: 'GET',
           headers: {
@@ -98,11 +99,11 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
           },
         });
         setUserSpaceConfig(await res.json());
-      };
-      await fetchUserSpaceConfig();
-    } catch {
-      setUserSpaceConfig({});
-    }
+      } catch {
+        setUserSpaceConfig({});
+      }
+    };
+    fetchUserSpaceConfig();
   }, [user]);
 
   useEffect(() => {
