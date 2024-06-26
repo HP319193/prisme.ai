@@ -78,7 +78,7 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
   const { asPath, replace } = useRouter();
   const [userSpaceConfig, setUserSpaceConfig] = useState<UserSpaceConfig>();
 
-  useEffect(() => {
+  useEffect(async () => {
     /**
      * Some elements can be hide or changed by calling a user contextualised
      * endpoint. This endpoint must return an object following the
@@ -99,7 +99,7 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
         });
         setUserSpaceConfig(await res.json());
       };
-      fetchUserSpaceConfig();
+      await fetchUserSpaceConfig();
     } catch {
       setUserSpaceConfig({});
     }
