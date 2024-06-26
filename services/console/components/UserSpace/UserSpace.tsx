@@ -39,7 +39,10 @@ interface UserSpaceConfig {
   /**
    * URL of main logo alternative logo
    */
-  mainLogo?: string;
+  mainLogo?: {
+    url: string;
+    attrs?: object;
+  };
   /**
    * Main URL on main logo link
    * @example: /product/ai-knowledge-chat/assistant?id=6474c0db33959b6283770367
@@ -122,9 +125,13 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
         <div className="flex flex-row bg-layout-surface h-[70px] pl-[24px] justify-between">
           <Link href={userSpaceConfig?.mainUrl || '/'}>
             <a className="flex">
-              {userSpaceConfig.mainLogo ? (
+              {userSpaceConfig.mainLogo?.url ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={userSpaceConfig.mainLogo} alt="Prisme.ai" />
+                <img
+                  src={userSpaceConfig.mainLogo.url}
+                  {...(userSpaceConfig.mainLogo.attrs || {})}
+                  alt="Prisme.ai"
+                />
               ) : (
                 <Image src={logo} alt="Prisme.ai" />
               )}
