@@ -110,11 +110,11 @@ export const ProductsProvider = ({
       const { list = [], ...rest } = await fetchResults();
 
       const fetched: Map<string, Product> = new Map(
-        list.map(({ slug, name, icon, description, highlighted }) => [
+        list.map(({ slug, name, icon, description, highlighted, href }) => [
           slug,
           {
             slug,
-            href: `/product/${slug}`,
+            href: href || `/product/${slug}`,
             name,
             icon,
             description,
