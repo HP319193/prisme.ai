@@ -68,6 +68,11 @@ interface UserSpaceConfig {
    * @default true
    */
   displayProducts?: boolean;
+
+  /**
+   * style object that will be injected inside root div, allowing to cutomize theme colors ...
+   */
+  style?: object;
 }
 
 interface UserSpaceProps {
@@ -121,7 +126,10 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
 
   return (
     <ProductsProvider>
-      <div className="dark flex flex-col flex-1 min-h-full">
+      <div
+        className="dark flex flex-col flex-1 min-h-full"
+        style={userSpaceConfig.style || ({} as React.CSSProperties)}
+      >
         <div className="flex flex-row bg-layout-surface h-[70px] pl-[24px] justify-between">
           <Link href={userSpaceConfig?.mainUrl || '/'}>
             <a className="flex">
