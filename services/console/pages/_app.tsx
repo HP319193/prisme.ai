@@ -57,18 +57,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <UserProvider anonymous>
         <PublicBlocksProvider>
           <Tracking>
-            <Head>
-              <title>{t('main.title')}</title>
-              <meta name="description" content={t('main.description')} />
-              <meta
-                name="viewport"
-                content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
-              />
-              <link rel="icon" href="/favicon.png" />
-              <link rel="manifest" href="/manifest.webmanifest" />
-            </Head>
-            <Sentry />
-            {getLayout(<Component {...pageProps} />)}
+            <UserSpace followMainUrl={false}>
+              <Head>
+                <title>{t('main.title')}</title>
+                <meta name="description" content={t('main.description')} />
+                <meta
+                  name="viewport"
+                  content="width=device-width,initial-scale=1, maximum-scale=1, shrink-to-fit=no, viewport-fit=cover"
+                />
+                <link rel="icon" href="/favicon.png" />
+                <link rel="manifest" href="/manifest.webmanifest" />
+              </Head>
+              <Sentry />
+              {getLayout(<Component {...pageProps} />)}
+            </UserSpace>
           </Tracking>
         </PublicBlocksProvider>
       </UserProvider>

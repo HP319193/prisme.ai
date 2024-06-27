@@ -5,7 +5,7 @@ import helpIcon from '../../public/images/header-help.svg';
 import menuIcon from '../../public/images/header-menu.svg';
 import bellIcon from '../../public/images/header-bell.svg';
 import Image from 'next/image';
-import { useTranslation } from 'next-i18next';
+import { useTranslation, i18n } from 'next-i18next';
 import Avatar from './Avatar';
 import { ProductsSidebar } from './ProductsSidebar';
 import { Dropdown } from 'antd';
@@ -75,13 +75,28 @@ interface UserSpaceConfig {
   style?: {
     root?: object;
   };
+
+  /**
+   * Allow overriding translations
+   */
+  translations?: {
+    [lang: string]: {
+      [ns: string]: {
+        [k: string]: string;
+      };
+    };
+  };
 }
 
 interface UserSpaceProps {
   children: ReactNode;
+  followMainUrl?: boolean;
 }
 
-export const UserSpace = ({ children }: UserSpaceProps) => {
+export const UserSpace = ({
+  children,
+  followMainUrl = true,
+}: UserSpaceProps) => {
   const { t } = useTranslation('user');
   const { trackEvent } = useTracking();
   const { user } = useUser();
@@ -94,7 +109,6 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
      * endpoint. This endpoint must return an object following the
      * UserSpaceConfig interface.
      */
-    if (!user) return;
     if (!USER_SPACE_ENDPOINT) {
       setUserSpaceConfig({});
       return;
@@ -117,15 +131,29 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
   }, [user]);
 
   useEffect(() => {
+    if (!followMainUrl) {
+      return;
+    }
     if (!userSpaceConfig?.kiosk || !userSpaceConfig?.mainUrl) return;
     if (!asPath.includes(userSpaceConfig.kiosk)) {
       replace(userSpaceConfig.mainUrl);
     }
   }, [asPath, replace, userSpaceConfig?.kiosk, userSpaceConfig?.mainUrl]);
 
-  if (!user) return null;
-  if (userSpaceConfig === undefined) return <Loading />;
+  useEffect(() => {
+    for (let [lang, namespaces] of Object.entries(
+      userSpaceConfig?.translations || {}
+    )) {
+      for (let [ns, translations] of Object.entries(namespaces || {})) {
+        for (let [k, v] of Object.entries(translations || {})) {
+          i18n?.addResource(lang, ns, k, v);
+        }
+      }
+    }
+  }, [userSpaceConfig?.translations]);
 
+  if (!user || user?.authData?.anonymous) return <>{children}</>;
+  if (userSpaceConfig === undefined) return <Loading />;
   return (
     <ProductsProvider>
       <div
