@@ -47,7 +47,7 @@ spec:
             name: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          
+
           volumeMounts: {{- toYaml .Values.volumeMounts | nindent 13 }}
 
           env:
@@ -84,6 +84,8 @@ spec:
               value: {{ .Values.tracking | toJson }}
             - name: TRACKING_WEBHOOK
               value: {{ .Values.tracking_webhook }}
+            - name: PRODUCTS_ENDPOINT
+              value: {{ .Values.products_endpoint }}
 
             # - name: DEV_USER
             #   value: {{ .Values.devUser }}

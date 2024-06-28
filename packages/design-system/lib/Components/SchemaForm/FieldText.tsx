@@ -35,6 +35,16 @@ export const FieldText = ({
   const field = useField(props.name);
   const { 'ui:widget': uiWidget, 'ui:options': uiOptions } = props.schema;
 
+  const hasError = getError(field.meta);
+
+  const inputMode = getInputMode(props.schema);
+
+  const inputProps = useMemo(() => {
+    if (props.schema.type === 'number') {
+      return (uiOptions as UIOptionsNumber)?.number;
+    }
+  }, [props, uiOptions]);
+
   const onChange = useCallback(
     ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
       field.input.onChange(props.schema.type === 'number' ? +value : value);
@@ -88,16 +98,6 @@ export const FieldText = ({
         />
       ) : null;
   }
-
-  const hasError = getError(field.meta);
-
-  const inputMode = getInputMode(props.schema);
-
-  const inputProps = useMemo(() => {
-    if (props.schema.type === 'number') {
-      return (uiOptions as UIOptionsNumber)?.number;
-    }
-  }, [props, uiOptions]);
 
   return (
     <FieldContainer {...props} className="pr-form-text">

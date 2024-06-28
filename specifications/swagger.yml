@@ -3339,17 +3339,17 @@ paths:
                     type: boolean
         '401': *AuthenticationError
 
-  /v2/login/oauth:
+  /v2/login:
     get:
-      description: Starts OAUth authentication
-      operationId: oauthInit
+      description: Starts generic authentication
+      operationId: genericAuthInit
       tags:
         - API Gateway
         - AuthProviders
       parameters:
         - name: 'provider'
           in: 'query'
-          description: 'OAuth provider name as configured in api gateway environment variables'
+          description: 'Auth provider name as configured in api gateway environment variables'
           required: true
           schema:
             type: string
@@ -3358,7 +3358,7 @@ paths:
           description: Redirection response
 
   /v2/login/callback:
-    get:
+    get: &LOGIN_CALLBACK
       description: End OAuth2 authentication
       operationId: oauthCallback
       tags:
@@ -3395,6 +3395,8 @@ paths:
       responses:
         '302':
           description: Redirection response
+    post: *LOGIN_CALLBACK
+
 
   /v2/login/azure:
     get:

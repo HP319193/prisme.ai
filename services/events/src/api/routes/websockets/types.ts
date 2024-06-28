@@ -1,3 +1,5 @@
+import { SearchOptions } from '../../../services/events/store';
+
 export const WORKSPACE_NSP_PATTERN = /^\/v2\/workspaces\/([\w-_]+)\/events$/;
 export const getWorkspaceNsp = (workspaceId: string) =>
   `/v2/workspaces/${workspaceId}/events`;
@@ -7,8 +9,9 @@ export interface SocketCtx {
   userId: string;
   sessionId: string;
   socketId: string;
+  reuseSocketId?: string;
   userIp: string;
-  query: Record<string, any>;
+  filters: SearchOptions;
   apiKey?: string;
   authData?: Record<string, any>;
 }

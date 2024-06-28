@@ -55,7 +55,7 @@ export default async function initRoutes(
   app.use(
     bodyParser.json({ limit: syscfg.REQUEST_MAX_SIZE }),
     validationMiddleware({
-      ignorePaths: ['^/sys'],
+      ignorePaths: ['^/sys', '/v2/login/oauth'],
     }),
     validationErrorMiddleware
   );

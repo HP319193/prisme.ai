@@ -38,4 +38,5 @@ ENV NPM_CONFIG_LOGS_MAX 0
 # Uncomment the following line in case you want to disable telemetry.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+
 CMD ["npm", "--prefix", "services/console", "start"]

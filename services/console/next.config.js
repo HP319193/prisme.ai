@@ -12,6 +12,12 @@ function booleanParse(env) {
   return ['true', 'y', '1'].includes((env || '').toLowerCase());
 }
 
+function getWorkspaceOpsUrl(slug) {
+  return process.env.WORKSPACE_OPS_MANAGER
+    ? `${process.env.WORKSPACE_OPS_MANAGER}/${slug}`
+    : '';
+}
+
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
@@ -23,12 +29,17 @@ module.exports = {
     PAGES_HOST: process.env.PAGES_HOST || '',
     SENTRY_DSN: process.env.SENTRY_DSN || '',
     HEADER_POPOVERS: process.env.HEADER_POPOVERS || '{}',
-    SUGGESTIONS_ENDPOINT: process.env.SUGGESTIONS_ENDPOINT || '',
+    SUGGESTIONS_ENDPOINT:
+      getWorkspaceOpsUrl('suggestions') ||
+      process.env.SUGGESTIONS_ENDPOINT ||
+      '',
     BILLING_HOME: process.env.BILLING_HOME || '',
     BILLING_USAGE: process.env.BILLING_USAGE || '',
     TRACKING: jsonParse(process.env.TRACKING),
     TRACKING_WEBHOOK: process.env.TRACKING_WEBHOOK || '',
-    PRODUCTS_ENDPOINT: process.env.PRODUCTS_ENDPOINT || '',
+    PRODUCTS_ENDPOINT:
+      getWorkspaceOpsUrl('products') || process.env.PRODUCTS_ENDPOINT || '',
+    USER_SPACE_ENDPOINT: getWorkspaceOpsUrl('user-space'),
     OIDC_PROVIDER_URL:
       process.env.OIDC_PROVIDER_URL ||
       (process.env.API_URL && process.env.API_URL.replace('/v2', '')) ||

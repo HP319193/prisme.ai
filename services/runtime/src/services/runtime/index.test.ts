@@ -26,6 +26,7 @@ global.console.warn = jest.fn();
 
 let mongod: MongoMemoryServer;
 let brokers: Broker[] = [];
+let accessManagers: AccessManager[] = [];
 
 const getMockedAccessManager = () => {
   const mock = {
@@ -1127,6 +1128,7 @@ describe('Automations execution permissions', () => {
       },
       { on: jest.fn() } as any
     );
+    accessManagers.push(baseAccessManager);
     await baseAccessManager.start();
 
     const mocks = getMocks(
@@ -1397,13 +1399,13 @@ describe('Automations execution permissions', () => {
 });
 
 afterAll(async () => {
-  console.log('CLOSE ROKRS');
   await Promise.all(brokers.map((broker) => broker.close()));
-  console.log('done');
   if (mongod) {
-    console.log('close mongod');
     await mongod.stop();
   }
-  await mongoose.connection.close();
-  console.log('end');
+  console.log('avant mongoose close');
+  await Promise.all(
+    accessManagers.map((accessManager) => accessManager.close())
+  );
+  console.log('closed');
 });

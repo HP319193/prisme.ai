@@ -5,13 +5,13 @@ global:
 
   broker:
     driver: redis # Driver used
-    url: redis://localhost:6379/1 # URL to the broker
-    password: "" # Broker password
+    url: redis://localhost:6379/1 # URL to the broker # REQUIRED
+    password: "" # Broker password # REQUIRED
     maxLen: "700" # Default redis streams maxlen (how many events per stream stay in cache before being dropped, whether they have been read or not)
 
-  apiUrl: "" # Public API URL, should contain the "/v2", example : https://api.prisme.ai/v2
-  consoleUrl: "" # Public Console URL, example : https://studio.prisme.ai
-  pagesHost: "" # Public Pages host, every single pages built on the platform will be served this way "page-slug.<pagesHost>", example : .pages.prisme.ai
+  apiUrl: "" # Public API URL, should contain the "/v2", example : https://api.prisme.ai/v2 # REQUIRED
+  consoleUrl: "" # Public Console URL, example : https://studio.prisme.ai  # REQUIRED
+  pagesHost: "" # Public Pages host, must begin with a dot. Every single pages built on the platform will be served this way "page-slug<pagesHost>", example : ".pages.prisme.ai" # REQUIRED
 
   oidc:
     clientRegistrationToken:
@@ -45,8 +45,9 @@ global:
   storage:
     workspaces:
       # Configure where the workspaces models will be saved
-      driver: S3_LIKE # Driver used (check the documentation for all the availalbe drivers and their configuration)
+      driver: FILESYSTEM # Available drivers: S3_LIKE, FILESYSTEM, AZURE_BLOB
 
+      # REQUIRED if S3_LIKE
       s3_like_accessKey: ''
       s3_like_secretKey: ''
       s3_like_baseUrl: '' # Base public URL
@@ -55,8 +56,9 @@ global:
 
     uploads:
       # Configure where the user uploads will be saved
-      driver: S3_LIKE # Driver used (check the documentation for all the availalbe drivers and their configuration)
+      driver: FILESYSTEM # Available drivers: S3_LIKE, FILESYSTEM
 
+      # REQUIRED if S3_LIKE
       s3_like_accessKey: ''
       s3_like_secretKey: ''
       s3_like_baseUrl: '' # Base public URL
@@ -65,16 +67,12 @@ global:
 
     permissions:
       driver: mongoose # Driver used
-      url: mongodb+srv://prisme:password@mongodbcluster.example/?tls=true # Your MongoDB URI
+      url: mongodb+srv://prisme:password@mongodbcluster.example/permissions?tls=true # Your MongoDB URI REQUIRED
 
     events:
-      url: http://core-es:9200 # Data lake URL
+      url: http://core-es:9200 # Data lake URL REQUIRED
       user: elastic
-      password:
-        valueFrom:
-          secretKeyRef:
-            name: core-es-elastic-user
-            key: elastic
+      password: '' # REQUIRED
 
 ########################################
 # Service-specific configs
@@ -95,6 +93,7 @@ prismeai-workspaces:
   serviceAccount:
     create: true
 
+  # Remove volumes & volumeMounts if global.storage.workspaces.driver is not FILESYSTEM
   volumes:
     - name: models
       persistentVolumeClaim:
@@ -106,7 +105,7 @@ prismeai-workspaces:
 
   env:
     - name: NODE_OPTIONS
-      value: '--max-old-space-size=200'
+      value: '--max-old-space-size=300' # Keep it as 2/3 of memory limit
     - name: UPLOADS_MAX_SIZE
       value: '100000000' # 100MB
 
@@ -142,9 +141,10 @@ prismeai-runtime:
   cache:
     contexts:
       driver: redis
-      url: redis://localhost:6379
+      url: redis://localhost:6379/2
       password: ""
 
+  # Remove volumes & volumeMounts if global.storage.workspaces.driver is not FILESYSTEM
   volumes:
     - name: models
       persistentVolumeClaim:
@@ -156,17 +156,14 @@ prismeai-runtime:
 
   env:
     - name: NODE_OPTIONS
-      value: '--max-old-space-size=500'
+      value: '--max-old-space-size=530' # Keep it as 2/3 of memory limit
     - &BROKER_EMIT_MAXLEN
       name: BROKER_EMIT_MAXLEN
       value: '1000000'
     - name: UPLOADS_MAX_SIZE
       value: '100000000' # 100MB
 
-    ## App configs:
-    ## Those are examples and not necessary to run prismeai-core.
-    - name: WORKSPACE_CONFIG_collection_mongoURI
-      value: 'mongodb+srv://prisme:password@mongodbcluster.example/collections?tls=true' # Note the path
+    ## App configs for enterprise features :
     - name: APP_CONFIG_CustomCode_apiUrl
       value: 'http://apps-prismeai-functions.apps.svc.cluster.local'
     - name: APP_CONFIG_NLU_apiUrl
@@ -177,6 +174,27 @@ prismeai-runtime:
       value: 'http://apps-prismeai-searchengine.apps.svc.cluster.local'
     - name: APP_CONFIG_LLMOpen-Source_apiUrl
       value: 'http://apps-prismeai-llm.apps.svc.cluster.local'
+
+    - name: APP_CONFIG_SendMail_apiKey # Optional
+      value: ''
+    - name: APP_CONFIG_SendMail_region
+      value: 'https://api.eu.mailgun.net/'
+    - name: APP_CONFIG_SendMail_domain
+      value: ''
+
+    - name: WORKSPACE_CONFIG_collection_mongoURI
+      value: 'mongodb+srv://prisme:password@mongodbcluster.example/collections' # Note the path
+
+    - name: WORKSPACE_CONFIG_ai-knowledge_redisUrl
+      value: 'redis://localhost:6379/0' # RedisSearch database for LLM/embeddings
+    - name: WORKSPACE_CONFIG_ai-knowledge_azureOpenaiApiKey
+      value: ''
+    - name: WORKSPACE_CONFIG_ai-knowledge_openaiApiKey
+      value: ''
+    - name: WORKSPACE_CONFIG_ai-knowledge-groqApiKey
+      value: ""
+    - name: WORKSPACE_CONFIG_ai-knowledge-chat_openaiApiKey
+      value: ''
 
   hpa: *CORE_CPU_HPA
 
@@ -202,7 +220,7 @@ prismeai-events:
 
   env:
     - name: NODE_OPTIONS
-      value: '--max-old-space-size=400'
+      value: '--max-old-space-size=400' # Keep it as 2/3 of memory limit
     - *BROKER_EMIT_MAXLEN
     - name: SOCKETIO_COOKIE_MAX_AGE
       value: '1200'
@@ -210,15 +228,20 @@ prismeai-events:
       value: '100'
     - name: ELASTIC_SEARCH_TIMEOUT
       value: '10000ms' # Default 2sec too short for some requests which can easily exceeds 2sec anyway.
-    - name: EVENTS_CLEANUP_WORKSPACE_MAX_EVENTS
-      value: "50"
-    - name: 'EVENTS_CLEANUP_WORKSPACE_INACTIVITY_DAYS'
-      value: '30'
+    # - name: EVENTS_STORAGE_NAMESPACE # Optional prefix for ES indexes, useful for sharing same ES cluster between different platforms
+    #   value: ''
 
-  hpa: *CORE_CPU_HPA
+  # hpa: *CORE_CPU_HPA
 
   events:
-    retention: 1080 # 3 years
+    cleanupjob: true # Create a cronjob to call /cleanup API in order to regularly apply retention, clean unused & inactive workspaces (see EVENTS_CLEANUP_* vars)...
+
+    # /cleanup API configuration :
+    retention: 1080 # Delete events older than 3 years
+
+    # delete all events from small & inactive workspaces :
+    workspaceMaxEvents: 50 # with max N events
+    workspaceInactivityDays: 30 # & inactive for N days
 
 prismeai-console:
   enabled: true
@@ -239,10 +262,17 @@ prismeai-console:
 
   # Custom config (Optional)
   suggestions: '' # Webhook to display suggestions
+  products_endpoint: ''
   billingHome: ""
   billingUsage: ""
   hpa: *CORE_CPU_HPA
   tracking: ''
+
+  env:
+    # Use websocket first since default socketio settings would require sticky sessions between api-gateway & prismeai-events : https://socket.io/docs/v4/using-multiple-nodes
+    - name: WEBSOCKETS_DEFAULT_TRANSPORTS
+      value: &WEBSOCKETS_DEFAULT_TRANSPORTS
+            'websocket,polling'
 
 prismeai-pages:
   enabled: true
@@ -261,6 +291,14 @@ prismeai-pages:
   serviceAccount:
     create: true
   hpa: *CORE_CPU_HPA
+
+
+  env:
+    # Use websocket first since default socketio settings would require sticky sessions between api-gateway & prismeai-events : https://socket.io/docs/v4/using-multiple-nodes
+    - name: WEBSOCKETS_DEFAULT_TRANSPORTS
+      value: *WEBSOCKETS_DEFAULT_TRANSPORTS
+#   - name: DISABLE_SSR
+#     value: 'true' # Disabling SSR tend to significantly improve pages performances & scaling
 
 prismeai-api-gateway:
   enabled: true
@@ -281,12 +319,12 @@ prismeai-api-gateway:
   storage:
     users:
       driver: mongodb
-      url: mongodb+srv://prisme:password@mongodbcluster.example/collections?tls=true
+      url: "mongodb+srv://prisme:password@mongodbcluster.example/users" # REQUIRED
 
     sessions:
       driver: redis
-      url: redis://localhost:6379
-      password: ""
+      url: redis://localhost:6379/3 # REQUIRED
+      password: "" # REQUIRED
 
   config:
     admins: '' # List of emails which shall be considered as admin of the platform, they have read access to all the workspaces.
@@ -303,12 +341,20 @@ prismeai-api-gateway:
 
   env:
     - name: NODE_OPTIONS
-      value: '--max-old-space-size=200'
+      value: '--max-old-space-size=330' # Keep it as 2/3 of memory limit
     - name: UPLOADS_MAX_SIZE
       value: '100000000' # 100MB
+
+    - name: EMAIL_FROM
+      value: '"Prisme.ai" <no-reply@mg.prisme.ai>'
+
+    # - name: EMAIL_VALIDATION_ENABLED # REQUIRED uncomment in order to create local accounts without providers.mailgun.apiKey configured
+    #   value: false
+
   hpa: *CORE_CPU_HPA
 
 extraObjects:
+  # Remove this PVC if global.storage.workspaces.driver is not FILESYSTEM
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
@@ -322,59 +368,64 @@ extraObjects:
       resources:
         requests:
           storage: 10Gi
-      storageClassName: ''  # to fill
+      storageClassName: ''  # REQUIRED if global.storage.workspaces.driver is FILESYSTEM
 
 ########################################
 # External/infra services configs
 
-# Default rbac rules
-rbac:
-  create: false
-
 # Proxying, balancing, TLS
-ingresses: [] # Comment this line and uncomment below if you want to use our ingress example
-# ingresses:
-#   - name: core-ingress
-#     annotations:
-#       kubernetes.io/elb.id: "..."
-#       kubernetes.io/elb.ip: "..."
-#       cert-manager.io/cluster-issuer: "core-issuer"
+ingresses:
+  # REQUIRED unless another load balancing method is configured
+  - name: core-ingress
+    annotations:
+      # AWS ALB example :
+      kubernetes.io/ingress.class: alb
+      # alb.ingress.kubernetes.io/load-balancer-name: "alb-name"
+      # alb.ingress.kubernetes.io/subnets: "target subnets"
+      # alb.ingress.kubernetes.io/certificate-arn: 'arn:aws:acm:...'
+      # alb.ingress.kubernetes.io/scheme: internet-facing
+      # alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443},{"HTTP": 80}]'
+      # alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+    tls:
+      - hosts:
+          - "api.customer.prisme.ai"
+          - "studio.customer.prisme.ai"
+          - "*.pages.customer.prisme.ai"
+        secretName: customer-tls
+    rules:
+      - host: api.customer.prisme.ai # Backend URL (api-gateway)
+        http: &API_SERVICE
+          paths:
+            - path: "/"
+              pathType: Prefix
+              backend:
+                service:
+                  name: core-prismeai-api-gateway
+                  port:
+                    number: 80
 
-#     tls:
-#       - hosts:
-#           - "studio.prisme.ai"
-#           - "*.studio.prisme.ai"
-#           - "pages.prisme.ai"
-#           - "*.pages.prisme.ai"
-#         secretName: prismeai-tls
-#     rules:
-#       - host: api.studio.prisme.ai # Backend URL (api-gateway)
-#         http: &API_SERVICE
-#           paths:
-#             - path: "/"
-#               backend:
-#                 serviceName: core-prismeai-api-gateway
-#                 servicePort: 80
 
+      - host: studio.customer.prisme.ai # Studio URL
+        http: &CONSOLE_SERVICE
+          paths:
+            - path: "/"
+              pathType: Prefix
+              backend:
+                service:
+                  name: core-prismeai-console
+                  port:
+                    number: 80
 
-#       - host: studio.prisme.ai # Studio URL
-#         http: &CONSOLE_SERVICE
-#           paths:
-#             - path: "/"
-#               backend:
-#                 serviceName: core-prismeai-console
-#                 servicePort: 80
-
-#       - host: pages.prisme.ai
-#         http: &PAGES_SERVICE
-#           paths:
-#             - path: "/"
-#               backend:
-#                 serviceName: core-prismeai-pages
-#                 servicePort: 80
-
-#       - host: '*.pages.prisme.ai' # This wildcard allows acces to workspaces pages
-#         http: *PAGES_SERVICE
+      - host: '*.pages.customer.prisme.ai'
+        http:
+          paths:
+            - path: "/"
+              pathType: Prefix
+              backend:
+                service:
+                  name: core-prismeai-pages
+                  port:
+                    number: 80
 
 # cert-manager
 clusterissuer:

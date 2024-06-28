@@ -10,7 +10,7 @@ import { EventType } from '../eda';
 import { AuthProvider } from '../services/msal/provider';
 import services from '../services';
 import { isAuthenticated } from '../middlewares';
-import { AuthProviders } from '../services/identity';
+import { AuthProviderType, AuthProviders } from '../services/identity';
 import { logger } from '../logger';
 import { JWKStore } from '../services/jwks/store';
 
@@ -48,7 +48,7 @@ const getAnonymousLoginHandler = (jwks: JWKStore) =>
     passport.authenticate(
       'anonymous',
       { session: true },
-      async (err, user, info) => {
+      async (err: any, user: any, info: any) => {
         if (err || !user) {
           next(info || err);
           await req.broker.send<Prismeai.FailedLogin['payload']>(
@@ -105,14 +105,14 @@ const getAnonymousLoginHandler = (jwks: JWKStore) =>
     )(req, res, next);
   };
 
-async function oauthHandler(
-  req: Request<any, any, any, PrismeaiAPI.OauthInit.QueryParameters>,
-  res: Response<PrismeaiAPI.OauthInit.Responses.$302>,
+async function genericAuthHandler(
+  req: Request<any, any, any, PrismeaiAPI.GenericAuthInit.QueryParameters>,
+  res: Response<PrismeaiAPI.GenericAuthInit.Responses.$302>,
   next: NextFunction
 ) {
   const { query } = req;
-  const oauthConfig = authProviders.oauth?.[query.provider]?.config;
-  if (!query.provider || !oauthConfig) {
+  const providerConfig = authProviders.providers?.[query.provider]?.config;
+  if (!query.provider || !providerConfig) {
     throw new ConfigurationError(
       `Unknown or missing auth provider '${query.provider}'`,
       {
@@ -120,9 +120,10 @@ async function oauthHandler(
       }
     );
   }
-  req.session.oauth = {
+  req.session.auth = {
     provider: query.provider,
   };
+
   return passport.authenticate(query.provider)(req, res, next);
 }
 
@@ -136,63 +137,92 @@ export async function initAuthProviders(
   app.post(`/login/mfa`, isAuthenticated, mfaHandler);
 
   /**
-   * OAuth2
+   * Generic OIDC / SAML
    */
-  app.get('/login/oauth', oauthHandler);
-  const passportOAuthStrategies = Object.keys(authProviders.oauth || {});
-  if (passportOAuthStrategies.length) {
-    app.get(
-      `/login/callback`,
-      (
-        req: Request<any, any>,
-        res: Response<PrismeaiAPI.AnonymousAuth.Responses.$200>,
-        next: NextFunction
-      ) => {
-        return passport.authenticate(
-          passportOAuthStrategies,
-          {},
-          async (err: Error, user: any) => {
-            if (err || !user?.id) {
-              ((<any>req)?.logger || logger).error({
-                msg: `Failed OAuth provider '${req.session?.oauth?.provider}' authentication with an error : ${err?.message}. Redirect user back to sign out.`,
-                err,
-              });
-              req.broker
-                .send<Prismeai.FailedLogin['payload']>(EventType.FailedLogin, {
-                  ip: req.context?.http?.ip,
-                  provider: req.session?.oauth?.provider,
-                })
-                .catch((err) => logger.warn({ err }));
-              try {
-                const loginInteraction = await provider.interactionDetails(
-                  req,
-                  res
-                );
-                return res.redirect(
-                  (loginInteraction?.params?.redirect_uri as string) ||
-                    oidcCfg.getSignoutUri()
-                );
-              } catch (err) {
-                return res.redirect(oidcCfg.getSignoutUri());
-              }
+  app.get('/login', genericAuthHandler);
+  app.get('/login/oauth', genericAuthHandler); // Legacy API, to remove
+  const passportStrategies: Record<AuthProviderType, string[]> = Object.entries(
+    authProviders.providers || {}
+  ).reduce<Record<AuthProviderType, string[]>>(
+    (strategiesByType, [strategy, { type }]) => ({
+      ...strategiesByType,
+      [type!]: (strategiesByType[type!] || []).concat(strategy),
+    }),
+    {} as any
+  );
+  const getGenericCallbackHandler =
+    (strategies: string[]) =>
+    (
+      req: Request<any, any>,
+      res: Response<PrismeaiAPI.AnonymousAuth.Responses.$200>,
+      next: NextFunction
+    ) => {
+      const strategy =
+        req.session?.auth?.provider &&
+        (strategies || []).includes(req.session?.auth?.provider)
+          ? req.session?.auth?.provider
+          : strategies || [];
+      return passport.authenticate(
+        strategy,
+        {},
+        async (err: Error, user: any) => {
+          if (err || !user?.id) {
+            ((<any>req)?.logger || logger).error({
+              msg: `Failed authentication from provider '${req.session?.auth?.provider}' with an error : ${err?.message}. Redirect user back to sign out.`,
+              err,
+            });
+            req.broker
+              .send<Prismeai.FailedLogin['payload']>(EventType.FailedLogin, {
+                ip: req.context?.http?.ip,
+                provider: req.session?.auth?.provider,
+              })
+              .catch((err) => logger.warn({ err }));
+            try {
+              const loginInteraction = await provider.interactionDetails(
+                req,
+                res
+              );
+              return res.redirect(
+                (loginInteraction?.params?.redirect_uri as string) ||
+                  oidcCfg.getSignoutUri()
+              );
+            } catch (err) {
+              return res.redirect(oidcCfg.getSignoutUri());
             }
+          }
 
+          try {
             const result = {
               login: {
                 accountId: user.id!,
                 acr: 'urn:mace:incommon:iap:bronze',
-                amr: [req.session?.oauth?.provider!],
+                amr: [req.session?.auth?.provider!],
                 remember: true,
                 ts: Math.floor(Date.now() / 1000),
               },
               consent: {},
             };
             await provider.interactionFinished(req, res, result);
+          } catch (err) {
+            logger.warn({
+              msg: `Failed authenticating OIDC session from ${req.session?.auth?.provider} auth provider`,
+              err,
+            });
+            return res.redirect(oidcCfg.getSignoutUri());
           }
-        )(req, res, next);
-      }
-    );
-  }
+        }
+      )(req, res, next);
+    };
+  app.get(
+    `/login/callback`,
+    getGenericCallbackHandler(passportStrategies[AuthProviderType.Oidc])
+  );
+  // Post required by SAML
+  app.post(
+    `/login/callback`,
+    bodyParser.urlencoded({ extended: false }),
+    getGenericCallbackHandler(passportStrategies[AuthProviderType.Saml])
+  );
 
   /**
    * Azure SSO
@@ -226,21 +256,28 @@ export async function initAuthProviders(
             ip: req.context?.http?.ip,
             user,
           })
-          .then(console.log)
           .catch((err) => req.logger.error({ err }));
       }
 
-      const result = {
-        login: {
-          accountId: user.id!,
-          acr: 'urn:mace:incommon:iap:bronze',
-          amr: ['azure'],
-          remember: true,
-          ts: Math.floor(Date.now() / 1000),
-        },
-        consent: {},
-      };
-      await provider.interactionFinished(req, res, result);
+      try {
+        const result = {
+          login: {
+            accountId: user.id!,
+            acr: 'urn:mace:incommon:iap:bronze',
+            amr: ['azure'],
+            remember: true,
+            ts: Math.floor(Date.now() / 1000),
+          },
+          consent: {},
+        };
+        await provider.interactionFinished(req, res, result);
+      } catch (err) {
+        logger.warn({
+          msg: `Failed authenticating OIDC session from Azure auth provider`,
+          err,
+        });
+        return res.redirect(oidcCfg.getSignoutUri());
+      }
     }
   );
 }

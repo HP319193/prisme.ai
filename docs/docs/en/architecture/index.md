@@ -27,7 +27,7 @@ Other backend microservices will rely on a `x-prismeai-user-id` header (automati
 **Required databases :**  
 
 * **Document database** : Stores user accounts & their API level permissions (i.e can access events API, workspaces API, ...)  
-* **Distributed cache** : Stores currently active session tokens
+* **Distributed cache** : Stores OIDC authentication states
 
 ## prisme.ai-events
 
@@ -42,6 +42,7 @@ More specifically, **prisme.ai-events** is in charge of :
 **Required databases :**  
 
 * **Document database** : Same instance as [prisme.ai-workspaces](#prismeai-workspaces) in order to read workspace-level roles & permissions  
+* **Distributed cache** : Stores events & user topics subscriptions  
 * **Datalake** : Stores events for long-term history
 
 ## prisme.ai-runtime
@@ -50,6 +51,7 @@ More specifically, **prisme.ai-events** is in charge of :
 
 **Required databases :**  
 
+* **Document database** : Stores workspace-level roles & permissions   
 * **Distributed cache** : Stores execution contexts (i.e automation variables as **global**, **user** and **session**)  
 * **File storage** : Same instance as [prisme.ai-workspaces](#prismeai-workspaces), containing existing workspaces
 
@@ -70,4 +72,4 @@ It might by any well-known broker such as Kafka, RabbitMQ, Redis ...
 Internal micro services uses the @prisme.ai/broker npm package in order to stay "broker
 technology" agnostic and ease broker replacement.
 
-However, **Redis 5.0** is the only supported broker currently.
+However, **Redis 5.0+** is the only supported broker currently.

@@ -1,8 +1,10 @@
 node_modules
 coverage
+*.xml
 services/*/dist
 **/.DS_STORE
 **/.env
+services/*/.env
 services/workspaces/heapdumps
 data/
 **/**/dist/
@@ -17,3 +19,4 @@ tests-e2e/.auth
 playwright-report
 test-results
 .env.local
+services/api-gateway/*.xml

@@ -64,8 +64,8 @@ export default function init(fileStorage: FileStorage) {
         size,
         mimetype,
         expiresAfter: Array.isArray(expiresAfter)
-          ? expiresAfter[idx]
-          : expiresAfter,
+          ? parseInt(expiresAfter[idx] || '0')
+          : parseInt(expiresAfter || '0'),
         public: Array.isArray(publicFile)
           ? publicFile[idx] !== defaultPublic
           : publicFile !== defaultPublic,

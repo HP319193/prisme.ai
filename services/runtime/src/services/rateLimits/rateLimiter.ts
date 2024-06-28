@@ -7,6 +7,7 @@ import {
   RATE_LIMIT_EMITS,
   RATE_LIMIT_FETCHS,
   RATE_LIMIT_REPEATS,
+  RATE_LIMIT_DISABLED,
 } from '../../../config/rateLimits';
 
 export class RateLimiter {
@@ -55,24 +56,28 @@ class WorkspaceLimiter {
       tokensPerInterval: automations.rate,
       interval: automations.interval || 'second',
     });
+    this.automations.content = automations.burstRate;
 
     this.emits = new TokenBucket({
       bucketSize: emits.burstRate,
       tokensPerInterval: emits.rate,
       interval: emits.interval || 'second',
     });
+    this.emits.content = emits.burstRate;
 
     this.fetchs = new TokenBucket({
       bucketSize: fetchs.burstRate,
       tokensPerInterval: fetchs.rate,
       interval: fetchs.interval || 'second',
     });
+    this.fetchs.content = fetchs.burstRate;
 
     this.repeats = new TokenBucket({
       bucketSize: repeats.burstRate,
       tokensPerInterval: repeats.rate,
       interval: repeats.interval || 'second',
     });
+    this.repeats.content = repeats.burstRate;
   }
 
   private tokenBucket(type: ThrottleType) {
@@ -96,6 +101,9 @@ class WorkspaceLimiter {
     ctx: ContextsManager,
     tokens: number = 1
   ) {
+    if (RATE_LIMIT_DISABLED) {
+      return Number.POSITIVE_INFINITY;
+    }
     let t0 = Date.now();
     const ret = await this.tokenBucket(type).removeTokens(tokens);
     const throttled = Date.now() - t0;

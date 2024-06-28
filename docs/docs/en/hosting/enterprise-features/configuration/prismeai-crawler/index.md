@@ -5,7 +5,7 @@ Those two services works together : `prismeai-crawler` and `prismeai-searchengin
 They need access to:  
 
 * An **ElasticSearch**, it can be the same as the one used for the core deployment  
-* A **Redis with JSON and SEARCH** modules, it might not be the case of your Redis intance (i.e check with `redis-cli info modules`). If needed, the `redis/redis-stack-server` image include all required modules and [is already packaged as Helm chart here](https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/docs/charts-examples/addon-redis-stack-server)
+* A **Redis**, it can also be the same as the one used for the core deployment  
 
 ## Environment variables
 * REDIS_URL=redis://localhost:6379

@@ -69,6 +69,8 @@ export class AccessManager<
   SubjectInterfaces extends { [k in SubjectType]: UserSubject },
   Role extends string = string
 > {
+  private mongoose?: mongoose.Mongoose;
+
   private opts: AccessManagerOptions<SubjectType>;
   private models: Record<SubjectType, Model<SubjectInterfaces[any]>>;
   private permissionsConfig: PermissionsConfig<SubjectType, Role>;
@@ -135,7 +137,7 @@ export class AccessManager<
 
   async start() {
     const appName = this.opts.appName || '@prismeai/permissions';
-    await mongoose.connect(this.opts.storage.host, {
+    this.mongoose = await mongoose.connect(this.opts.storage.host, {
       appName,
       socketTimeoutMS: 60 * 1000, // Close sockets after 60 secs of inactivity
       maxPoolSize: 30,
@@ -144,7 +146,9 @@ export class AccessManager<
   }
 
   async close() {
-    await mongoose.connection.close();
+    if (this.mongoose) {
+      await this.mongoose.connection.close();
+    }
   }
 
   async as(

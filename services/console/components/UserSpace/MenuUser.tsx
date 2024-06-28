@@ -22,7 +22,7 @@ export const MenuUser = () => {
                   {user.firstName}
                 </div>
                 <div className="text-[#939CA6] text-[12px] font-normal">
-                  {user.email}
+                  {user.email || ''}
                 </div>
               </div>
             </div>

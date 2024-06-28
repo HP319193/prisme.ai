@@ -1,6 +1,7 @@
 enabled: true
 
 events:
+  cleanupjob: false
   retention: 60
 
 # Additional envs

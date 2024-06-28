@@ -323,7 +323,7 @@ export class Workspaces extends DsulCrud {
         ...fromWorkspace,
         name: fromName + ' - Copie',
         labels: (fromWorkspace.labels || []).filter(
-          (cur) => cur !== 'suggestions'
+          (cur) => cur !== 'suggestions' && !cur.startsWith('production:')
         ),
         description: `Copie du workspace ${fromName}`,
       },
