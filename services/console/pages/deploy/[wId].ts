@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { serverSideTranslations } from '../../utils/serverSideTranslations';
 
 export { default } from '../../views/Deploy';
 

@@ -55,6 +55,8 @@ module.exports = {
         .map((name) => ({ name }))
     ),
     DISABLE_SSR: booleanParse(process.env.DISABLE_SSR),
+    TRANSLATIONS_OVERRIDE:
+      getWorkspaceOpsUrl('translations') || process.env.TRANSLATIONS_OVERRIDE,
 
     // https://socket.io/docs/v3/client-initialization/#transports
     WEBSOCKETS_DEFAULT_TRANSPORTS: (
