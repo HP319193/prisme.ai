@@ -90,13 +90,9 @@ interface UserSpaceConfig {
 
 interface UserSpaceProps {
   children: ReactNode;
-  followMainUrl?: boolean;
 }
 
-export const UserSpace = ({
-  children,
-  followMainUrl = true,
-}: UserSpaceProps) => {
+export const UserSpace = ({ children }: UserSpaceProps) => {
   const { t } = useTranslation('user');
   const { trackEvent } = useTracking();
   const { user } = useUser();
@@ -131,9 +127,6 @@ export const UserSpace = ({
   }, [user]);
 
   useEffect(() => {
-    if (!followMainUrl) {
-      return;
-    }
     if (!userSpaceConfig?.kiosk || !userSpaceConfig?.mainUrl) return;
     if (!asPath.includes(userSpaceConfig.kiosk)) {
       replace(userSpaceConfig.mainUrl);
