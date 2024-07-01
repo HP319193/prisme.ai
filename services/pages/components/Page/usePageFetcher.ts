@@ -1,15 +1,17 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import api from '../../../console/utils/api';
+import api, { HTTPError } from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
+import BUILTIN_PAGES from '../../builtinPages';
 
 export const usePageFetcher = (
   pageFromServer?: Prismeai.DetailedPage,
-  error?: number
+  errorFromServer?: number
 ) => {
   const [page, setPage] = useState<Prismeai.DetailedPage | null>(
     pageFromServer || null
   );
+  const [error, setError] = useState<null | number>(null);
   const [loading, setLoading] = useState(false);
   const {
     query: { pageSlug: path = '' },
@@ -26,7 +28,11 @@ export const usePageFetcher = (
       );
       api.token = api.token || page.headers?.apiToken;
       setPage(page);
-    } catch (e) {}
+    } catch (e) {
+      const statusCode = (e as HTTPError).code;
+      setError(statusCode);
+      setPage(null);
+    }
     setLoading(false);
   }, [slug]);
 
@@ -49,12 +55,12 @@ export const usePageFetcher = (
   }, [pageFromServer]);
 
   useEffect(() => {
-    if (pageFromServer && !error) return;
+    if (pageFromServer && !errorFromServer) return;
     setLoading(true);
     fetchPage();
-  }, [error, fetchPage, pageFromServer]);
+  }, [errorFromServer, fetchPage, pageFromServer]);
 
-  return { page, setPage: setPageFromChildren, loading, fetchPage };
+  return { page, setPage: setPageFromChildren, loading, fetchPage, error };
 };
 
 export default usePageFetcher;

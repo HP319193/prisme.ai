@@ -6,7 +6,7 @@ import usePageParent from './usePageParent';
 export interface PageContext
   extends ReturnType<typeof usePageFetcher>,
     ReturnType<typeof usePageEvents> {
-  error?: number | null;
+  error: number | null;
 }
 export const pageContext = createContext<PageContext>({
   page: null,
@@ -14,6 +14,7 @@ export const pageContext = createContext<PageContext>({
   loading: false,
   async fetchPage() {},
   events: undefined,
+  error: null,
 });
 
 export const usePage = () => useContext(pageContext);
@@ -28,12 +29,12 @@ export interface PageProviderProps {
 
 export const PageProvider: FC<PageProviderProps> = ({
   page: pageFromServer,
-  error,
+  error: errorFromServer,
   children,
 }) => {
-  const { page, setPage, loading, fetchPage } = usePageFetcher(
+  const { page, setPage, loading, fetchPage, error } = usePageFetcher(
     pageFromServer || undefined,
-    error || undefined
+    errorFromServer || undefined
   );
   const { events } = usePageEvents(page);
   usePageParent(events, setPage);
@@ -46,7 +47,7 @@ export const PageProvider: FC<PageProviderProps> = ({
         loading,
         fetchPage,
         events,
-        error,
+        error: error || errorFromServer || null,
       }}
     >
       {children}

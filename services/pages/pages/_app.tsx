@@ -38,17 +38,18 @@ if (typeof window !== 'undefined') {
   window.Prisme.ai.debug = window.Prisme.ai.debug || {};
 }
 
+const defaultGetLayout = (page: any) => page;
+
 function MyApp({
   Component,
   pageProps: { page, error, styles, initialConfig, clientId },
   router,
 }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout ?? ((page) => page);
+  const getLayout = Component.getLayout ?? defaultGetLayout;
   const { t, i18n } = useTranslation('common');
 
   api.language = i18n.language;
   if (clientId) {
-    api.overwriteClientId = clientId;
     api.overwriteClientId = clientId;
   }
 
