@@ -11,6 +11,7 @@ import { useContext } from '../../utils/useContext';
 import consoleIcon from '../../public/images/icon-console.svg';
 import getConfig from 'next/config';
 import { Loading } from '@prisme.ai/design-system';
+import api from '../../utils/api';
 
 const {
   publicRuntimeConfig: { PRODUCTS_ENDPOINT = '' },
@@ -96,6 +97,7 @@ export const ProductsProvider = ({
             method: 'GET',
             headers: {
               'content-type': 'application/json',
+              Authorization: `Bearer ${api.token}`,
             },
           });
           if (!results.ok) {

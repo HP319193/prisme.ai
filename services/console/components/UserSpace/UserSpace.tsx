@@ -1,11 +1,11 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import WorkspaceBuilder from '../WorkspaceBuilder/WorkspaceBuilder';
 import logo from '../../public/images/header-logo.svg';
 import helpIcon from '../../public/images/header-help.svg';
 import menuIcon from '../../public/images/header-menu.svg';
 import bellIcon from '../../public/images/header-bell.svg';
 import Image from 'next/image';
-import { useTranslation, i18n } from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 import Avatar from './Avatar';
 import { ProductsSidebar } from './ProductsSidebar';
 import { Dropdown } from 'antd';
