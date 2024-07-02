@@ -20,6 +20,7 @@ import { Loading, Popover } from '@prisme.ai/design-system';
 import { useUser } from '../UserProvider';
 import { useRouter } from 'next/router';
 import api from '../../utils/api';
+import FourOhFour from '../../pages/404';
 
 const {
   publicRuntimeConfig: { HEADER_POPOVERS, USER_SPACE_ENDPOINT = '' },
@@ -37,10 +38,16 @@ const headerPopovers = getHeaderPopovers();
 
 interface UserSpaceConfig {
   /**
-   * URL of main logo alternative logo
+   * Main logo alternative
    */
   mainLogo?: {
+    /**
+     * Logo URL
+     */
     url: string;
+    /**
+     * Attributes to apply on <img /> tag like alt or title
+     */
     attrs?: object;
   };
   /**
@@ -77,15 +84,9 @@ interface UserSpaceConfig {
   };
 
   /**
-   * Allow overriding translations
+   * Disable Builder
    */
-  translations?: {
-    [lang: string]: {
-      [ns: string]: {
-        [k: string]: string;
-      };
-    };
-  };
+  disableBuilder?: true;
 }
 
 interface UserSpaceProps {
@@ -133,22 +134,14 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
     }
   }, [asPath, replace, userSpaceConfig?.kiosk, userSpaceConfig?.mainUrl]);
 
-  useEffect(() => {
-    for (let [lang, namespaces] of Object.entries(
-      userSpaceConfig?.translations || {}
-    )) {
-      for (let [ns, translations] of Object.entries(namespaces || {})) {
-        for (let [k, v] of Object.entries(translations || {})) {
-          i18n?.addResource(lang, ns, k, v);
-        }
-      }
-    }
-  }, [userSpaceConfig?.translations]);
-
   if (!user || user?.authData?.anonymous) return <>{children}</>;
   if (userSpaceConfig === undefined) return <Loading />;
+
+  if (userSpaceConfig.disableBuilder && asPath.startsWith('/workspaces'))
+    return <FourOhFour />;
+
   return (
-    <ProductsProvider>
+    <ProductsProvider disableBuilder={userSpaceConfig.disableBuilder}>
       <div
         className="dark flex flex-col flex-1 min-h-full"
         style={userSpaceConfig?.style?.root || ({} as React.CSSProperties)}

@@ -48,6 +48,7 @@ export interface ProductsContext {
 
 interface ProductsContextProviderProps {
   children: ReactNode;
+  disableBuilder?: true;
 }
 
 export const productsContext = createContext<ProductsContext | undefined>(
@@ -70,9 +71,10 @@ export const builderProduct: Product = {
 
 export const ProductsProvider = ({
   children,
+  disableBuilder,
 }: ProductsContextProviderProps) => {
   const [products, setProducts] = useState<ProductsContext['products']>(
-    new Map([['workspaces', builderProduct]])
+    new Map(disableBuilder ? undefined : [['workspaces', builderProduct]])
   );
   const fetching = useRef(false);
   const [loading, setLoading] = useState(true);
