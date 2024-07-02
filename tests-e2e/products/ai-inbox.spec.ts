@@ -3,7 +3,7 @@ import path from 'path';
 
 const { TESTS_E2E_BASE_LOGIN = '', TESTS_E2E_BASE_PASSWORD = '' } = process.env;
 const authFile = 'tests-e2e/.auth/user.json';
-const baseUrl = 'https://ai-knowledge-inbox.pages.prisme.ai/fr';
+const baseUrl = 'https://ai-inbox.pages.prisme.ai/fr';
 
 test.describe.configure({ mode: 'serial' });
 test.beforeEach(async ({ page }) => {
@@ -64,6 +64,7 @@ test.describe('Teams list', () => {
     await fileChooser.setFiles(
       path.join(__dirname, '../assets/prisme-logo.png')
     );
+    await page.waitForTimeout(200);
     await page.getByTestId('schema-form-field-values.name').press('Enter');
     let createdId = '';
     await page.waitForURL((url: URL) => {
@@ -272,11 +273,12 @@ test.describe('Inbox', () => {
   test('Display inbox conversations', async ({ page }) => {
     await page.goto(baseUrl);
     await page.getByRole('link', { name: 'name testing channels' }).click();
-    await expect(
-      page.getByText('👈 Choisissez une conversation')
-    ).toBeAttached();
-    await expect(page.locator('a.conversation').first()).toBeAttached();
-    await page.locator('a.conversation').first().click();
+    let conversation: string | null;
+    await page.waitForURL((url) => {
+      conversation = url.searchParams.get('conversation');
+      return !!conversation;
+    });
+    await expect(page.locator('.pr-block-action').first()).toBeAttached();
     await expect(page.locator('.pr-block-dialog-box')).toBeAttached();
   });
 });
