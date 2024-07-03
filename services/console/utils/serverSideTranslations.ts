@@ -38,6 +38,7 @@ function fetchOverrideTranslations() {
             isNotFound = undefined;
           }, 60 * 1000);
         });
+  return promise;
 }
 
 export const serverSideTranslations: typeof originalServerSideTranslations =
