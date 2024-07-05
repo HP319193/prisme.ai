@@ -129,7 +129,10 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
 
   useEffect(() => {
     if (!userSpaceConfig?.kiosk || !userSpaceConfig?.mainUrl) return;
-    if (!asPath.includes(userSpaceConfig.kiosk)) {
+    if (
+      !asPath.includes('/account') &&
+      !asPath.includes(userSpaceConfig.kiosk)
+    ) {
       replace(userSpaceConfig.mainUrl);
     }
   }, [asPath, replace, userSpaceConfig?.kiosk, userSpaceConfig?.mainUrl]);
