@@ -1,11 +1,11 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import WorkspaceBuilder from '../WorkspaceBuilder/WorkspaceBuilder';
 import logo from '../../public/images/header-logo.svg';
 import helpIcon from '../../public/images/header-help.svg';
 import menuIcon from '../../public/images/header-menu.svg';
 import bellIcon from '../../public/images/header-bell.svg';
 import Image from 'next/image';
-import { useTranslation, i18n } from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 import Avatar from './Avatar';
 import { ProductsSidebar } from './ProductsSidebar';
 import { Dropdown } from 'antd';
@@ -20,6 +20,7 @@ import { Loading, Popover } from '@prisme.ai/design-system';
 import { useUser } from '../UserProvider';
 import { useRouter } from 'next/router';
 import api from '../../utils/api';
+import FourOhFour from '../../pages/404';
 
 const {
   publicRuntimeConfig: { HEADER_POPOVERS, USER_SPACE_ENDPOINT = '' },
@@ -37,10 +38,16 @@ const headerPopovers = getHeaderPopovers();
 
 interface UserSpaceConfig {
   /**
-   * URL of main logo alternative logo
+   * Main logo alternative
    */
   mainLogo?: {
+    /**
+     * Logo URL
+     */
     url: string;
+    /**
+     * Attributes to apply on <img /> tag like alt or title
+     */
     attrs?: object;
   };
   /**
@@ -77,26 +84,16 @@ interface UserSpaceConfig {
   };
 
   /**
-   * Allow overriding translations
+   * Disable Builder
    */
-  translations?: {
-    [lang: string]: {
-      [ns: string]: {
-        [k: string]: string;
-      };
-    };
-  };
+  disableBuilder?: true;
 }
 
 interface UserSpaceProps {
   children: ReactNode;
-  followMainUrl?: boolean;
 }
 
-export const UserSpace = ({
-  children,
-  followMainUrl = true,
-}: UserSpaceProps) => {
+export const UserSpace = ({ children }: UserSpaceProps) => {
   const { t } = useTranslation('user');
   const { trackEvent } = useTracking();
   const { user } = useUser();
@@ -131,31 +128,23 @@ export const UserSpace = ({
   }, [user]);
 
   useEffect(() => {
-    if (!followMainUrl) {
-      return;
-    }
     if (!userSpaceConfig?.kiosk || !userSpaceConfig?.mainUrl) return;
-    if (!asPath.includes(userSpaceConfig.kiosk)) {
+    if (
+      !asPath.includes('/account') &&
+      !asPath.includes(userSpaceConfig.kiosk)
+    ) {
       replace(userSpaceConfig.mainUrl);
     }
   }, [asPath, replace, userSpaceConfig?.kiosk, userSpaceConfig?.mainUrl]);
 
-  useEffect(() => {
-    for (let [lang, namespaces] of Object.entries(
-      userSpaceConfig?.translations || {}
-    )) {
-      for (let [ns, translations] of Object.entries(namespaces || {})) {
-        for (let [k, v] of Object.entries(translations || {})) {
-          i18n?.addResource(lang, ns, k, v);
-        }
-      }
-    }
-  }, [userSpaceConfig?.translations]);
-
   if (!user || user?.authData?.anonymous) return <>{children}</>;
   if (userSpaceConfig === undefined) return <Loading />;
+
+  if (userSpaceConfig.disableBuilder && asPath.startsWith('/workspaces'))
+    return <FourOhFour />;
+
   return (
-    <ProductsProvider>
+    <ProductsProvider disableBuilder={userSpaceConfig.disableBuilder}>
       <div
         className="dark flex flex-col flex-1 min-h-full"
         style={userSpaceConfig?.style?.root || ({} as React.CSSProperties)}

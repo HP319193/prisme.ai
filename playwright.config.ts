@@ -29,6 +29,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     baseURL: TESTS_E2E_BASE_URL,
+    locale: 'en-US',
   },
 
   /* Configure projects for major browsers */

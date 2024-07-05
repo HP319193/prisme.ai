@@ -33,7 +33,8 @@ export const FourHundredOne = () => {
       'en',
     ];
     i18n.changeLanguage(language);
-  });
+  }, [i18n]);
+
   const [loadingCustomPage, setLoadingCustomPage] = useState(true);
   const [page, setPage] = useState<any>();
 

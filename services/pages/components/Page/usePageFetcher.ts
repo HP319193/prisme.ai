@@ -1,15 +1,17 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import api from '../../../console/utils/api';
+import api, { HTTPError } from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
+import BUILTIN_PAGES from '../../builtinPages';
 
 export const usePageFetcher = (
   pageFromServer?: Prismeai.DetailedPage,
-  error?: number
+  errorFromServer?: number
 ) => {
   const [page, setPage] = useState<Prismeai.DetailedPage | null>(
     pageFromServer || null
   );
+  const [error, setError] = useState<null | number>(null);
   const [loading, setLoading] = useState(false);
   const {
     query: { pageSlug: path = '' },
@@ -26,9 +28,13 @@ export const usePageFetcher = (
       );
       api.token = api.token || page.headers?.apiToken;
       setPage(page);
-    } catch (e) {}
+    } catch (e) {
+      const statusCode = (e as HTTPError).code;
+      setError(statusCode);
+      setPage(pageFromServer || null);
+    }
     setLoading(false);
-  }, [slug]);
+  }, [pageFromServer, slug]);
 
   const setPageFromChildren = useCallback(
     (page: Prismeai.DetailedPage | null, error?: number | null) => {
@@ -37,7 +43,6 @@ export const usePageFetcher = (
         setLoading(false);
         return;
       }
-
       fetchPage();
     },
     [fetchPage]
@@ -49,12 +54,34 @@ export const usePageFetcher = (
   }, [pageFromServer]);
 
   useEffect(() => {
-    if (pageFromServer && !error) return;
+    if (pageFromServer && !errorFromServer) return;
     setLoading(true);
-    fetchPage();
-  }, [error, fetchPage, pageFromServer]);
+    // We display a loading while the api.token is retreived from UserProvider
+    setPage({
+      slug: 'Loading',
+      appInstances: [],
+      blocks: [
+        {
+          slug: 'RichText',
+          content: `<div class="flex flex-1 align-center justify-center "><div class="ant-spin ant-spin-spinning !flex justify-center items-center " aria-live="polite" aria-busy="true"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span></div></div>`,
+        },
+      ],
+      styles: `.page-blocks {
+  justify-content: center;
+}`,
+    });
 
-  return { page, setPage: setPageFromChildren, loading, fetchPage };
+    function delayFetchPage() {
+      if (!api.token) {
+        setTimeout(delayFetchPage, 10);
+      } else {
+        fetchPage();
+      }
+    }
+    delayFetchPage();
+  }, [errorFromServer, fetchPage, pageFromServer]);
+
+  return { page, setPage: setPageFromChildren, loading, fetchPage, error };
 };
 
 export default usePageFetcher;

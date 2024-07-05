@@ -11,6 +11,7 @@ import { useContext } from '../../utils/useContext';
 import consoleIcon from '../../public/images/icon-console.svg';
 import getConfig from 'next/config';
 import { Loading } from '@prisme.ai/design-system';
+import api from '../../utils/api';
 
 const {
   publicRuntimeConfig: { PRODUCTS_ENDPOINT = '' },
@@ -48,6 +49,7 @@ export interface ProductsContext {
 
 interface ProductsContextProviderProps {
   children: ReactNode;
+  disableBuilder?: true;
 }
 
 export const productsContext = createContext<ProductsContext | undefined>(
@@ -70,9 +72,10 @@ export const builderProduct: Product = {
 
 export const ProductsProvider = ({
   children,
+  disableBuilder,
 }: ProductsContextProviderProps) => {
   const [products, setProducts] = useState<ProductsContext['products']>(
-    new Map([['workspaces', builderProduct]])
+    new Map(disableBuilder ? undefined : [['workspaces', builderProduct]])
   );
   const fetching = useRef(false);
   const [loading, setLoading] = useState(true);
@@ -94,6 +97,7 @@ export const ProductsProvider = ({
             method: 'GET',
             headers: {
               'content-type': 'application/json',
+              Authorization: `Bearer ${api.token}`,
             },
           });
           if (!results.ok) {

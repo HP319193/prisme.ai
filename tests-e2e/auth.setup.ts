@@ -27,10 +27,10 @@ setup('authenticate', async ({ page, request, context, baseURL }) => {
   await page.waitForURL((url) => {
     return url.searchParams.has('interaction');
   });
-  await page.getByPlaceholder('Email').fill(TESTS_E2E_BASE_LOGIN);
-  await page.getByPlaceholder('Password').fill(TESTS_E2E_BASE_PASSWORD);
+  await page.locator('[name=email]').fill(TESTS_E2E_BASE_LOGIN);
+  await page.locator('[name=password]').fill(TESTS_E2E_BASE_PASSWORD);
   await page.waitForTimeout(200);
-  await page.getByRole('button', { name: 'Login' }).click();
+  await page.locator('button[type=submit]').click();
   await page.waitForURL(`${baseURL}/products`);
   await page.context().storageState({ path: authFile });
 });
