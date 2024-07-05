@@ -81,6 +81,9 @@
     }
   },
   "sidebar": {
+    "home": {
+      "title": "Home"
+    },
     "expand": "Expand",
     "expand_in": "Reduce",
     "unpin": {
