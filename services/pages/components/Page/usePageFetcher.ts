@@ -31,10 +31,10 @@ export const usePageFetcher = (
     } catch (e) {
       const statusCode = (e as HTTPError).code;
       setError(statusCode);
-      setPage(null);
+      setPage(pageFromServer || null);
     }
     setLoading(false);
-  }, [slug]);
+  }, [pageFromServer, slug]);
 
   const setPageFromChildren = useCallback(
     (page: Prismeai.DetailedPage | null, error?: number | null) => {
@@ -43,7 +43,6 @@ export const usePageFetcher = (
         setLoading(false);
         return;
       }
-
       fetchPage();
     },
     [fetchPage]
@@ -57,7 +56,29 @@ export const usePageFetcher = (
   useEffect(() => {
     if (pageFromServer && !errorFromServer) return;
     setLoading(true);
-    fetchPage();
+    // We display a loading while the api.token is retreived from UserProvider
+    setPage({
+      slug: 'Loading',
+      appInstances: [],
+      blocks: [
+        {
+          slug: 'RichText',
+          content: `<div class="flex flex-1 align-center justify-center "><div class="ant-spin ant-spin-spinning !flex justify-center items-center " aria-live="polite" aria-busy="true"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span></div></div>`,
+        },
+      ],
+      styles: `.page-blocks {
+  justify-content: center;
+}`,
+    });
+
+    function delayFetchPage() {
+      if (!api.token) {
+        setTimeout(delayFetchPage, 10);
+      } else {
+        fetchPage();
+      }
+    }
+    delayFetchPage();
   }, [errorFromServer, fetchPage, pageFromServer]);
 
   return { page, setPage: setPageFromChildren, loading, fetchPage, error };
