@@ -21,6 +21,7 @@ import { useUser } from '../UserProvider';
 import { useRouter } from 'next/router';
 import api from '../../utils/api';
 import FourOhFour from '../../pages/404';
+import userSpaceContext, { UserSpaceConfig } from './context';
 
 const {
   publicRuntimeConfig: { HEADER_POPOVERS, USER_SPACE_ENDPOINT = '' },
@@ -35,59 +36,6 @@ function getHeaderPopovers() {
 }
 
 const headerPopovers = getHeaderPopovers();
-
-interface UserSpaceConfig {
-  /**
-   * Main logo alternative
-   */
-  mainLogo?: {
-    /**
-     * Logo URL
-     */
-    url: string;
-    /**
-     * Attributes to apply on <img /> tag like alt or title
-     */
-    attrs?: object;
-  };
-  /**
-   * Main URL on main logo link
-   * @example: /product/ai-knowledge-chat/assistant?id=6474c0db33959b6283770367
-   */
-  mainUrl?: string;
-  /**
-   * The studio can act as a kiosk to keep the user in a URL template
-   * @example: /product/ai-knowledge-chat/
-   */
-  kiosk?: string;
-  /**
-   * Define if Whats new popover is visible.
-   * @default true
-   */
-  displayWhatsNew?: boolean;
-  /**
-   * Define if Help popover is visible.
-   * @default true
-   */
-  displayHelp?: boolean;
-  /**
-   * Define if products popover is visible.
-   * @default true
-   */
-  displayProducts?: boolean;
-
-  /**
-   * style object that will be injected inside various sections, allowing to cutomize theme colors ...
-   */
-  style?: {
-    root?: object;
-  };
-
-  /**
-   * Disable Builder
-   */
-  disableBuilder?: true;
-}
 
 interface UserSpaceProps {
   children: ReactNode;
@@ -144,29 +92,58 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
     return <FourOhFour />;
 
   return (
-    <ProductsProvider disableBuilder={userSpaceConfig.disableBuilder}>
-      <div
-        className="dark flex flex-col flex-1 min-h-full"
-        style={userSpaceConfig?.style?.root || ({} as React.CSSProperties)}
-      >
-        <div className="flex flex-row bg-layout-surface h-[70px] pl-[24px] justify-between">
-          <Link href={userSpaceConfig?.mainUrl || '/'}>
-            <a className="flex">
-              {userSpaceConfig.mainLogo?.url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={userSpaceConfig.mainLogo.url}
-                  {...(userSpaceConfig.mainLogo.attrs || {})}
-                  alt="Prisme.ai"
-                />
-              ) : (
-                <Image src={logo} alt="Prisme.ai" />
-              )}
-            </a>
-          </Link>
-          <div className="flex relative">
-            {userSpaceConfig.displayWhatsNew !== false &&
-              headerPopovers.whatsNew && (
+    <userSpaceContext.Provider value={userSpaceConfig}>
+      <ProductsProvider disableBuilder={userSpaceConfig.disableBuilder}>
+        <div
+          className="dark flex flex-col flex-1 min-h-full"
+          style={userSpaceConfig?.style?.root || ({} as React.CSSProperties)}
+        >
+          <div className="flex flex-row bg-layout-surface h-[70px] pl-[24px] justify-between">
+            <Link href={userSpaceConfig?.mainUrl || '/'}>
+              <a className="flex">
+                {userSpaceConfig.mainLogo?.url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={userSpaceConfig.mainLogo.url}
+                    {...(userSpaceConfig.mainLogo.attrs || {})}
+                    alt="Prisme.ai"
+                  />
+                ) : (
+                  <Image src={logo} alt="Prisme.ai" />
+                )}
+              </a>
+            </Link>
+            <div className="flex relative">
+              {userSpaceConfig.displayWhatsNew !== false &&
+                headerPopovers.whatsNew && (
+                  <Popover
+                    trigger={['click']}
+                    placement="bottomRight"
+                    content={() => (
+                      <div className="flex h-[75vh] w-[30rem]">
+                        <IFrameLoader
+                          className="flex flex-1"
+                          src={headerPopovers.whatsNew}
+                        />
+                      </div>
+                    )}
+                    overlayClassName="pr-full-popover"
+                    onOpenChange={(open) => {
+                      trackEvent({
+                        name: `Open header popover whatsNew`,
+                        action: 'click',
+                      });
+                    }}
+                  >
+                    <button className="m-[1rem]">
+                      <Image
+                        src={bellIcon}
+                        alt={t('header.notifications.title')}
+                      />
+                    </button>
+                  </Popover>
+                )}
+              {userSpaceConfig.displayHelp !== false && headerPopovers.help && (
                 <Popover
                   trigger={['click']}
                   placement="bottomRight"
@@ -174,83 +151,59 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
                     <div className="flex h-[75vh] w-[30rem]">
                       <IFrameLoader
                         className="flex flex-1"
-                        src={headerPopovers.whatsNew}
+                        src={headerPopovers.help}
                       />
                     </div>
                   )}
                   overlayClassName="pr-full-popover"
                   onOpenChange={(open) => {
                     trackEvent({
-                      name: `Open header popover whatsNew`,
+                      name: `Open header popover help`,
                       action: 'click',
                     });
                   }}
                 >
                   <button className="m-[1rem]">
                     <Image
-                      src={bellIcon}
-                      alt={t('header.notifications.title')}
+                      src={helpIcon}
+                      alt={t('header.notifications.help')}
                     />
                   </button>
                 </Popover>
               )}
-            {userSpaceConfig.displayHelp !== false && headerPopovers.help && (
-              <Popover
-                trigger={['click']}
-                placement="bottomRight"
-                content={() => (
-                  <div className="flex h-[75vh] w-[30rem]">
-                    <IFrameLoader
-                      className="flex flex-1"
-                      src={headerPopovers.help}
-                    />
-                  </div>
-                )}
-                overlayClassName="pr-full-popover"
-                onOpenChange={(open) => {
-                  trackEvent({
-                    name: `Open header popover help`,
-                    action: 'click',
-                  });
-                }}
-              >
-                <button className="m-[1rem]">
-                  <Image src={helpIcon} alt={t('header.notifications.help')} />
-                </button>
-              </Popover>
-            )}
-            {userSpaceConfig.displayProducts !== false && (
+              {userSpaceConfig.displayProducts !== false && (
+                <Dropdown
+                  autoFocus
+                  overlay={<MenuProducts />}
+                  trigger={['click']}
+                  placement="bottom"
+                >
+                  <button className="m-[1rem]">
+                    <Image src={menuIcon} alt={t('header.products.title')} />
+                  </button>
+                </Dropdown>
+              )}
               <Dropdown
                 autoFocus
-                overlay={<MenuProducts />}
+                overlay={<MenuUser />}
                 trigger={['click']}
                 placement="bottom"
               >
                 <button className="m-[1rem]">
-                  <Image src={menuIcon} alt={t('header.products.title')} />
+                  <Avatar />
                 </button>
               </Dropdown>
-            )}
-            <Dropdown
-              autoFocus
-              overlay={<MenuUser />}
-              trigger={['click']}
-              placement="bottom"
-            >
-              <button className="m-[1rem]">
-                <Avatar />
-              </button>
-            </Dropdown>
+            </div>
+          </div>
+          <div className="flex flex-row flex-1 max-h-[calc(100vh-70px)] max-w-[100vw]">
+            <ProductsSidebar />
+            <div className="flex flex-col flex-1 relative overflow-hidden">
+              {<WorkspaceBuilder>{children}</WorkspaceBuilder>}
+            </div>
           </div>
         </div>
-        <div className="flex flex-row flex-1 max-h-[calc(100vh-70px)] max-w-[100vw]">
-          <ProductsSidebar />
-          <div className="flex flex-col flex-1 relative overflow-hidden">
-            {<WorkspaceBuilder>{children}</WorkspaceBuilder>}
-          </div>
-        </div>
-      </div>
-    </ProductsProvider>
+      </ProductsProvider>
+    </userSpaceContext.Provider>
   );
 };
 

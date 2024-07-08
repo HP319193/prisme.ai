@@ -1,10 +1,10 @@
 import { Tooltip } from 'antd';
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, ReactElement, ReactNode } from 'react';
 
 interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
   expanded: boolean;
   selected?: boolean;
-  icon: string;
+  icon: string | ReactNode;
   name?: string;
   tooltip?: string;
 }
@@ -39,8 +39,12 @@ export const Button = ({
             }`}
           >
             <Tooltip title={expanded ? undefined : tooltip} placement="right">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={icon} alt={name} className="h-[26px] w-[26px]" />
+              {typeof icon === 'string' ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={icon} alt={name} className="h-[26px] w-[26px]" />
+              ) : (
+                icon
+              )}
             </Tooltip>
           </span>
         </span>
@@ -55,8 +59,12 @@ export const Button = ({
   return (
     <button className="flex justify-start px-[24px]" {...props}>
       <Tooltip title={tooltip} placement="right">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={icon} alt={tooltip} />
+        {typeof icon === 'string' ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={icon} alt={name} className="h-[26px] w-[26px]" />
+        ) : (
+          icon
+        )}
       </Tooltip>
     </button>
   );

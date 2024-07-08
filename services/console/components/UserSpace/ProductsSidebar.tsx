@@ -12,6 +12,8 @@ import Image from 'next/image';
 import ConfirmButton from '../ConfirmButton';
 import { Tooltip } from 'antd';
 import pkg from '../../../../package.json';
+import Home from '../../icons/home.svgr';
+import { useUserSpace } from './context';
 
 function getProductSlug(path: string) {
   if (path.match(/^\/workspaces/)) {
@@ -37,6 +39,7 @@ export const ProductsSidebar = () => {
     Storage.set('sidebarExpanded', !expanded);
   }, [expanded]);
   const [history, setHistory] = useState(new Map());
+  const { mainUrl = '/' } = useUserSpace();
 
   useEffect(() => {
     const history = new Map(Storage.get('productsHistory') || []);
@@ -127,6 +130,19 @@ export const ProductsSidebar = () => {
             tooltip={t('sidebar.expand', { context: expanded ? 'in' : '' })}
             onClick={toggleSidebar}
           />
+          <div className="flex relative group">
+            <Link href={mainUrl}>
+              <a className="flex flex-1">
+                <Button
+                  expanded={expanded}
+                  icon={
+                    <Home width="2rem" height="2rem" className="text-primary" />
+                  }
+                  name={t('sidebar.home.title')}
+                />
+              </a>
+            </Link>
+          </div>
           {products.map(({ slug, href, icon, name }, index) => (
             <div
               key={href}
