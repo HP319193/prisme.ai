@@ -5,7 +5,7 @@ interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
   expanded: boolean;
   selected?: boolean;
   icon: string | ReactNode;
-  name?: string;
+  name?: string | ReactNode;
   tooltip?: string;
 }
 export const Button = ({

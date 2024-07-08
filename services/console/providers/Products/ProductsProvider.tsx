@@ -25,15 +25,23 @@ export interface Product {
   description: Prismeai.LocalizedText;
   highlighted?: boolean;
 }
+export interface Shortcut {
+  href: string;
+  name: string;
+  icon: string;
+  description: Prismeai.LocalizedText;
+}
 
 export interface ProductsEndpointResponse {
   list: Product[];
   total: number;
   page: number;
+  shortcuts: Shortcut[];
 }
 
 export interface ProductsContext {
   products: Map<string, Product>;
+  shortcuts: Shortcut[];
   highlighted: Map<string, Product>;
   fetchProducts: (query?: {
     slugs?: string[];
@@ -77,6 +85,7 @@ export const ProductsProvider = ({
   const [products, setProducts] = useState<ProductsContext['products']>(
     new Map(disableBuilder ? undefined : [['workspaces', builderProduct]])
   );
+  const [shortcuts, setShortcuts] = useState<Shortcut[]>([]);
   const fetching = useRef(false);
   const [loading, setLoading] = useState(true);
   const highlighted = useMemo(
@@ -89,7 +98,12 @@ export const ProductsProvider = ({
   const fetchProducts: ProductsContext['fetchProducts'] = useCallback(
     async (query) => {
       if (!PRODUCTS_ENDPOINT || fetching.current)
-        return { list: new Map(), total: 0, page: query?.page || 1 };
+        return {
+          list: new Map(),
+          total: 0,
+          page: query?.page || 1,
+          shortcuts: [],
+        };
       fetching.current = true;
       async function fetchResults(): Promise<ProductsEndpointResponse> {
         try {
@@ -103,22 +117,26 @@ export const ProductsProvider = ({
           if (!results.ok) {
             throw new Error(results.statusText);
           }
-          const res: { list: Product[]; total: number; page: number } =
-            await results.json();
+          const res: {
+            list: Product[];
+            total: number;
+            page: number;
+            shortcuts: Shortcut[];
+          } = await results.json();
           return res;
         } catch {
-          const res = { list: [], total: 0, page: query?.page || 1 };
+          const res = { list: [], total: 0, page: query?.page || 1, shortcuts };
           return res;
         }
       }
-      const { list = [], ...rest } = await fetchResults();
+      const { list = [], shortcuts = [], ...rest } = await fetchResults();
 
       const fetched: Map<string, Product> = new Map(
-        list.map(({ slug, name, icon, description, highlighted, href }) => [
+        list.map(({ slug, name, icon, description, highlighted }) => [
           slug,
           {
             slug,
-            href: href || `/product/${slug}`,
+            href: `/product/${slug}`,
             name,
             icon,
             description,
@@ -134,9 +152,11 @@ export const ProductsProvider = ({
         });
         return newList;
       });
+      setShortcuts(shortcuts);
       fetching.current = false;
       return {
         list: fetched,
+        shortcuts,
         ...rest,
       };
     },
@@ -167,6 +187,7 @@ export const ProductsProvider = ({
     <productsContext.Provider
       value={{
         products,
+        shortcuts,
         highlighted,
         fetchProducts,
         canSearch: !!PRODUCTS_ENDPOINT,
