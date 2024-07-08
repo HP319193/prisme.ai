@@ -12,8 +12,7 @@ import Image from 'next/image';
 import ConfirmButton from '../ConfirmButton';
 import { Tooltip } from 'antd';
 import pkg from '../../../../package.json';
-import Home from '../../icons/home.svgr';
-import { useUserSpace } from './context';
+import useLocalizedText from '../../utils/useLocalizedText';
 
 function getProductSlug(path: string) {
   if (path.match(/^\/workspaces/)) {
@@ -25,10 +24,11 @@ function getProductSlug(path: string) {
 
 export const ProductsSidebar = () => {
   const { t } = useTranslation('user');
+  const { localize } = useLocalizedText();
   const [expanded, setExpanded] = useState(!!Storage.get('sidebarExpanded'));
   const { user, updateMeta } = useUser();
   const [added, setAdded] = useState<string>('');
-  const { fetchProducts } = useProducts();
+  const { fetchProducts, shortcuts } = useProducts();
   const products: Product[] = useMemo(
     () => (user && user.meta?.products) || [],
     [user]
@@ -39,7 +39,6 @@ export const ProductsSidebar = () => {
     Storage.set('sidebarExpanded', !expanded);
   }, [expanded]);
   const [history, setHistory] = useState(new Map());
-  const { mainUrl = '/' } = useUserSpace();
 
   useEffect(() => {
     const history = new Map(Storage.get('productsHistory') || []);
@@ -130,19 +129,21 @@ export const ProductsSidebar = () => {
             tooltip={t('sidebar.expand', { context: expanded ? 'in' : '' })}
             onClick={toggleSidebar}
           />
-          <div className="flex relative group">
-            <Link href={mainUrl}>
-              <a className="flex flex-1">
-                <Button
-                  expanded={expanded}
-                  icon={
-                    <Home width="2rem" height="2rem" className="text-primary" />
-                  }
-                  name={t('sidebar.home.title')}
-                />
-              </a>
-            </Link>
-          </div>
+          {shortcuts && shortcuts.length > 0 && (
+            <div className="flex relative group">
+              {shortcuts.map(({ name, href, icon }, key) => (
+                <Link href={href} key={key}>
+                  <a className="flex flex-1">
+                    <Button
+                      expanded={expanded}
+                      icon={icon}
+                      name={localize(name)}
+                    />
+                  </a>
+                </Link>
+              ))}
+            </div>
+          )}
           {products.map(({ slug, href, icon, name }, index) => (
             <div
               key={href}
