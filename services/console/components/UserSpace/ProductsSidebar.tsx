@@ -12,8 +12,6 @@ import Image from 'next/image';
 import ConfirmButton from '../ConfirmButton';
 import { Tooltip } from 'antd';
 import pkg from '../../../../package.json';
-import Home from '../../icons/home.svgr';
-import { useUserSpace } from './context';
 import useLocalizedText from '../../utils/useLocalizedText';
 
 function getProductSlug(path: string) {
@@ -41,7 +39,6 @@ export const ProductsSidebar = () => {
     Storage.set('sidebarExpanded', !expanded);
   }, [expanded]);
   const [history, setHistory] = useState(new Map());
-  const { mainUrl = '/' } = useUserSpace();
 
   useEffect(() => {
     const history = new Map(Storage.get('productsHistory') || []);
@@ -134,20 +131,13 @@ export const ProductsSidebar = () => {
           />
           {shortcuts && shortcuts.length > 0 && (
             <div className="flex relative group">
-              {shortcuts.map(({ name, description, href, icon }, key) => (
+              {shortcuts.map(({ name, href, icon }, key) => (
                 <Link href={href} key={key}>
                   <a className="flex flex-1">
                     <Button
                       expanded={expanded}
                       icon={icon}
-                      name={
-                        <Tooltip
-                          title={localize(description)}
-                          placement="right"
-                        >
-                          {localize(name)}
-                        </Tooltip>
-                      }
+                      name={localize(name)}
                     />
                   </a>
                 </Link>
