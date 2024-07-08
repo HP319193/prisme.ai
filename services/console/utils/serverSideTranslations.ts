@@ -17,20 +17,16 @@ function fetchOverrideTranslations() {
            * It will not retry loading translations if a 404 has been returned in last 60s
            * Then, the response will be kept in cache for 60s
            */
-          if (TRANSLATIONS_OVERRIDE) {
-            try {
-              const response = await fetch(TRANSLATIONS_OVERRIDE);
-              if (response.status !== 200) {
-                resolve({});
-                return;
-              }
-              const override = await response.json();
-              resolve(override);
-            } catch (e) {
-              console.error('TRANSLATIONS_OVERRIDE is invalid', e);
+          try {
+            const response = await fetch(TRANSLATIONS_OVERRIDE);
+            if (response.status !== 200) {
               resolve({});
+              return;
             }
-          } else {
+            const override = await response.json();
+            resolve(override);
+          } catch (e) {
+            console.error('TRANSLATIONS_OVERRIDE is invalid', e);
             resolve({});
           }
           setTimeout(() => {
@@ -48,10 +44,12 @@ export const serverSideTranslations: typeof originalServerSideTranslations =
       configOverride,
       extraLocales
     );
-    const override = await fetchOverrideTranslations();
-    translations._nextI18Next.initialI18nStore = merge(
-      translations._nextI18Next.initialI18nStore,
-      override
-    );
+    if (TRANSLATIONS_OVERRIDE) {
+      const override = await fetchOverrideTranslations();
+      translations._nextI18Next.initialI18nStore = merge(
+        translations._nextI18Next.initialI18nStore,
+        override
+      );
+    }
     return translations;
   };
