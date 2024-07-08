@@ -29,7 +29,7 @@ export const Button = ({
                     }`}
         {...props}
       >
-        <span className={`flex ${expanded ? '' : 'px-[7px]'}`}>
+        <span className={`flex flex-none ${expanded ? '' : 'px-[7px]'}`}>
           <span
             className={`p-[14px] rounded-[6px] ${
               !expanded &&
@@ -57,7 +57,7 @@ export const Button = ({
     );
   }
   return (
-    <button className="flex justify-start px-[24px]" {...props}>
+    <button className="flex justify-start px-[22px]" {...props}>
       <Tooltip title={tooltip} placement="right">
         {typeof icon === 'string' ? (
           /* eslint-disable-next-line @next/next/no-img-element */
