@@ -130,7 +130,7 @@ export const ProductsSidebar = () => {
             onClick={toggleSidebar}
           />
           {shortcuts && shortcuts.length > 0 && (
-            <div className="flex relative group">
+            <div className="flex relative group flex-col">
               {shortcuts.map(({ name, href, icon }, key) => (
                 <Link href={href} key={key}>
                   <a className="flex flex-1">
