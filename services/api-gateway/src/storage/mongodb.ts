@@ -144,7 +144,11 @@ export class MongodbDriver implements StorageDriver<any> {
 
     const limit = opts?.limit || 50;
     const skip = (opts?.page || 0) * limit;
-    const result = await collection.find(query).skip(skip).limit(limit);
+    let result = await collection.find(query);
+    if (skip !== 0) {
+      result = result.skip(skip);
+    }
+    result = result.limit(limit);
     return (await result.toArray()).map((cur) => this.prepareData(cur));
   }
 
