@@ -26,17 +26,15 @@ export interface UserSpaceConfig {
    */
   kiosk?: string;
   /**
+   * URL of "what's new" popover
+   */
+  whatsnewView?: string;
+  /**
+   * URL of "help" popover
+   */
+  helpView?: string;
+  /**
    * Define if Whats new popover is visible.
-   * @default true
-   */
-  displayWhatsNew?: boolean;
-  /**
-   * Define if Help popover is visible.
-   * @default true
-   */
-  displayHelp?: boolean;
-  /**
-   * Define if products popover is visible.
    * @default true
    */
   displayProducts?: boolean;

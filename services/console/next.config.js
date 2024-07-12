@@ -28,7 +28,6 @@ module.exports = {
     INTERNAL_API_URL: process.env.INTERNAL_API_URL || '', // Optional. Useful to ensure prismeai-pages makes server-side calls using this url
     PAGES_HOST: process.env.PAGES_HOST || '',
     SENTRY_DSN: process.env.SENTRY_DSN || '',
-    HEADER_POPOVERS: process.env.HEADER_POPOVERS || '{}',
     SUGGESTIONS_ENDPOINT:
       getWorkspaceOpsUrl('suggestions') ||
       process.env.SUGGESTIONS_ENDPOINT ||

@@ -24,18 +24,8 @@ import FourOhFour from '../../pages/404';
 import userSpaceContext, { UserSpaceConfig } from './context';
 
 const {
-  publicRuntimeConfig: { HEADER_POPOVERS, USER_SPACE_ENDPOINT = '' },
+  publicRuntimeConfig: { USER_SPACE_ENDPOINT = '' },
 } = getConfig();
-
-function getHeaderPopovers() {
-  try {
-    return JSON.parse(HEADER_POPOVERS);
-  } catch {
-    return {};
-  }
-}
-
-const headerPopovers = getHeaderPopovers();
 
 interface UserSpaceProps {
   children: ReactNode;
@@ -114,36 +104,7 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
               </a>
             </Link>
             <div className="flex relative">
-              {userSpaceConfig.displayWhatsNew !== false &&
-                headerPopovers.whatsNew && (
-                  <Popover
-                    trigger={['click']}
-                    placement="bottomRight"
-                    content={() => (
-                      <div className="flex h-[75vh] w-[30rem]">
-                        <IFrameLoader
-                          className="flex flex-1"
-                          src={headerPopovers.whatsNew}
-                        />
-                      </div>
-                    )}
-                    overlayClassName="pr-full-popover"
-                    onOpenChange={(open) => {
-                      trackEvent({
-                        name: `Open header popover whatsNew`,
-                        action: 'click',
-                      });
-                    }}
-                  >
-                    <button className="m-[1rem]">
-                      <Image
-                        src={bellIcon}
-                        alt={t('header.notifications.title')}
-                      />
-                    </button>
-                  </Popover>
-                )}
-              {userSpaceConfig.displayHelp !== false && headerPopovers.help && (
+              {userSpaceConfig.whatsnewView && (
                 <Popover
                   trigger={['click']}
                   placement="bottomRight"
@@ -151,7 +112,35 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
                     <div className="flex h-[75vh] w-[30rem]">
                       <IFrameLoader
                         className="flex flex-1"
-                        src={headerPopovers.help}
+                        src={userSpaceConfig.whatsnewView || ''}
+                      />
+                    </div>
+                  )}
+                  overlayClassName="pr-full-popover"
+                  onOpenChange={(open) => {
+                    trackEvent({
+                      name: `Open header popover whatsNew`,
+                      action: 'click',
+                    });
+                  }}
+                >
+                  <button className="m-[1rem]">
+                    <Image
+                      src={bellIcon}
+                      alt={t('header.notifications.title')}
+                    />
+                  </button>
+                </Popover>
+              )}
+              {userSpaceConfig.helpView && (
+                <Popover
+                  trigger={['click']}
+                  placement="bottomRight"
+                  content={() => (
+                    <div className="flex h-[75vh] w-[30rem]">
+                      <IFrameLoader
+                        className="flex flex-1"
+                        src={userSpaceConfig.helpView || ''}
                       />
                     </div>
                   )}
