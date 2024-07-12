@@ -131,17 +131,20 @@ export const ProductsSidebar = () => {
           />
           {shortcuts && shortcuts.length > 0 && (
             <div className="flex relative group flex-col">
-              {shortcuts.map(({ name, href, icon }, key) => (
-                <Link href={href} key={key}>
-                  <a className="flex flex-1">
-                    <Button
-                      expanded={expanded}
-                      icon={icon}
-                      name={localize(name)}
-                    />
-                  </a>
-                </Link>
-              ))}
+              {shortcuts.map(
+                ({ name, href, icon }, key) =>
+                  href && (
+                    <Link href={href} key={key}>
+                      <a className="flex flex-1">
+                        <Button
+                          expanded={expanded}
+                          icon={icon}
+                          name={localize(name)}
+                        />
+                      </a>
+                    </Link>
+                  )
+              )}
             </div>
           )}
           {products.map(({ slug, href, icon, name }, index) => (

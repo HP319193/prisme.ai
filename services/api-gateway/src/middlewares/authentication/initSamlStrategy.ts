@@ -22,7 +22,6 @@ export async function initSamlStrategy(
     {
       passReqToCallback: true,
       callbackUrl,
-      audience: config.audience || 'https://studio.prisme.ai/sp',
       authnRequestBinding: 'HTTP-POST',
       ...config,
     },

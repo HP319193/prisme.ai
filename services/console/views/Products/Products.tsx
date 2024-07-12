@@ -117,17 +117,20 @@ export const Products = () => {
         )}
         <Title className="mt-11">{t('list.title')}</Title>
         <div className="flex flex-row flex-wrap -ml-[13px]">
-          {shortcuts.map(({ name, description, href, icon }) => (
-            <Link href={href} key={href}>
-              <a className="w-[100%] 2xl:w-1/5 xl:w-1/4 lg:w-1/3 md:w-1/2">
-                <ProductCard
-                  title={localize(name)}
-                  description={localize(description)}
-                  icon={icon}
-                />
-              </a>
-            </Link>
-          ))}
+          {shortcuts.map(
+            ({ name, description, href, icon }) =>
+              href && (
+                <Link href={href} key={href}>
+                  <a className="w-[100%] 2xl:w-1/5 xl:w-1/4 lg:w-1/3 md:w-1/2">
+                    <ProductCard
+                      title={localize(name)}
+                      description={localize(description)}
+                      icon={icon}
+                    />
+                  </a>
+                </Link>
+              )
+          )}
           {filteredProducts.map(({ slug, description, name, icon, href }) => (
             <Link href={href} key={slug}>
               <a className="w-[100%] 2xl:w-1/5 xl:w-1/4 lg:w-1/3 md:w-1/2">
