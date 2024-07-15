@@ -127,7 +127,7 @@ export const Enum = ({ value, onChange }: EnumProps) => {
       <SchemaForm
         schema={{
           type: 'boolean',
-          title: 'schema.property.enum.uiOptions.select.hideSearch.title',
+          title: t('schema.uiOptions.select.hideSearch.title'),
         }}
         buttons={[]}
         initialValues={value}
