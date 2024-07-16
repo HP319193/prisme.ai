@@ -163,6 +163,12 @@ Once your form-handling automation is complete, you can trigger the redirection 
 
 This approach allows for smooth user navigation post-form submission.
 
+!!! warning "Not in preview mode"
+
+    Redirection will **not work** within the Prisme.ai Builder (when you are previewing a page).  
+    If you wish to test redirections on your pages make sure to access them from their dedicated URL.
+
+
 ## Blocks
 
 ### Overview:
