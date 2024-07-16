@@ -135,13 +135,33 @@ Redirection is a mechanism to navigate from one resource to another automaticall
 
 ### Usage Example:
 Here is how you might configure a redirection within a page:
-```yaml
-redirection:
+```yaml title="page.yml"
+redirect:
   url: "/new-page"
   locale: "fr"
   method: "get"
   push: true
 ```
+
+Let's walk through a practical scenario: imagine you're managing a page with a form. After successful form validation, you want to seamlessly redirect your users.
+
+Your form page needs to be configured to listen for an `updateOn` event. Let's call this event `updatePage`:
+
+```yaml title="page.yml"
+updateOn: "updatePage"
+```
+
+Once your form-handling automation is complete, you can trigger the redirection like this:
+
+```yaml title="automation.yml"
+- emit: 
+    event: updatePage
+    payload: 
+      redirect:  
+        url: /index # Absolute or relative URL
+```
+
+This approach allows for smooth user navigation post-form submission.
 
 ## Blocks
 
