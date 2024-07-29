@@ -15,7 +15,7 @@ Deploy the required external services either within your Kubernetes cluster or m
 - MongoDB: Deploy a MongoDB instance or cluster and note down the connection string.
 - Elasticsearch: Set up an Elasticsearch cluster and note down the connection details.
 - Redis: Deploy a Redis instance and configure it for both caching and message brokering, or deploy separate instances for each purpose.
-    - If planning to install **Enterprise features** as well, an additional Redis with **JSON and SEARCH** modules is required, it might not be the case of your Redis intance (i.e check with `redis-cli info modules`). If needed, the `redis/redis-stack-server` image include all required modules and [is already packaged as Helm chart here](https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/docs/charts-examples/addon-redis-stack-server)
+    - If planning to install **Enterprise features** as well, an additional Redis with **JSON and SEARCH** modules is required, it might not be the case of your Redis intance (i.e check with `redis-cli info modules`). If needed, the `redis/redis-stack-server` image include all required modules  
 - File Storage: Configure your chosen file storage solution among FILESYSTEM/S3_LIKE/AZURE_BLOB and obtain the necessary access credentials.
 
 ## Create a cluster
@@ -29,18 +29,19 @@ Download the Prisme.ai Helm charts repository or add it as a Helm repo.
 
 #### Option 1: Downloading the charts
 
-Download the example Helm charts from the following address : https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/docs/charts-examples/prismeai-core.   
-You should download the entire content of the linked file.
+Download the example Helm chart from the following address :  https://helm.prisme.ai/charts/prismeai-core/prismeai-core-0.1.1.tgz
 
 #### Option 2: Adding as a Helm repo
 
-!!! warning "Not available yet"
+```sh
+helm repo add prismeai https://helm.prisme.ai/charts
+helm repo update
+```
 
-    This option is not available yet.
+Initiate the chart values file :  
 
 ```sh
-helm repo add prismeai https://charts.prisme.ai
-helm repo update
+helm show values prismeai/prismeai-core > ./values.yml  
 ```
 
 ## Configure values.yaml
@@ -69,7 +70,7 @@ helm install core . --namespace core -f values.yaml
 #### Option 2 : Added as a repo
 ```sh
 kubectl create namespace core
-helm install core prismeai/prismeai-chart --namespace core -f values.yaml
+helm install core prismeai/prismeai-core --namespace core -f values.yaml
 ```
 
 ## Verify the Deployment

@@ -18,8 +18,25 @@ Depending on the microservices you wish to install you might have different prer
 
 ### Retrieve the Helm charts
 
-Download the example Helm charts from the following address : https://gitlab.com/prisme.ai/prisme.ai/-/tree/main/docs/charts-examples/prismeai-apps.   
-You should download the entire content of the linked file.
+Download the Prisme.ai Helm charts repository or add it as a Helm repo.
+
+#### Option 1: Downloading the charts
+
+Download the example Helm chart from the following address :  https://helm.prisme.ai/charts/prismeai-apps/prismeai-apps-0.1.0.tgz
+
+#### Option 2: Adding as a Helm repo
+
+```sh
+helm repo add prismeai https://helm.prisme.ai/charts
+helm repo update
+```
+
+Initiate the chart values file :  
+
+```sh
+helm show values prismeai/prismeai-apps > ./values.yml  
+```
+
 
 ### Configure values.yaml
 
@@ -33,10 +50,16 @@ We recommend deploying the microservices in a different namespace than the core 
 kubectl create namespace apps
 ```
 
-From the root of the directory (`./prismeai-apps`) execute the installation command :
+#### Option 1 : Charts downloaded
+From the root of the directory (`./prismeai-apps`) execute the installation command :  
 
 ```sh
 helm install apps . --namespace apps -f values.yaml 
+```
+
+#### Option 2 : Added as a repo
+```sh
+helm install apps prismeai/prismeai-apps --namespace apps -f values.yaml
 ```
 
 ### Test the microservices

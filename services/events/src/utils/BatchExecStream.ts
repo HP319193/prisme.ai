@@ -146,6 +146,11 @@ export default class BatchExecStream<T> extends Stream.Writable {
       ) {
         this.bulk.push(...ret.retryItems);
         this.bulkCount += ret.retryItems.length;
+      } else if (ret?.retryItems?.length) {
+        logger.error({
+          msg: `Could not persist ${ret?.retryItems?.length} items after ${this.retriesCounter} retries.`,
+          retries: this.retriesCounter,
+        });
       }
 
       callback();
