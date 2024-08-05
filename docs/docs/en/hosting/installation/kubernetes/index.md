@@ -29,7 +29,7 @@ Download the Prisme.ai Helm charts repository or add it as a Helm repo.
 
 #### Option 1: Downloading the charts
 
-Download the example Helm chart from the following address :  https://helm.prisme.ai/charts/prismeai-core/prismeai-core-0.1.1.tgz
+Download the example Helm chart from the following address :  https://helm.prisme.ai/charts/prismeai-core/prismeai-core-0.1.2.tgz
 
 #### Option 2: Adding as a Helm repo
 
