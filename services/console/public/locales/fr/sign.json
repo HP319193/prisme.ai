@@ -17,7 +17,7 @@
     "error_AuthenticationError": "Mot de passe ou email invalide.",
     "error_ValidateEmailError": "Veuillez vérifier votre email",
     "error_InvalidOrExpiredToken": "Ce lien de validation est invalide. Votre compte est peut-être déjà activé, essayez de vous connecter.",
-    "error_ManualValidateEmailError": "Votre compte est en cours de vérification par nos équipes. Veuillez patienter que l'on vous contacte.",
+    "error_ManualValidateEmailError": "Votre demande de création de compte est en cours de validation par nos équipes. Vous serez notifié.e par email dès que votre compte sera validé.",
     "success": "L'opération s'est déroulée avec succès !",
     "success_mailValidated": "Votre email a été validé ! Vous pouvez désormais vous connecter."
   },

@@ -17,7 +17,7 @@
     "error_AuthenticationError": "Wrong email or password.",
     "error_ValidateEmailError": "Please verify your email",
     "error_InvalidOrExpiredToken": "This validation link is invalid. Your account might already be validated, try to sign in.",
-    "error_ManualValidateEmailError": "Your account is being verified by our team. Please wait for us to contact you.",
+    "error_ManualValidateEmailError": "Your account creation request is currently being validated by our teams. You will be notified by email as soon as your account is validated.",
     "success": "Operation successful!",
     "success_mailValidated": "Your email was succesfully validated, you can now login!"
   },
