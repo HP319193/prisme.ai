@@ -16,6 +16,7 @@ import {
   ValidateEmailError,
   RequestValidationError,
   ForbiddenError,
+  ManualValidateEmailError,
 } from '../../types/errors';
 import { comparePasswords, hashPassword } from './utils';
 import { EmailTemplate, sendMail } from '../../utils/email';
@@ -215,9 +216,10 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       email,
       firstName,
       lastName,
-      status: mailConfig.EMAIL_VALIDATION_ENABLED
-        ? UserStatus.Pending
-        : UserStatus.Validated,
+      status:
+        mailConfig.ACCOUNT_VALIDATION_METHOD !== 'auto'
+          ? UserStatus.Pending
+          : UserStatus.Validated,
       language,
       authData: {
         prismeai: { email },
@@ -227,8 +229,10 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       ...user,
       password: hash,
     });
-
-    if (user.status === UserStatus.Pending) {
+    if (
+      user.status === UserStatus.Pending &&
+      mailConfig.ACCOUNT_VALIDATION_METHOD === 'email'
+    ) {
       try {
         await sendAccountValidationLink(Users, ctx)({ email, language, host });
       } catch (err) {
@@ -239,7 +243,11 @@ export const signup = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       }
     }
 
-    return Promise.resolve({ ...user, id: savedUser.id! });
+    return Promise.resolve({
+      ...user,
+      id: savedUser.id!,
+      validation: mailConfig.ACCOUNT_VALIDATION_METHOD,
+    });
   };
 
 // User getter for /me
@@ -362,7 +370,12 @@ export const login = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       throw new AuthenticationError();
     }
     if (users[0].status && users[0].status !== UserStatus.Validated) {
-      throw new ValidateEmailError();
+      if (mailConfig.ACCOUNT_VALIDATION_METHOD === 'email') {
+        throw new ValidateEmailError();
+      }
+      if (mailConfig.ACCOUNT_VALIDATION_METHOD === 'manual') {
+        throw new ManualValidateEmailError();
+      }
     }
     return filterUserFields(users[0]);
   };

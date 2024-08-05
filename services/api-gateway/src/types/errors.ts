@@ -44,6 +44,11 @@ export class ValidateEmailError extends PrismeError {
     super(msg, undefined, 401);
   }
 }
+export class ManualValidateEmailError extends PrismeError {
+  constructor(msg = 'Please wait for a manual validation') {
+    super(msg, undefined, 401);
+  }
+}
 export class RequestValidationError extends PrismeError {
   constructor(msg: string, details: any[] = []) {
     super(msg, details, 400);

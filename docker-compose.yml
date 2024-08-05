@@ -36,7 +36,7 @@ services:
       CONSOLE_URL: '${CONSOLE_URL}'
       API_URL: '${API_URL}'
       PAGES_HOST: '${PAGES_HOST}'
-      EMAIL_VALIDATION_ENABLED: false
+      ACCOUNT_VALIDATION_METHOD: auto
   console:
     entrypoint: npm start  --prefix services/console
     restart: on-failure

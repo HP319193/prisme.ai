@@ -8,7 +8,12 @@ export default {
   CONSOLE_URL,
   RESET_PASSWORD_URL: process.env.RESET_PASSWORD_URL || `${CONSOLE_URL}/forgot`,
   LOGIN_URL: process.env.LOGIN_URL || `${CONSOLE_URL}/signin`,
-  EMAIL_VALIDATION_ENABLED: ['true', '1'].includes(
-    process.env.EMAIL_VALIDATION_ENABLED || 'true'
-  ),
+  ACCOUNT_VALIDATION_METHOD:
+    process.env.ACCOUNT_VALIDATION_METHOD ||
+    // retro compatibility
+    (process.env.EMAIL_VALIDATION_ENABLED &&
+      (['true', '1'].includes(process.env.EMAIL_VALIDATION_ENABLED || 'true')
+        ? 'email'
+        : 'auto')) ||
+    'email',
 };

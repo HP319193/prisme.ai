@@ -42,7 +42,7 @@
         }
       }
     },
-    "dirtyWarning": "Votre travail en cours n'a pas été sauvegarder. Souhaitez-vous quitter ?",
+    "dirtyWarning": "Votre travail en cours n'a pas été sauvegardé. Souhaitez-vous quitter ?",
     "dirtyOk": "Quitter",
     "delete": {
       "label": "Supprimer le workspace",

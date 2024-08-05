@@ -31,7 +31,9 @@ export interface UserContext<
     firstName: string,
     lastName: string,
     language: string
-  ) => Promise<Prismeai.User | null>;
+  ) => Promise<
+    (Prismeai.User & { validation?: 'email' | 'auto' | 'manual' }) | null
+  >;
   signout: (clearOpSession?: boolean) => void;
   sendPasswordResetMail: (email: string, language: string) => Promise<any>;
   passwordReset: (token: string, password: string) => Promise<any>;

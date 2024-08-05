@@ -32,7 +32,7 @@ To begin utilizing Custom Code in your workspace, follow these simple steps:
    - **Node.js Functions:** You can write your function in Node.js and import external libraries as required to extend functionality.
 
    - **Python Functions:** Python functions can be authored using a predefined set of libraries. While external library imports are not supported for Python, the following libraries are available:
-     ```plaintext
+     ```toml title="Available dependencies"
       python = ">=3.10,<3.12"
       requests = "==2.31.0"
       ipykernel = "==6.23.1"
@@ -52,22 +52,30 @@ To begin utilizing Custom Code in your workspace, follow these simple steps:
       aiofiles = "*"
       pyyaml = "*"
       openpyxl = "*"
-      llama-index = "==0.10.4"
-      llama-index-vector-stores-elasticsearch = "==0.1.2"
+      llama-index = "^0.10.49"
+      llama-index-vector-stores-elasticsearch = "^0.2.0"
       llama-index-vector-stores-redis = "==0.1.1"
       llama-index-vector-stores-azurecosmosmongo = "==0.1.1"
       llama-index-vector-stores-mongodb = "==0.1.2"
-      llama-index-embeddings-azure-openai = "==0.1.1"
-      llama-index-embeddings-elasticsearch = "==0.1.1"
-      llama-index-embeddings-openai = "==0.1.1"
-      llama-index-llms-azure-openai = "==0.1.1"
+      llama-index-embeddings-azure-openai = "^0.1.10"
+      llama-index-embeddings-elasticsearch = "^0.1.2"
+      llama-index-embeddings-openai = "^0.1.10"
+      llama-index-llms-azure-openai = "^0.1.8"
       llama-index-llms-mistralai = "==0.1.1"
-      llama-index-llms-openai-like = "==0.1.1"
-      llama-index-llms-openai = "==0.1.1"
+      llama-index-llms-openai-like = "^0.1.3"
+      llama-index-llms-openai = "^0.1.22"
       python-pptx = "*"
       pymupdf = "1.24.0"
       llama-parse = "^0.4.0"
       langchain-community = "^0.0.32"
+      llama-index-core = "^0.10.49"
+      llama-index-readers-file = "^0.1.25"
+      llama-index-llms-gemini = "^0.1.11"
+      llama-index-embeddings-bedrock = "^0.2.1"
+      llama-index-llms-sagemaker-endpoint = "^0.1.3"
+      llama-index-llms-bedrock = "^0.1.10"
+      llama-index-llms-anthropic = "^0.1.15"
+      boto3 = "^1.34.144"
      ```
 
 **Function Example:** Access the 'See Code' menu to view example codes, or use the visual editor to create or modify your functions. Below is an example of a simple data cleaning function written in Node.js:

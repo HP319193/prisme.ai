@@ -11,6 +11,7 @@ export enum SignType {
   Forgot = 'forgot',
   Reset = 'reset',
   Validate = 'validate',
+  Manual = 'validate.manual',
 }
 
 export const SignLayout = ({

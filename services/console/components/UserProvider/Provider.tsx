@@ -311,9 +311,15 @@ export const UserProvider: FC<UserProviderProps> = ({
               }).toString()}`
             );
           }, 2000);
-        } else if (error == 'Internal') {
+          return false;
+        }
+        if (error == 'Internal') {
           // Corrupted session cookies or invalid interaction id cause 500, clean cookies & restart from fresh state
           signout();
+          return false;
+        }
+        if (error === 'ManualValidateEmailError') {
+          return true;
         }
         return false;
       }

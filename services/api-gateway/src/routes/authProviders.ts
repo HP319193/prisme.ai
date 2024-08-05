@@ -98,6 +98,11 @@ const getAnonymousLoginHandler = (jwks: JWKStore) =>
                 expiresIn: syscfg.SESSION_COOKIES_MAX_AGE,
                 expires,
               },
+            },
+            {},
+            {},
+            {
+              disableValidation: true,
             }
           );
         });
