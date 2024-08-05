@@ -12,8 +12,8 @@ export default {
     process.env.ACCOUNT_VALIDATION_METHOD ||
     // retro compatibility
     (process.env.EMAIL_VALIDATION_ENABLED &&
-    ['true', '1'].includes(process.env.EMAIL_VALIDATION_ENABLED || 'true')
-      ? 'email'
-      : 'auto') ||
+      (['true', '1'].includes(process.env.EMAIL_VALIDATION_ENABLED || 'true')
+        ? 'email'
+        : 'auto')) ||
     'email',
 };
