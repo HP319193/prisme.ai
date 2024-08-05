@@ -11,7 +11,7 @@ import ValidateForm from '../../components/ValidateForm';
 export const Validate = () => {
   const { t } = useTranslation('sign');
   const router = useRouter();
-  const { email, sent } = router.query;
+  const { email, sent, manual } = router.query;
 
   const { error, success } = useUser();
 
@@ -32,8 +32,13 @@ export const Validate = () => {
   }, [success, t]);
 
   return (
-    <SignLayout type={SignType.Validate} link="signup">
-      <ValidateForm email={email as string} sent={!!sent} />
+    <SignLayout
+      type={manual ? SignType.Manual : SignType.Validate}
+      link="signup"
+    >
+      {!manual && (
+        <ValidateForm email={email as string} sent={sent === 'true'} />
+      )}
     </SignLayout>
   );
 };

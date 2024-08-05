@@ -17,6 +17,7 @@
     "error_AuthenticationError": "Mot de passe ou email invalide.",
     "error_ValidateEmailError": "Veuillez vérifier votre email",
     "error_InvalidOrExpiredToken": "Ce lien de validation est invalide. Votre compte est peut-être déjà activé, essayez de vous connecter.",
+    "error_ManualValidateEmailError": "Votre compte est en cours de vérification par nos équipes. Veuillez patienter que l'on vous contacte.",
     "success": "L'opération s'est déroulée avec succès !",
     "success_mailValidated": "Votre email a été validé ! Vous pouvez désormais vous connecter."
   },
@@ -74,7 +75,12 @@
     "success": "Opération réussie !",
     "success_emailSent": "Nous venons de vous envoyer un nouvel email, veuillez vérifier votre boîte de réception !",
     "emailSentAt": "Nous vous avons envoyé un email à l'adresse suivante :",
-    "followInstructions": "Veuillez suivre les instructions de cet email afin de valider votre compte"
+    "followInstructions": "Veuillez suivre les instructions de cet email afin de valider votre compte",
+    "manual": {
+      "topForm1": "On y est presque",
+      "topForm2": "Votre compte a bien été créé",
+      "topForm3": "Nous vous contacterons au plus vite afin de valider votre accès."
+    }
   },
   "pages": {
     "restricted": "Cette page nécessite une authentification"

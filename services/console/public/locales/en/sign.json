@@ -17,6 +17,7 @@
     "error_AuthenticationError": "Wrong email or password.",
     "error_ValidateEmailError": "Please verify your email",
     "error_InvalidOrExpiredToken": "This validation link is invalid. Your account might already be validated, try to sign in.",
+    "error_ManualValidateEmailError": "Your account is being verified by our team. Please wait for us to contact you.",
     "success": "Operation successful!",
     "success_mailValidated": "Your email was succesfully validated, you can now login!"
   },
@@ -74,7 +75,12 @@
     "success": "Operation successful!",
     "success_emailSent": "We just sent you a new email, please check your inbox!",
     "emailSentAt": "We sent you an email at:",
-    "followInstructions": "Please, follow its instructions in order to validate your account"
+    "followInstructions": "Please, follow its instructions in order to validate your account",
+    "manual": {
+      "topForm1": "Almost there",
+      "topForm2": "Your account has been created",
+      "topForm3": "We will contact you as soon as possible to validate your access."
+    }
   },
   "pages": {
     "restricted": "Access to this page is restricted."
