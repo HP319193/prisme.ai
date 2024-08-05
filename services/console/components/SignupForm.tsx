@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from 'next-i18next';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Form } from 'react-final-form';
 import { useUser } from './UserProvider';
 import {
@@ -56,9 +56,25 @@ export const SignupForm = ({
   const submit = useCallback(
     async ({ email, password, firstName, lastName }: Values) => {
       Storage.set('redirect-once-authenticated', redirect);
-      const user = await signup(email, password, firstName, lastName, language);
-      if (!user) return;
+      const res = await signup(email, password, firstName, lastName, language);
+      if (!res) return;
+      const { validation, ...user } = res;
       function next() {
+        if (validation === 'auto') {
+          // User is auto validated, he can go to console home right now
+          return;
+        }
+        if (validation === 'manual') {
+          // User needs to wait for a super admin to validate its account.
+          push(
+            `/validate?${new URLSearchParams({
+              email: email,
+              manual: 'true',
+            }).toString()}`
+          );
+          return;
+        }
+        // User must validate his account from its email.
         push(
           `/validate?${new URLSearchParams({
             email: email,

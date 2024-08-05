@@ -445,8 +445,14 @@
   <tr>
     <td>EMAIL_VALIDATION_ENABLED</td>
     <td>api-gateway</td>
-    <td>Enable email validation on signup</td>
+    <td>Depreacted. Use ACCOUNT_VALIDATION_METHOD instead. Enable email validation on signup</td>
     <td>true</td>    
+  </tr>
+  <tr>
+    <td>ACCOUNT_VALIDATION_METHOD</td>
+    <td>api-gateway</td>
+    <td>Account validation method on signup. Can be an auto validation ("auto"), a validation by email ("email") or a manual validation by a super admin ("manual")</td>
+    <td>email</td>
   </tr>
   <tr>
     <td>WORKSPACES_API_URL</td>

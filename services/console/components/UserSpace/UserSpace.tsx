@@ -74,7 +74,7 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
       replace(userSpaceConfig.mainUrl);
     }
   }, [asPath, replace, userSpaceConfig?.kiosk, userSpaceConfig?.mainUrl]);
-
+  if (user === null) return null;
   if (!user || user?.authData?.anonymous) return <>{children}</>;
   if (userSpaceConfig === undefined) return <Loading />;
 
