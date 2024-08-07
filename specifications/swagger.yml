@@ -598,6 +598,23 @@ components:
           type: string
         value: {}
 
+    WorkspaceSecrets:
+      type: object
+      example:
+        openaiApiKey:
+          value: 'some secret api key'
+        allowedModels:
+          value:
+            - gpt4
+            - gpt4o
+      additionalProperties:
+        type: object
+        required:
+          - value
+        properties:
+          value:
+            type: string
+
     When:
       type: object
       anyOf:
@@ -5316,6 +5333,113 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
+
+
+  ## Workspace secrets
+  /v2/workspaces/{workspaceId}/security/secrets:
+    get:
+      description: Fetch workspace's secrets
+      operationId: getWorkspaceSecrets
+      tags:
+        - 'Secrets'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceSecrets'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+    patch:
+      description: Patch workspace secrets
+      operationId: patchWorkspaceSecrets
+      tags:
+        - 'Secrets'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      requestBody: &PATCH_BODY
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceSecrets'
+
+      responses: &PATCH_RESPONSES
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceSecrets'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+
+    put:
+      description: Update workspace secrets
+      operationId: updateWorkspaceSecrets
+      tags:
+        - 'Secrets'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      requestBody: *PATCH_BODY
+      responses: *PATCH_RESPONSES
 
   ## automations
   /v2/workspaces/{workspaceId}/automations:
