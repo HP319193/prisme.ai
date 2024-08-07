@@ -2568,6 +2568,18 @@ declare namespace Prismeai {
             migrated?: string;
         };
     }
+    export interface UpdatedWorkspaceSecrets {
+        /**
+         * example:
+         * workspaces.secrets.updated
+         */
+        type: "workspaces.secrets.updated";
+        payload: {
+            created?: string[];
+            updated?: string[];
+            deleted?: string[];
+        };
+    }
     export interface UpdatedWorkspaceSecurity {
         /**
          * example:
@@ -2877,7 +2889,14 @@ declare namespace Prismeai {
      */
     export interface WorkspaceSecrets {
         [name: string]: {
+            id?: string;
             value: string;
+            description?: string;
+            createdBy?: string;
+            updatedBy?: string;
+            createdAt?: string;
+            updatedAt?: string;
+            permissions?: PermissionsMap;
         };
     }
     export interface WorkspaceSecurity {
@@ -3223,6 +3242,24 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export interface $200 {
                 id: string;
+            }
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace DeleteWorkspaceSecret {
+        namespace Parameters {
+            export type SecretName = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            secretName: Parameters.SecretName;
+        }
+        namespace Responses {
+            export interface $200 {
+                secretName?: string;
             }
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;

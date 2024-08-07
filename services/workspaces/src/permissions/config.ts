@@ -26,6 +26,7 @@ export enum SubjectType {
   App = 'apps',
   Page = 'pages',
   File = 'files',
+  Secret = 'secrets',
 }
 
 export enum Role {
@@ -73,6 +74,13 @@ export const config: PermissionsConfig<
     [SubjectType.File]: {
       author: {
         // File permissions should only be indicated by parent workspace permissions
+        disableManagePolicy: true,
+      },
+    },
+
+    [SubjectType.Secret]: {
+      author: {
+        // Secret permissions should only be indicated by parent workspace permissions
         disableManagePolicy: true,
       },
     },
@@ -133,6 +141,13 @@ export const config: PermissionsConfig<
           conditions: {
             subjectId: '${subject.id}',
             subjectType: 'workspaces',
+          },
+        },
+        {
+          action: [ActionType.Manage],
+          subject: SubjectType.Secret,
+          conditions: {
+            workspaceId: '${subject.id}',
           },
         },
       ],

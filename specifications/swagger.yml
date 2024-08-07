@@ -598,6 +598,7 @@ components:
           type: string
         value: {}
 
+
     WorkspaceSecrets:
       type: object
       example:
@@ -612,8 +613,22 @@ components:
         required:
           - value
         properties:
+          id:
+            type: string
           value:
             type: string
+          description:
+            type: string
+          createdBy:
+            type: string
+          updatedBy:
+            type: string
+          createdAt:
+            type: string
+          updatedAt:
+            type: string
+          permissions:
+            $ref: '#/components/schemas/PermissionsMap'
 
     When:
       type: object
@@ -2481,6 +2496,33 @@ components:
           properties:
             security:
               $ref: '#/components/schemas/WorkspaceSecurity'
+
+    UpdatedWorkspaceSecrets:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.secrets.updated
+          enum:
+            - workspaces.secrets.updated
+        payload:
+          type: object
+          properties:
+            created:
+              type: array
+              items:
+                type: string
+            updated:
+              type: array
+              items:
+                type: string
+            deleted:
+              type: array
+              items:
+                type: string
 
     PublishedWorkspaceVersion:
       type: object
@@ -5440,6 +5482,54 @@ paths:
             type: string
       requestBody: *PATCH_BODY
       responses: *PATCH_RESPONSES
+
+  /v2/workspaces/{workspaceId}/security/secrets/{secretName}:
+    delete:
+      description: Delete a secret
+      operationId: deleteWorkspaceSecret
+      tags:
+        - 'Secrets'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'secretName'
+          in: 'path'
+          description: 'Automation slug'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  secretName:
+                    type: string
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
 
   ## automations
   /v2/workspaces/{workspaceId}/automations:

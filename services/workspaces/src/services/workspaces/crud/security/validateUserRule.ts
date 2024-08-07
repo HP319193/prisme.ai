@@ -83,6 +83,7 @@ export function validateUserRule(workspaceId: string, rule: Rule): Rule[] {
           [SubjectType.App]: 'workspaceId',
           [SubjectType.File]: 'workspaceId',
           [SubjectType.Page]: 'workspaceId',
+          [SubjectType.Secret]: 'workspaceId',
           ['automations']: 'runningWorkspaceId',
         }[subject as SubjectType] || 'workspaceId';
 

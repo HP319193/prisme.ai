@@ -165,6 +165,7 @@ export default function init(dsulStorage: DSULStorage) {
 
   async function updateSecretsHandler(
     {
+      method,
       context,
       params: { workspaceId },
       body,
@@ -178,7 +179,28 @@ export default function init(dsulStorage: DSULStorage) {
     res: Response<PrismeaiAPI.UpdateWorkspaceSecrets.Responses.$200>
   ) {
     const secrets = new Secrets(accessManager, broker.child(context));
-    const data = await secrets.updateSecrets(workspaceId, body);
+    const data = await secrets.updateSecrets(workspaceId, body, {
+      mode: method.toLowerCase() as any,
+    });
+
+    return res.send(data);
+  }
+
+  async function deleteSecretHandler(
+    {
+      context,
+      params: { workspaceId, secretName },
+      body,
+      accessManager,
+      broker,
+    }: Request<
+      PrismeaiAPI.DeleteWorkspaceSecret.PathParameters,
+      PrismeaiAPI.DeleteWorkspaceSecret.Responses.$200
+    >,
+    res: Response<PrismeaiAPI.DeleteWorkspaceSecret.Responses.$200>
+  ) {
+    const secrets = new Secrets(accessManager, broker.child(context));
+    const data = await secrets.deleteSecret(workspaceId, secretName);
 
     return res.send(data);
   }
@@ -197,6 +219,7 @@ export default function init(dsulStorage: DSULStorage) {
   app.get(`/secrets`, asyncRoute(getSecretsHandler));
   app.put(`/secrets`, asyncRoute(updateSecretsHandler));
   app.patch(`/secrets`, asyncRoute(updateSecretsHandler));
+  app.delete(`/secrets/:secretName`, asyncRoute(deleteSecretHandler));
 
   return app;
 }
