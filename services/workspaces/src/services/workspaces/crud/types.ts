@@ -3,6 +3,7 @@ import { AccessManager, SubjectType } from '../../../permissions';
 import { DSULStorage, DSULType } from '../../DSULStorage';
 import { Logger, logger as globalLogger } from '../../../logger';
 import { InvalidVersionError } from '../../../errors';
+import { Secrets } from './security';
 
 export class DsulCrud {
   protected accessManager: Required<AccessManager>;
@@ -44,5 +45,10 @@ export class DsulCrud {
       version: version || 'current',
     });
     return { id: workspaceId, ...workspace };
+  };
+
+  interpolateSecrets = async <T>(workspaceId: string, data: T): Promise<T> => {
+    const secrets = new Secrets(this.accessManager, this.broker);
+    return secrets.interpolateSecrets(workspaceId, data);
   };
 }

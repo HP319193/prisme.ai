@@ -185,7 +185,7 @@ export class AccessManager<
     const { permissions } = this.checkAsUser();
     const subject =
       typeof subjectOrId === 'string'
-        ? (await this.fetch(subjectType, subjectOrId))?.toJSON()
+        ? (await this.__unsecureGet(subjectType, subjectOrId))?.toJSON()
         : subjectOrId;
     if (!subject) {
       return;
@@ -228,7 +228,7 @@ export class AccessManager<
     );
   }
 
-  private async fetch<returnType extends SubjectType>(
+  private async __unsecureGet<returnType extends SubjectType>(
     subjectType: returnType,
     id: string | FilterQuery<SubjectInterfaces[returnType], Role>
   ) {
@@ -238,6 +238,21 @@ export class AccessManager<
     const Model = this.model(subjectType);
     const query = typeof id === 'string' ? { id } : id;
     const subject = await Model.findOne(query);
+    return subject;
+  }
+
+  public async __unsecureFind<returnType extends SubjectType>(
+    subjectType: returnType,
+    query: mongoose.FilterQuery<Document<SubjectInterfaces[returnType]>>,
+    opts?: FindOptions
+  ) {
+    const { page = 0, limit = DEFAULT_FIND_PAGE_SIZE } = opts?.pagination || {};
+
+    const Model = this.model(subjectType);
+    const subject = await Model.find(query)
+      .sort(opts?.sort!)
+      .skip(page * limit)
+      .limit(limit);
     return subject;
   }
 
@@ -300,7 +315,7 @@ export class AccessManager<
     query: string | FilterQuery<SubjectInterfaces[returnType], Role>
   ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions } = this.checkAsUser();
-    const subject = await this.fetch(subjectType, query);
+    const subject = await this.__unsecureGet(subjectType, query);
     if (!subject) {
       throw new ObjectNotFoundError('Object not found', {
         subjectType,
@@ -381,7 +396,10 @@ export class AccessManager<
   ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions, user } = this.checkAsUser();
 
-    const currentSubject = await this.fetch(subjectType, updatedSubject.id);
+    const currentSubject = await this.__unsecureGet(
+      subjectType,
+      updatedSubject.id
+    );
     if (!currentSubject) {
       throw new ObjectNotFoundError('Object not found', {
         subjectType,
@@ -420,7 +438,7 @@ export class AccessManager<
     subjectType: returnType,
     id: string
   ): Promise<void> {
-    const subject = await this.fetch(subjectType, id);
+    const subject = await this.__unsecureGet(subjectType, id);
     if (!subject) {
       throw new ObjectNotFoundError('Object not found', {
         subjectType,
@@ -464,7 +482,7 @@ export class AccessManager<
   ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions } = this.checkAsUser();
 
-    const doc = await this.fetch(subjectType, id);
+    const doc = await this.__unsecureGet(subjectType, id);
     if (!doc) {
       throw new ObjectNotFoundError('Object not found', {
         subjectType,
@@ -513,7 +531,7 @@ export class AccessManager<
   ): Promise<SubjectInterfaces[returnType] & BaseSubject> {
     const { permissions } = this.checkAsUser();
 
-    const doc = await this.fetch(subjectType, id);
+    const doc = await this.__unsecureGet(subjectType, id);
     if (!doc) {
       throw new ObjectNotFoundError('Object not found', {
         subjectType,
@@ -566,7 +584,7 @@ export class AccessManager<
 
     const subject =
       typeof idOrSubject === 'string'
-        ? await this.fetch(subjectType, idOrSubject)
+        ? await this.__unsecureGet(subjectType, idOrSubject)
         : idOrSubject;
     if (!subject) {
       throw new ObjectNotFoundError('Object not found', {

@@ -58,7 +58,9 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
   const [versions, setVersions] =
     useState<{ label: ReactNode; value: string }[]>();
   useEffect(() => {
-    if (visible !== 'pull') return;
+    if (visible !== 'pull') {
+      return;
+    }
     async function fetchVersions() {
       const events = await api.getEvents(workspace.id, {
         type: 'workspaces.versions.published',
@@ -68,19 +70,18 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
         .filter((event) => {
           if (
             repository === LOCAL_REPOSITORY &&
-            event?.payload?.repository?.id
+            event?.payload?.version?.repository?.id
           ) {
             return false;
           }
 
           if (
             repository !== LOCAL_REPOSITORY &&
-            (!event?.payload?.repository?.id ||
-              LOCAL_REPOSITORY !== event?.payload?.repository?.id)
+            (!event?.payload?.version?.repository?.id ||
+              repository !== event?.payload?.version?.repository?.id)
           ) {
             return false;
           }
-
           return true;
         })
         .flatMap(({ payload: { version } }) =>
@@ -239,7 +240,7 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
           />
         </label>
 
-        {versions && (
+        {versions && visible === 'pull' && (
           <label className="flex flex-col mb-2">
             {t('workspace.versions.pull.version.label')}
             <Select

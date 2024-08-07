@@ -1,6 +1,10 @@
 // @ts-ignore
 import { hri } from 'human-readable-ids';
-import { AccessManager, SubjectType } from '../../../../permissions';
+import {
+  AccessManager,
+  getSuperAdmin,
+  SubjectType,
+} from '../../../../permissions';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 import {
@@ -9,6 +13,7 @@ import {
 } from '../../../../utils/getObjectsDifferences';
 import { ObjectNotFoundError } from '../../../../errors';
 import { logger } from '../../../../logger';
+import { interpolate } from '../../../../utils/interpolate';
 
 export class Secrets {
   private accessManager: Required<AccessManager>;
@@ -18,10 +23,6 @@ export class Secrets {
     this.accessManager = accessManager;
     this.broker = broker;
   }
-
-  /**
-   * API Keys
-   */
 
   getSecrets = async (
     workspaceId: string
@@ -51,6 +52,35 @@ export class Secrets {
         [name!]: cur,
       };
     }, {});
+  };
+
+  interpolateSecrets = async <T>(workspaceId: string, data: T): Promise<T> => {
+    const secrets = await this.accessManager.__unsecureFind(
+      SubjectType.Secret,
+      {
+        workspaceId,
+      },
+      {
+        pagination: {
+          limit: 9999,
+        },
+      }
+    );
+    const ctx = {
+      secret: secrets.reduce((secrets, { name, type, value }) => {
+        if (type === 'object' && typeof value === 'string') {
+          try {
+            value = JSON.parse(value);
+          } catch {}
+        }
+        return {
+          ...secrets,
+          [name!]: value,
+        };
+      }, {}),
+    };
+
+    return interpolate(data, ctx);
   };
 
   updateSecrets = async (
