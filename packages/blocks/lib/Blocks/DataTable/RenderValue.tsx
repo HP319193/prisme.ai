@@ -131,7 +131,7 @@ export const RenderValue = ({
                   const href = interpolate(value, data);
                   return (
                     <Link href={href} target={popup ? '_blank' : undefined}>
-                      {label}
+                      {localize(label)}
                     </Link>
                   );
                 }
