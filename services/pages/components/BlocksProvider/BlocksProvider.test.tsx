@@ -9,6 +9,7 @@ jest.mock('@prisme.ai/blocks', () => ({
   BlocksProvider: function BlocksProvider() {
     return null;
   },
+  CardVariants: [],
 }));
 
 jest.mock('../../../console/utils/api', () => {
