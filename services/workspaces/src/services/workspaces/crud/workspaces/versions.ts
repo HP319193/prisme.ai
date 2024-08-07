@@ -242,7 +242,9 @@ export class WorkspaceVersions extends DsulCrud {
       );
       const versionDetails =
         version === 'latest' && workspaceMetadata?.versions?.length
-          ? workspaceMetadata.versions[workspaceMetadata.versions.length - 1]
+          ? workspaceMetadata.versions
+              .reverse()
+              .find((cur) => !cur?.repository?.id)
           : (workspaceMetadata.versions || []).find(
               (cur) => cur.name == version
             );
@@ -250,6 +252,7 @@ export class WorkspaceVersions extends DsulCrud {
         throw new InvalidVersionError(`Unknown version name '${version}'`);
       }
       targetVersion = versionDetails;
+      version = versionDetails.name;
     }
 
     // Prepare the requested version archive
