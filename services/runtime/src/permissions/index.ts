@@ -6,6 +6,7 @@ import {
 import { EventType } from '../eda';
 import { config, Role, SubjectType, ActionType } from './config';
 import { APP_NAME } from '../../config';
+import { Schema } from 'mongoose';
 
 export { SubjectType, Role, ActionType };
 
@@ -17,6 +18,14 @@ type SubjectInterfaces = {
     registerWorkspace?: boolean;
   };
   [SubjectType.Automation]: Prismeai.Automation;
+  [SubjectType.Secret]: {
+    id: string;
+    name: string;
+    workspaceId: string;
+    description?: string;
+    value: any;
+    type: 'string' | 'number' | 'object' | 'boolean';
+  };
 };
 
 export type AccessManager = GenericAccessManager<
@@ -48,6 +57,13 @@ export function initAccessManager(
           registerWorkspace: Boolean,
         },
         [SubjectType.Automation]: false,
+        [SubjectType.Secret]: {
+          workspaceId: { type: String, index: true },
+          name: { type: String, text: true },
+          description: Schema.Types.Mixed,
+          type: { type: String },
+          value: Schema.Types.Mixed,
+        },
       },
     },
     config

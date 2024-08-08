@@ -105,6 +105,7 @@ export class Workspaces extends Storage {
       EventType.PublishedApp,
       EventType.SuspendedWorkspace,
       EventType.UpdatedRuntimeDSUL,
+      EventType.UpdatedWorkspaceSecrets,
     ];
     this.broker.on(
       onceListenedEvents.concat(alwaysListenedEvents),
@@ -167,6 +168,13 @@ export class Workspaces extends Storage {
           await this.fetchWorkspace(
             (event as Prismeai.UpdatedRuntimeDSUL).payload.workspaceId
           );
+        } else if (event.type === EventType.UpdatedWorkspaceSecrets) {
+          const workspace =
+            event.source.workspaceId &&
+            this.workspaces[event.source.workspaceId];
+          if (workspace) {
+            await this.applyWorkspaceEvent(workspace, event);
+          }
         }
 
         return true;
@@ -199,12 +207,18 @@ export class Workspaces extends Storage {
         workspace.name = updatedDSUL.name;
         this.updateWorkspacesRegistry(updatedDSUL, oldWorkspaceSlug);
         break;
-      case EventType.ConfiguredWorkspace:
-        const {
-          payload: { config },
-        } = event as any as Prismeai.ConfiguredWorkspace;
-        workspace.updateConfig(config);
+      case EventType.UpdatedWorkspaceSecrets:
+      case EventType.ConfiguredWorkspace: {
+        const config =
+          event.type === EventType.ConfiguredWorkspace
+            ? (event.payload as Prismeai.ConfiguredWorkspace['payload']).config
+            : workspace.dsul.config || {};
+        const secrets = await this.getWorkspaceSecrets(workspace.id);
+        workspace.updateConfig(config, {
+          secret: secrets,
+        });
         break;
+      }
       case EventType.CreatedAutomation:
       case EventType.UpdatedAutomation:
         const {
@@ -405,10 +419,41 @@ export class Workspaces extends Storage {
     }
   }
 
+  getWorkspaceSecrets = async (workspaceId: string): Promise<object> => {
+    const secrets = await this.accessManager.__unsecureFind(
+      SubjectType.Secret,
+      {
+        workspaceId,
+      },
+      {
+        pagination: {
+          limit: 9999,
+        },
+      }
+    );
+    return secrets.reduce((secrets, { name, type, value }) => {
+      if (type === 'object' && typeof value === 'string') {
+        try {
+          value = JSON.parse(value);
+        } catch {}
+      }
+      return {
+        ...secrets,
+        [name!]: value,
+      };
+    }, {});
+  };
+
   private async loadWorkspace(workspace: Prismeai.RuntimeModel) {
+    // Retrieve secrets
+    const secrets = await this.getWorkspaceSecrets(workspace.id!);
+
     this.workspaces[workspace.id!] = await Workspace.create(
       workspace,
-      this.apps
+      this.apps,
+      undefined,
+      undefined,
+      secrets
     );
 
     // Check imported apps & update watched app current versions

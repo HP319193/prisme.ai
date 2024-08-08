@@ -228,7 +228,7 @@ export class AccessManager<
     );
   }
 
-  private async __unsecureGet<returnType extends SubjectType>(
+  public async __unsecureGet<returnType extends SubjectType>(
     subjectType: returnType,
     id: string | FilterQuery<SubjectInterfaces[returnType], Role>
   ) {
