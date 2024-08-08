@@ -11,7 +11,7 @@ export async function emit(
   ctx: ContextsManager,
   appContext?: AppContext
 ) {
-  await rateLimiter.workspace(ctx.workspaceId).emit(ctx);
+  await rateLimiter.workspace(ctx.workspaceId, ctx.system).emit(ctx);
   const emitSourceContext: Partial<EventSource> = {
     ...appContext,
     userId: undefined, // Only custom events sent from API or Websocket have their source userId sent

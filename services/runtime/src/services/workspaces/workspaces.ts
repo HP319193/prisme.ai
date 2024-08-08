@@ -9,9 +9,13 @@ import { Workspace } from './workspace';
 import { Apps } from '../apps';
 import { logger } from '../../logger';
 import { AccessManager, SubjectType, getSuperAdmin } from '../../permissions';
+import { WORKSPACE_SECRET_SYSTEM_PREFIX } from '../../../config';
 
 export * from './workspace';
 
+export type WorkspaceSystemSecrets = Prismeai.WorkspaceSystemSecrets & {
+  rev: string; // Add a random id so we can detect when we need to keep our modules in sync with new updated secrets
+};
 export class Workspaces extends Storage {
   private broker: Broker;
   private apps: Apps;
@@ -26,6 +30,8 @@ export class Workspaces extends Storage {
     }
   >;
 
+  public workspaceSystemSecrets: Record<string, WorkspaceSystemSecrets>;
+
   constructor(
     driverType: DriverType,
     driverOptions: StorageOptions[DriverType],
@@ -39,6 +45,7 @@ export class Workspaces extends Storage {
     this.broker = broker;
     this.watchedApps = {};
     this.workspacesRegistry = {};
+    this.workspaceSystemSecrets = {};
     this.accessManager = accessManager;
   }
 
@@ -431,17 +438,34 @@ export class Workspaces extends Storage {
         },
       }
     );
-    return secrets.reduce((secrets, { name, type, value }) => {
+    const systemSecrets: Record<string, any> = {};
+
+    const secretsObj = secrets.reduce((secrets, { name, type, value }) => {
       if (type === 'object' && typeof value === 'string') {
         try {
           value = JSON.parse(value);
         } catch {}
+      }
+
+      if (
+        typeof name === 'string' &&
+        name.startsWith(WORKSPACE_SECRET_SYSTEM_PREFIX)
+      ) {
+        systemSecrets[name] = value;
+        return secrets;
       }
       return {
         ...secrets,
         [name!]: value,
       };
     }, {});
+
+    this.workspaceSystemSecrets[workspaceId] = {
+      ...systemSecrets,
+      rev: `${Date.now()}`,
+    };
+
+    return secretsObj;
   };
 
   private async loadWorkspace(workspace: Prismeai.RuntimeModel) {

@@ -52,7 +52,7 @@ export async function fetch(
   if (!fetchParams.url) {
     throw new InvalidInstructionError(`Invalid fetch instruction : empty url`);
   }
-  await rateLimiter.workspace(ctx.workspaceId).fetch(ctx);
+  await rateLimiter.workspace(ctx.workspaceId, ctx.system).fetch(ctx);
 
   const maxRetries =
     typeof opts?.maxRetries !== 'undefined' ? opts.maxRetries : 2;

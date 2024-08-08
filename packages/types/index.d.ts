@@ -2905,6 +2905,17 @@ declare namespace Prismeai {
             clientId?: string;
         };
     }
+    export interface WorkspaceSystemSecrets {
+        prismeai_ratelimit_disabled?: any;
+        prismeai_ratelimit_automations?: any;
+        prismeai_ratelimit_emits?: any;
+        prismeai_ratelimit_fetchs?: any;
+        prismeai_ratelimit_repeats?: any;
+        prismeai_ratelimit_automations_burst?: any;
+        prismeai_ratelimit_emits_burst?: any;
+        prismeai_ratelimit_fetchs_burst?: any;
+        prismeai_ratelimit_repeats_burst?: any;
+    }
     export interface WorkspaceUsage {
         workspaceId: string;
         beforeDate: string;

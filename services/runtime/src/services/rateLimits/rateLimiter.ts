@@ -9,7 +9,7 @@ import {
   RATE_LIMIT_REPEATS,
   RATE_LIMIT_DISABLED,
 } from '../../../config/rateLimits';
-
+import { WorkspaceSystemSecrets } from '../workspaces';
 export class RateLimiter {
   private workspaces: Record<string, WorkspaceLimiter>;
 
@@ -17,26 +17,55 @@ export class RateLimiter {
     this.workspaces = {};
   }
 
-  initWorkspaceLimits(workspaceId: string) {
-    this.workspaces[workspaceId] = new WorkspaceLimiter(workspaceId, {
-      automations: RATE_LIMIT_AUTOMATIONS,
-      emits: RATE_LIMIT_EMITS,
-      fetchs: RATE_LIMIT_FETCHS,
-      repeats: RATE_LIMIT_REPEATS,
-    });
+  initWorkspaceLimits(workspaceId: string, sys?: WorkspaceSystemSecrets) {
+    this.workspaces[workspaceId] = new WorkspaceLimiter(
+      workspaceId,
+      {
+        automations: {
+          rate:
+            sys?.prismeai_ratelimit_automations || RATE_LIMIT_AUTOMATIONS.rate,
+          burstRate:
+            sys?.prismeai_ratelimit_automations_burst ||
+            RATE_LIMIT_AUTOMATIONS.burstRate,
+        },
+        emits: {
+          rate: sys?.prismeai_ratelimit_emits || RATE_LIMIT_EMITS.rate,
+          burstRate:
+            sys?.prismeai_ratelimit_emits_burst || RATE_LIMIT_EMITS.burstRate,
+        },
+        fetchs: {
+          rate: sys?.prismeai_ratelimit_fetchs || RATE_LIMIT_FETCHS.rate,
+          burstRate:
+            sys?.prismeai_ratelimit_fetchs_burst || RATE_LIMIT_FETCHS.burstRate,
+        },
+        repeats: {
+          rate: sys?.prismeai_ratelimit_repeats || RATE_LIMIT_REPEATS.rate,
+          burstRate:
+            sys?.prismeai_ratelimit_repeats_burst ||
+            RATE_LIMIT_REPEATS.burstRate,
+        },
+      },
+      sys?.rev || '1'
+    );
 
     return this.workspaces[workspaceId];
   }
 
-  workspace(workspaceId: string) {
-    if (!this.workspaces[workspaceId]) {
-      return this.initWorkspaceLimits(workspaceId);
+  workspace(workspaceId: string, sys?: WorkspaceSystemSecrets) {
+    if (
+      !this.workspaces[workspaceId] ||
+      // Rebuild limiters whenever system secrets change
+      (sys?.rev && this.workspaces[workspaceId].rev !== sys.rev)
+    ) {
+      return this.initWorkspaceLimits(workspaceId, sys);
     }
     return this.workspaces[workspaceId];
   }
 }
 
 class WorkspaceLimiter {
+  public rev: string;
+
   private limits: WorkspaceLimits;
 
   private workspaceId: string;
@@ -45,9 +74,10 @@ class WorkspaceLimiter {
   private fetchs: TokenBucket;
   private repeats: TokenBucket;
 
-  constructor(workspaceId: string, limits: WorkspaceLimits) {
+  constructor(workspaceId: string, limits: WorkspaceLimits, rev: string) {
     this.workspaceId = workspaceId;
     this.limits = limits;
+    this.rev = rev; // Simple version string so consuming code can detect when configured limits are out of date
 
     const { automations, emits, fetchs, repeats } = limits;
 
@@ -101,7 +131,7 @@ class WorkspaceLimiter {
     ctx: ContextsManager,
     tokens: number = 1
   ) {
-    if (RATE_LIMIT_DISABLED) {
+    if (RATE_LIMIT_DISABLED || ctx?.system?.prismeai_ratelimit_disabled) {
       return Number.POSITIVE_INFINITY;
     }
     let t0 = Date.now();

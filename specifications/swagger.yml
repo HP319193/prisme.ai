@@ -629,6 +629,21 @@ components:
           permissions:
             $ref: '#/components/schemas/PermissionsMap'
 
+    WorkspaceSystemSecrets:
+      type: object
+      properties:
+        prismeai_ratelimit_disabled: {}
+
+        prismeai_ratelimit_automations: {}
+        prismeai_ratelimit_emits: {}
+        prismeai_ratelimit_fetchs: {}
+        prismeai_ratelimit_repeats: {}
+
+        prismeai_ratelimit_automations_burst: {}
+        prismeai_ratelimit_emits_burst: {}
+        prismeai_ratelimit_fetchs_burst: {}
+        prismeai_ratelimit_repeats_burst: {}
+
     When:
       type: object
       anyOf:
