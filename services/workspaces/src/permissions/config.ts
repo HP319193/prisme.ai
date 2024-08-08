@@ -7,7 +7,6 @@ import {
   LAST_CUSTOM_RULE_PRIORITY,
   PLATFORM_WORKSPACE_ID,
   UPLOADS_STORAGE_TYPE,
-  WORKSPACE_SECRET_SYSTEM_REGEX,
   WORKSPACE_SECRET_USER_REGEX,
 } from '../../config';
 import { DriverType } from '../storage/types';
@@ -99,18 +98,9 @@ export const config: PermissionsConfig<
             SubjectType.File,
             SubjectType.Page,
             NativeSubjectType.Roles,
+            SubjectType.Secret,
           ],
           priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
-        },
-        {
-          action: [ActionType.Manage],
-          subject: SubjectType.Secret,
-          conditions: {
-            name: {
-              $regex: WORKSPACE_SECRET_SYSTEM_REGEX,
-            },
-          },
-          priority: LAST_CUSTOM_RULE_PRIORITY + 1010,
         },
       ],
     },

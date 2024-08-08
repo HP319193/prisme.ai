@@ -7,7 +7,6 @@ export const LAST_CUSTOM_RULE_PRIORITY = 999;
 // Wile super admins can only manage these reserved secrets
 const WORKSPACE_SECRET_SYSTEM_PREFIX = 'prismeai_';
 
-export const WORKSPACE_SECRET_SYSTEM_REGEX = `^${WORKSPACE_SECRET_SYSTEM_PREFIX}.*$`;
 export const WORKSPACE_SECRET_USER_REGEX = `^(?!${WORKSPACE_SECRET_SYSTEM_PREFIX}).*$`;
 
 export const INIT_WORKSPACE_SECURITY: Prismeai.WorkspaceSecurity = {
