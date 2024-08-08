@@ -289,7 +289,6 @@ export class AccessManager<
     }
     const { permissions } = this.checkAsUser();
     const SubjectModel = this.model(subjectType);
-    // TODO check that
     const mongoQuery = (
       SubjectModel as any as AccessibleRecordModel<any>
     ).accessibleBy(permissions.ability, ActionType.Read);

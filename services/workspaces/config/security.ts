@@ -3,6 +3,13 @@ export const FIRST_CUSTOM_RULE_PRIORITY = 100;
 // last priority must be lower than platform-level priority rules as used in permissions/config.ts
 export const LAST_CUSTOM_RULE_PRIORITY = 999;
 
+// Owners & custom roles will always have this regex applied for secrets
+// Wile super admins can only manage these reserved secrets
+const WORKSPACE_SECRET_SYSTEM_PREFIX = 'prismeai_';
+
+export const WORKSPACE_SECRET_SYSTEM_REGEX = `^${WORKSPACE_SECRET_SYSTEM_PREFIX}.*$`;
+export const WORKSPACE_SECRET_USER_REGEX = `^(?!${WORKSPACE_SECRET_SYSTEM_PREFIX}).*$`;
+
 export const INIT_WORKSPACE_SECURITY: Prismeai.WorkspaceSecurity = {
   authorizations: {
     roles: {

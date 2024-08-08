@@ -1,10 +1,6 @@
 // @ts-ignore
 import { hri } from 'human-readable-ids';
-import {
-  AccessManager,
-  getSuperAdmin,
-  SubjectType,
-} from '../../../../permissions';
+import { AccessManager, SubjectType } from '../../../../permissions';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../../eda';
 import {

@@ -1,6 +1,7 @@
 import { ActionType, SubjectType } from '../../../../permissions';
 import { Rule } from '@prisme.ai/permissions';
 import { InvalidSecurity } from '../../../../errors';
+import { WORKSPACE_SECRET_USER_REGEX } from '../../../../../config';
 
 const OnlyAllowedSubjects = [
   SubjectType.Workspace,
@@ -76,6 +77,19 @@ export function validateUserRule(workspaceId: string, rule: Rule): Rule[] {
           },
         });
       }
+    } // Protect system secrets ; only super admin can create & read them
+    else if (subject === 'secrets') {
+      rules.push({
+        ...ruleWithoutConditions,
+        subject,
+        conditions: {
+          ...conditions,
+          workspaceId,
+          name: {
+            $regex: WORKSPACE_SECRET_USER_REGEX,
+          },
+        },
+      });
     } else {
       const workspaceIdField =
         {

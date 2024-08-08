@@ -615,8 +615,7 @@ components:
         properties:
           id:
             type: string
-          value:
-            type: string
+          value: {}
           description:
             type: string
           createdBy:

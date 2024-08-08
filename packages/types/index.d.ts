@@ -2890,7 +2890,7 @@ declare namespace Prismeai {
     export interface WorkspaceSecrets {
         [name: string]: {
             id?: string;
-            value: string;
+            value: any;
             description?: string;
             createdBy?: string;
             updatedBy?: string;
