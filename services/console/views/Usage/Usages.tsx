@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next';
 import { ApiError } from '@prisme.ai/sdk';
 import getConfig from 'next/config';
 import { AppUsageMetricsWithPhoto } from './useWorkspaceUsage';
+import { useEffect, useRef } from 'react';
 
 interface UsagesProps {
   appsUsages: AppUsageMetricsWithPhoto[];
@@ -22,6 +23,22 @@ const Usages = ({ appsUsages, wpId, error }: UsagesProps) => {
     i18n: { language },
   } = useTranslation('user');
 
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  useEffect(() => {
+    if (!iframeRef.current) return;
+    iframeRef.current.style.height = '450px';
+    window.addEventListener('message', (e) => {
+      if (!iframeRef.current) return;
+      if (!BILLING_USAGE) return;
+      const { hostname: origin } = new URL(e.origin);
+      const { hostname: allowed } = new URL(BILLING_USAGE);
+      if (origin != allowed) return;
+      if (e.data.type !== 'update height') return;
+      if (!e.data.height) return;
+      iframeRef.current.style.height = `${e.data.height}px`;
+    });
+  }, []);
+
   return (
     <div className="space-y-5 flex flex-col">
       {BILLING_USAGE && (
@@ -31,7 +48,7 @@ const Usages = ({ appsUsages, wpId, error }: UsagesProps) => {
             <div className="ml-2 uppercase">{t('usage.title')}</div>
           </div>
           <iframe
-            height={450}
+            ref={iframeRef}
             src={`${BILLING_USAGE.replace(
               /\{\{lang\}\}/,
               language
