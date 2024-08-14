@@ -15,13 +15,13 @@ export function dataURItoBlob(dataURI: string): [Blob, string] {
   // convert base64/URLEncoded data component to raw binary data held in a string
   let byteString;
   if (dataURI.split(',')[0].indexOf('base64') >= 0)
-    byteString = atob(dataURI.split(',')[1]);
+    byteString = atob(dataURI.split(',')[1].split(';')[0]);
   else byteString = unescape(dataURI.split(',')[1]);
   // separate out the mime component
   const metadata = dataURI
     .split(';')
-    .filter((v, k, all) => k < all.length - 1)
-    .map((v) => v.split(/:/));
+    .map((v) => v.split(/:/))
+    .filter((pair) => pair.length === 2);
   const [, mimeString = ''] = metadata.find(([k, v]) => k === 'data') || [];
   const [, ext] = mimeString.split(/\//);
   const [, fileName = `file.${ext}`] =
