@@ -20,7 +20,7 @@ const BillingPlan = ({ wpName, wpId, userEmail }: BillingPlanProps) => {
     t,
     i18n: { language },
   } = useTranslation('user');
-
+  if (!BILLING_HOME) return null;
   return (
     <>
       <div className="flex flex-col">
@@ -29,31 +29,13 @@ const BillingPlan = ({ wpName, wpId, userEmail }: BillingPlanProps) => {
           <div className="ml-2 uppercase">{t('billing.title')}</div>
         </div>
         <div className="flex flex-col">
-          {BILLING_HOME ? (
-            <iframe
-              height={200}
-              src={`${BILLING_HOME.replace(
-                /\{\{lang\}\}/,
-                language
-              )}?workspaceId=${wpId}&email=${userEmail}`}
-            ></iframe>
-          ) : (
-            <>
-              <div className="flex flex-row font-semibold text-[1.125rem]">
-                {t('billing.free')}
-                <DisabledButton>{t('billing.change')}</DisabledButton>
-              </div>
-              <div className="flex flex-row">
-                <div className="text-[0.75rem]">O</div>
-                <div className="flex flex-col ml-2 text-gray text-[0.75rem]">
-                  {t('billing.limit_ok')}
-                  <div>
-                    <DisabledButton>{t('billing.cta_premium')}</DisabledButton>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
+          <iframe
+            height={200}
+            src={`${BILLING_HOME.replace(
+              /\{\{lang\}\}/,
+              language
+            )}?workspaceId=${wpId}&email=${userEmail}`}
+          ></iframe>
         </div>
       </div>
     </>
