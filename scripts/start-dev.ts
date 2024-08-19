@@ -103,8 +103,7 @@ async function runDocker(services: Service[]) {
 
   // Pull latest images
   await pullImages(dockerServices);
-
-  const command = ['docker-compose', '-f', devConfigPath];
+  const command = ['docker', 'compose', '-f', devConfigPath];
   // Detach databases services to avoid killing them on every ctrl+c
   shell(
     [...command, '-p', 'prismeai', 'up', '-d', 'redis', 'mongo', 'elastic'],
@@ -118,7 +117,7 @@ async function runDocker(services: Service[]) {
 
   process.on('exit', () => {
     if (dockerServices.length) {
-      shell('docker-compose -p prismeai down ' + dockerServices.join(' '));
+      shell('docker compose -p prismeai down ' + dockerServices.join(' '));
     }
   });
 }

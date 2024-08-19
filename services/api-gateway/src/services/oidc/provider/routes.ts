@@ -158,19 +158,25 @@ export function initRoutes(broker: Broker, provider: Provider) {
         '',
         oidcCfg.ACCESS_TOKENS_OPTIONS
       );
-      const origin = ctx.request.headers.origin;
-      if (origin) {
+      const handleHostname =
+        ctx.request.headers.origin || ctx.request.headers.host;
+
+      if (handleHostname) {
         try {
           // Delete specific domain cookie
+          const origin = ctx.request.headers.origin;
+          const hostname = origin
+            ? new URL(origin).hostname
+            : ctx.request.headers.host?.split(':')[0];
           ctx.cookies.set(oidcCfg.ACCESS_TOKENS_NAME, '', {
             ...oidcCfg.ACCESS_TOKENS_OPTIONS,
-            domain: new URL(origin).hostname,
+            domain: hostname,
           });
         } catch (error) {
           logger.warn({
             msg: 'Failed deleting specific origin domain',
             error,
-            origin,
+            handleHostname,
           });
         }
       }
