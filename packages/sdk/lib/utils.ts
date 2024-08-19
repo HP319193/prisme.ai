@@ -27,6 +27,8 @@ export function dataURItoBlob(dataURI: string): [Blob, string] {
   const [, fileName = `file.${ext}`] =
     metadata.find(([k, v]) => k === 'filename') || [];
 
+  fileName.replace(/[\s\p{P}]/gu, '-');
+
   // write the bytes of the string to a typed array
   let ia = new Uint8Array(byteString.length);
   for (var i = 0; i < byteString.length; i++) {
