@@ -27,7 +27,9 @@ export function dataURItoBlob(dataURI: string): [Blob, string] {
   const [, fileName = `file.${ext}`] =
     metadata.find(([k, v]) => k === 'filename') || [];
 
-  fileName.replace(/[\s\p{P}]/gu, '-');
+  const sanitizedFileName = encodeURIComponent(
+    decodeURIComponent(fileName).replace(/[;,\s]/g, '-')
+  );
 
   // write the bytes of the string to a typed array
   let ia = new Uint8Array(byteString.length);
@@ -35,7 +37,7 @@ export function dataURItoBlob(dataURI: string): [Blob, string] {
     ia[i] = byteString.charCodeAt(i);
   }
 
-  return [new Blob([ia], { type: mimeString }), fileName];
+  return [new Blob([ia], { type: mimeString }), sanitizedFileName];
 }
 
 export function isDataURL(file: any): file is string {
