@@ -264,6 +264,15 @@ export const Navigation = () => {
             .map(([slug, automation]) =>
               processItems({
                 type: 'automation',
+                tooltip: `${slug}
+                
+                ${
+                  (automation.description &&
+                    `${localize(automation.description)}
+                    
+                  `) ||
+                  ''
+                }`,
                 slug,
                 name: automation.name || slug,
                 automation,
