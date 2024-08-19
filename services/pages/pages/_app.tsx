@@ -21,7 +21,6 @@ import WorkspaceProvider from '../components/Workspace';
 import api from '../../console/utils/api';
 
 api.opts = api.opts;
-
 const Sentry = dynamic(import('../../console/utils/Sentry'), { ssr: false });
 
 type NextPageWithLayout = NextPage & {

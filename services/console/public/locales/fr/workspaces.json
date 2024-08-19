@@ -183,13 +183,13 @@
       "afterDate": "À partir du",
       "beforeDate": "Jusqu'à",
       "specific": {
-        "add": "Ajouter un champs spécifique",
+        "add": "Ajouter un champ spécifique",
         "remove": "Supprimer cette valeur",
         "label": "Champs"
       },
       "query": {
-        "label": "Ajouter un champs spécifique",
-        "description": "Un objet JSON spécifiant la valeur attendue par chaque champs, par exemple : { \"source.workspaceId\": \"Wl4RRUN\",}",
+        "label": "Ajouter un champ spécifique",
+        "description": "Un objet JSON spécifiant la valeur attendue par chaque champ, par exemple : { \"source.workspaceId\": \"Wl4RRUN\",}",
         "field": "Champs",
         "value": "Valeur"
       },
@@ -496,10 +496,10 @@
             "description": "Données à envoyer sous forme de multipart/form-data.",
             "items": {
               "label": "Champs",
-              "add": "Ajouter un champs",
-              "remove": "Supprimer le champs",
+              "add": "Ajouter un champ",
+              "remove": "Supprimer le champ",
               "fieldname": {
-                "label": "Nom du champs"
+                "label": "Nom du champ"
               },
               "value": {
                 "label": "Valeur",
@@ -1344,7 +1344,7 @@
         "schema": {
           "label": "Spécification du formulaire",
           "description": "Utilisez l'interface de construction de formulaire pour ajouter les champs de votre choix.",
-          "add": "Ajouter un champs"
+          "add": "Ajouter un champ"
         },
         "disabledSubmit": {
           "label": "Désactiver le bouton de validation",
@@ -1356,7 +1356,7 @@
         },
         "autoFocus": {
           "label": "Auto focus",
-          "description": "Met automatiquement le focus sur le premier champs du formulaire."
+          "description": "Met automatiquement le focus sur le premier champ du formulaire."
         }
       },
       "richtext": {
@@ -1730,14 +1730,14 @@
       "details": "Détails",
       "items": "Éléments du tableau",
       "required": "Requis",
-      "title": "Label du champs",
+      "title": "Label du champ",
       "description": {
-        "label": "Description du champs",
+        "label": "Description du champ",
         "description": "Ce texte sera affiché dans une bulle exactement comme celle-ci."
       },
       "placeholder": {
         "label": "Exemple de valeur",
-        "description": "Ce texte sera affiché dans le champs."
+        "description": "Ce texte sera affiché dans le champ."
       },
       "type": {
         "label": "Type de valeur",
@@ -1769,12 +1769,12 @@
     },
     "widget": {
       "default": "Par défaut",
-      "default_description": "Un champs basique relatif au type de valeur.",
+      "default_description": "Un champ basique relatif au type de valeur.",
       "name": "{{context}}",
       "name_upload": "Envoi de fichier",
       "description_upload": "Une zone d'upload sera affichée. Le fichier sera uploadé sur notre cloud et l'url sera stockée en tant que valeur de votre object de données.",
       "name_textarea": "Zone de texte",
-      "description_textarea": "Une zone de rédaction plus confortable qu'un simple champs.",
+      "description_textarea": "Une zone de rédaction plus confortable qu'un simple champ.",
       "name_date": "Date",
       "description_date": "Un calendrier sera affiché. La valeur sera formatté en tant que date.",
       "name_enum": "Liste déroulante",
@@ -1804,7 +1804,7 @@
       "description": "Définition de chaque élément du tableau"
     },
     "uiOptions": {
-      "label": "Options du champs",
+      "label": "Options du champ",
       "tags": {
         "title": "Tags",
         "options": {
