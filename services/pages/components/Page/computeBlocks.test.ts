@@ -34,6 +34,7 @@ it('should display conditionally', () => {
   expect(testCondition('!true', {})).toBeFalsy();
   expect(testCondition('false', {})).toBeFalsy();
   expect(testCondition('!false', {})).toBeTruthy();
+  expect(testCondition('!abc\ndef', {})).toBeFalsy();
 
   expect(
     testCondition('!{{currentFile}}', {

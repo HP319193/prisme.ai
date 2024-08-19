@@ -158,7 +158,7 @@ export function interpolateExpression(expression: string, values: any) {
 
   if (typeof newValue != 'string') return newValue;
   // Start a very very quicky'n dirty expression engine (only manage ! car)
-  const [hasNegation, asBoolean] = newValue.match(/^!(.*)$/) || [];
+  const [hasNegation, asBoolean] = newValue.match(/^!(.*)$/m) || [];
   if (hasNegation) {
     if (['false', 'null', '0'].includes(asBoolean)) return true;
     return !asBoolean;
