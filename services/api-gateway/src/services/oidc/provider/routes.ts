@@ -2,7 +2,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import Provider, { InteractionResults } from 'oidc-provider';
 import bodyParser from 'body-parser';
-import { URL } from 'url';
+// import { URL } from 'url';
 import services from '../..';
 import { PrismeError } from '../../../types/errors';
 import { Broker } from '@prisme.ai/broker';
@@ -126,7 +126,7 @@ export function initRoutes(broker: Broker, provider: Provider) {
         }
       );
 
-      const origin = ctx.request.headers.origin;
+      /* const origin = ctx.request.headers.origin;
       if (origin) {
         try {
           // Set specific domain cookie
@@ -146,7 +146,7 @@ export function initRoutes(broker: Broker, provider: Provider) {
             origin,
           });
         }
-      }
+      } */
     }
     if (
       ['end_session', 'end_session_success', 'end_session_confirm'].includes(
@@ -158,9 +158,9 @@ export function initRoutes(broker: Broker, provider: Provider) {
         '',
         oidcCfg.ACCESS_TOKENS_OPTIONS
       );
-      const handleHostname =
-        ctx.request.headers.origin || ctx.request.headers.host;
 
+      /* const handleHostname =
+        ctx.request.headers.origin || ctx.request.headers.host;
       if (handleHostname) {
         try {
           // Delete specific domain cookie
@@ -179,7 +179,7 @@ export function initRoutes(broker: Broker, provider: Provider) {
             handleHostname,
           });
         }
-      }
+      } */
     }
   });
 

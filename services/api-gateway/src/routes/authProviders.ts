@@ -82,7 +82,7 @@ const getAnonymousLoginHandler = (jwks: JWKStore) =>
             oidcCfg.ACCESS_TOKENS_OPTIONS
           );
 
-          const origin = req.headers.origin;
+          /* const origin = req.headers.origin;
           if (origin) {
             try {
               // Set a cookie for pages domain
@@ -101,7 +101,7 @@ const getAnonymousLoginHandler = (jwks: JWKStore) =>
             logger.warn({
               msg: `Missing origin header, could not set auth cookie for specific origin domain, anonymous user will not be properly handled.`,
             });
-          }
+          } */
           res.send({
             ...user,
             token: jwt,
