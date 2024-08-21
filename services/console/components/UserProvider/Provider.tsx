@@ -41,12 +41,9 @@ async function authFromConsole() {
       if (type === 'api.token') {
         if (legacy) {
           api.legacyToken = token;
-          Storage.set('auth-token', token);
           cookie.set('auth-token', token);
         } else {
           api.token = token;
-          Storage.set('access-token', token);
-          cookie.set('access-token', token);
         }
         clearTimeout(t);
         resolve(token);
@@ -207,15 +204,7 @@ export const UserProvider: FC<UserProviderProps> = ({
         } catch {}
       }
 
-      api.token = Storage.get('access-token');
-      api.token && cookie.set('access-token', api.token);
-
       const user = await api.me();
-      if (user?.expires && api.token) {
-        cookie.set('access-token', api.token, {
-          expires: new Date(user?.expires),
-        });
-      }
 
       if (user.authData && user.authData.anonymous && !anonymous) {
         throw {
@@ -258,7 +247,6 @@ export const UserProvider: FC<UserProviderProps> = ({
         try {
           const { token, ...user } = await api.createAnonymousSession();
           api.token = token;
-          Storage.set('access-token', token);
           setUser(user);
           setLoading(false);
           return;
@@ -345,7 +333,6 @@ export const UserProvider: FC<UserProviderProps> = ({
             redirectionUrl.toString()
           );
           api.token = access_token;
-          Storage.set('access-token', access_token);
         } catch (e) {
           const { error } = e as ApiError;
           if (error === 'invalid_grant') {

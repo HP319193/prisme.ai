@@ -34,7 +34,6 @@ const api = new Api({
     transports: publicRuntimeConfig.WEBSOCKETS_DEFAULT_TRANSPORTS,
   },
 });
-api.token = Storage.get('access-token');
 const legacyToken = Storage.get('auth-token');
 if (!api.token && legacyToken) {
   api.legacyToken = legacyToken;

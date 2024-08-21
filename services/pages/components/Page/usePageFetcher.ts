@@ -26,7 +26,6 @@ export const usePageFetcher = (
         workspaceSlug,
         slug === '' ? 'index' : slug
       );
-      api.token = api.token || page.headers?.apiToken;
       setPage(page);
     } catch (e) {
       const statusCode = (e as HTTPError).code;
@@ -56,7 +55,7 @@ export const usePageFetcher = (
   useEffect(() => {
     if (pageFromServer && !errorFromServer) return;
     setLoading(true);
-    // We display a loading while the api.token is retreived from UserProvider
+    // Display a loading while page is fetched
     setPage({
       slug: 'Loading',
       appInstances: [],
@@ -71,14 +70,7 @@ export const usePageFetcher = (
 }`,
     });
 
-    function delayFetchPage() {
-      if (!api.token) {
-        setTimeout(delayFetchPage, 10);
-      } else {
-        fetchPage();
-      }
-    }
-    delayFetchPage();
+    fetchPage();
   }, [errorFromServer, fetchPage, pageFromServer]);
 
   return { page, setPage: setPageFromChildren, loading, fetchPage, error };

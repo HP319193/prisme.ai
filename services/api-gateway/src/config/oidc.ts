@@ -1,9 +1,10 @@
 import crypto from 'crypto';
 import { Configuration, JWK } from 'oidc-provider';
 const errors = require('fix-esm').require('oidc-provider').errors;
+import { CookieOptions } from 'express';
+import { URL, URLSearchParams } from 'url';
 import { syscfg } from '.';
 import { findCommonParentDomain } from '../utils/findCommonParentDomain';
-import { URL, URLSearchParams } from 'url';
 import { logger } from '../logger';
 import { getOAuthClient } from '../services/oidc/client';
 
@@ -79,6 +80,15 @@ const SESSION_COOKIES_MAX_AGE = parseInt(
 const ACCESS_TOKENS_MAX_AGE = parseInt(
   process.env.ACCESS_TOKENS_MAX_AGE || <any>(30 * 24 * 60 * 60)
 );
+const isProduction = process.env.NODE_ENV === 'production';
+
+const ACCESS_TOKENS_NAME = 'access-token';
+
+const ACCESS_TOKENS_OPTIONS: CookieOptions = {
+  secure: isProduction,
+  httpOnly: true,
+  sameSite: isProduction ? 'none' : undefined,
+};
 
 const OIDC_CLIENT_REGISTRATION_TOKEN =
   process.env.OIDC_CLIENT_REGISTRATION_TOKEN || 'oidc-client-registration';
@@ -95,6 +105,8 @@ export default {
   PAGES_HOST, // Used to build login form url for workspace pages
   SESSION_COOKIES_MAX_AGE,
   ACCESS_TOKENS_MAX_AGE,
+  ACCESS_TOKENS_NAME,
+  ACCESS_TOKENS_OPTIONS,
   OIDC_CLIENT_REGISTRATION_TOKEN,
   OIDC_WELL_KNOWN_URL,
   JWKS_URL: process.env.JWKS_URL || `${PROVIDER_URL}/oidc/jwks`,

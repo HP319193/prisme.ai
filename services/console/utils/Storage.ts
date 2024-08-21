@@ -48,7 +48,7 @@ export class StoragePolyfill {
     if (this.storage) {
       return this.storage.setItem(k, value);
     }
-    return Cookie.set(k, value);
+    return Cookie.set(k, value); // No sensitive data should be stored in this fallback Storage
   }
   remove(k: string) {
     if (this.storage) {

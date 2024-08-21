@@ -207,13 +207,7 @@ export class Api extends Fetcher {
       Prismeai.User & {
         token: string;
       }
-    >(
-      '/login/anonymous',
-      {},
-      {
-        credentials: 'omit',
-      }
-    );
+    >('/login/anonymous');
     this._user = user;
     return user;
   }

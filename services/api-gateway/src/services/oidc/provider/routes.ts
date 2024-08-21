@@ -7,6 +7,7 @@ import { PrismeError } from '../../../types/errors';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { logger } from '../../../logger';
+import { oidcCfg } from '../../../config';
 
 export function initRoutes(broker: Broker, provider: Provider) {
   const app = express.Router();
@@ -106,6 +107,36 @@ export function initRoutes(broker: Broker, provider: Provider) {
       }
     }
   );
+
+  // Add post-processing middleware to native OIDC routes
+  provider.use(async (ctx, next) => {
+    await next();
+    /** post-processing */
+    if (ctx?.oidc?.route === 'token' && ctx?.response?.body?.access_token) {
+      const expires = new Date(
+        new Date().valueOf() + ctx.response.body.expires_in * 1000
+      );
+      ctx.cookies.set(
+        oidcCfg.ACCESS_TOKENS_NAME,
+        ctx.response.body.access_token,
+        {
+          ...oidcCfg.ACCESS_TOKENS_OPTIONS,
+          expires,
+        }
+      );
+    }
+    if (
+      ['end_session', 'end_session_success', 'end_session_confirm'].includes(
+        ctx?.oidc?.route
+      )
+    ) {
+      ctx.cookies.set(
+        oidcCfg.ACCESS_TOKENS_NAME,
+        '',
+        oidcCfg.ACCESS_TOKENS_OPTIONS
+      );
+    }
+  });
 
   // Implement native OIDC routes : /auth, /token, /token/introspection, ...
   app.use(provider.callback());
