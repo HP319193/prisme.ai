@@ -2,7 +2,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Divider, Input, Schema, Tooltip } from '@prisme.ai/design-system';
 import { Button, Collapse } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import SchemaFormBuilder from './SchemaFormBuilder';
 
 interface PropertiesProps {
@@ -12,7 +12,7 @@ interface PropertiesProps {
 }
 
 export const Properties = ({ value, onChange, addLabel }: PropertiesProps) => {
-  const { t } = useTranslation('workspaces');
+  const { t } = useTranslation('common');
   const update = useCallback(
     (updatedKey: keyof typeof value) => (schema: Schema) => {
       onChange(
@@ -74,14 +74,17 @@ export const Properties = ({ value, onChange, addLabel }: PropertiesProps) => {
               }}
             >
               <Input
-                label={t('schema.property.name')}
+                label={t('schemaForm.builder.property.name')}
                 value={key}
                 onChange={({ target: { value } }) => updateKey(key)(value)}
                 pattern={/^[a-zA-Z0-9_]+$/.source}
                 containerClassName="flex flex-1"
               />
               <div className="absolute -top-3 -right-2">
-                <Tooltip title={t('schema.property.delete')} placement="left">
+                <Tooltip
+                  title={t('schemaForm.builder.property.delete')}
+                  placement="left"
+                >
                   <Button onClick={remove(key)}>
                     <DeleteOutlined />
                   </Button>

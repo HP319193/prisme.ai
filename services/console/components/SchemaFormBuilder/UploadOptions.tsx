@@ -11,7 +11,7 @@ interface UploadOptionsProps {
 }
 
 export const UploadOptions = ({ value, onChange }: UploadOptionsProps) => {
-  const { t } = useTranslation('workspaces');
+  const { t } = useTranslation('common');
 
   return (
     <SchemaForm
@@ -20,12 +20,14 @@ export const UploadOptions = ({ value, onChange }: UploadOptionsProps) => {
         properties: {
           upload: {
             type: 'object',
-            title: t('schema.uiOptions.upload.title'),
+            title: t('schemaForm.builder.uiOptions.upload.title'),
             properties: {
               accept: {
                 type: 'string',
-                title: t('schema.uiOptions.upload.accept.title'),
-                description: t('schema.uiOptions.upload.accept.description'),
+                title: t('schemaForm.builder.uiOptions.upload.accept.title'),
+                description: t(
+                  'schemaForm.builder.uiOptions.upload.accept.description'
+                ),
                 default: defaultUploadAccept,
               },
             },

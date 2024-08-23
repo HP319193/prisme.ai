@@ -16,7 +16,140 @@
   "no": "Non",
   "duplicate": "Dupliquer",
   "schemaForm": {
-    "uploadLabel": "Choisissez un fichier"
+    "uploadLabel": "Choisissez un fichier",
+    "builder": {
+      "property": {
+        "edit": "Éditer",
+        "add": "Ajouter une propriété",
+        "delete": "Supprimer la propriété",
+        "name": "Nom de la propriété :",
+        "details": "Détails",
+        "items": "Éléments du tableau",
+        "required": "Requis",
+        "title": "Label du champ",
+        "description": {
+          "label": "Description du champ",
+          "description": "Ce texte sera affiché dans une bulle exactement comme celle-ci."
+        },
+        "placeholder": {
+          "label": "Exemple de valeur",
+          "description": "Ce texte sera affiché dans le champ."
+        },
+        "type": {
+          "label": "Type de valeur",
+          "description": "La valeur sera du type que vous aurez spécifié."
+        },
+        "widget": {
+          "label": "Mode d'affichage",
+          "description": "Chaque type propose un affichage particulier, mais certains proposent des alternatives. Vous pouvez par exemple forcer le choix d'une date avec l'affichage en Date."
+        },
+        "enum": {
+          "label": "Liste de valeurs spécifiques",
+          "description": "Vous pouvez imposer une valeur parmi une sélection spécifique. Un menu déroulant sera alors affiché à l'utilisateur.",
+          "add": "Ajouter une valeur",
+          "remove": "Supprimer cette valeur",
+          "key": "Libellé",
+          "value": "Valeur"
+        }
+      },
+      "types": {
+        "string": "Texte",
+        "localized_string": "Texte localisé",
+        "boolean": "Booléen",
+        "localized_boolean": "Booléen localisé",
+        "number": "Nombre",
+        "localized_number": "Nombre localisé",
+        "object": "Objet",
+        "array": "Tableau",
+        "any": "N'importe quel type"
+      },
+      "widget": {
+        "default": "Par défaut",
+        "default_description": "Un champ basique relatif au type de valeur.",
+        "name": "{{context}}",
+        "name_upload": "Envoi de fichier",
+        "description_upload": "Une zone d'upload sera affichée. Le fichier sera uploadé sur notre cloud et l'url sera stockée en tant que valeur de votre object de données.",
+        "name_textarea": "Zone de texte",
+        "description_textarea": "Une zone de rédaction plus confortable qu'un simple champ.",
+        "name_date": "Date",
+        "description_date": "Un calendrier sera affiché. La valeur sera formatté en tant que date.",
+        "name_enum": "Liste déroulante",
+        "description_enum": "Vous choisissez la liste des valeurs possibles. Seule une de ces valeurs sera autorisée.",
+        "name_radio": "Radio",
+        "description_radio": "Liste de valeurs sous forme de boutons radio",
+        "name_autocomplete": "Autocompletion",
+        "description_autocomplete": "Propose une autocompletion au cours de la frappe",
+        "name_color": "Couleur",
+        "description_color": "Sélecteur de couleur",
+        "name_html": "HTML",
+        "description_html": "Contenu enrichi (HTML)",
+        "name_slider": "Glissière",
+        "description_slider": "Sélection d'une valeur numérique sur une glissière",
+        "name_tags": "Sélection multiple",
+        "description_tags": "Sélection de plusieurs valeurs",
+        "name_code": "Code",
+        "name_password": "Mot de passe"
+      },
+      "properties": {
+        "label": "Propriétés de l'objet",
+        "description": "Définition des propriétés de l'objet",
+        "add": "Ajouter une propriété"
+      },
+      "items": {
+        "label": "Items",
+        "description": "Définition de chaque élément du tableau"
+      },
+      "uiOptions": {
+        "label": "Options du champ",
+        "tags": {
+          "title": "Tags",
+          "options": {
+            "title": "Option"
+          },
+          "value": {
+            "title": "Valeur"
+          },
+          "label": {
+            "title": "Label"
+          },
+          "color": {
+            "title": "Couleur"
+          },
+          "allowNew": {
+            "title": "Entrée libre",
+            "description": "Permet de spécifier d'autres valeurs que celles listées"
+          }
+        },
+        "upload": {
+          "title": "Envoi de fichier",
+          "accept": {
+            "title": "Types de fichier autorisé",
+            "description": "Définit les types de fichiers autorisés. Chaque type est séparé à l'aide d'une virgule. Un type peut être désigné par un type MIME ou une extension de fichier (.pdf par exemple)."
+          }
+        },
+        "slider": {
+          "steps": {
+            "add": "Ajouter une étape",
+            "remove": "Supprimer l'étape",
+            "label": "Étapes",
+            "value": {
+              "label": "Valeur"
+            },
+            "_label": {
+              "label": "Libellé"
+            },
+            "description": {
+              "label": "Description"
+            }
+          }
+        },
+        "select": {
+          "hideSearch": {
+            "title": "Disable search"
+          }
+        }
+      }
+    }
   },
   "form": {
     "addItem": "Ajouter un élément",
