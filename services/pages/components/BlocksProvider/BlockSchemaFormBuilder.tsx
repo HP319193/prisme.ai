@@ -81,6 +81,20 @@ export const BlockSchemaFormBuilder: FieldComponent = ({
 
   if (!i18n) return null;
 
+  if (ArgumentsEditor) {
+    return (
+      <ArgumentsEditor
+        name={name}
+        title={typeof children === 'string' ? children : ''}
+        description={
+          typeof schema.description === 'string' ? schema.description : ''
+        }
+        add={i18n.t('schemaForm.builder.property.add', { ns: 'common' })}
+        schema={schema}
+      />
+    );
+  }
+
   return (
     <div className="pr-form-block">
       {_label && _label !== '' && (
@@ -96,18 +110,7 @@ export const BlockSchemaFormBuilder: FieldComponent = ({
       )}
       <Tooltip title={hasError} overlayClassName="pr-form-error">
         <I18nextProvider i18n={i18n}>
-          {asArgumentsBuilder && (
-            <ArgumentsEditor
-              name={name}
-              title=""
-              description=""
-              add=""
-              schema={schema}
-            />
-          )}
-          {!asArgumentsBuilder && (
-            <SchemaFormBuilder onChange={onChange} value={formValues} />
-          )}
+          <SchemaFormBuilder onChange={onChange} value={formValues} />
         </I18nextProvider>
       </Tooltip>
       <InfoBubble
