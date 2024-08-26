@@ -16,6 +16,7 @@ import { useBlock } from '@prisme.ai/blocks';
 import { get } from 'lodash';
 import equal from 'fast-deep-equal';
 import { FieldAny } from '../../../console/components/SchemaForm/schemaFormComponents';
+import BlockSchemaFormBuilder from './BlockSchemaFormBuilder';
 
 const FieldCode: SchemaFormContext['components']['FieldCode'] = ({
   schema,
@@ -120,6 +121,7 @@ const components = {
   HTMLEditor: RichTextEditor,
   UiWidgets: {
     block: BlockWidget,
+    'schema-form-builder': BlockSchemaFormBuilder,
   },
   FieldCode,
 };

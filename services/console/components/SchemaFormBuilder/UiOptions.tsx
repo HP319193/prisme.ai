@@ -24,7 +24,7 @@ const getOptionsForm = (widget: typeof WidgetsWithOptions[number]) => {
 };
 
 export const UiOptions = ({ value, onChange }: UiOptionsProps) => {
-  const { t } = useTranslation('workspaces');
+  const { t } = useTranslation('common');
   const widget = value?.['ui:widget'];
   const hasOptions =
     widget && typeof widget === 'string' && WidgetsWithOptions.includes(widget);
@@ -35,7 +35,7 @@ export const UiOptions = ({ value, onChange }: UiOptionsProps) => {
     if (!Component) return null;
     return [
       {
-        label: t('schema.uiOptions.label'),
+        label: t('schemaForm.builder.uiOptions.label'),
         content: (
           <Component
             value={value['ui:options'] || {}}

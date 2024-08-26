@@ -9,7 +9,7 @@ import DownIcon from './DownIcon';
 import Loading from './Loading';
 import BlockLoader from '../Page/BlockLoader';
 import SchemaForm from './SchemaForm';
-import { useTranslation } from 'next-i18next';
+import { i18n, useTranslation } from 'next-i18next';
 import { useUser } from '../../../console/components/UserProvider';
 import { original } from '../Page/computeBlocks';
 import Head from 'next/head';
@@ -23,8 +23,9 @@ export const BlocksProvider: FC = ({ children }) => {
   const { id } = useWorkspace();
   const { user } = useUser();
   const {
+    t,
     i18n: { language },
-  } = useTranslation();
+  } = useTranslation('common');
   const { initAuthentication } = useUser();
   const uploadFile = useCallback(
     async (
@@ -78,7 +79,6 @@ export const BlocksProvider: FC = ({ children }) => {
     };
   }, []);
 
-  const { t } = useTranslation('common');
   const locales = useMemo(
     () => ({
       addItem: t('form.addItem'),

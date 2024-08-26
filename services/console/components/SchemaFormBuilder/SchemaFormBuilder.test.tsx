@@ -1,6 +1,6 @@
 import SchemaFormBuilder from './SchemaFormBuilder';
 import renderer, { act } from 'react-test-renderer';
-import { Button, Schema, Select } from '@prisme.ai/design-system';
+import { Schema, Select } from '@prisme.ai/design-system';
 import Properties from './Properties';
 
 it('should render', () => {
@@ -73,8 +73,9 @@ it('should add properties in object', () => {
 
   expect(root.root.findAllByType(Properties).length).toBe(1);
   act(() => {
-    const button = root.root.findByProps({ title: 'schema.properties.add' })
-      .children[0] as renderer.ReactTestInstance;
+    const button = root.root.findByProps({
+      title: 'schemaForm.builder.properties.add',
+    }).children[0] as renderer.ReactTestInstance;
     button.props.onClick();
   });
   expect(onChange).toHaveBeenCalledWith({

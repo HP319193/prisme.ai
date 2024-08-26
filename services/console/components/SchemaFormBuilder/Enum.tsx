@@ -23,7 +23,7 @@ interface EnumProps {
   onChange: (v: Value) => void;
 }
 export const Enum = ({ value, onChange }: EnumProps) => {
-  const { t } = useTranslation('workspaces');
+  const { t } = useTranslation('common');
   const addValue = useCallback(() => {
     const newValue = { ...value, enum: value.enum || [] };
     const index = newValue.enum.push('');
@@ -79,9 +79,11 @@ export const Enum = ({ value, onChange }: EnumProps) => {
     <div className="flex-1 flex-col">
       <div className="flex flex-1 flex-row justify-between">
         <div>
-          <label className="font-bold">{t('schema.property.enum.label')}</label>
+          <label className="font-bold">
+            {t('schemaForm.builder.property.enum.label')}
+          </label>
           <Tooltip
-            title={t('schema.property.enum.description')}
+            title={t('schemaForm.builder.property.enum.description')}
             placement="right"
           >
             <button type="button" className="ml-2">
@@ -89,7 +91,10 @@ export const Enum = ({ value, onChange }: EnumProps) => {
             </button>
           </Tooltip>
         </div>
-        <Tooltip title={t('schema.property.enum.add')} placement="left">
+        <Tooltip
+          title={t('schemaForm.builder.property.enum.add')}
+          placement="left"
+        >
           <Button type="button" onClick={addValue} className="-mt-2">
             <PlusOutlined />
           </Button>
@@ -102,17 +107,17 @@ export const Enum = ({ value, onChange }: EnumProps) => {
             className="relative flex flex-1 flex-row items-center mb-2"
           >
             <Input
-              placeholder={t('schema.property.enum.key')}
+              placeholder={t('schemaForm.builder.property.enum.key')}
               value={(value.enumNames || [])[k]}
               onChange={updateLabel(k)}
             />
             <span className="flex m-1">:</span>
             <Input
-              placeholder={t('schema.property.enum.value')}
+              placeholder={t('schemaForm.builder.property.enum.value')}
               value={v}
               onChange={updateValue(k)}
             />
-            <Tooltip title={t('schema.property.enum.remove')}>
+            <Tooltip title={t('schemaForm.builder.property.enum.remove')}>
               <button
                 type="button"
                 className="absolute top-[50%] right-2 text-neutral-500 text-xs"
@@ -127,7 +132,7 @@ export const Enum = ({ value, onChange }: EnumProps) => {
       <SchemaForm
         schema={{
           type: 'boolean',
-          title: t('schema.uiOptions.select.hideSearch.title'),
+          title: t('schemaForm.builder.uiOptions.select.hideSearch.title'),
         }}
         buttons={[]}
         initialValues={value}
