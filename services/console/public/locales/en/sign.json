@@ -38,7 +38,8 @@
     "error_InvalidPassword": "The password is invalid : must be at least 8 characters long.",
     "error_ValidateEmailError": "Please verify your email",
     "success": "Operation successful!",
-    "success_signupSuccess": "You just created your account. We sent you a validation email, please check your inbox before logging in."
+    "success_signupSuccess": "You just created your account. We sent you a validation email, please check your inbox before logging in.",
+    "unavailable": "Signup are not available for this instance. Login using an account provided by your administrator."
   },
   "out": {
     "link": "Logout"

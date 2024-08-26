@@ -14,6 +14,24 @@ import { isFormFieldValid } from '../utils/forms';
 import LinkInTrans from './LinkInTrans';
 import { useRouter } from 'next/router';
 import Storage from '../utils/Storage';
+import getConfig from 'next/config';
+
+interface AuthProvider {
+  name: string;
+  extends?: string;
+  label?: Prismeai.LocalizedText;
+  icon?: string;
+  url?: string;
+}
+
+const { publicRuntimeConfig } = getConfig();
+
+const ENABLED_AUTH_PROVIDERS: AuthProvider[] =
+  publicRuntimeConfig.ENABLED_AUTH_PROVIDERS || [{ name: 'local' }];
+
+const hasLocalSignup = ENABLED_AUTH_PROVIDERS.some(
+  ({ name }) => name === 'local'
+);
 
 interface SignupFormProps {
   onSignup?: (user: Prismeai.User, next: () => void) => void;
@@ -107,6 +125,10 @@ export const SignupForm = ({
     }
     return errors;
   };
+
+  if (!hasLocalSignup) {
+    return <div>{t('up.unavailable')}</div>;
+  }
 
   return (
     <Form onSubmit={submit} validate={validate}>
