@@ -4,6 +4,7 @@ import { Tooltip } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { useField, useForm } from 'react-final-form';
 import SchemaFormBuilder from '../../../console/components/SchemaFormBuilder/SchemaFormBuilder';
+import ArgumentsEditor from '../../../console/components/SchemaFormBuilder/ArgumentsEditor';
 import { getI18n, I18nextProvider } from 'react-i18next';
 import { get } from 'lodash';
 
@@ -16,6 +17,11 @@ export const BlockSchemaFormBuilder: FieldComponent = ({
   const field = useField(name);
   const form = useForm();
   const [formValues, setFormValues] = useState({});
+  const {
+    'ui:options': {
+      'schema-form-builder': { arguments: asArgumentsBuilder = false } = {},
+    } = {},
+  } = schema;
 
   const [i18n, seti18n] = useState<ReturnType<typeof getI18n>>();
   useEffect(() => {
@@ -90,7 +96,18 @@ export const BlockSchemaFormBuilder: FieldComponent = ({
       )}
       <Tooltip title={hasError} overlayClassName="pr-form-error">
         <I18nextProvider i18n={i18n}>
-          <SchemaFormBuilder onChange={onChange} value={formValues} />
+          {asArgumentsBuilder && (
+            <ArgumentsEditor
+              name={name}
+              title=""
+              description=""
+              add=""
+              schema={schema}
+            />
+          )}
+          {!asArgumentsBuilder && (
+            <SchemaFormBuilder onChange={onChange} value={formValues} />
+          )}
         </I18nextProvider>
       </Tooltip>
       <InfoBubble
