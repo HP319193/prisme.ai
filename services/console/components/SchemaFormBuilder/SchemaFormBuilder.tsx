@@ -31,7 +31,8 @@ export const SchemaFormBuilder = ({
   value = {},
   onChange,
 }: SchemaFormBuilderProps) => {
-  const { t } = useTranslation('workspaces');
+  const { t } = useTranslation('common');
+
   const update = useCallback(
     (type: string) => (v: any) => {
       let newValue = { ...value };
@@ -131,11 +132,11 @@ export const SchemaFormBuilder = ({
 
     return [
       {
-        label: t('schema.types.any'),
+        label: t('schemaForm.builder.types.any'),
         value: '',
       },
       ...filteredTypes.map((value) => ({
-        label: t(`schema.types.${value.replace(':', '_')}`),
+        label: t(`schemaForm.builder.types.${value.replace(':', '_')}`),
         value,
       })),
     ];
@@ -151,8 +152,8 @@ export const SchemaFormBuilder = ({
     return [
       {
         label: (
-          <Tooltip title={t('schema.widget.default_description')}>
-            {t('schema.widget.default')}
+          <Tooltip title={t('schemaForm.builder.widget.default_description')}>
+            {t('schemaForm.builder.widget.default')}
           </Tooltip>
         ),
         value: '',
@@ -160,11 +161,11 @@ export const SchemaFormBuilder = ({
       ...filteredWidgets.map((widget) => ({
         label: (
           <Tooltip
-            title={t('schema.widget.description', {
+            title={t('schemaForm.builder.widget.description', {
               context: widget,
             })}
           >
-            {t('schema.widget.name', {
+            {t('schemaForm.builder.widget.name', {
               context: widget,
             })}
           </Tooltip>
@@ -180,10 +181,10 @@ export const SchemaFormBuilder = ({
         <div className="flex flex-1 flex-col mr-1">
           <div className="flex flex-row my-2">
             <label className="font-bold">
-              {t('schema.property.widget.label')}
+              {t('schemaForm.builder.property.widget.label')}
             </label>
             <Tooltip
-              title={t('schema.property.widget.description')}
+              title={t('schemaForm.builder.property.widget.description')}
               placement="right"
             >
               <button type="button" className="ml-2">
@@ -205,10 +206,10 @@ export const SchemaFormBuilder = ({
         <div className="flex flex-1 flex-col ml-1">
           <div className="flex flex-row my-2">
             <label className="font-bold">
-              {t('schema.property.type.label')}
+              {t('schemaForm.builder.property.type.label')}
             </label>
             <Tooltip
-              title={t('schema.property.type.description')}
+              title={t('schemaForm.builder.property.type.description')}
               placement="right"
             >
               <button type="button" className="ml-2">
@@ -239,17 +240,19 @@ export const SchemaFormBuilder = ({
       )}
       <div>
         <div className="flex flex-row my-2">
-          <label className="font-bold">{t('schema.property.title')}</label>
+          <label className="font-bold">
+            {t('schemaForm.builder.property.title')}
+          </label>
         </div>
       </div>
       <LocalizedInput value={value.title || ''} onChange={update('title')} />
       <div>
         <div className="flex flex-row my-2">
           <label className="font-bold">
-            {t('schema.property.description.label')}
+            {t('schemaForm.builder.property.description.label')}
           </label>
           <Tooltip
-            title={t('schema.property.description.description')}
+            title={t('schemaForm.builder.property.description.description')}
             placement="right"
           >
             <button type="button" className="ml-2">
@@ -266,10 +269,10 @@ export const SchemaFormBuilder = ({
         <div>
           <div className="flex flex-row my-2">
             <label className="font-bold">
-              {t('schema.property.placeholder.label')}
+              {t('schemaForm.builder.property.placeholder.label')}
             </label>
             <Tooltip
-              title={t('schema.property.placeholder.description')}
+              title={t('schemaForm.builder.property.placeholder.description')}
               placement="right"
             >
               <button type="button" className="ml-2">
@@ -292,16 +295,18 @@ export const SchemaFormBuilder = ({
           onChange={(checked) => update('required')(checked)}
           className="!mr-2"
         />
-        {t('schema.property.required')}
+        {t('schemaForm.builder.property.required')}
       </label>*/}
       {value.type === 'array' &&
         !['upload'].includes((value?.['ui:widget'] as string) || '') && (
           <div>
             <div className="flex flex-1 flex-row justify-between items-baseline">
               <div className="mb-4">
-                <label className="font-bold">{t('schema.items.label')}</label>
+                <label className="font-bold">
+                  {t('schemaForm.builder.items.label')}
+                </label>
                 <Tooltip
-                  title={t('schema.items.description')}
+                  title={t('schemaForm.builder.items.description')}
                   placement="right"
                 >
                   <button type="button" className="ml-2">
@@ -321,10 +326,10 @@ export const SchemaFormBuilder = ({
           <div className="flex flex-1 flex-row justify-between items-baseline">
             <div>
               <label className="font-bold">
-                {t('schema.properties.label')}
+                {t('schemaForm.builder.properties.label')}
               </label>
               <Tooltip
-                title={t('schema.properties.description')}
+                title={t('schemaForm.builder.properties.description')}
                 placement="right"
               >
                 <button type="button" className="ml-2">
@@ -332,7 +337,10 @@ export const SchemaFormBuilder = ({
                 </button>
               </Tooltip>
             </div>
-            <Tooltip title={t('schema.properties.add')} placement="left">
+            <Tooltip
+              title={t('schemaForm.builder.properties.add')}
+              placement="left"
+            >
               <Button
                 className="-mr-2"
                 onClick={() =>

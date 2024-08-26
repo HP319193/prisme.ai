@@ -7,7 +7,7 @@ interface TagsOptionsProps {
 }
 
 export const TagsOptions = ({ value, onChange }: TagsOptionsProps) => {
-  const { t } = useTranslation('workspaces');
+  const { t } = useTranslation('common');
 
   return (
     <SchemaForm
@@ -16,29 +16,31 @@ export const TagsOptions = ({ value, onChange }: TagsOptionsProps) => {
         properties: {
           tags: {
             type: 'object',
-            title: t('schema.uiOptions.tags.title'),
+            title: t('schemaForm.builder.uiOptions.tags.title'),
             properties: {
               allowNew: {
                 type: 'boolean',
-                title: t('schema.uiOptions.tags.allowNew.title'),
-                description: t('schema.uiOptions.tags.allowNew.description'),
+                title: t('schemaForm.builder.uiOptions.tags.allowNew.title'),
+                description: t(
+                  'schemaForm.builder.uiOptions.tags.allowNew.description'
+                ),
               },
               options: {
                 type: 'array',
-                title: t('schema.uiOptions.tags.options.title'),
+                title: t('schemaForm.builder.uiOptions.tags.options.title'),
                 items: {
                   type: 'object',
                   properties: {
                     value: {
-                      title: t('schema.uiOptions.tags.value.title'),
+                      title: t('schemaForm.builder.uiOptions.tags.value.title'),
                       type: 'string',
                     },
                     label: {
-                      title: t('schema.uiOptions.tags.label.title'),
+                      title: t('schemaForm.builder.uiOptions.tags.label.title'),
                       type: 'string',
                     },
                     color: {
-                      title: t('schema.uiOptions.tags.color.title'),
+                      title: t('schemaForm.builder.uiOptions.tags.color.title'),
                       type: 'string',
                       'ui:widget': 'color',
                     },

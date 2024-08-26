@@ -11,7 +11,7 @@ interface SliderOptionsProps {
 }
 
 export const SliderOptions = ({ value, onChange }: SliderOptionsProps) => {
-  const { t } = useTranslation('workspaces');
+  const { t } = useTranslation('common');
 
   const addStep = useCallback(() => {
     onChange({
@@ -63,11 +63,11 @@ export const SliderOptions = ({ value, onChange }: SliderOptionsProps) => {
   return (
     <div>
       <label className="font-bold flex justify-between mb-2">
-        {t('schema.uiOptions.slider.steps.label')}
+        {t('schemaForm.builder.uiOptions.slider.steps.label')}
         <div className="flex justify-end">
           <button onClick={addStep}>
             <Tooltip
-              title={t('schema.uiOptions.slider.steps.add')}
+              title={t('schemaForm.builder.uiOptions.slider.steps.add')}
               placement="left"
             >
               <PlusOutlined />
@@ -82,7 +82,7 @@ export const SliderOptions = ({ value, onChange }: SliderOptionsProps) => {
               <div className="flex flex-row">
                 <div className="flex flex-col w-[30%]">
                   <label htmlFor={`value-${key}`}>
-                    {t('schema.uiOptions.slider.steps.value.label')}
+                    {t('schemaForm.builder.uiOptions.slider.steps.value.label')}
                   </label>
                   <Input
                     id={`value-${key}`}
@@ -95,7 +95,9 @@ export const SliderOptions = ({ value, onChange }: SliderOptionsProps) => {
                 </div>
                 <div className="flex flex-col flex-1 ml-2">
                   <label htmlFor={`label-${key}`}>
-                    {t('schema.uiOptions.slider.steps._label.label')}
+                    {t(
+                      'schemaForm.builder.uiOptions.slider.steps._label.label'
+                    )}
                   </label>
                   <Input
                     id={`label-${key}`}
@@ -108,7 +110,9 @@ export const SliderOptions = ({ value, onChange }: SliderOptionsProps) => {
               </div>
               <div className="mt-2">
                 <label>
-                  {t('schema.uiOptions.slider.steps.description.label')}
+                  {t(
+                    'schemaForm.builder.uiOptions.slider.steps.description.label'
+                  )}
                 </label>
                 <div className="-mt-6">
                   <RichTextEditor
@@ -122,7 +126,7 @@ export const SliderOptions = ({ value, onChange }: SliderOptionsProps) => {
                 className="absolute top-0 right-0"
               >
                 <Tooltip
-                  title={t('schema.uiOptions.slider.steps.remove')}
+                  title={t('schemaForm.builder.uiOptions.slider.steps.remove')}
                   placement="left"
                 >
                   <DeleteOutlined />
