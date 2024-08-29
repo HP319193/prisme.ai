@@ -35,7 +35,11 @@ export const UiOptions = ({ value, onChange }: UiOptionsProps) => {
     if (!Component) return null;
     return [
       {
-        label: t('schemaForm.builder.uiOptions.label'),
+        label: (
+          <div className="font-bold my-2">
+            {t('schemaForm.builder.uiOptions.label')}
+          </div>
+        ),
         content: (
           <Component
             value={value['ui:options'] || {}}
