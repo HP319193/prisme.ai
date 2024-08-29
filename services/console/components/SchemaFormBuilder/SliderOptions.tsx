@@ -1,5 +1,5 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { UiOptionsSlider } from '@prisme.ai/design-system';
+import { Collapse, UiOptionsSlider } from '@prisme.ai/design-system';
 import { Input, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
@@ -108,22 +108,32 @@ export const SliderOptions = ({ value, onChange }: SliderOptionsProps) => {
                   />
                 </div>
               </div>
-              <div className="mt-2">
-                <label>
-                  {t(
-                    'schemaForm.builder.uiOptions.slider.steps.description.label'
-                  )}
-                </label>
-                <div className="-mt-6">
-                  <RichTextEditor
-                    value={description}
-                    onChange={udpateStepValue(key)('description')}
-                  />
-                </div>
-              </div>
+              <Collapse
+                className="mt-2"
+                items={[
+                  {
+                    label: (
+                      <label>
+                        {t(
+                          'schemaForm.builder.uiOptions.slider.steps.description.label'
+                        )}
+                      </label>
+                    ),
+                    content: (
+                      <div className="-mt-6">
+                        <RichTextEditor
+                          value={description}
+                          onChange={udpateStepValue(key)('description')}
+                        />
+                      </div>
+                    ),
+                  },
+                ]}
+              />
               <button
                 onClick={removeStep(key)}
                 className="absolute top-0 right-0"
+                type="button"
               >
                 <Tooltip
                   title={t('schemaForm.builder.uiOptions.slider.steps.remove')}
