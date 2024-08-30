@@ -4,6 +4,24 @@ import { Title } from '@prisme.ai/design-system';
 import icon from '../icons/icon-prisme.svg';
 import Image from 'next/image';
 import LinkInTrans from './LinkInTrans';
+import getConfig from 'next/config';
+
+interface AuthProvider {
+  name: string;
+  extends?: string;
+  label?: Prismeai.LocalizedText;
+  icon?: string;
+  url?: string;
+}
+
+const { publicRuntimeConfig } = getConfig();
+
+const ENABLED_AUTH_PROVIDERS: AuthProvider[] =
+  publicRuntimeConfig.ENABLED_AUTH_PROVIDERS || [{ name: 'local' }];
+
+const hasLocalSignup = ENABLED_AUTH_PROVIDERS.some(
+  ({ name }) => name === 'local'
+);
 
 export enum SignType {
   In = 'in',
@@ -65,18 +83,20 @@ export const SignLayout = ({
             <Title className="text-center !text-3xl">
               {t(`${type}.topForm2`)}
             </Title>
-            <div className="text-center">
-              <Trans
-                t={t}
-                i18nKey={`${type}.topForm3`}
-                values={{
-                  url: `/${link}`,
-                }}
-                components={{
-                  a: <LinkInTrans href={`${link}`} className="text-link" />,
-                }}
-              />
-            </div>
+            {hasLocalSignup && (
+              <div className="text-center">
+                <Trans
+                  t={t}
+                  i18nKey={`${type}.topForm3`}
+                  values={{
+                    url: `/${link}`,
+                  }}
+                  components={{
+                    a: <LinkInTrans href={`${link}`} className="text-link" />,
+                  }}
+                />
+              </div>
+            )}
           </div>
           {children}
         </div>

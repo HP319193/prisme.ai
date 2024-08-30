@@ -38,7 +38,8 @@
     "error_InvalidPassword": "Le mot de passe est invalide : celui-ci doit avoir au moins 8 caractère.",
     "error_ValidateEmailError": "Veuillez vérifier votre email",
     "success": "L'opération s'est déroulée avec succès !",
-    "success_signupSuccess": "Vous venez de créer votre compte. Nous vous avons envoyé un email de validation, veuillez vérifier cet email avant de vous connecter."
+    "success_signupSuccess": "Vous venez de créer votre compte. Nous vous avons envoyé un email de validation, veuillez vérifier cet email avant de vous connecter.",
+    "unavailable": "Les inscriptions ne sont pas disponible sur cette instance. Veuillez-vous connecter via un compte fournis par votre administrateur."
   },
   "out": {
     "link": "Déconnexion"
