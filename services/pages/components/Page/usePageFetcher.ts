@@ -11,7 +11,7 @@ export const usePageFetcher = (
     pageFromServer || null
   );
   const [error, setError] = useState<null | number>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!pageFromServer);
   const {
     query: { pageSlug: path = '' },
   } = useRouter();
