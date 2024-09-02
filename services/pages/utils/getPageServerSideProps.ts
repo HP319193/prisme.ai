@@ -64,7 +64,6 @@ export const getPageServerSideProps =
     let styles = '';
     let page: Prismeai.DetailedPage | null = null;
     try {
-      api.token = req.cookies['access-token'] || null;
       page = await getPage(req.headers.host || '', pageSlug);
       if (!page) {
         throw new HTTPError('not found', 404);
