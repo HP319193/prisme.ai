@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import api, { HTTPError } from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
-import BUILTIN_PAGES from '../../builtinPages';
 
 export const usePageFetcher = (
   pageFromServer?: Prismeai.DetailedPage,
@@ -12,7 +11,7 @@ export const usePageFetcher = (
     pageFromServer || null
   );
   const [error, setError] = useState<null | number>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const {
     query: { pageSlug: path = '' },
   } = useRouter();
