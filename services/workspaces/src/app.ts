@@ -4,6 +4,7 @@ import {
   APP_NAME,
   PERMISSIONS_STORAGE_MONGODB_OPTIONS,
   PORT,
+  UPLOADS_PUBLIC_STORAGE_S3_OPTIONS,
   UPLOADS_STORAGE_OPTIONS,
   UPLOADS_STORAGE_TYPE,
   WORKSPACES_STORAGE_OPTIONS,
@@ -54,7 +55,11 @@ const uploadsStorage = new FileStorage(
   buildStorage(
     UPLOADS_STORAGE_TYPE,
     UPLOADS_STORAGE_OPTIONS[UPLOADS_STORAGE_TYPE]
-  )
+  ),
+  // For now, only S3 supports 2 distincts public/private buckets
+  UPLOADS_PUBLIC_STORAGE_S3_OPTIONS.bucket
+    ? buildStorage(UPLOADS_STORAGE_TYPE, UPLOADS_PUBLIC_STORAGE_S3_OPTIONS)
+    : undefined
 );
 
 autoremoveExpiredUploads(uploadsStorage, accessManager);

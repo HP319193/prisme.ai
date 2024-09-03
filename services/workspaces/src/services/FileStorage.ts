@@ -3,14 +3,12 @@ import { FilterQuery, FindOptions } from '@prisme.ai/permissions';
 import { nanoid } from 'nanoid';
 import stream from 'stream';
 import {
-  UPLOADS_STORAGE_S3_LIKE_BASE_URL,
   UPLOADS_FILESYSTEM_DOWNLOAD_URL,
-  UPLOADS_STORAGE_AZURE_BLOB_BASE_URL,
   PLATFORM_WORKSPACE_ID,
 } from '../../config';
 import { logger } from '../logger';
 import { AccessManager, Role, SubjectType } from '../permissions';
-import { DriverType, IStorage, Streamed } from '../storage/types';
+import { IStorage, Streamed } from '../storage/types';
 import { UPLOADS_MAX_SIZE, UPLOADS_ALLOWED_MIMETYPES } from '../../config';
 import { InvalidUploadError } from '../errors';
 import { token } from '../utils';
@@ -27,31 +25,37 @@ export type FileUploadRequest = Omit<
 };
 
 class FileStorage {
-  private driver: IStorage;
-  constructor(driver: IStorage) {
-    this.driver = driver;
+  private _driver: IStorage;
+  private _driver_public?: IStorage; // If defined, will be used only for public files, while driver will be used for privates ones
+
+  constructor(driver: IStorage, driver_public?: IStorage) {
+    this._driver = driver;
+    this._driver_public = driver_public;
+  }
+
+  private driver(public_file: boolean = false) {
+    if (public_file && this._driver_public) {
+      return this._driver_public;
+    }
+    return this._driver;
   }
 
   getPath(workspaceId: string, filename: string, fileId: string) {
     return `${workspaceId}/${fileId}.${filename}`;
   }
 
-  getUrl(file: Omit<Prismeai.File, 'url'>, baseUrl: string) {
-    const storageType = file.public
-      ? this.driver.type()
-      : DriverType.FILESYSTEM;
+  getUrl(
+    file: Omit<Prismeai.File, 'url'>,
+    baseUrl: string,
+    public_file?: boolean
+  ) {
+    const driver = this.driver(public_file);
+
     const path = file.path;
-    if (
-      storageType === DriverType.S3_LIKE &&
-      UPLOADS_STORAGE_S3_LIKE_BASE_URL
-    ) {
-      return `${UPLOADS_STORAGE_S3_LIKE_BASE_URL}/${path}`;
-    }
-    if (
-      storageType === DriverType.AZURE_BLOB &&
-      UPLOADS_STORAGE_AZURE_BLOB_BASE_URL
-    ) {
-      return `${UPLOADS_STORAGE_AZURE_BLOB_BASE_URL}/${path}`;
+    const driverBaseUrl = driver.baseUrl();
+    // Private files will always be downloaded through our local api for access control
+    if (file.public && driverBaseUrl) {
+      return `${driverBaseUrl}/${path}`;
     }
 
     // Proxy mode can be forced by simply not providing storage BASE_URL env var
@@ -70,7 +74,7 @@ class FileStorage {
     });
     return result.map((file) => ({
       ...file,
-      url: this.getUrl(file, baseUrl),
+      url: this.getUrl(file, baseUrl, file.public == true),
     }));
   }
 
@@ -82,7 +86,7 @@ class FileStorage {
     const file = await accessManager.get(SubjectType.File, id);
     return {
       ...file,
-      url: this.getUrl(file, baseUrl),
+      url: this.getUrl(file, baseUrl, file.public),
     };
   }
 
@@ -165,7 +169,7 @@ class FileStorage {
 
           return {
             ...details,
-            url: this.getUrl(details, baseUrl),
+            url: this.getUrl(details, baseUrl, publicFile),
           };
         }
       )
@@ -173,9 +177,11 @@ class FileStorage {
 
     await Promise.all(
       fileDetails.map(async (file, idx) => {
-        await this.driver.save(file.path, files[idx].buffer, {
+        await this.driver(file.public).save(file.path, files[idx].buffer, {
           mimetype: file.mimetype,
-          public: file.public,
+          // Do not pass file public status to storage driver if we have separate drivers for public/private
+          // Avoids S3 errors when ACL param is not allowed by bucket configuration
+          public: this._driver_public ? undefined : file.public,
         });
       })
     );
@@ -203,13 +209,29 @@ class FileStorage {
       ...patchedField
     } = userPatch;
     const updateReq: Partial<Prismeai.File> = patchedField;
+
     if (
       typeof publicPatch === 'boolean' &&
       publicPatch !== currentFile.public
     ) {
-      await this.driver.save(currentFile.path, undefined, {
-        public: publicPatch,
-      });
+      // Bucket in-place ACL update
+      if (!this._driver_public) {
+        await this.driver().save(currentFile.path, undefined, {
+          mimetype: currentFile.mimetype,
+          public: this._driver_public ? undefined : publicPatch,
+        });
+      } else {
+        // Move objet between our 2 distinct public/private buckets
+        const data = await this.driver(currentFile.public).get(
+          currentFile.path
+        );
+        await this.driver(currentFile.public).delete(currentFile.path);
+        await this.driver(publicPatch).save(currentFile.path, data, {
+          mimetype: currentFile.mimetype,
+        });
+        updateReq.url = this.getUrl(currentFile, baseUrl, publicPatch);
+      }
+
       updateReq.public = publicPatch;
     }
 
@@ -232,12 +254,12 @@ class FileStorage {
 
     return {
       ...updatedFile,
-      url: this.getUrl(updatedFile, baseUrl),
+      url: this.getUrl(updatedFile, baseUrl, publicPatch),
     };
   }
 
-  async download(path: string, out: stream.Writable) {
-    const data = await this.driver.get(path, {
+  async download(path: string, out: stream.Writable, public_file?: boolean) {
+    const data = await this.driver(public_file).get(path, {
       stream: out,
     });
     // If driver does not support streaming, handle it ourselves
@@ -253,7 +275,7 @@ class FileStorage {
     const file = await this.get(accessManager, id, '');
 
     try {
-      await this.driver.delete(file.path);
+      await this.driver(file.public).delete(file.path);
     } catch (error) {
       logger.error(error);
     }
@@ -267,7 +289,31 @@ class FileStorage {
     const files = await accessManager.deleteMany(SubjectType.File, query);
 
     try {
-      await this.driver.deleteMany(files.map((cur) => cur.path));
+      const { publicFiles, privateFiles } = files.reduce<{
+        privateFiles: Prismeai.File[];
+        publicFiles: Prismeai.File[];
+      }>(
+        ({ publicFiles, privateFiles }, file) => ({
+          privateFiles: file.public
+            ? privateFiles
+            : privateFiles.concat(file as any),
+          publicFiles: file.public
+            ? publicFiles.concat(file as any)
+            : publicFiles,
+        }),
+        {
+          privateFiles: [],
+          publicFiles: [],
+        }
+      );
+      if (publicFiles.length) {
+        await this.driver(true).deleteMany(publicFiles.map((cur) => cur.path));
+      }
+      if (privateFiles.length) {
+        await this.driver(false).deleteMany(
+          privateFiles.map((cur) => cur.path)
+        );
+      }
     } catch (error) {
       logger.error(error);
     }
@@ -289,7 +335,15 @@ class FileStorage {
     }
 
     try {
-      await this.driver.delete(workspaceId);
+      await this.driver(false).delete(workspaceId);
+    } catch (error) {
+      logger.error(error);
+    }
+
+    try {
+      if (this._driver_public) {
+        await this.driver(true).delete(workspaceId);
+      }
     } catch (error) {
       logger.error(error);
     }

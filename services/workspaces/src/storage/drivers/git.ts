@@ -17,7 +17,7 @@ export type GitOptions = FilesystemOptions &
   Prismeai.WorkspaceRepository['config'];
 
 export type GitExportOptions = ExportOptions & {
-  commit?: string; // Speciific commit to export from
+  commit?: string; // Specific commit to export from
   email?: string; // Author email
 };
 

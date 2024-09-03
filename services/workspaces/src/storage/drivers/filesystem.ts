@@ -57,6 +57,10 @@ export default class Filesystem implements IStorage {
     return DriverType.FILESYSTEM;
   }
 
+  baseUrl(): string {
+    return '';
+  }
+
   protected getPath(key: string) {
     return join(this.options.dirpath || '', key);
   }

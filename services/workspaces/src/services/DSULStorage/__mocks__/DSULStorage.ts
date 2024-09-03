@@ -7,6 +7,7 @@ const getMockedStorage = (initStore?: any): IStorage => {
   const store = initStore || {};
   const driver: IStorage = {
     type: () => DriverType.FILESYSTEM,
+    baseUrl: () => '',
     find: () => Promise.resolve([]),
     save: jest.fn((id: string, data: any) => {
       store[id] = data;

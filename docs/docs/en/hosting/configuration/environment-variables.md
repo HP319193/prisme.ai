@@ -46,6 +46,21 @@
 
 ## Databases
 
+
+**Notes on uploads bucket :**  
+By default, S3 driver stores all uploads inside the same bucket whether they are public or private. This unique bucket is expected to allow public accesses and enable object level ACLs, letting the S3 driver selectively set objects public or private ACL.  
+
+In case these S3 options are forbidden in your environment, you can have 2 separate S3 Buckets for public / private objects :  
+* Both buckets can keep default S3 settings (which forbid any public access & disable object level ACLs)
+* The 2nd additional bucket will be served through a public CDN allowed to access `*` objects (or any more restrictive patterns you want)  
+
+In this setup, `UPLOADS_STORAGE_S3_*` environement variables will configure the private bucket, and the public bucket can be enabled with `UPLOADS_PUBLIC_STORAGE_S3_*` environment variables.  
+Separate secret/access keys can be provided for the public bucket, or you can retrieve credentials from the first bucket by simply setting these 2 variables :  
+```
+UPLOADS_PUBLIC_STORAGE_S3_LIKE_BUCKET_NAME="here is your public uploads bucket name"
+UPLOADS_PUBLIC_STORAGE_S3_LIKE_BASE_URL="here is your CDN public base URL"
+```
+
 <table>
   <tr>
     <td>Name</td>

@@ -35,6 +35,7 @@ export const Streamed = Symbol('streamed');
 
 export interface IStorage {
   type(): DriverType;
+  baseUrl(): string;
 
   get(id: string, opts?: GetOptions): Promise<any | typeof Streamed>;
   find(prefix: string): Promise<ObjectList>;

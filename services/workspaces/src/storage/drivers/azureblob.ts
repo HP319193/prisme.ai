@@ -23,8 +23,10 @@ export interface AzureBlobOptions {
 
 export default class AzureBlob implements IStorage {
   private client: ContainerClient;
+  private options: AzureBlobOptions;
 
   public constructor(options: AzureBlobOptions) {
+    this.options = options;
     this.client = BlobServiceClient.fromConnectionString(
       options.connectionString
     ).getContainerClient(options.container);
@@ -32,6 +34,10 @@ export default class AzureBlob implements IStorage {
 
   type() {
     return DriverType.AZURE_BLOB;
+  }
+
+  baseUrl(): string {
+    return this.options.baseUrl || '';
   }
 
   public async find(
