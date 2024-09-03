@@ -43,3 +43,9 @@ export function dataURItoBlob(dataURI: string): [Blob, string] {
 export function isDataURL(file: any): file is string {
   return !!(typeof file === 'string' && file.match(/^data\:/));
 }
+
+export async function wait(delay: number = 0) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay);
+  });
+}
