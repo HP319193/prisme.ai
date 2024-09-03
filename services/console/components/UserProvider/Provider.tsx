@@ -251,9 +251,6 @@ export const UserProvider: FC<UserProviderProps> = ({
           setLoading(false);
           return;
         } catch {
-          console.log({
-            failToSignin: e,
-          });
           setLoading(false);
         }
       }
