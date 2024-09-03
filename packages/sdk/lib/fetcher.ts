@@ -1,6 +1,7 @@
 import FormData from 'form-data';
 import ApiError from './ApiError';
 import HTTPError from './HTTPError';
+import { wait } from './utils';
 
 const headersAsObject = (headers: Headers) =>
   Array.from(headers).reduce(
@@ -80,9 +81,18 @@ export class Fetcher {
   protected async _fetch<T>(
     url: string,
     options: RequestInit = {},
-    maxRetries?: number
+    maxRetries: number = 3
   ): Promise<T> {
-    const res = await this.prepareRequest(url, options);
+    let res: Response;
+    try {
+      res = await this.prepareRequest(url, options);
+    } catch (e: any) {
+      if (maxRetries > 0 && e.message === 'Load failed') {
+        await wait(20);
+        return this._fetch(url, options, --maxRetries);
+      }
+      throw e;
+    }
     if (options.redirect === 'manual' && res.status === 0) {
       return { redirected: true } as T;
     }
@@ -92,7 +102,6 @@ export class Fetcher {
       this.overwriteClientId = this.lastReceivedHeaders[this.clientIdHeader];
     }
     if (!res.ok) {
-      maxRetries = typeof maxRetries === 'undefined' ? 2 : maxRetries;
       if (
         res.statusText?.length &&
         res.statusText.includes('ECONNRESET') &&
@@ -101,7 +110,8 @@ export class Fetcher {
         console.log(
           `Retrying request towards ${url} as we received ECONNRESET error : ${res.statusText}`
         );
-        return await this._fetch(url, options, maxRetries - 1);
+        await wait(20);
+        return this._fetch(url, options, --maxRetries);
       }
       let error;
       try {
