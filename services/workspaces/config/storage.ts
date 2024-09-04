@@ -21,7 +21,7 @@ export const UPLOADS_MAX_SIZE = parseInt(
 
 export const UPLOADS_ALLOWED_MIMETYPES = (
   process.env.UPLOADS_ALLOWED_MIMETYPES ||
-  'image/*,text/*,video/*,audio/*,application/*'
+  'image/*,text/*,video/*,audio/*,application/*,font/*'
 ).split(',');
 
 export const UPLOADS_DEFAULT_VISIBILITY =
