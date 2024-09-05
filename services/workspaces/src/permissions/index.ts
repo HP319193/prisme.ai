@@ -26,6 +26,15 @@ export interface WorkspaceMetadata {
   registerWorkspace?: boolean;
 }
 
+export interface WorkspaceSecret {
+  id: string;
+  name: string;
+  workspaceId: string;
+  description?: string;
+  value: any;
+  type: 'string' | 'number' | 'object' | 'boolean';
+}
+
 export type SubjectInterfaces = {
   [SubjectType.Workspace]: WorkspaceMetadata;
   [SubjectType.App]: Prismeai.App;
@@ -33,6 +42,7 @@ export type SubjectInterfaces = {
     name?: Prismeai.LocalizedText;
   };
   [SubjectType.File]: Omit<Prismeai.File, 'url'>;
+  [SubjectType.Secret]: WorkspaceSecret;
 };
 
 export type AccessManager = GenericAccessManager<
@@ -103,6 +113,14 @@ export function initAccessManager(
           metadata: Schema.Types.Mixed,
           public: Boolean,
           shareToken: String,
+        },
+
+        [SubjectType.Secret]: {
+          workspaceId: { type: String, index: true },
+          name: { type: String, text: true },
+          description: Schema.Types.Mixed,
+          type: { type: String },
+          value: Schema.Types.Mixed,
         },
       },
     },

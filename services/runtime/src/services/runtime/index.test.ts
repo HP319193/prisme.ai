@@ -39,6 +39,17 @@ const getMockedAccessManager = () => {
     delete: jest.fn(),
     getLoadedSubjectRole: jest.fn(),
     deleteMany: jest.fn(),
+    __unsecureFind: (type) => {
+      if (type === SubjectType.Secret) {
+        return [
+          {
+            name: 'foo',
+            value: 'someSecretValue',
+          },
+        ];
+      }
+      throw new Error('Not implemented');
+    },
   };
   (<any>mock).as = jest.fn(() => mock);
 
@@ -63,14 +74,15 @@ const getMocks = (
   };
 
   const apps = new Apps(DriverType.FILESYSTEM, modelsStorage);
+  const mockedAccessManager = accessManager || getMockedAccessManager();
   const workspaces = new Workspaces(
     DriverType.FILESYSTEM,
     modelsStorage,
     apps,
-    broker as any
+    broker as any,
+    mockedAccessManager as any
   );
   workspaces.saveWorkspace = () => Promise.resolve();
-  const mockedAccessManager = accessManager || getMockedAccessManager();
   const runtime = new Runtime(
     broker as any,
     workspaces,

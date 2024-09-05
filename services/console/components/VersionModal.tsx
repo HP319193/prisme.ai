@@ -18,9 +18,11 @@ interface VersionModalProps {
   close: () => void;
 }
 
+const LOCAL_REPOSITORY = '__local__';
+
 const VersionModal = ({ visible, close }: VersionModalProps) => {
   const [description, setDescription] = useState('');
-  const [repository, setRepository] = useState('__local__');
+  const [repository, setRepository] = useState(LOCAL_REPOSITORY);
 
   const { workspace } = useWorkspace();
   const { t } = useTranslation('workspaces');
@@ -31,7 +33,7 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
     const repositories = [
       {
         label: 'Prisme.ai',
-        value: '__local__',
+        value: LOCAL_REPOSITORY,
         mode: 'read-write' as string,
       },
     ].concat(
@@ -56,38 +58,58 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
   const [versions, setVersions] =
     useState<{ label: ReactNode; value: string }[]>();
   useEffect(() => {
-    if (visible !== 'pull') return;
+    if (visible !== 'pull') {
+      return;
+    }
     async function fetchVersions() {
       const events = await api.getEvents(workspace.id, {
         type: 'workspaces.versions.published',
         limit: 10,
       });
-      const versions = events.flatMap(({ payload: { version } }) =>
-        version
-          ? [
-              {
-                label: (
-                  <Tooltip
-                    title={
-                      <div>
-                        <div>{version.name}</div>
+      const versions = events
+        .filter((event) => {
+          if (
+            repository === LOCAL_REPOSITORY &&
+            event?.payload?.version?.repository?.id
+          ) {
+            return false;
+          }
+
+          if (
+            repository !== LOCAL_REPOSITORY &&
+            (!event?.payload?.version?.repository?.id ||
+              repository !== event?.payload?.version?.repository?.id)
+          ) {
+            return false;
+          }
+          return true;
+        })
+        .flatMap(({ payload: { version } }) =>
+          version
+            ? [
+                {
+                  label: (
+                    <Tooltip
+                      title={
                         <div>
-                          {dateFormat(new Date(version.createdAt), {
-                            relative: true,
-                          })}
+                          <div>{version.name}</div>
+                          <div>
+                            {dateFormat(new Date(version.createdAt), {
+                              relative: true,
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    }
-                    placement="right"
-                  >
-                    {version.description || version.name}
-                  </Tooltip>
-                ),
-                value: version.name,
-              },
-            ]
-          : []
-      );
+                      }
+                      placement="right"
+                    >
+                      {version.description || version.name}
+                    </Tooltip>
+                  ),
+                  value: version.name,
+                },
+              ]
+            : []
+        );
       if (versions.length) {
         setVersion('latest');
         if (versions.length === 10) {
@@ -116,7 +138,7 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
       setVersions(versions);
     }
     fetchVersions();
-  }, [close, dateFormat, push, t, visible, workspace.id]);
+  }, [close, dateFormat, push, t, visible, workspace.id, repository]);
 
   const onConfirm = useCallback(
     async (mode: 'pull' | 'push') => {
@@ -126,7 +148,7 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
       });
       try {
         const remoteRepository =
-          repository === '__local__'
+          repository === LOCAL_REPOSITORY
             ? undefined
             : {
                 id: repository,
@@ -207,16 +229,6 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
             <br />
           </>
         ) : null}
-        {versions && (
-          <label className="flex flex-col mb-2">
-            {t('workspace.versions.pull.version.label')}
-            <Select
-              value={version}
-              selectOptions={versions}
-              onChange={setVersion}
-            />
-          </label>
-        )}
         <label className="flex flex-col">
           {t('workspace.versions.repository')}
           <Select
@@ -227,6 +239,17 @@ const VersionModal = ({ visible, close }: VersionModalProps) => {
             onChange={(value) => setRepository(value)}
           />
         </label>
+
+        {versions && visible === 'pull' && (
+          <label className="flex flex-col mb-2">
+            {t('workspace.versions.pull.version.label')}
+            <Select
+              value={version}
+              selectOptions={versions}
+              onChange={setVersion}
+            />
+          </label>
+        )}
       </div>
     </Modal>
   );

@@ -56,7 +56,8 @@ See [default security config](#default-security-config) for a full example.
 * **files**
 * **automations**
     * execute : allows executing the automation (regardless the trigger method is)
-* **events**
+* **events**  
+* **secrets**   
 
 **Shared actions :**  
 

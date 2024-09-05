@@ -22,7 +22,7 @@ import {
 import { getArchiveEntries } from '../../../utils/processArchive';
 import { streamToBuffer } from '../../../utils/streamToBuffer';
 import AppInstances from './appInstances';
-import Security from './security';
+import { Security } from './security';
 import Automations from './automations';
 import { Workspaces } from './workspaces';
 import { Broker } from '@prisme.ai/broker';

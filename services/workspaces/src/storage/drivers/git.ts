@@ -221,6 +221,13 @@ export default class Git extends Filesystem {
           repository: this.gitOptions.url,
         }
       );
+    } else if (`${err}`.includes('could not read Username')) {
+      throw new ForbiddenError(
+        `Authentication failed for repository ${this.gitOptions.url} : missing username or token`,
+        {
+          repository: this.gitOptions.url,
+        }
+      );
     }
     throw err;
   }

@@ -76,24 +76,28 @@ export class Workspace {
     dsul: Prismeai.RuntimeModel,
     apps: Apps,
     appContext?: AppContext,
-    overrideConfig?: any
+    overrideConfig?: any,
+    secrets?: object
   ) {
     const workspace = new Workspace(dsul, apps, appContext);
-    await workspace.loadModel({
-      ...dsul,
-      config: {
-        ...dsul.config,
-        value: {
-          ...dsul.config?.value,
-          ...overrideConfig,
+    await workspace.loadModel(
+      {
+        ...dsul,
+        config: {
+          ...dsul.config,
+          value: {
+            ...dsul.config?.value,
+            ...overrideConfig,
+          },
         },
       },
-    });
+      secrets
+    );
     return workspace;
   }
 
-  async loadModel(workspace: Prismeai.RuntimeModel) {
-    this.updateConfig(workspace.config || {});
+  async loadModel(workspace: Prismeai.RuntimeModel, secrets?: object) {
+    this.updateConfig(workspace.config || {}, { secret: secrets || {} });
     const { automations = {}, imports = {} } = workspace;
     this.triggers = Object.keys(automations).reduce(
       (prev, key) => {
@@ -161,7 +165,7 @@ export class Workspace {
     }
   }
 
-  updateConfig(config: Prismeai.Config) {
+  updateConfig(config: Prismeai.Config, additionalCtx?: { secret: object }) {
     let additionalConfigFromEnv = {};
     if (this.appContext?.appSlug) {
       additionalConfigFromEnv = extractConfigFromEnv(
@@ -184,6 +188,7 @@ export class Workspace {
       {
         // App config var from env vars should not be accessible to workspace appInstances config (only from the app automations)
         config: this.appContext?.appSlug ? config?.value || {} : configValue,
+        secret: additionalCtx?.secret || {},
       },
       {
         undefinedVars: 'leave',
@@ -194,6 +199,11 @@ export class Workspace {
       this.config,
       findSecretPaths(config?.schema || {})
     );
+    Object.values(additionalCtx?.secret || {}).forEach((secret) => {
+      if (typeof secret != 'object') {
+        this.secrets.add(secret);
+      }
+    });
 
     this.dsul = {
       ...this.dsul,

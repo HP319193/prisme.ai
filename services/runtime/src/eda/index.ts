@@ -54,6 +54,7 @@ export enum EventType {
 
   DuplicatedWorkspace = 'workspaces.duplicated',
   UpdatedWorkspaceSecurity = 'workspaces.security.updated',
+  UpdatedWorkspaceSecrets = 'workspaces.secrets.updated',
   WorkspacePermissionsShared = 'workspaces.permissions.shared',
   WorkspacePermissionsDeleted = 'workspaces.permissions.deleted',
 }

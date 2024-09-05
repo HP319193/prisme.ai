@@ -29,6 +29,13 @@ repositories:
         password: 'your git password'
 ```
 
+[Secret variables](/workspaces/#secrets) can be used in `config` section, for example :  
+```yaml
+config:
+  auth:
+    password: '{{secret.gitPassword}}
+```
+
 Any git provider is supported (Gitlab, bitbucket, ...), and multiple repositories can be configured :  
 ```yaml
 repositories:

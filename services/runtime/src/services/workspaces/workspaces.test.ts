@@ -7,6 +7,7 @@ import path from 'path';
 import { Apps } from '../apps';
 import { AvailableModels } from '../workspaces/__mocks__/workspaces';
 import { EventType } from '../../eda';
+import { SubjectType } from '../../permissions';
 
 jest.setTimeout(5000);
 global.console.warn = jest.fn();
@@ -68,7 +69,20 @@ const getMocks = () => {
     DriverType.FILESYSTEM,
     modelsStorage,
     apps,
-    broker as any
+    broker as any,
+    {
+      __unsecureFind: (type) => {
+        if (type === SubjectType.Secret) {
+          return [
+            {
+              name: 'foo',
+              value: 'someSecretValue',
+            },
+          ];
+        }
+        throw new Error('Not implemented');
+      },
+    } as any
   );
   workspaces.saveWorkspace = () => Promise.resolve();
 
