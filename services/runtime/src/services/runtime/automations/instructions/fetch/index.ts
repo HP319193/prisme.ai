@@ -192,7 +192,9 @@ export async function fetch(
   }
   let responseBody: any, error: any;
 
-  const isSSE = result.headers.get('content-type') === 'text/event-stream';
+  const isSSE = result.headers
+    .get('content-type')
+    ?.includes('text/event-stream');
   if (!stream?.event && !isSSE) {
     responseBody = await getResponseBody(result);
     if (result.status >= 400 && result.status < 600 && emitErrors) {
