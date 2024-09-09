@@ -46,7 +46,7 @@ export class Subscriptions extends Readable {
     this.cluster = cluster;
 
     // cache workspaces in accessManager
-    const uncachedFetch = (this.accessManager as any).fetch.bind(
+    const uncachedFetch = this.accessManager.__unsecureGet.bind(
       this.accessManager
     );
     const cachedWorkspaces: Record<
@@ -56,10 +56,7 @@ export class Subscriptions extends Readable {
         data: any;
       }
     > = {};
-    (this.accessManager as any).fetch = async (
-      subjectType: any,
-      id: string
-    ) => {
+    this.accessManager.__unsecureGet = async (subjectType: any, id: string) => {
       if (subjectType !== SubjectType.Workspace) {
         return uncachedFetch(subjectType, id);
       }
