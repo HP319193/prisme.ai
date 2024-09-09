@@ -17,7 +17,7 @@ export type GitOptions = FilesystemOptions &
   Prismeai.WorkspaceRepository['config'];
 
 export type GitExportOptions = ExportOptions & {
-  commit?: string; // Speciific commit to export from
+  commit?: string; // Specific commit to export from
   email?: string; // Author email
 };
 
@@ -217,6 +217,13 @@ export default class Git extends Filesystem {
     } else if (`${err}`.includes('Authentication failed')) {
       throw new ForbiddenError(
         `Authentication failed for repository ${this.gitOptions.url}`,
+        {
+          repository: this.gitOptions.url,
+        }
+      );
+    } else if (`${err}`.includes('could not read Username')) {
+      throw new ForbiddenError(
+        `Authentication failed for repository ${this.gitOptions.url} : missing username or token`,
         {
           repository: this.gitOptions.url,
         }

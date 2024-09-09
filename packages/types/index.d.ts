@@ -2568,6 +2568,18 @@ declare namespace Prismeai {
             migrated?: string;
         };
     }
+    export interface UpdatedWorkspaceSecrets {
+        /**
+         * example:
+         * workspaces.secrets.updated
+         */
+        type: "workspaces.secrets.updated";
+        payload: {
+            created?: string[];
+            updated?: string[];
+            deleted?: string[];
+        };
+    }
     export interface UpdatedWorkspaceSecurity {
         /**
          * example:
@@ -2861,11 +2873,48 @@ declare namespace Prismeai {
             };
         };
     }
+    /**
+     * example:
+     * {
+     *   "openaiApiKey": {
+     *     "value": "some secret api key"
+     *   },
+     *   "allowedModels": {
+     *     "value": [
+     *       "gpt4",
+     *       "gpt4o"
+     *     ]
+     *   }
+     * }
+     */
+    export interface WorkspaceSecrets {
+        [name: string]: {
+            id?: string;
+            value: any;
+            description?: string;
+            createdBy?: string;
+            updatedBy?: string;
+            createdAt?: string;
+            updatedAt?: string;
+            permissions?: PermissionsMap;
+        };
+    }
     export interface WorkspaceSecurity {
         authorizations?: WorkspaceAuthorizations;
         authentication?: {
             clientId?: string;
         };
+    }
+    export interface WorkspaceSystemSecrets {
+        prismeai_ratelimit_disabled?: any;
+        prismeai_ratelimit_automations?: any;
+        prismeai_ratelimit_emits?: any;
+        prismeai_ratelimit_fetchs?: any;
+        prismeai_ratelimit_repeats?: any;
+        prismeai_ratelimit_automations_burst?: any;
+        prismeai_ratelimit_emits_burst?: any;
+        prismeai_ratelimit_fetchs_burst?: any;
+        prismeai_ratelimit_repeats_burst?: any;
     }
     export interface WorkspaceUsage {
         workspaceId: string;
@@ -3204,6 +3253,24 @@ declare namespace PrismeaiAPI {
         namespace Responses {
             export interface $200 {
                 id: string;
+            }
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace DeleteWorkspaceSecret {
+        namespace Parameters {
+            export type SecretName = string;
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+            secretName: Parameters.SecretName;
+        }
+        namespace Responses {
+            export interface $200 {
+                secretName?: string;
             }
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
@@ -3655,6 +3722,34 @@ declare namespace PrismeaiAPI {
             export type $404 = Prismeai.ObjectNotFoundError;
         }
     }
+    namespace GetWorkspaceSecrets {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        namespace Responses {
+            export type $200 = /**
+             * example:
+             * {
+             *   "openaiApiKey": {
+             *     "value": "some secret api key"
+             *   },
+             *   "allowedModels": {
+             *     "value": [
+             *       "gpt4",
+             *       "gpt4o"
+             *     ]
+             *   }
+             * }
+             */
+            Prismeai.WorkspaceSecrets;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
     namespace GetWorkspaces {
         namespace Parameters {
             export type Email = string;
@@ -3975,6 +4070,50 @@ declare namespace PrismeaiAPI {
         }
         namespace Responses {
             export type $200 = Prismeai.User;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace PatchWorkspaceSecrets {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export type RequestBody = /**
+         * example:
+         * {
+         *   "openaiApiKey": {
+         *     "value": "some secret api key"
+         *   },
+         *   "allowedModels": {
+         *     "value": [
+         *       "gpt4",
+         *       "gpt4o"
+         *     ]
+         *   }
+         * }
+         */
+        Prismeai.WorkspaceSecrets;
+        namespace Responses {
+            export type $200 = /**
+             * example:
+             * {
+             *   "openaiApiKey": {
+             *     "value": "some secret api key"
+             *   },
+             *   "allowedModels": {
+             *     "value": [
+             *       "gpt4",
+             *       "gpt4o"
+             *     ]
+             *   }
+             * }
+             */
+            Prismeai.WorkspaceSecrets;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }
@@ -4466,6 +4605,50 @@ declare namespace PrismeaiAPI {
         export type RequestBody = Prismeai.DSULPatch;
         namespace Responses {
             export type $200 = Prismeai.Workspace;
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace UpdateWorkspaceSecrets {
+        namespace Parameters {
+            export type WorkspaceId = string;
+        }
+        export interface PathParameters {
+            workspaceId: Parameters.WorkspaceId;
+        }
+        export type RequestBody = /**
+         * example:
+         * {
+         *   "openaiApiKey": {
+         *     "value": "some secret api key"
+         *   },
+         *   "allowedModels": {
+         *     "value": [
+         *       "gpt4",
+         *       "gpt4o"
+         *     ]
+         *   }
+         * }
+         */
+        Prismeai.WorkspaceSecrets;
+        namespace Responses {
+            export type $200 = /**
+             * example:
+             * {
+             *   "openaiApiKey": {
+             *     "value": "some secret api key"
+             *   },
+             *   "allowedModels": {
+             *     "value": [
+             *       "gpt4",
+             *       "gpt4o"
+             *     ]
+             *   }
+             * }
+             */
+            Prismeai.WorkspaceSecrets;
             export type $400 = Prismeai.BadParametersError;
             export type $401 = Prismeai.AuthenticationError;
             export type $403 = Prismeai.ForbiddenError;

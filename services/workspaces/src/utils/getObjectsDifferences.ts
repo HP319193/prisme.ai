@@ -85,7 +85,10 @@ export function getObjectsDifferences<RawType>(
   }
 
   for (const key in obj1) {
-    if (isFunction(obj1[key])) {
+    if (
+      isFunction(obj1[key]) ||
+      (ignoreFields?.length && ignoreFields.includes(key))
+    ) {
       continue;
     }
 
@@ -94,7 +97,7 @@ export function getObjectsDifferences<RawType>(
       value2 = obj2[key];
     }
 
-    diff.data[key] = getObjectsDifferences(obj1[key], value2);
+    diff.data[key] = getObjectsDifferences(obj1[key], value2, ignoreFields);
     if (
       diff['__type'] === DiffType.ValueUnchanged &&
       diff.data[key].__type !== DiffType.ValueUnchanged
@@ -103,12 +106,16 @@ export function getObjectsDifferences<RawType>(
     }
   }
   for (const key in obj2) {
-    if (isFunction(obj2[key]) || diff.data[key] !== undefined) {
+    if (
+      isFunction(obj2[key]) ||
+      diff.data[key] !== undefined ||
+      (ignoreFields?.length && ignoreFields.includes(key))
+    ) {
       continue;
     }
 
     // Here key is a created field not existing in obj1
-    diff.data[key] = getObjectsDifferences(undefined, obj2[key]);
+    diff.data[key] = getObjectsDifferences(undefined, obj2[key], ignoreFields);
     if (
       diff['__type'] === DiffType.ValueUnchanged &&
       diff.data[key].__type !== DiffType.ValueUnchanged

@@ -365,6 +365,10 @@ export default class Runtime {
     };
     await ctx.fetch();
 
+    if (source.workspaceId && this.workspaces.workspaceSystemSecrets) {
+      ctx.system = this.workspaces.workspaceSystemSecrets[source.workspaceId];
+    }
+
     if (!(source.correlationId in this.contexts)) {
       this.contexts[source.correlationId] = [];
     }
@@ -714,9 +718,7 @@ export default class Runtime {
 
   private async startAccessManagerCacheSynchronization() {
     const workspaces: Record<string, Prismeai.Workspace> = {};
-    const uncachedFetch = (<any>this.accessManager).fetch.bind(
-      this.accessManager
-    );
+    const uncachedFetch = (<any>this.accessManager).__unsecureGet;
     // Patch accessManager.fetch to cache workspaces
     (<any>this.accessManager).fetch = (
       subjectType: SubjectType,

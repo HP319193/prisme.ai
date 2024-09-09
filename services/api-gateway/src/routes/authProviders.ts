@@ -180,6 +180,7 @@ export async function initAuthProviders(
             ((<any>req)?.logger || logger).error({
               msg: `Failed authentication from provider '${req.session?.auth?.provider}' with an error : ${err?.message}. Redirect user back to sign out.`,
               err,
+              user,
             });
             req.broker
               .send<Prismeai.FailedLogin['payload']>(EventType.FailedLogin, {

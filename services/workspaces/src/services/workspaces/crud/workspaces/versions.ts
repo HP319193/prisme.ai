@@ -30,10 +30,12 @@ export class WorkspaceVersions extends DsulCrud {
   };
 
   getRepositoryDriver = async (
-    workspace: Prismeai.Workspace,
+    workspace: Prismeai.Workspace & { id: string },
     repositoryId: string,
     mode: 'write' | 'read'
   ) => {
+    workspace = await this.interpolateSecrets(workspace.id!, workspace);
+
     if (!(repositoryId in (workspace.repositories || {}))) {
       throw new ObjectNotFoundError(
         `Unknown workspace repository '${repositoryId}'`,
@@ -108,7 +110,7 @@ export class WorkspaceVersions extends DsulCrud {
       const exportStream = new stream.PassThrough();
 
       const destDriver = await this.getRepositoryDriver(
-        workspaceMetadata,
+        { ...workspaceMetadata, id: workspaceId },
         versionRequest.repository.id,
         'write'
       );
@@ -242,7 +244,9 @@ export class WorkspaceVersions extends DsulCrud {
       );
       const versionDetails =
         version === 'latest' && workspaceMetadata?.versions?.length
-          ? workspaceMetadata.versions[workspaceMetadata.versions.length - 1]
+          ? workspaceMetadata.versions
+              .reverse()
+              .find((cur) => !cur?.repository?.id)
           : (workspaceMetadata.versions || []).find(
               (cur) => cur.name == version
             );
@@ -250,6 +254,7 @@ export class WorkspaceVersions extends DsulCrud {
         throw new InvalidVersionError(`Unknown version name '${version}'`);
       }
       targetVersion = versionDetails;
+      version = versionDetails.name;
     }
 
     // Prepare the requested version archive
@@ -298,7 +303,7 @@ export class WorkspaceVersions extends DsulCrud {
     } else {
       // Export archive from workspace's own repository
       const sourceDriver = await this.getRepositoryDriver(
-        workspaceDsul,
+        { ...workspaceDsul, id: workspaceId },
         targetVersion.repository.id,
         'read'
       );

@@ -12,6 +12,7 @@ import { EventType } from '../../../eda';
 import Runtime from '..';
 import { EventSource } from '@prisme.ai/broker';
 import { RUNTIME_EMITS_BROKER_TOPIC } from '../../../../config';
+import { SubjectType } from '../../../permissions';
 
 global.console.warn = jest.fn();
 let brokers = [];
@@ -27,6 +28,17 @@ const getMockedAccessManager = () => {
     delete: jest.fn(),
     deleteMany: jest.fn(),
     getLoadedSubjectRole: jest.fn(),
+    __unsecureFind: (type) => {
+      if (type === SubjectType.Secret) {
+        return [
+          {
+            name: 'foo',
+            value: 'someSecretValue',
+          },
+        ];
+      }
+      throw new Error('Not implemented');
+    },
   };
   (<any>mock).as = jest.fn(() => mock);
 
@@ -59,16 +71,17 @@ const getMocks = (partialSource?: Partial<EventSource>, opts?: any) => {
     dirpath: path.join(__dirname, '../../workspaces/__mocks__/'),
   };
 
+  const mockedAccessManager = getMockedAccessManager();
   const apps = new Apps(DriverType.FILESYSTEM, modelsStorage);
   const workspaces = new Workspaces(
     DriverType.FILESYSTEM,
     modelsStorage,
     apps,
-    broker as any
+    broker as any,
+    mockedAccessManager as any
   );
   workspaces.saveWorkspace = () => Promise.resolve();
 
-  const mockedAccessManager = getMockedAccessManager();
   const runtime = new Runtime(
     broker as any,
     workspaces,

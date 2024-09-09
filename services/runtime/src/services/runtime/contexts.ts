@@ -13,7 +13,11 @@ import { InvalidInstructionError, TooManyCallError } from '../../errors';
 import { logger } from '../../logger';
 import { EventType } from '../../eda';
 import { parseVariableName, SplittedPath } from '../../utils/parseVariableName';
-import { AppContext, DetailedAutomation } from '../workspaces';
+import {
+  AppContext,
+  DetailedAutomation,
+  WorkspaceSystemSecrets,
+} from '../workspaces';
 import { findSecretValues } from '../../utils/secrets';
 import { PrismeContext } from '../../api/middlewares';
 import { AccessManager, ActionType, SubjectType } from '../../permissions';
@@ -132,6 +136,8 @@ export class ContextsManager {
   private workspaceApiKeys: Record<string, string>;
   private observers: Record<string, ((data?: any) => void)[]>;
 
+  public system: WorkspaceSystemSecrets;
+
   constructor(
     ctx: PrismeContext,
     session: PrismeaiSession,
@@ -172,6 +178,9 @@ export class ContextsManager {
     this.accessManager = accessManager as any;
     this.workspaceApiKeys = {};
     this.observers = {};
+    this.system = {
+      rev: '0',
+    };
   }
 
   async fetch(contexts?: ContextType[]) {

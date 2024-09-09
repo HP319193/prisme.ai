@@ -9,9 +9,13 @@ import { Workspace } from './workspace';
 import { Apps } from '../apps';
 import { logger } from '../../logger';
 import { AccessManager, SubjectType, getSuperAdmin } from '../../permissions';
+import { WORKSPACE_SECRET_SYSTEM_PREFIX } from '../../../config';
 
 export * from './workspace';
 
+export type WorkspaceSystemSecrets = Prismeai.WorkspaceSystemSecrets & {
+  rev: string; // Add a random id so we can detect when we need to keep our modules in sync with new updated secrets
+};
 export class Workspaces extends Storage {
   private broker: Broker;
   private apps: Apps;
@@ -26,6 +30,8 @@ export class Workspaces extends Storage {
     }
   >;
 
+  public workspaceSystemSecrets: Record<string, WorkspaceSystemSecrets>;
+
   constructor(
     driverType: DriverType,
     driverOptions: StorageOptions[DriverType],
@@ -39,6 +45,7 @@ export class Workspaces extends Storage {
     this.broker = broker;
     this.watchedApps = {};
     this.workspacesRegistry = {};
+    this.workspaceSystemSecrets = {};
     this.accessManager = accessManager;
   }
 
@@ -105,6 +112,7 @@ export class Workspaces extends Storage {
       EventType.PublishedApp,
       EventType.SuspendedWorkspace,
       EventType.UpdatedRuntimeDSUL,
+      EventType.UpdatedWorkspaceSecrets,
     ];
     this.broker.on(
       onceListenedEvents.concat(alwaysListenedEvents),
@@ -167,6 +175,13 @@ export class Workspaces extends Storage {
           await this.fetchWorkspace(
             (event as Prismeai.UpdatedRuntimeDSUL).payload.workspaceId
           );
+        } else if (event.type === EventType.UpdatedWorkspaceSecrets) {
+          const workspace =
+            event.source.workspaceId &&
+            this.workspaces[event.source.workspaceId];
+          if (workspace) {
+            await this.applyWorkspaceEvent(workspace, event);
+          }
         }
 
         return true;
@@ -199,12 +214,18 @@ export class Workspaces extends Storage {
         workspace.name = updatedDSUL.name;
         this.updateWorkspacesRegistry(updatedDSUL, oldWorkspaceSlug);
         break;
-      case EventType.ConfiguredWorkspace:
-        const {
-          payload: { config },
-        } = event as any as Prismeai.ConfiguredWorkspace;
-        workspace.updateConfig(config);
+      case EventType.UpdatedWorkspaceSecrets:
+      case EventType.ConfiguredWorkspace: {
+        const config =
+          event.type === EventType.ConfiguredWorkspace
+            ? (event.payload as Prismeai.ConfiguredWorkspace['payload']).config
+            : workspace.dsul.config || {};
+        const secrets = await this.getWorkspaceSecrets(workspace.id);
+        workspace.updateConfig(config, {
+          secret: secrets,
+        });
         break;
+      }
       case EventType.CreatedAutomation:
       case EventType.UpdatedAutomation:
         const {
@@ -405,10 +426,58 @@ export class Workspaces extends Storage {
     }
   }
 
+  getWorkspaceSecrets = async (workspaceId: string): Promise<object> => {
+    const secrets = await this.accessManager.__unsecureFind(
+      SubjectType.Secret,
+      {
+        workspaceId,
+      },
+      {
+        pagination: {
+          limit: 9999,
+        },
+      }
+    );
+    const systemSecrets: Record<string, any> = {};
+
+    const secretsObj = secrets.reduce((secrets, { name, type, value }) => {
+      if (type === 'object' && typeof value === 'string') {
+        try {
+          value = JSON.parse(value);
+        } catch {}
+      }
+
+      if (
+        typeof name === 'string' &&
+        name.startsWith(WORKSPACE_SECRET_SYSTEM_PREFIX)
+      ) {
+        systemSecrets[name] = value;
+        return secrets;
+      }
+      return {
+        ...secrets,
+        [name!]: value,
+      };
+    }, {});
+
+    this.workspaceSystemSecrets[workspaceId] = {
+      ...systemSecrets,
+      rev: `${Date.now()}`,
+    };
+
+    return secretsObj;
+  };
+
   private async loadWorkspace(workspace: Prismeai.RuntimeModel) {
+    // Retrieve secrets
+    const secrets = await this.getWorkspaceSecrets(workspace.id!);
+
     this.workspaces[workspace.id!] = await Workspace.create(
       workspace,
-      this.apps
+      this.apps,
+      undefined,
+      undefined,
+      secrets
     );
 
     // Check imported apps & update watched app current versions

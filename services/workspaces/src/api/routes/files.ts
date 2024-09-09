@@ -311,6 +311,6 @@ export function initDownloadProxy(
     if (file.mimetype) {
       res.setHeader('content-type', file.mimetype);
     }
-    await fileStorage.download(file.path, res);
+    await fileStorage.download(file.path, res, file.public);
   });
 }

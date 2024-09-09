@@ -18,7 +18,7 @@ export async function executeAutomation(
   rootAutomation?: boolean
 ) {
   await ctx.securityChecks();
-  await rateLimiter.workspace(workspace.id).executeAutomation(ctx);
+  await rateLimiter.workspace(workspace.id, ctx.system).executeAutomation(ctx);
   const startedAt = Date.now();
 
   let breakThisAutomation: false | Break = false,

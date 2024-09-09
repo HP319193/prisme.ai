@@ -606,6 +606,12 @@ export class Workspaces extends DsulCrud {
 
     // Delete workspace DB entry & check permissions
     await this.accessManager.delete(SubjectType.Workspace, workspaceId);
+
+    const superAdmin = await getSuperAdmin(this.accessManager as AccessManager);
+    await superAdmin.deleteMany(SubjectType.Secret, {
+      workspaceId,
+    });
+
     // Emit this early on, as a runtime bug would recreate runtime model file during azure storage deletion & prevent if from deleting non empty workspace directory
     this.broker.send<Prismeai.DeletedWorkspace['payload']>(
       EventType.DeletedWorkspace,
@@ -616,7 +622,6 @@ export class Workspaces extends DsulCrud {
       { workspaceId }
     );
 
-    const superAdmin = await getSuperAdmin(this.accessManager as AccessManager);
     await superAdmin.deleteMany(NativeSubjectType.Roles as any, {
       subjectType: 'workspaces',
       subjectId: workspaceId,

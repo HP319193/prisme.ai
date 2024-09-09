@@ -7,6 +7,7 @@ import {
   LAST_CUSTOM_RULE_PRIORITY,
   PLATFORM_WORKSPACE_ID,
   UPLOADS_STORAGE_TYPE,
+  WORKSPACE_SECRET_USER_REGEX,
 } from '../../config';
 import { DriverType } from '../storage/types';
 
@@ -26,6 +27,7 @@ export enum SubjectType {
   App = 'apps',
   Page = 'pages',
   File = 'files',
+  Secret = 'secrets',
 }
 
 export enum Role {
@@ -76,6 +78,13 @@ export const config: PermissionsConfig<
         disableManagePolicy: true,
       },
     },
+
+    [SubjectType.Secret]: {
+      author: {
+        // Secret permissions should only be indicated by parent workspace permissions
+        disableManagePolicy: true,
+      },
+    },
   },
   rbac: [
     {
@@ -89,6 +98,7 @@ export const config: PermissionsConfig<
             SubjectType.File,
             SubjectType.Page,
             NativeSubjectType.Roles,
+            SubjectType.Secret,
           ],
           priority: LAST_CUSTOM_RULE_PRIORITY + 1000,
         },
@@ -133,6 +143,16 @@ export const config: PermissionsConfig<
           conditions: {
             subjectId: '${subject.id}',
             subjectType: 'workspaces',
+          },
+        },
+        {
+          action: [ActionType.Manage],
+          subject: SubjectType.Secret,
+          conditions: {
+            workspaceId: '${subject.id}',
+            name: {
+              $regex: WORKSPACE_SECRET_USER_REGEX,
+            },
           },
         },
       ],

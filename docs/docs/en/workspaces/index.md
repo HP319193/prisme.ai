@@ -29,7 +29,10 @@ config:
 The **config.value** field defined at the top of this workspace is exposed as a **config** variable inside your automations.  
 This **config** variable is also avaible in the workspace config itself, as well as in installed apps config.  
 
-Sensitive config values like credentials can also be passed from environment variables built using the target workspace slug, for example :  
+Sensitive config values like credentials can be injected with secret variables : `{{secret.yourExternalSecret}}`.  
+See [Secrets](#secrets).  
+
+Finally, sensitive config values can also be passed from environment variables built using the target workspace slug, for example :  
 ```
 WORKSPACE_CONFIG_test_API_URL=https://api.mycompany.com
 ```
@@ -39,6 +42,37 @@ This will set the same `config.API_URL` variable as in above example. Workspace 
 [More details on variables usage](automations#variables).  
 
 The **config** object accepts an additional field specific to apps : [**config.schema**](apps#defining-an-app-config-schema)
+
+## Secrets
+
+Workspaces can have a list of secrets provided either from UI or API. API usage will allow you to pull some externals secret manager in a CI pipeline to feed workspaces' secrets with `/workspaces/:workspaceId/security/secrets` API ([See documentation](/api/#/Secrets/getWorkspaceSecrets)).  
+
+By default (unless permitted through [custom roles](/workspaces/security/)), only owner can access workspace secrets.  
+
+These secrets can be used with `secret` variable in these 2 places exclusively :  
+
+**Workspace config :**  
+```yaml
+config:
+  value:
+    headers:
+      apiKey: '{{secret.apiKey}}'
+```
+
+**Workspace repositories :**  
+```yaml
+repositories:
+  github:
+    name: My Own Github
+    type: git
+    mode: read-write
+    config:
+      url: https://github.com/YourUser/your-repository.git
+      branch: main
+      auth:
+        user: 'your git user'
+        password: '{{secret.gitPassword}}'
+```
 
 ## Events  
 Each workspace has a continuous and real-time stream of **events** describing what's happening at any time.  

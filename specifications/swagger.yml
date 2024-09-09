@@ -598,6 +598,52 @@ components:
           type: string
         value: {}
 
+
+    WorkspaceSecrets:
+      type: object
+      example:
+        openaiApiKey:
+          value: 'some secret api key'
+        allowedModels:
+          value:
+            - gpt4
+            - gpt4o
+      additionalProperties:
+        type: object
+        required:
+          - value
+        properties:
+          id:
+            type: string
+          value: {}
+          description:
+            type: string
+          createdBy:
+            type: string
+          updatedBy:
+            type: string
+          createdAt:
+            type: string
+          updatedAt:
+            type: string
+          permissions:
+            $ref: '#/components/schemas/PermissionsMap'
+
+    WorkspaceSystemSecrets:
+      type: object
+      properties:
+        prismeai_ratelimit_disabled: {}
+
+        prismeai_ratelimit_automations: {}
+        prismeai_ratelimit_emits: {}
+        prismeai_ratelimit_fetchs: {}
+        prismeai_ratelimit_repeats: {}
+
+        prismeai_ratelimit_automations_burst: {}
+        prismeai_ratelimit_emits_burst: {}
+        prismeai_ratelimit_fetchs_burst: {}
+        prismeai_ratelimit_repeats_burst: {}
+
     When:
       type: object
       anyOf:
@@ -2464,6 +2510,33 @@ components:
           properties:
             security:
               $ref: '#/components/schemas/WorkspaceSecurity'
+
+    UpdatedWorkspaceSecrets:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: string
+          example: workspaces.secrets.updated
+          enum:
+            - workspaces.secrets.updated
+        payload:
+          type: object
+          properties:
+            created:
+              type: array
+              items:
+                type: string
+            updated:
+              type: array
+              items:
+                type: string
+            deleted:
+              type: array
+              items:
+                type: string
 
     PublishedWorkspaceVersion:
       type: object
@@ -5298,6 +5371,161 @@ paths:
               schema:
                 type: string
                 format: binary
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+
+  ## Workspace secrets
+  /v2/workspaces/{workspaceId}/security/secrets:
+    get:
+      description: Fetch workspace's secrets
+      operationId: getWorkspaceSecrets
+      tags:
+        - 'Secrets'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceSecrets'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+    patch:
+      description: Patch workspace secrets
+      operationId: patchWorkspaceSecrets
+      tags:
+        - 'Secrets'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      requestBody: &PATCH_BODY
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceSecrets'
+
+      responses: &PATCH_RESPONSES
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceSecrets'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '401':
+          description: AuthenticationError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+
+    put:
+      description: Update workspace secrets
+      operationId: updateWorkspaceSecrets
+      tags:
+        - 'Secrets'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+      requestBody: *PATCH_BODY
+      responses: *PATCH_RESPONSES
+
+  /v2/workspaces/{workspaceId}/security/secrets/{secretName}:
+    delete:
+      description: Delete a secret
+      operationId: deleteWorkspaceSecret
+      tags:
+        - 'Secrets'
+      parameters:
+        - name: 'workspaceId'
+          in: 'path'
+          description: 'Workspace id'
+          required: true
+          schema:
+            type: string
+        - name: 'secretName'
+          in: 'path'
+          description: 'Automation slug'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  secretName:
+                    type: string
         '404':
           description: Object not found
           content:

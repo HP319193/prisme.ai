@@ -52,7 +52,7 @@ export async function fetch(
   if (!fetchParams.url) {
     throw new InvalidInstructionError(`Invalid fetch instruction : empty url`);
   }
-  await rateLimiter.workspace(ctx.workspaceId).fetch(ctx);
+  await rateLimiter.workspace(ctx.workspaceId, ctx.system).fetch(ctx);
 
   const maxRetries =
     typeof opts?.maxRetries !== 'undefined' ? opts.maxRetries : 2;
@@ -192,7 +192,9 @@ export async function fetch(
   }
   let responseBody: any, error: any;
 
-  const isSSE = result.headers.get('content-type') === 'text/event-stream';
+  const isSSE = result.headers
+    .get('content-type')
+    ?.includes('text/event-stream');
   if (!stream?.event && !isSSE) {
     responseBody = await getResponseBody(result);
     if (result.status >= 400 && result.status < 600 && emitErrors) {

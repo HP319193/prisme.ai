@@ -53,6 +53,10 @@ export default class S3Like implements IStorage {
     return DriverType.S3_LIKE;
   }
 
+  baseUrl(): string {
+    return this.options.baseUrl || '';
+  }
+
   public find(
     prefix: string,
     fullKeys?: boolean,
@@ -208,8 +212,10 @@ export default class S3Like implements IStorage {
       Body: data,
       CacheControl: this.options.cacheControl,
       ContentType: opts?.mimetype,
-      ACL: opts?.public ? 'public-read' : 'private',
     };
+    if (typeof opts?.public === 'boolean') {
+      params.ACL = opts?.public ? 'public-read' : 'private';
+    }
 
     const result = await new Promise((resolve: any, reject: any) => {
       this.client.putObject(params, function (err: any, data: any) {
@@ -229,7 +235,9 @@ export default class S3Like implements IStorage {
   }
 
   public async copy(from: string, to: string, opts?: SaveOptions) {
-    const additionalS3Meta: Partial<AWS.S3.CopyObjectRequest> = {};
+    const additionalS3Meta: Partial<AWS.S3.CopyObjectRequest> = {
+      ContentType: opts?.mimetype,
+    };
     if (typeof opts?.public !== 'undefined') {
       additionalS3Meta.ACL = opts?.public ? 'public-read' : 'private';
       if (from === to) {

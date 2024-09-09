@@ -13,6 +13,7 @@ export const ActionType = {
 export enum SubjectType {
   Workspace = 'workspaces',
   Automation = 'automations',
+  Secret = 'secrets',
 }
 
 export enum Role {
@@ -42,6 +43,7 @@ export const config: PermissionsConfig<
       },
     },
     [SubjectType.Automation]: {},
+    [SubjectType.Secret]: {},
   },
   rbac: [
     {

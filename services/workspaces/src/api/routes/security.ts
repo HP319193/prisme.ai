@@ -1,29 +1,9 @@
-import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
-import { AccessManager } from '../../permissions';
-import { Security } from '../../services';
+import { ApiKeys, Secrets, Security } from '../../services';
 import { DSULStorage } from '../../services/DSULStorage';
-import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 
 export default function init(dsulStorage: DSULStorage) {
-  const getServices = ({
-    context,
-    accessManager,
-    broker,
-  }: {
-    context: PrismeContext;
-    accessManager: Required<AccessManager>;
-    broker: Broker;
-  }) => {
-    const security = new Security(
-      accessManager,
-      broker.child(context),
-      dsulStorage
-    );
-    return { security };
-  };
-
   async function getSecurityHandler(
     {
       context,
@@ -33,7 +13,11 @@ export default function init(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.GetSecurity.PathParameters>,
     res: Response<PrismeaiAPI.GetSecurity.Responses.$200>
   ) {
-    const { security } = getServices({ context, accessManager, broker });
+    const security = new Security(
+      accessManager,
+      broker.child(context),
+      dsulStorage
+    );
     const result = await security.getSecurity(workspaceId);
     res.send(result);
   }
@@ -47,7 +31,11 @@ export default function init(dsulStorage: DSULStorage) {
     }: Request<PrismeaiAPI.GetRoles.PathParameters>,
     res: Response<PrismeaiAPI.GetRoles.Responses.$200>
   ) {
-    const { security } = getServices({ context, accessManager, broker });
+    const security = new Security(
+      accessManager,
+      broker.child(context),
+      dsulStorage
+    );
     const result = await security.getRoles(workspaceId);
     res.send(result);
   }
@@ -66,7 +54,11 @@ export default function init(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.UpdateSecurity.Responses.$200>
   ) {
-    const { security } = getServices({ context, accessManager, broker });
+    const security = new Security(
+      accessManager,
+      broker.child(context),
+      dsulStorage
+    );
     const result = await security.updateSecurity(workspaceId, body);
     res.send(result);
   }
@@ -87,9 +79,9 @@ export default function init(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.ListApiKeys.Responses.$200>
   ) {
-    const { security } = getServices({ context, accessManager, broker });
-    const apiKeys = await security.listApiKeys(workspaceId);
-    return res.send(apiKeys as PrismeaiAPI.ListApiKeys.Responses.$200);
+    const apiKeys = new ApiKeys(accessManager, broker.child(context));
+    const data = await apiKeys.listApiKeys(workspaceId);
+    return res.send(data as PrismeaiAPI.ListApiKeys.Responses.$200);
   }
 
   async function createApiKeyHandler(
@@ -106,9 +98,9 @@ export default function init(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.CreateApiKey.Responses.$200>
   ) {
-    const { security } = getServices({ context, accessManager, broker });
-    const apiKey = await security.createApiKey(workspaceId, body);
-    return res.send(apiKey as Prismeai.ApiKey);
+    const apiKeys = new ApiKeys(accessManager, broker.child(context));
+    const data = await apiKeys.createApiKey(workspaceId, body);
+    return res.send(data as Prismeai.ApiKey);
   }
 
   async function updateApiKeyHandler(
@@ -125,12 +117,8 @@ export default function init(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.UpdateApiKey.Responses.$200>
   ) {
-    const { security } = getServices({ context, accessManager, broker });
-    const updatedApiKey = await security.updateApiKey(
-      workspaceId,
-      apiKey,
-      body
-    );
+    const apiKeys = new ApiKeys(accessManager, broker.child(context));
+    const updatedApiKey = await apiKeys.updateApiKey(workspaceId, apiKey, body);
 
     return res.send(updatedApiKey as Prismeai.ApiKey);
   }
@@ -148,10 +136,73 @@ export default function init(dsulStorage: DSULStorage) {
     >,
     res: Response<PrismeaiAPI.DeleteApiKey.Responses.$200>
   ) {
-    const { security } = getServices({ context, accessManager, broker });
-    await security.deleteApiKey(workspaceId, apiKey);
+    const apiKeys = new ApiKeys(accessManager, broker.child(context));
+    await apiKeys.deleteApiKey(workspaceId, apiKey);
 
     return res.send({ apiKey });
+  }
+
+  /*
+   * Secrets
+   */
+  async function getSecretsHandler(
+    {
+      context,
+      broker,
+      params: { workspaceId },
+      accessManager,
+    }: Request<
+      PrismeaiAPI.GetWorkspaceSecrets.PathParameters,
+      PrismeaiAPI.GetWorkspaceSecrets.Responses.$200,
+      any
+    >,
+    res: Response<PrismeaiAPI.GetWorkspaceSecrets.Responses.$200>
+  ) {
+    const secrets = new Secrets(accessManager, broker.child(context));
+    const data = await secrets.getSecrets(workspaceId);
+    return res.send(data as PrismeaiAPI.GetWorkspaceSecrets.Responses.$200);
+  }
+
+  async function updateSecretsHandler(
+    {
+      method,
+      context,
+      params: { workspaceId },
+      body,
+      accessManager,
+      broker,
+    }: Request<
+      PrismeaiAPI.UpdateWorkspaceSecrets.PathParameters,
+      PrismeaiAPI.UpdateWorkspaceSecrets.Responses.$200,
+      PrismeaiAPI.UpdateWorkspaceSecrets.RequestBody
+    >,
+    res: Response<PrismeaiAPI.UpdateWorkspaceSecrets.Responses.$200>
+  ) {
+    const secrets = new Secrets(accessManager, broker.child(context));
+    const data = await secrets.updateSecrets(workspaceId, body, {
+      mode: method.toLowerCase() as any,
+    });
+
+    return res.send(data);
+  }
+
+  async function deleteSecretHandler(
+    {
+      context,
+      params: { workspaceId, secretName },
+      body,
+      accessManager,
+      broker,
+    }: Request<
+      PrismeaiAPI.DeleteWorkspaceSecret.PathParameters,
+      PrismeaiAPI.DeleteWorkspaceSecret.Responses.$200
+    >,
+    res: Response<PrismeaiAPI.DeleteWorkspaceSecret.Responses.$200>
+  ) {
+    const secrets = new Secrets(accessManager, broker.child(context));
+    const data = await secrets.deleteSecret(workspaceId, secretName);
+
+    return res.send(data);
   }
 
   const app = express.Router({ mergeParams: true });
@@ -164,6 +215,11 @@ export default function init(dsulStorage: DSULStorage) {
   app.post(`/apikeys`, asyncRoute(createApiKeyHandler));
   app.put(`/apikeys/:apiKey`, asyncRoute(updateApiKeyHandler));
   app.delete(`/apikeys/:apiKey`, asyncRoute(deleteApiKeyHandler));
+
+  app.get(`/secrets`, asyncRoute(getSecretsHandler));
+  app.put(`/secrets`, asyncRoute(updateSecretsHandler));
+  app.patch(`/secrets`, asyncRoute(updateSecretsHandler));
+  app.delete(`/secrets/:secretName`, asyncRoute(deleteSecretHandler));
 
   return app;
 }
