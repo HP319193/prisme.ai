@@ -112,7 +112,7 @@ export class Secrets {
             deleted.push(name);
             return this.accessManager.delete(
               SubjectType.Secret,
-              currentSecrets[name].id
+              currentSecrets[name].id!
             );
           }
           return true;
@@ -138,7 +138,7 @@ export class Secrets {
           updated.push(name);
           return this.accessManager.update(SubjectType.Secret, {
             ...data,
-            id: currentSecrets[name].id,
+            id: currentSecrets[name].id!,
           });
         }
         return true;
