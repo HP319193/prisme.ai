@@ -23,7 +23,7 @@ export default async function initRoutes(
   oidc: Provider,
   jwks: JWKStore
 ) {
-  // Drop legacy session cookies on logout as they would otherwise prevent from signing out
+  // Also clear express-session cookie on signout
   app.use(
     oidcCfg.SIGNOUT_PATH,
     (req: Request, res: Response, next: NextFunction) => {
@@ -33,6 +33,7 @@ export default async function initRoutes(
       next();
     }
   );
+
   // This needs to be called before passport.authenticate('jwt',...), dunno why
   app.use('/oidc', initOidcRoutes(broker, oidc));
   await initAuthentication(app);
