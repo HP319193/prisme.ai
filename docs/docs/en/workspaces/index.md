@@ -74,6 +74,8 @@ repositories:
         password: '{{secret.gitPassword}}'
 ```
 
+Secrets beginning with `prismeai_*` are reserved for super admins to configure some system settings by workspace.
+
 ## Events  
 Each workspace has a continuous and real-time stream of **events** describing what's happening at any time.  
 Events can be **native** or **custom** :  

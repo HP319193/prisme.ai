@@ -52,48 +52,62 @@ The same amount of time is also included in the corresponding `payload.duration`
 
 **Burst rate :** During a momentary peak usage, number of times that can be executed before being throttled to the normal rate.  
 
+Default rate limits can be configured for all workspaces with environment variables, or can be configured per workspace with `prismeai_*` [workspace secrets]((/workspaces/#secrets)) (restricted to super admins).  
+
+Rate limits can also be disabled for a specific workspace with `prismeai_ratelimit_disabled: true` secret.  
+
 <table>
   <tr>
     <td>Type</td>
     <td>Rate/s</td>
     <td>Environment variable</td>
+    <td>Workspace secret</td>
     <td>Burst rate</td>
     <td>Environment variable</td>
+    <td>Workspace secret</td>
   </tr>
 
   <tr>
     <td>Automations execution</td>
     <td>100</td>
     <td>RATE_LIMIT_AUTOMATIONS</td>
+    <td>prismeai_ratelimit_automations</td>
     <td>400</td>
     <td>RATE_LIMIT_AUTOMATIONS_BURST</td>
+    <td>prismeai_ratelimit_automations_burst</td>
   </tr>    
 
   <tr>
     <td>Emits</td>
     <td>30</td>
     <td>RATE_LIMIT_EMITS</td>
+    <td>prismeai_ratelimit_emits</td>
     <td>100</td>
     <td>RATE_LIMIT_EMITS_BURST</td>
+    <td>prismeai_ratelimit_emits_burst</td>
   </tr>    
 
   <tr>
     <td>HTTP fetchs</td>
     <td>50</td>
     <td>RATE_LIMIT_FETCHS</td>
+    <td>prismeai_ratelimit_fetchs</td>
     <td>200</td>
     <td>RATE_LIMIT_FETCHS_BURST</td>
+    <td>prismeai_ratelimit_fetchs_burst</td>
   </tr>        
 
   <tr>
     <td>Repeat iterations</td>
     <td>1000</td>
     <td>RATE_LIMIT_REPEATS</td>
+    <td>prismeai_ratelimit_repeats</td>
     <td>4000</td>
     <td>RATE_LIMIT_REPEATS_BURST</td>
+    <td>prismeai_ratelimit_repeats_burst</td>
   </tr>        
 
 </table>
 
-* Setting one of the above environment variables to 0 disable the corresponding rate limit.  
-* Rate limits can be entirely disabled with `RATE_LIMIT_DISABLED=true` environment variable.
+* Setting one of the above environment variables to 0 disable the corresponding rate limit for all workspaces.  
+* Rate limits can be disabled for all workspaces with `RATE_LIMIT_DISABLED=true` environment variable.
