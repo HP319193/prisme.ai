@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import api, { HTTPError } from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
+import { useRedirect } from './useRedirect';
 
 export const usePageFetcher = (
   pageFromServer?: Prismeai.DetailedPage,
@@ -14,7 +15,10 @@ export const usePageFetcher = (
   const [loading, setLoading] = useState(!pageFromServer);
   const {
     query: { pageSlug: path = '' },
+    asPath: fullPath,
   } = useRouter();
+  const redirect = useRedirect();
+
   const slug = Array.isArray(path) ? path.join('/') : path;
 
   const fetchPage = useCallback(async () => {
@@ -29,10 +33,14 @@ export const usePageFetcher = (
     } catch (e) {
       const statusCode = (e as HTTPError).code;
       setError(statusCode);
-      setPage(pageFromServer || null);
+      if ([401, 403].includes(statusCode)) {
+        redirect({ url: `/signin?redirect=${fullPath}` });
+      } else {
+        setPage(pageFromServer || null);
+      }
     }
     setLoading(false);
-  }, [pageFromServer, slug]);
+  }, [pageFromServer, slug, redirect, fullPath]);
 
   const setPageFromChildren = useCallback(
     (page: Prismeai.DetailedPage | null, error?: number | null) => {
