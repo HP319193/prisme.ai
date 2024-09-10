@@ -11,7 +11,7 @@ import {
 import api, { Events } from '../../utils/api';
 import { useContext } from '../../utils/useContext';
 import { WorkspacesContext } from '../Workspaces';
-import updateOnEvents from './updateOnEvents';
+import updateOnEvents, { eventsListeners } from './updateOnEvents';
 
 export interface Workspace extends Prismeai.DSULReadOnly {
   id: string;
@@ -76,7 +76,10 @@ export const WorkspaceProvider = ({
   useEffect(() => {
     let events: Events;
     const initEvents = async () => {
-      events = await api.streamEvents(id);
+      events = await api.streamEvents(id, {
+        // Listen to only what we need, a wildcard would cause both our browser & remote events instance crash on workspaces with lot of events
+        type: Object.keys(eventsListeners),
+      });
       setEvents(events);
       updateOnEvents(events, setWorkspace);
     };

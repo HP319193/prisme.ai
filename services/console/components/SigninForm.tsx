@@ -61,15 +61,18 @@ export const SigninForm = ({ show403 }: SigninFormProps) => {
   };
 
   useEffect(() => {
-    async function init() {
-      const url = await initAuthentication();
+    async function init(redirect?: string | null) {
+      const url = await initAuthentication({
+        redirect: redirect || '',
+      });
       window.location.assign(url);
     }
     const urlParams = new URLSearchParams(window.location.search);
     const interactionUid = urlParams.get('interaction');
     const code = urlParams.get('code');
+    const redirect = urlParams.get('redirect');
     if (!code && !interactionUid && !urlParams.get('error') && !show403) {
-      init();
+      init(redirect);
     }
   }, [initAuthentication, show403]);
 
@@ -114,6 +117,7 @@ export const SigninForm = ({ show403 }: SigninFormProps) => {
     const urlParams = new URLSearchParams(window.location.search);
     const interactionUid = urlParams.get('interaction');
     const code = urlParams.get('code');
+    const redirect = urlParams.get('redirect');
     if (!code && !interactionUid && !urlParams.get('error')) {
       if (!show403) {
         return null;
@@ -124,7 +128,9 @@ export const SigninForm = ({ show403 }: SigninFormProps) => {
           <div>
             <Button
               onClick={async () => {
-                const url = await initAuthentication();
+                const url = await initAuthentication({
+                  redirect: redirect || '',
+                });
                 window.location.assign(url);
               }}
               variant="primary"

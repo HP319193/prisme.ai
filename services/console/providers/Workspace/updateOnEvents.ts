@@ -103,3 +103,4 @@ export const updateOnEvents = (
 };
 
 export default updateOnEvents;
+export { eventsListeners };

@@ -11,7 +11,6 @@ import { closeStorage } from './storage';
 import { broker } from './eda';
 import { initOidcProvider } from './services/oidc/provider';
 import startWorkspacesClientSync from './services/oidc/client';
-import { cleanIncomingRequest } from './middlewares';
 import { JWKStore } from './services/jwks/store';
 import { publishJWKToRuntime } from './services/jwks/internal';
 
@@ -65,14 +64,8 @@ let gtwcfg: GatewayConfig, oidc;
     initMetrics(app);
     initRoutes(app, gtwcfg, broker, oidc, jwks);
 
-    const server = app.listen(syscfg.PORT, () => {
+    app.listen(syscfg.PORT, () => {
       logger.info(`Running on port ${syscfg.PORT}`);
-    });
-
-    // Clean any internal header on WS upgrade as these requests are not intercepted by our express authentication HTTP middlewares
-    // Instead, let prismeai-events authenticate reqs himself
-    server.on('upgrade', function (req) {
-      cleanIncomingRequest(req as any);
     });
   } catch (e) {
     console.error({ ...(<object>e) });

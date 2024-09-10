@@ -236,14 +236,3 @@ async function initPassportStrategies(
     }
   }
 }
-
-export async function cleanIncomingRequest(req: Request) {
-  for (let header in req.headers) {
-    if (
-      header.startsWith('x-prismeai-') &&
-      !syscfg.ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE.includes(header)
-    ) {
-      delete req.headers[header];
-    }
-  }
-}

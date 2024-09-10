@@ -50,6 +50,18 @@ export async function init(params: Params, gtwcfg: GatewayConfig) {
     proxyTimeout: timeout,
     xfwd: syscfg.X_FORWARDED_HEADERS,
     agent: keepaliveAgent,
+    onProxyReqWs(cr, req) {
+      // Clean any internal header on WS upgrade as these requests are not intercepted by our express authentication HTTP middlewares
+      // Instead, let prismeai-events authenticate reqs himself
+      for (let header in req.headers) {
+        if (
+          header.startsWith('x-prismeai-') &&
+          !syscfg.ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE.includes(header)
+        ) {
+          cr.removeHeader(header);
+        }
+      }
+    },
     onError(err, req, res) {
       if ((<any>err).code === 'ERR_FR_MAX_BODY_LENGTH_EXCEEDED') {
         err = new PayloadTooLarge(

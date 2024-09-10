@@ -4,7 +4,7 @@ import { logger } from '../logger';
 import { v4 as uuid } from 'uuid';
 import { broker } from '../eda';
 import { Role } from '../types/permissions';
-import { cleanIncomingRequest } from './authentication';
+import { cleanIncomingRequest } from './validation';
 
 export interface HTTPContext {
   hostname: string;
