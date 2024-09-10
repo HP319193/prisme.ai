@@ -1269,6 +1269,11 @@ declare namespace Prismeai {
         repositories?: {
             [name: string]: WorkspaceRepository;
         };
+        secrets?: {
+            schema?: {
+                [name: string]: TypedArgument;
+            };
+        };
     }
     export interface DSULPatch {
         name?: string;
@@ -1292,6 +1297,11 @@ declare namespace Prismeai {
         repositories?: {
             [name: string]: WorkspaceRepository;
         };
+        secrets?: {
+            schema?: {
+                [name: string]: TypedArgument;
+            };
+        };
     }
     export interface DSULReadOnly {
         name: string;
@@ -1314,6 +1324,11 @@ declare namespace Prismeai {
          */
         repositories?: {
             [name: string]: WorkspaceRepository;
+        };
+        secrets?: {
+            schema?: {
+                [name: string]: TypedArgument;
+            };
         };
         automations?: {
             [name: string]: AutomationMeta;
@@ -2274,6 +2289,11 @@ declare namespace Prismeai {
          */
         repositories?: {
             [name: string]: WorkspaceRepository;
+        };
+        secrets?: {
+            schema?: {
+                [name: string]: TypedArgument;
+            };
         };
         automations?: {
             [name: string]: Automation;

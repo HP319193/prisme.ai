@@ -540,6 +540,14 @@ components:
           description: 'Remote versioning repositories'
           additionalProperties:
             $ref: '#/components/schemas/WorkspaceRepository'
+        secrets:
+          type: object
+          additionalProperties: false
+          properties:
+            schema:
+              additionalProperties:
+                $ref: '#/components/schemas/TypedArgument'
+
 
     RuntimeModel:
       allOf:
