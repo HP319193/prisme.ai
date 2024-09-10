@@ -177,6 +177,7 @@
     },
     "filters": {
       "title": "Filters",
+      "missing": "Please add at least 1 event filter",
       "correlationId": "Correlation ID",
       "submit": "Apply filters",
       "text": "Keyword search",

@@ -9,6 +9,8 @@ import {
 import api, { Event, Events } from '../../utils/api';
 import Storage from '../../utils/Storage';
 import { useContext } from '../../utils/useContext';
+import { notification } from 'antd';
+import { useTranslation } from 'next-i18next';
 
 const READ_KEY = 'readEvents';
 const PER_PAGE = 50;
@@ -46,6 +48,7 @@ export const EventsProvider = ({
   workspaceId,
   children,
 }: EventsProviderProps) => {
+  const { t } = useTranslation('workspaces');
   const [events, setEvents] = useState<EventsContext['events']>(new Set());
   const [loading, setLoading] = useState<EventsContext['loading']>(true);
   const [filters, setFilters] = useState<EventsContext['filters']>({});
@@ -127,8 +130,15 @@ export const EventsProvider = ({
   }, [fetchEvents, filters]);
 
   const start = useCallback(() => {
+    if (!Object.keys(filters).length) {
+      notification.error({
+        message: t('events.filters.missing'),
+        placement: 'bottomRight',
+      });
+      return;
+    }
     setRunning(true);
-  }, []);
+  }, [filters]);
 
   const stop = useCallback(() => {
     setRunning(false);
