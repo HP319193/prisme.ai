@@ -118,6 +118,15 @@
     "sidebar_extend": "Extend navigation",
     "sidebar_minimize": "Minimize navigation",
     "notFound": "Workspace not found.",
+    "secrets": {
+      "edit": {
+        "label": "Manage secrets",
+        "success": "The secrets have been updated",
+        "modalTitle": "Workspace's secrets",
+        "save": "Save",
+        "description": "Secrets can be edited here."
+      }
+    },
     "versions": {
       "repository": "Repository",
       "create": {
@@ -177,6 +186,7 @@
     },
     "filters": {
       "title": "Filters",
+      "missing": "Please add at least 1 event filter",
       "correlationId": "Correlation ID",
       "submit": "Apply filters",
       "text": "Keyword search",

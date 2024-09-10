@@ -177,6 +177,7 @@
     },
     "filters": {
       "title": "Filtres",
+      "missing": "Merci d'ajouter au moins 1 filtre d'événement",
       "correlationId": "ID de corrélation",
       "submit": "Appliquer les filtres",
       "text": "Recherche par mots clés",

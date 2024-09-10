@@ -1,4 +1,8 @@
-import { AppstoreAddOutlined, LoadingOutlined } from '@ant-design/icons';
+import {
+  AppstoreAddOutlined,
+  KeyOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
 import { Dropdown } from '@prisme.ai/design-system';
 import { Menu } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
@@ -17,6 +21,7 @@ import ArrowDown from '/icons/arrow-down.svgr';
 import ArrowUp from '/icons/arrow-up.svgr';
 import useLocalizedText from '../../utils/useLocalizedText';
 import { kebabCase } from 'lodash';
+import EditSecretsModal from '../../components/EditSecrets';
 
 interface ActionsMenuProps {
   children: ReactNode;
@@ -33,6 +38,7 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
   const { displaySource, sourceDisplayed } = useWorkspaceLayout();
   const [exporting, setExporting] = useState(false);
   const [publishVisible, setPublishVisible] = useState(false);
+  const [editSecretsVisible, setEditSecretsVisible] = useState(false);
   const [versionVisible, setVersionVisible] = useState<false | 'push' | 'pull'>(
     false
   );
@@ -69,6 +75,15 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
     });
     setIsOpen(false);
     setPublishVisible(true);
+  }, [trackEvent]);
+
+  const onEditSecrets = useCallback(() => {
+    trackEvent({
+      name: 'Display edit secrets',
+      action: 'click',
+    });
+    setIsOpen(false);
+    setEditSecretsVisible(true);
   }, [trackEvent]);
 
   const onVersion = useCallback(
@@ -128,6 +143,18 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
           >
             <UsersIcon className="mr-2" />
             {t(`expert.security`)}
+          </button>
+        ),
+      },
+      {
+        key: 'editSecrets',
+        label: (
+          <button
+            onClick={onEditSecrets}
+            className="flex flex-1 flex-row items-center"
+          >
+            <KeyOutlined className="mr-2" />
+            {t(`workspace.secrets.edit.label`)}
           </button>
         ),
       },
@@ -200,6 +227,10 @@ export const ActionsMenu = ({ children, className }: ActionsMenuProps) => {
       <PublishModal
         visible={publishVisible}
         close={() => setPublishVisible(false)}
+      />
+      <EditSecretsModal
+        visible={editSecretsVisible}
+        close={() => setEditSecretsVisible(false)}
       />
       <VersionModal
         visible={versionVisible}
