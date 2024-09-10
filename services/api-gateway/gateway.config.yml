@@ -56,7 +56,8 @@ pipelines:
     endpoints:
       - socket.io
     policies:
-      - authentication: {}
+      - authentication:
+          optional: true
       - proxy:
           service: events
           websockets: true

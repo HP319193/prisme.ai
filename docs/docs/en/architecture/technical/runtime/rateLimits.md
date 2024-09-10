@@ -52,7 +52,7 @@ The same amount of time is also included in the corresponding `payload.duration`
 
 **Burst rate :** During a momentary peak usage, number of times that can be executed before being throttled to the normal rate.  
 
-Default rate limits can be configured for all workspaces with environment variables, or can be configured per workspace with `prismeai_*` [workspace secrets]((/workspaces/#secrets)) (restricted to super admins).  
+Default rate limits can be configured for all workspaces with environment variables, or can be configured per workspace with `prismeai_*` [workspace secrets](/workspaces/#secrets) (restricted to super admins).  
 
 Rate limits can also be disabled for a specific workspace with `prismeai_ratelimit_disabled: true` secret.  
 
