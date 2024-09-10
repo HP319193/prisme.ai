@@ -33,7 +33,8 @@ export const usePageFetcher = (
     } catch (e) {
       const statusCode = (e as HTTPError).code;
       setError(statusCode);
-      if ([401, 403].includes(statusCode)) {
+      if ([401, 403].includes(statusCode) && !pageFromServer) {
+        // Only if there is no pageFromServer (ie SSR disabled)
         redirect({ url: `/signin?redirect=${fullPath}` });
       } else {
         setPage(pageFromServer || null);
