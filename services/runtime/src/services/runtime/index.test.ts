@@ -39,6 +39,7 @@ const getMockedAccessManager = () => {
     delete: jest.fn(),
     getLoadedSubjectRole: jest.fn(),
     deleteMany: jest.fn(),
+    __unsecureGet: jest.fn(),
     __unsecureFind: (type) => {
       if (type === SubjectType.Secret) {
         return [

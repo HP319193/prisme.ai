@@ -68,7 +68,7 @@ const getSubscriptions = (
       return true;
     }
 
-    fetch() {
+    __unsecureGet() {
       return {};
     }
   }

@@ -718,7 +718,9 @@ export default class Runtime {
 
   private async startAccessManagerCacheSynchronization() {
     const workspaces: Record<string, Prismeai.Workspace> = {};
-    const uncachedFetch = this.accessManager.__unsecureGet;
+    const uncachedFetch = this.accessManager.__unsecureGet.bind(
+      this.accessManager
+    );
     // Patch accessManager.__unsecureGet to cache workspaces
     this.accessManager.__unsecureGet = (
       subjectType: SubjectType,
