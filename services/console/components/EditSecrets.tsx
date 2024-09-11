@@ -82,7 +82,11 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
           <Loading />
         ) : (
           <SchemaForm
-            schema={{ type: 'object', properties: schema }}
+            schema={{
+              type: 'object',
+              properties: schema,
+              additionalProperties: true,
+            }}
             initialValues={values}
             onChange={setValues}
             // onSubmit={submit}
