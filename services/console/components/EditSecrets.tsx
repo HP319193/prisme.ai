@@ -62,17 +62,17 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
       console.error(error);
       return null;
     }
-  }, [t, trackEvent, workspaceId, values]);
+  }, [t, trackEvent, workspaceId, values, loading]);
 
   return (
     <Modal
       open={visible}
-      title={t('workspace.secrets.edit.modelTitle')}
+      title={t('workspace.secrets.edit.modalTitle')}
       onOk={() => {
         onConfirm();
         close();
       }}
-      okText={t('workspace.secrets.edit.saveLabel')}
+      okText={t('workspace.secrets.edit.save')}
       cancelText={t('cancel', { ns: 'common' })}
       onCancel={close}
     >
