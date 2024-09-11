@@ -34,11 +34,13 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [deletedKeys, setDeletedKeys] = useState<string[]>([]);
+  const [hadSecrets, setHadSecrets] = useState<boolean>(false);
 
   const prevAdditionalValuesRef = useRef<AdditionalValue[]>([]);
 
   const fetchSecrets = async () => {
     const secrets = await api.getWorkspaceSecrets(workspaceId);
+    if (secrets && Object.keys(secrets).length > 0) setHadSecrets(true);
     const adaptedSecrets: SecretValue = {};
     const extraValues: AdditionalValue[] = [];
 
@@ -157,7 +159,7 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
       onCancel={close}
     >
       <div className="p-10">
-        {(!values || Object.keys(values).length === 0) && (
+        {!hadSecrets && (
           <div className="mb-10">{t('workspace.secrets.edit.description')}</div>
         )}
         {loading ? (
@@ -173,7 +175,6 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
               onChange={handleValuesChange}
               buttons={[]}
             />
-            <hr />
             <SchemaForm
               schema={{
                 type: 'array',
