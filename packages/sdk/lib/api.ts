@@ -303,9 +303,18 @@ export class Api extends Fetcher {
     id: string,
     newSecrets: any
   ): Promise<Workspace> {
-    return await this.put(`/workspaces/${id}/security/secrets`, {
+    return await this.patch(`/workspaces/${id}/security/secrets`, {
       ...newSecrets,
     });
+  }
+
+  async deleteWorkspaceSecrets(
+    id: string,
+    secretName: string
+  ): Promise<Workspace> {
+    return await this.delete(
+      `/workspaces/${id}/security/secrets/${secretName}`
+    );
   }
 
   async createWorkspace(
