@@ -40,9 +40,11 @@ export const usePageFetcher = (
           'redirect-once-authenticated',
           new URL(fullPath, window.location.href).toString()
         );
-        redirect({
-          url: new URL('/signin', window.location.href).toString(),
-        });
+        if (!window.location.href.includes('signin')) {
+          redirect({
+            url: new URL('/signin', window.location.href).toString(),
+          });
+        }
       } else {
         setPage(pageFromServer || null);
       }
