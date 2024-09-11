@@ -77,7 +77,9 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
       onCancel={close}
     >
       <div className="p-10">
-        <div className="mb-10">{t('workspace.secrets.edit.description')}</div>
+        {(!values || Object.keys(values).length == 0) && (
+          <div className="mb-10">{t('workspace.secrets.edit.description')}</div>
+        )}
         {loading ? (
           <Loading />
         ) : (
