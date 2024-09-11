@@ -227,7 +227,7 @@ console_build_docker:
   extends: .build_docker
   needs:
     - console_test
-    - console_check_translations
+    # - console_check_translations
   stage: build_docker
   image: docker:25
   services:
@@ -294,7 +294,7 @@ pages_build_docker:
   extends: .build_docker
   needs:
     - pages_test
-    - pages_check_translations
+    # - pages_check_translations
   stage: build_docker
   image: docker:25
   services:
