@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import api, { HTTPError } from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
 import { useRedirect } from './useRedirect';
+import Storage from '../../../console/utils/Storage';
 
 export const usePageFetcher = (
   pageFromServer?: Prismeai.DetailedPage,
@@ -35,7 +36,13 @@ export const usePageFetcher = (
       setError(statusCode);
       if ([401, 403].includes(statusCode) && !pageFromServer) {
         // Only if there is no pageFromServer (ie SSR disabled)
-        redirect({ url: `/signin?redirect=${fullPath}` });
+        Storage.set(
+          'redirect-once-authenticated',
+          new URL(fullPath, window.location.href)
+        );
+        redirect({
+          url: `/signin`,
+        });
       } else {
         setPage(pageFromServer || null);
       }
