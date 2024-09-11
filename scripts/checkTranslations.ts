@@ -29,7 +29,7 @@ function compareKeys(a: any, b: any): boolean {
 
 function check(path: string) {
   const files = fs.readdirSync(getPath(path, MAIN_LANGUAGE));
-  return files.reduce((prev, file) => {
+  return files.reduce((prev: any, file: any) => {
     try {
       const content = JSON.parse(
         fs.readFileSync(getPath(path, MAIN_LANGUAGE, file)).toString() || ''
