@@ -118,6 +118,15 @@
     "sidebar_extend": "Étendre la navigation",
     "sidebar_minimize": "Réduire la navigation",
     "notFound": "Le Workspace n'existe pas.",
+    "secrets": {
+      "edit": {
+        "label": "Gérer les secrets",
+        "success": "Les secrets ont été mis à jour avec succès",
+        "modalTitle": "Secrets du Workspace",
+        "save": "Enregistrer",
+        "description": "Modifiez les secrets depuis cette interface."
+      }
+    },
     "versions": {
       "repository": "Dépôt",
       "create": {
