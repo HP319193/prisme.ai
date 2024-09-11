@@ -38,10 +38,10 @@ export const usePageFetcher = (
         // Only if there is no pageFromServer (ie SSR disabled)
         Storage.set(
           'redirect-once-authenticated',
-          new URL(fullPath, window.location.href)
+          new URL(fullPath, window.location.href).toString()
         );
         redirect({
-          url: `/signin`,
+          url: new URL('/signin', window.location.href).toString(),
         });
       } else {
         setPage(pageFromServer || null);
