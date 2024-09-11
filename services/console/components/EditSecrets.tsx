@@ -1,5 +1,5 @@
 import { Loading, Modal, SchemaForm } from '@prisme.ai/design-system';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useLocalizedText from '../utils/useLocalizedText';
 import { useWorkspace } from '../providers/Workspace';
@@ -12,6 +12,15 @@ interface EditSecretsModalProps {
   close: () => void;
 }
 
+interface SecretValue {
+  [key: string]: any;
+}
+
+interface AdditionalValue {
+  key: string;
+  value: any;
+}
+
 const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
   const {
     workspace: { id: workspaceId, secrets: { schema = {} } = {} },
@@ -19,17 +28,32 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
   const { t } = useTranslation('workspaces');
   const { localize } = useLocalizedText();
   const { trackEvent } = useTracking();
-  const [values, setValues] = useState<any>({});
-  const [loading, setLoading] = useState<any>(true);
+  const [values, setValues] = useState<SecretValue>({});
+  const [additionalValues, setAdditionalValues] = useState<AdditionalValue[]>(
+    []
+  );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [deletedKeys, setDeletedKeys] = useState<string[]>([]);
+
+  const prevAdditionalValuesRef = useRef<AdditionalValue[]>([]);
 
   const fetchSecrets = async () => {
     const secrets = await api.getWorkspaceSecrets(workspaceId);
-    const adaptedSecrets = Object.entries(secrets).reduce(
-      (acc, [key, valueObj]) => ({ ...acc, [key]: valueObj.value }),
-      {}
-    );
+    const adaptedSecrets: SecretValue = {};
+    const extraValues: AdditionalValue[] = [];
+
+    // Split secrets between schema-based and additional
+    Object.entries(secrets).forEach(([key, valueObj]) => {
+      if (schema[key]) {
+        adaptedSecrets[key] = valueObj.value;
+      } else {
+        extraValues.push({ key, value: valueObj.value });
+      }
+    });
 
     setValues(adaptedSecrets);
+    prevAdditionalValuesRef.current = extraValues;
+    setAdditionalValues(extraValues);
     setLoading(false);
   };
 
@@ -44,11 +68,37 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
     });
     if (loading) return;
     try {
-      const adaptedValues = Object.entries(values).reduce(
-        (acc, [key, value]) => ({ ...acc, [key]: { value } }),
-        {}
+      // Combine schema values with additional values
+      const mergedValues: SecretValue = {
+        ...values,
+        ...additionalValues.reduce(
+          (acc, { key, value }) => ({ ...acc, [key]: value }),
+          {}
+        ),
+      };
+
+      const adaptedValues = Object.entries(mergedValues).reduce(
+        (acc, [key, value]) => {
+          acc[key] = { value };
+          return acc;
+        },
+        {} as SecretValue
       );
+
       await api.updateWorkspaceSecrets(workspaceId, adaptedValues);
+
+      await Promise.all(
+        deletedKeys.map(async (key) => {
+          try {
+            await api.deleteWorkspaceSecrets(workspaceId, key);
+          } catch (err) {
+            console.error(`Error deleting secret key ${key}:`, err);
+          }
+        })
+      );
+
+      setDeletedKeys([]);
+
       notification.success({
         message: t('workspace.secrets.edit.success'),
         placement: 'bottomRight',
@@ -62,7 +112,37 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
       console.error(error);
       return null;
     }
-  }, [t, trackEvent, workspaceId, values, loading]);
+  }, [
+    t,
+    trackEvent,
+    workspaceId,
+    values,
+    additionalValues,
+    deletedKeys,
+    loading,
+  ]);
+
+  const handleValuesChange = (newValues: SecretValue) => {
+    setValues(newValues);
+  };
+
+  const handleAdditionalValuesChange = (newValues: AdditionalValue[]) => {
+    const prevValues = prevAdditionalValuesRef.current;
+    const deleted = prevValues
+      .filter(
+        (prevItem) => !newValues.some((newItem) => newItem.key === prevItem.key)
+      )
+      .map((deletedItem) => deletedItem.key);
+
+    setDeletedKeys((prevDeletedKeys) => {
+      const updatedDeletedKeys = [...prevDeletedKeys, ...deleted];
+      console.log('Updated deletedKeys state:', updatedDeletedKeys);
+      return updatedDeletedKeys;
+    });
+
+    setAdditionalValues(newValues);
+    prevAdditionalValuesRef.current = newValues;
+  };
 
   return (
     <Modal
@@ -77,17 +157,43 @@ const EditSecretsModal = ({ visible, close }: EditSecretsModalProps) => {
       onCancel={close}
     >
       <div className="p-10">
-        <div className="mb-10">{t('workspace.secrets.edit.description')}</div>
+        {(!values || Object.keys(values).length === 0) && (
+          <div className="mb-10">{t('workspace.secrets.edit.description')}</div>
+        )}
         {loading ? (
           <Loading />
         ) : (
-          <SchemaForm
-            schema={{ type: 'object', properties: schema }}
-            initialValues={values}
-            onChange={setValues}
-            // onSubmit={submit}
-            buttons={[]}
-          />
+          <>
+            <SchemaForm
+              schema={{
+                type: 'object',
+                properties: schema,
+              }}
+              initialValues={values}
+              onChange={handleValuesChange}
+              buttons={[]}
+            />
+            <hr />
+            <SchemaForm
+              schema={{
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    key: {
+                      type: 'string',
+                    },
+                    value: {
+                      type: 'string',
+                    },
+                  },
+                },
+              }}
+              initialValues={additionalValues}
+              onChange={handleAdditionalValuesChange}
+              buttons={[]}
+            />
+          </>
         )}
       </div>
     </Modal>
