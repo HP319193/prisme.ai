@@ -125,7 +125,7 @@ export class Secrets {
           type: typeof update.value as any,
           value:
             typeof update.value === 'object'
-              ? JSON.parse(update.value)
+              ? JSON.stringify(update.value)
               : update.value,
           description: update.description || '',
           workspaceId,
