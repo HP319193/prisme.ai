@@ -138,7 +138,7 @@ export const EventsProvider = ({
       return;
     }
     setRunning(true);
-  }, [filters]);
+  }, [filters, t]);
 
   const stop = useCallback(() => {
     setRunning(false);
