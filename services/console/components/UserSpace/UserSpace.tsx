@@ -52,9 +52,9 @@ export const UserSpace = ({ children }: UserSpaceProps) => {
       try {
         const res = await fetch(USER_SPACE_ENDPOINT, {
           method: 'GET',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${api.token}`,
           },
         });
         setUserSpaceConfig(await res.json());
