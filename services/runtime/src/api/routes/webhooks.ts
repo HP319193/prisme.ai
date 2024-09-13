@@ -3,8 +3,10 @@ import multer from 'multer';
 import Runtime, { WehookChunkOutput } from '../../services/runtime';
 import { asyncRoute } from '../utils/async';
 import { ReadableStream } from '../../utils';
-import { UPLOADS_MAX_SIZE } from '../../../config';
+import { UPLOADS_MAX_SIZE, WEBHOOKS_SSE_KEEPALIVE } from '../../../config';
 import { InvalidUploadError } from '../../errors';
+import { EventType } from '../../eda';
+import { errorHttpStatus } from '../middlewares/errors';
 
 export default function init(runtime: Runtime) {
   async function webhookHandler(
@@ -64,6 +66,7 @@ export default function init(runtime: Runtime) {
 
     let sseInitialized = false;
     let statusCode = 200;
+    let sseKeepAliveTimer: NodeJS.Timer;
     const outputBuffer = new ReadableStream<WehookChunkOutput>((chunk) => {
       if (Object.keys(chunk?.headers || {}).length) {
         Object.entries(chunk?.headers).forEach(([k, v]) => {
@@ -83,39 +86,68 @@ export default function init(runtime: Runtime) {
       if (chunk?.status) {
         statusCode = chunk?.status;
       }
-    });
-
-    const outputs = await runtime.triggerWebhook(
-      {
-        workspaceId,
-        automationSlug: decodeURIComponent(automationSlug),
-        body: {
-          ...body,
-          ...filesBody,
-        },
-        headers: filteredHeaders,
-        method,
-        query,
-        $http: outputBuffer,
-      },
-      context,
-      logger,
-      broker
-    );
-    outputBuffer.push(null);
-
-    outputBuffer.on('end', () => {
-      res.status(statusCode);
-      const output = outputs?.[0]?.output || {};
-      if (!sseInitialized) {
-        res.send(output);
-      } else {
-        if (JSON.stringify(output) != '{}') {
-          res.write('data: ' + JSON.stringify(output) + '\n\n');
-        }
-        res.end();
+      if (chunk?.sseKeepAlive) {
+        sseInitialized = true;
+        sseKeepAliveTimer = setInterval(
+          () => {
+            res.write('data: {"keepAlive": true}\n\n');
+          },
+          chunk?.sseKeepAlive < WEBHOOKS_SSE_KEEPALIVE
+            ? WEBHOOKS_SSE_KEEPALIVE
+            : chunk.sseKeepAlive
+        );
       }
     });
+
+    let output: any;
+    function endWebhook(error?: any) {
+      if (error) {
+        output = error;
+        res.status(errorHttpStatus(error as Error, false));
+      } else {
+        res.status(statusCode);
+      }
+      try {
+        if (sseKeepAliveTimer) {
+          clearInterval(sseKeepAliveTimer);
+        }
+
+        if (!sseInitialized) {
+          res.send(output);
+        } else {
+          if (JSON.stringify(output) != '{}') {
+            res.write('data: ' + JSON.stringify(output) + '\n\n');
+          }
+          res.end();
+        }
+      } catch {}
+    }
+    outputBuffer.on('end', endWebhook);
+
+    try {
+      const outputs = await runtime.triggerWebhook(
+        {
+          workspaceId,
+          automationSlug: decodeURIComponent(automationSlug),
+          body: {
+            ...body,
+            ...filesBody,
+          },
+          headers: filteredHeaders,
+          method,
+          query,
+          $http: outputBuffer,
+        },
+        context,
+        logger,
+        broker
+      );
+      output = outputs?.[0]?.output || {};
+      outputBuffer.push(null);
+    } catch (err) {
+      broker.send(EventType.Error, err as Error);
+      endWebhook(err);
+    }
   }
 
   const app = express.Router({ mergeParams: true });

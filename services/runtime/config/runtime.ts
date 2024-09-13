@@ -48,3 +48,7 @@ export const SYNCHRONIZE_CONTEXTS = [
 
 export const DEFAULT_LOCALE = process.env.DEFAULT_LOCALE || 'en';
 export const DEFAULT_TIMEZONE = process.env.DEFAULT_TIMEZONE || 'Europe/Paris';
+
+export const WEBHOOKS_SSE_KEEPALIVE = parseInt(
+  process.env.WEBHOOKS_SSE_KEEPALIVE || '5000'
+);

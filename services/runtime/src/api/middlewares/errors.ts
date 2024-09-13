@@ -14,7 +14,7 @@ enum KnownErrorCodes {
   PrismeError = 'PrismeError',
 }
 
-function errorHttpStatus(err: Error, serverError: boolean) {
+export function errorHttpStatus(err: Error, serverError: boolean) {
   if (
     (<any>err)?.details?.[0]?.message === 'not found' ||
     err instanceof ObjectNotFoundError ||
@@ -100,4 +100,5 @@ export const finalErrorHandler = (
 module.exports = {
   errorDecorator,
   finalErrorHandler,
+  errorHttpStatus,
 };

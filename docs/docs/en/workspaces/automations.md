@@ -66,6 +66,14 @@ Cache-Control: "no-cache"
 Connection: "keep-alive"
 ```
 
+When developing long running SSE endpoints, you can configure a keep-alive to avoid timeouts :  
+```yaml
+  - set:
+      name: $http
+      value:
+        sseKeepAlive: 5000 # Keep alive interval in millisecond, minimum 5000ms
+```
+After this instruction, a `data: {"keepAlive": true}` chunk will be regularly emitted until the connection ends.  
 
 
 
