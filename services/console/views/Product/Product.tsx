@@ -68,6 +68,7 @@ export const Product = memo(function Product() {
       src={productUrl}
       className="h-full"
       allow="clipboard-write; camera; geolocation; microphone; speaker"
+      title={productSlug}
     />
   );
 });
