@@ -67,6 +67,13 @@ export default function init(runtime: Runtime) {
     let sseInitialized = false;
     let statusCode = 200;
     let sseKeepAliveTimer: NodeJS.Timer;
+    const initSSE = () => {
+      res.setHeader('content-type', 'text/event-stream');
+      res.setHeader('cache-control', 'no-cache');
+      res.setHeader('connection', 'keep-alive');
+      res.flushHeaders();
+      sseInitialized = true;
+    };
     const outputBuffer = new ReadableStream<WehookChunkOutput>((chunk) => {
       if (Object.keys(chunk?.headers || {}).length) {
         Object.entries(chunk?.headers).forEach(([k, v]) => {
@@ -75,11 +82,7 @@ export default function init(runtime: Runtime) {
       }
       if (chunk?.chunk) {
         if (!sseInitialized) {
-          res.setHeader('content-type', 'text/event-stream');
-          res.setHeader('cache-control', 'no-cache');
-          res.setHeader('connection', 'keep-alive');
-          res.flushHeaders();
-          sseInitialized = true;
+          initSSE();
         }
         res.write('data: ' + JSON.stringify(chunk?.chunk) + '\n\n');
       }
@@ -87,7 +90,9 @@ export default function init(runtime: Runtime) {
         statusCode = chunk?.status;
       }
       if (chunk?.sseKeepAlive) {
-        sseInitialized = true;
+        if (!sseInitialized) {
+          initSSE();
+        }
         sseKeepAliveTimer = setInterval(
           () => {
             res.write('data: {"keepAlive": true}\n\n');
