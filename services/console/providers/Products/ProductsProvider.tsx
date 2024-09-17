@@ -109,9 +109,9 @@ export const ProductsProvider = ({
         try {
           const results = await fetch(PRODUCTS_ENDPOINT, {
             method: 'GET',
+            credentials: 'include',
             headers: {
               'content-type': 'application/json',
-              Authorization: `Bearer ${api.token}`,
             },
           });
           if (!results.ok) {
@@ -167,6 +167,7 @@ export const ProductsProvider = ({
     async ({ query }) => {
       const res = await fetch(`${PRODUCTS_ENDPOINT}?q=${query}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

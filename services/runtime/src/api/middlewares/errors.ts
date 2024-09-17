@@ -14,7 +14,7 @@ enum KnownErrorCodes {
   PrismeError = 'PrismeError',
 }
 
-function errorHttpStatus(err: Error, serverError: boolean) {
+export function errorHttpStatus(err: Error, serverError: boolean) {
   if (
     (<any>err)?.details?.[0]?.message === 'not found' ||
     err instanceof ObjectNotFoundError ||
@@ -71,7 +71,10 @@ export const errorDecorator = (
     (req.logger || logger).error({ ...req.context, err });
   }
 
-  if (req.broker) {
+  if (
+    req.broker &&
+    (!(<any>err)?.error || (<any>err)?.error !== 'ObjectNotFoundError')
+  ) {
     req.broker.send(EventType.Error, err);
   }
 
@@ -97,4 +100,5 @@ export const finalErrorHandler = (
 module.exports = {
   errorDecorator,
   finalErrorHandler,
+  errorHttpStatus,
 };

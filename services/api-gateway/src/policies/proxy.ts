@@ -77,10 +77,12 @@ export async function init(params: Params, gtwcfg: GatewayConfig) {
     const timeout = params.timeout || 20000;
     req.service = params.service;
     res.setTimeout(timeout, () => {
-      res
-        .status(408)
-        .setHeader('Content-Type', 'application/json')
-        .send({ error: 'TimeoutError', timeout });
+      try {
+        res.status(408).setHeader('Content-Type', 'application/json');
+      } catch {}
+      try {
+        res.send({ error: 'TimeoutError', timeout });
+      } catch {}
     });
     return middleware(req, res, next);
   };

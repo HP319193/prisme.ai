@@ -43,6 +43,7 @@ export type WehookChunkOutput = {
   chunk?: object;
   headers?: Record<string, string>;
   status?: number;
+  sseKeepAlive?: number;
 };
 
 export interface Webhook {

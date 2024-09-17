@@ -73,7 +73,10 @@ export const errorDecorator = (
     (req.logger || logger).error({ ...req.context, err });
   }
 
-  if (req.broker) {
+  if (
+    req.broker &&
+    (!(<any>err)?.error || (<any>err)?.error !== 'ObjectNotFoundError')
+  ) {
     req.broker.send(EventType.Error, err);
   }
 

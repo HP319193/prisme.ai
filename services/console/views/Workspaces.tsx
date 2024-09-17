@@ -118,7 +118,9 @@ export const WorkspacesView = () => {
     if (!SUGGESTIONS_ENDPOINT) return;
     async function fetchSuggestions() {
       try {
-        const res = await fetch(SUGGESTIONS_ENDPOINT);
+        const res = await fetch(SUGGESTIONS_ENDPOINT, {
+          credentials: 'include',
+        });
         if (!res.ok) {
           throw new Error();
         }

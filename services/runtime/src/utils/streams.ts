@@ -6,14 +6,16 @@ export type ChunkHandler<T = any> = (chunk: T) => any;
 export class ReadableStream<T> extends Readable {
   callback?: ChunkHandler<T>;
 
-  constructor(callback?: ChunkHandler) {
-    super();
+  constructor(callback?: ChunkHandler, objectMode: boolean = false) {
+    super({ objectMode: objectMode });
     this.callback = callback;
 
     this.on('data', (chunk: any) => {
-      try {
-        chunk = JSON.parse(chunk);
-      } catch {}
+      if (!objectMode) {
+        try {
+          chunk = JSON.parse(chunk);
+        } catch {}
+      }
 
       try {
         if (this.callback) {
