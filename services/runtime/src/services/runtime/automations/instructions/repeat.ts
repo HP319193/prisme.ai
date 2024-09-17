@@ -46,11 +46,6 @@ export async function repeat(
     const stream = on as any as Readable;
     for await (let buffer of stream) {
       try {
-        buffer = buffer.toString();
-        buffer = JSON.parse(buffer);
-      } catch {}
-
-      try {
         ctx.set(REPEAT_ITEM_VAR_NAME, buffer);
         await runInstructions(doInstructions, {
           workspace,

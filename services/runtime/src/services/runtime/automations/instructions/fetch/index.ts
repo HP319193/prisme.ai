@@ -203,16 +203,12 @@ export async function fetch(
   } else {
     outputMode = 'detailed_response';
     if (!stream?.event) {
-      responseBody = new ReadableStream();
+      responseBody = new ReadableStream(undefined, true);
     }
     let chunkIndex = 0;
     let concatenated: string | any[] | undefined;
     const send = (payload: any) => {
       if (responseBody instanceof ReadableStream) {
-        try {
-          payload =
-            typeof payload === 'string' ? payload : JSON.stringify(payload);
-        } catch {}
         responseBody.push(payload);
         return;
       }
@@ -249,12 +245,13 @@ export async function fetch(
                 }
               });
             }
-            await sendChunk({
+            const fullChunk = {
               index: chunkIndex,
               chunk,
               concatenated: concatenated ? { value: concatenated } : undefined,
               additionalPayload: stream?.payload,
-            });
+            };
+            await sendChunk(fullChunk);
             chunkIndex++;
           }
         } catch (err) {
@@ -272,6 +269,10 @@ export async function fetch(
       }
     } else if (responseBody instanceof ReadableStream) {
       processingPromise.then(() => {
+        if (stream?.concatenate?.throttle) {
+          // If the events were throttled we flush at the end in order to emit the last one right away.
+          (sendChunk as DebouncedFunc<any>).flush();
+        }
         responseBody.push(null);
       });
     }
