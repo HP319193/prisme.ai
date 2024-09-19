@@ -9,7 +9,7 @@ import DownIcon from './DownIcon';
 import Loading from './Loading';
 import BlockLoader from '../Page/BlockLoader';
 import SchemaForm from './SchemaForm';
-import { i18n, useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 import { useUser } from '../../../console/components/UserProvider';
 import { original } from '../Page/computeBlocks';
 import Head from 'next/head';
