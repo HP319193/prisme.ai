@@ -2,8 +2,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import api, { HTTPError } from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
-import { useRedirect } from './useRedirect';
-import Storage from '../../../console/utils/Storage';
+import BUILTIN_PAGES from '../../builtinPages';
 
 export const usePageFetcher = (
   pageFromServer?: Prismeai.DetailedPage,
@@ -16,16 +15,13 @@ export const usePageFetcher = (
   const [loading, setLoading] = useState(!pageFromServer);
   const {
     query: { pageSlug: path = '' },
-    asPath: fullPath,
   } = useRouter();
-  const redirect = useRedirect();
 
   const slug = Array.isArray(path) ? path.join('/') : path;
 
   const fetchPage = useCallback(async () => {
+    const workspaceSlug = getSubmodain(window.location.host);
     try {
-      const workspaceSlug = getSubmodain(window.location.host);
-
       const page = await api.getPageBySlug(
         workspaceSlug,
         slug === '' ? 'index' : slug
@@ -35,22 +31,28 @@ export const usePageFetcher = (
       const statusCode = (e as HTTPError).code;
       setError(statusCode);
       if ([401, 403].includes(statusCode) && !pageFromServer) {
-        // Only if there is no pageFromServer (ie SSR disabled)
-        Storage.set(
-          'redirect-once-authenticated',
-          new URL(fullPath, window.location.href).toString()
+        const fallbackSlug = [401, 403].includes((e as HTTPError).code)
+          ? '_401'
+          : path;
+        const builtinPage = BUILTIN_PAGES.find(
+          ({ slug }) => slug === fallbackSlug
         );
-        if (!window.location.href.includes('signin')) {
-          redirect({
-            url: new URL('/signin', window.location.href).toString(),
-          });
+        let page;
+        if (builtinPage) {
+          page = builtinPage;
         }
+        if (page && page.slug === '_401') {
+          try {
+            page = await api.getPageBySlug(workspaceSlug, '_401');
+          } catch {}
+        }
+        setPage(page || null);
       } else {
         setPage(pageFromServer || null);
       }
     }
     setLoading(false);
-  }, [pageFromServer, slug, redirect, fullPath]);
+  }, [pageFromServer, slug, path]);
 
   const setPageFromChildren = useCallback(
     (page: Prismeai.DetailedPage | null, error?: number | null) => {

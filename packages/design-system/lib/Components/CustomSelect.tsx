@@ -84,7 +84,11 @@ export const CustomSelect = ({
               setSearch('');
             }}
           >
-            <span className={value === option.value ? 'text-accent' : ''}>
+            <span
+              className={
+                value === option.value ? 'text-accent flex flex-1' : ''
+              }
+            >
               {option.label}
             </span>
           </Menu.Item>
