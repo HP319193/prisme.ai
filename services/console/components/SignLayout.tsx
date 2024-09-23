@@ -1,7 +1,7 @@
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Title } from '@prisme.ai/design-system';
-import icon from '../icons/icon-prisme.svg';
+import icon from '../public/images/header-logo.svg';
 import Image from 'next/image';
 import LinkInTrans from './LinkInTrans';
 import getConfig from 'next/config';
@@ -65,10 +65,7 @@ export const SignLayout = ({
               </div>
 
               <div className="flex flex-row  mt-20">
-                <Image src={icon} width={16} height={16} alt="Prisme.ai" />
-                <div className="ml-2 !font-light tracking-[.4em] text-[1.125rem] uppercase">
-                  {t('main.title', { ns: 'common' })}
-                </div>
+                <Image src={icon} alt={t('main.title', { ns: 'common' })} />
               </div>
             </div>
           </div>
