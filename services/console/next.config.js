@@ -35,7 +35,8 @@ module.exports = {
     BILLING_HOME: process.env.BILLING_HOME || '',
     BILLING_USAGE: process.env.BILLING_USAGE || '',
     TRACKING: jsonParse(process.env.TRACKING),
-    TRACKING_WEBHOOK: process.env.TRACKING_WEBHOOK || '',
+    TRACKING_WEBHOOK:
+      getWorkspaceOpsUrl('tracking') || process.env.TRACKING_WEBHOOK || '',
     PRODUCTS_ENDPOINT:
       getWorkspaceOpsUrl('products') || process.env.PRODUCTS_ENDPOINT || '',
     USER_SPACE_ENDPOINT: getWorkspaceOpsUrl('user-space'),
