@@ -1,6 +1,6 @@
 {
   "name": "@prisme.ai/pyramide",
-  "version": "24.09.201038",
+  "version": "24.09.231052",
   "description": "Prisme.ai event driven automation platform",
   "workspaces": [
     "./services/*",
