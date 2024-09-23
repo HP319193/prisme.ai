@@ -157,7 +157,15 @@ export const ProductsSidebar = () => {
               <Link
                 href={index === selected ? href : history.get(slug) || href}
               >
-                <a className="flex flex-1">
+                <a
+                  className="flex flex-1"
+                  onClick={(e) => {
+                    if (router.asPath.match(href)) {
+                      window.location.assign(href);
+                      return;
+                    }
+                  }}
+                >
                   <Button
                     expanded={expanded}
                     selected={index === selected}
