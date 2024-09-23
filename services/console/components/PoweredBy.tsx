@@ -1,4 +1,4 @@
-import { Trans, useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 import logo from '../icons/icon-prisme.svg';
 import Image from 'next/image';
 
