@@ -36,11 +36,6 @@ exports[`should have error 1`] = `
             className="flex flex-row  mt-20"
           >
             <div />
-            <div
-              className="ml-2 !font-light tracking-[.4em] text-[1.125rem] uppercase"
-            >
-              main.title
-            </div>
           </div>
         </div>
       </div>
@@ -106,11 +101,6 @@ exports[`should load 1`] = `
             className="flex flex-row  mt-20"
           >
             <div />
-            <div
-              className="ml-2 !font-light tracking-[.4em] text-[1.125rem] uppercase"
-            >
-              main.title
-            </div>
           </div>
         </div>
       </div>
@@ -176,11 +166,6 @@ exports[`should render 1`] = `
             className="flex flex-row  mt-20"
           >
             <div />
-            <div
-              className="ml-2 !font-light tracking-[.4em] text-[1.125rem] uppercase"
-            >
-              main.title
-            </div>
           </div>
         </div>
       </div>
