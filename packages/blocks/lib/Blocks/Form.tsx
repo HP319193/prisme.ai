@@ -290,7 +290,7 @@ const defaultStyles = `:block {
 .pr-form-autocomplete .ant-select-selector {
   padding: 0 ! important;
 }
-.pr-form-field--error input {
+.pr-form-field--error > input {
   border-color: var(--error-color, red);
 }
 `;
