@@ -2,7 +2,7 @@ import type { AppProps } from 'next/app';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import UserProvider from '../components/UserProvider';
 import { NextPage } from 'next';
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactElement, ReactNode, useEffect } from 'react';
 import cookie from 'js-cookie';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
@@ -16,6 +16,9 @@ import QueryStringProvider from '../providers/QueryStringProvider';
 import { PublicBlocksProvider } from '../components/BlocksProvider';
 import Tracking from '../components/Tracking';
 import UserSpace from '../components/UserSpace/UserSpace';
+import ColorSchemeManager, {
+  setColorScheme,
+} from '../components/ColorSchemeManager';
 
 const Sentry = dynamic(import('../utils/Sentry'), { ssr: false });
 
@@ -67,6 +70,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
               <link rel="icon" href="/favicon.png" />
               <link rel="manifest" href="/manifest.webmanifest" />
             </Head>
+            <ColorSchemeManager />
             <Sentry />
             {getLayout(<Component {...pageProps} />)}
           </Tracking>
@@ -86,6 +90,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <link rel="icon" href="/favicon.png" />
           <link rel="manifest" href="/manifest.webmanifest" />
         </Head>
+        <ColorSchemeManager />
         <UserSpace>{getLayout(<Component {...pageProps} />)}</UserSpace>
       </UserProvider>
     </QueryStringProvider>
