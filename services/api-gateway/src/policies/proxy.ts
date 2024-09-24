@@ -6,6 +6,7 @@ import followRedirects from 'follow-redirects';
 import { GatewayConfig, syscfg } from '../config';
 import errorHandler from '../middlewares/errorHandler';
 import { PayloadTooLarge } from '../types/errors';
+import { logger } from '../logger';
 
 followRedirects.maxBodyLength = syscfg.UPLOADS_MAX_SIZE;
 export interface Params {
@@ -50,7 +51,15 @@ export async function init(params: Params, gtwcfg: GatewayConfig) {
     proxyTimeout: timeout,
     xfwd: syscfg.X_FORWARDED_HEADERS,
     agent: keepaliveAgent,
-    onProxyReqWs(cr, req) {
+    onProxyReqWs(cr, req, socket) {
+      // Listen to socket errors so they don't make the whole server crash
+      socket.on('error', (err) => {
+        logger.error({
+          msg: 'Socket error',
+          err,
+        });
+      });
+
       // Clean any internal header on WS upgrade as these requests are not intercepted by our express authentication HTTP middlewares
       // Instead, let prismeai-events authenticate reqs himself
       for (let header in req.headers) {
