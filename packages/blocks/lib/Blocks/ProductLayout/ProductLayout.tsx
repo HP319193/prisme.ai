@@ -297,6 +297,7 @@ const defaultStyles = `
   display: flex;
   flex-direction: row;
   flex: 1;
+  overflow: auto;
 }
 .product-layout-content-panel {
   color: var(--main-element-text);
