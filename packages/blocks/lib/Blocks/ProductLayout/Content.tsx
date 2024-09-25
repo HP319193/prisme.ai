@@ -11,8 +11,10 @@ function isContentProps(content: any): content is ContentProps {
 
 export const Content = ({
   content,
+  assistant,
 }: {
   content: ProductLayoutProps['content'];
+  assistant: ProductLayoutProps['assistant'];
 }) => {
   if (isRenderProp(content)) return content;
   if (isBlock(content))
@@ -40,7 +42,7 @@ export const Content = ({
           )}
         />
       )}
-      <ContentPanel {...content} />
+      <ContentPanel {...content} assistant={assistant} />
     </div>
   );
 };

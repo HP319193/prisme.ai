@@ -35,17 +35,6 @@ import ActionsMenu from './ActionsMenu';
 
 const { ProductLayout } = builtinBlocks;
 
-const WithProductLayoutContext = ({
-  children,
-}: {
-  children: (
-    props: ReturnType<typeof ProductLayout.useProductLayoutContext>
-  ) => ReactElement;
-}) => {
-  const context = ProductLayout.useProductLayoutContext();
-  return children(context);
-};
-
 export const WorkspaceLayout: FC = ({ children }) => {
   const {
     workspace,

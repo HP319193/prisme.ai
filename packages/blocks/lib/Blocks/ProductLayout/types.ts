@@ -46,4 +46,8 @@ export interface ProductLayoutProps {
   };
   content?: ReactElement | ContentProps;
   toastOn?: string;
+  assistant?: {
+    url: string;
+    visible?: boolean;
+  };
 }
