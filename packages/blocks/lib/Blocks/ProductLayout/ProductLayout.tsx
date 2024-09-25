@@ -355,6 +355,7 @@ const defaultStyles = `
   margin-right: calc(var(--assistant-width) * -1);
   margin-left: 2rem;
   transition: margin-right .2s ease-in;
+  overflow: auto;
 }
 .product-layout-assistant-ctn.visible {
   margin-right: 0;
