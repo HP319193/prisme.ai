@@ -18,6 +18,7 @@ export const ProductLayout = ({
   content,
   className,
   toastOn,
+  assistant,
 }: ProductLayoutProps & BaseBlockConfig) => {
   const toastBlocks = useMemo(
     () => toastOn && [{ slug: 'Toast', toastOn }],
@@ -28,14 +29,36 @@ export const ProductLayout = ({
     <ProductLayoutProvider opened={sidebar?.opened}>
       <div className={`product-layout ${className}`}>
         {sidebar && <Sidebar {...sidebar} />}
-        <Content content={content} />
+        <Content content={content} assistant={assistant} />
         {toastBlocks && <GenericBlock content={toastBlocks} />}
       </div>
     </ProductLayoutProvider>
   );
 };
 
-const defaultStyles = `:block {
+const defaultStyles = `
+/*:root[data-color-scheme="light"] {
+  --layout-surface: #ffffff;
+  --layout-surface-secondary: #f9f9f9;
+  --main-surface: #ffffff;
+  --text-contrast: #313131;
+  --main-text: #313131;
+  --main-element: #f3f3f3;
+  --main-element-text: #343434;
+  --main-link: #063281;
+  --secondary-text: #bbb9b9d9;
+  --primary: #015dff;
+  --primary-contrast: #fff;
+  --button: #ffffff;
+  --accent-color: #015dff;
+  --accent-contrast-color: #fff;
+  --border-color: #494949;
+  --main-text-color: #313131;
+  --main-text-contrast: #313131;
+  --main-bg: #ffffff;
+}*/
+:block {
+  background: var(--test);
   display: flex;
   flex-direction: row;
   min-height: 100%;
@@ -270,12 +293,17 @@ const defaultStyles = `:block {
   display: flex;
   flex-direction: row;
 }
+.product-layout-content-ctn {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
 .product-layout-content-panel {
   color: var(--main-element-text);
   display: flex;
   flex: 1;
   flex-direction: column;
-  height: 1px;
+  height: 100%;
   max-width: 100%;
 }
 .product-layout-content-panel > * {
@@ -318,6 +346,42 @@ const defaultStyles = `:block {
 }
 .product-layout-content-panel .ant-table-tbody>tr>td {
   border: none;
+}
+.product-layout-assistant-ctn {
+  --assistant-width: 400px;
+  display: flex;
+  position: relative;
+  width: calc(var(--assistant-width) - 2rem);
+  margin-right: calc(var(--assistant-width) * -1);
+  margin-left: 2rem;
+  transition: margin-right .2s ease-in;
+}
+.product-layout-assistant-ctn.visible {
+  margin-right: 0;
+}
+.product-layout-assistant__handle {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+  left: -2rem;
+  width: 2rem;
+  cursor: col-resize;
+}
+.product-layout-assistant-ctn.visible .product-layout-assistant__handle {
+  display: flex;
+}
+.product-layout-assistant__handle svg {
+  height: 2rem;
+  width: 2rem;
+  color: var(--accent-contrast-color);
+}
+.product-layout-assistant {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
 }
 
 `;

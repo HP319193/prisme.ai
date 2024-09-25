@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useBlock } from '../../Provider';
 import { useBlocks } from '../../Provider/blocksContext';
 import GenericBlock from '../utils/GenericBlock';
+import Assistant from './Assistant';
 
-import { ContentProps } from './types';
+import { ContentProps, ProductLayoutProps } from './types';
 
 const Tab = ({
   title,
@@ -63,7 +64,8 @@ export const ContentPanel = ({
   tabs = EMPTY_ARRAY,
   content,
   additionalButtons,
-}: ContentProps) => {
+  assistant,
+}: ContentProps & { assistant: ProductLayoutProps['assistant'] }) => {
   const _tabs = Array.isArray(tabs) ? tabs : EMPTY_ARRAY;
   const { isSelected, hasContent } = _tabs.reduce(
     (prev, { content, selected }, index) => {
@@ -107,10 +109,13 @@ export const ContentPanel = ({
           </div>
         )}
       </div>
-      <GenericBlock
-        className={`product-layout-content-panel product-layout-content-panel--${columns}col`}
-        content={panelContent}
-      />
+      <div className="product-layout-content-ctn">
+        <GenericBlock
+          className={`product-layout-content-panel product-layout-content-panel--${columns}col`}
+          content={panelContent}
+        />
+        {assistant && <Assistant {...assistant} />}
+      </div>
     </>
   );
 };
