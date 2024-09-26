@@ -167,6 +167,11 @@ export function parseRedisUrl(input: string): RedisOptions {
   if (SCHEDULES.password || url.password)
     options.password = SCHEDULES.password || url.password; // If the env variable specify a password we ovewrite.
   if (url.pathname.length > 1) options.db = parseInt(url.pathname.slice(1));
+  if (input.startsWith('rediss://')) {
+    options.tls = {
+      host: options.host,
+    };
+  }
 
   return options;
 }
