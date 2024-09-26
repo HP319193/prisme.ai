@@ -26,7 +26,6 @@ export class Scheduler extends SchedulerDriver {
             workspace: { id: workspaceId },
           } as DetailedTrigger)
       );
-
       return await this.add(detailedSchedules);
     }
   }
