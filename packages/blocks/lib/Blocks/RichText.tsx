@@ -40,7 +40,7 @@ class ScriptsLoader {
     };
     next.addEventListener('load', loadNext);
     document.body.appendChild(next);
-    setTimeout(loadNext, 1000);
+    setTimeout(loadNext);
   }
 
   add(s: HTMLScriptElement) {

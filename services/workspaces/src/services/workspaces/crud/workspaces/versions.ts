@@ -280,8 +280,7 @@ export class WorkspaceVersions extends DsulCrud {
       },
     };
 
-    let versionArchiveStream = new stream.PassThrough(),
-      versionArchivePromise: Promise<any>;
+    let versionArchivePromise: Promise<any>;
     if (!targetVersion.repository?.id) {
       // Export archive from platform global repo
       try {
@@ -297,7 +296,7 @@ export class WorkspaceVersions extends DsulCrud {
 
       versionArchivePromise = this.storage.export(
         { workspaceId, parentFolder: true, version },
-        versionArchiveStream,
+        undefined,
         exportOptions
       );
     } else {
@@ -309,28 +308,23 @@ export class WorkspaceVersions extends DsulCrud {
       );
       versionArchivePromise = sourceDriver.export(
         `${targetVersion.repository.id}/`,
-        versionArchiveStream,
+        undefined,
         exportOptions
       );
     }
 
     // Finally import this version
+    const archive = await versionArchivePromise;
     const [importResult] = await Promise.all([
-      workspacesExports.importDSUL(
-        workspaceId,
-        'current',
-        versionArchiveStream,
-        {
-          removeAdditionalFiles: true,
-          sourceVersion: targetVersion,
-          overwriteWorkspaceSlugIfAvailable: true,
-          exclude: targetVersion.repository?.id
-            ? workspaceDsul?.repositories?.[targetVersion.repository.id]?.pull
-                ?.exclude
-            : undefined,
-        }
-      ),
-      versionArchivePromise,
+      workspacesExports.importDSUL(workspaceId, 'current', archive, {
+        removeAdditionalFiles: true,
+        sourceVersion: targetVersion,
+        overwriteWorkspaceSlugIfAvailable: true,
+        exclude: targetVersion.repository?.id
+          ? workspaceDsul?.repositories?.[targetVersion.repository.id]?.pull
+              ?.exclude
+          : undefined,
+      }),
     ]);
     return importResult;
   };

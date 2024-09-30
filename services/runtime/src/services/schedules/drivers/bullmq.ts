@@ -30,6 +30,12 @@ export default class BullMQ implements ISchedule {
         repeatStrategy,
       },
     });
+    this.queue.on('error', (err) => {
+      logger.error({
+        msg: 'BullMQ queue encountered an error',
+        err,
+      });
+    });
     this.queueEvents = new QueueEvents('schedules', {
       connection: parseRedisUrl(SCHEDULES.host),
     });
@@ -59,7 +65,7 @@ export default class BullMQ implements ISchedule {
 
     this.queueEvents.on('failed', async ({ jobId, failedReason }) => {
       const message = `Schedules : ${jobId} has failed with reason ${failedReason}`;
-      logger.debug(message);
+      logger.error({ msg: message });
 
       const failedJob = await this.queue.getJob(jobId);
 
@@ -108,6 +114,11 @@ export default class BullMQ implements ISchedule {
 
     for (const job of jobs) {
       const { name, data, opts } = job;
+      logger.debug({
+        msg: 'Added bullmq new job',
+        data,
+        opts,
+      });
       await this.queue.add(name, data, opts);
     }
 
@@ -156,6 +167,11 @@ export function parseRedisUrl(input: string): RedisOptions {
   if (SCHEDULES.password || url.password)
     options.password = SCHEDULES.password || url.password; // If the env variable specify a password we ovewrite.
   if (url.pathname.length > 1) options.db = parseInt(url.pathname.slice(1));
+  if (input.startsWith('rediss://')) {
+    options.tls = {
+      host: options.host,
+    };
+  }
 
   return options;
 }

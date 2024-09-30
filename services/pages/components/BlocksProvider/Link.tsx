@@ -31,6 +31,7 @@ export const Link = ({
     <NextLink href={url} locale={lang}>
       <a
         {...aProps}
+        href={url}
         className={className}
         onClick={(e) => {
           props.onClick && props.onClick(e);

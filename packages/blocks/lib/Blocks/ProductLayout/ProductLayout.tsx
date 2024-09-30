@@ -297,6 +297,7 @@ const defaultStyles = `
   display: flex;
   flex-direction: row;
   flex: 1;
+  overflow: auto;
 }
 .product-layout-content-panel {
   color: var(--main-element-text);
@@ -355,6 +356,7 @@ const defaultStyles = `
   margin-right: calc(var(--assistant-width) * -1);
   margin-left: 2rem;
   transition: margin-right .2s ease-in;
+  overflow: auto;
 }
 .product-layout-assistant-ctn.visible {
   margin-right: 0;

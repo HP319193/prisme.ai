@@ -3,6 +3,7 @@ import { EventType } from '../../eda';
 import { Apps } from '../apps';
 import { Scheduler } from './scheduler';
 import { TriggeredSchedule } from './types';
+import { logger } from '../../logger';
 
 // This is the main Schedules service
 // It's role is to manage the schedules defined in DSUL.
@@ -167,6 +168,10 @@ export class Schedules {
       this.scheduler.delete(workspaceId, oldSlug);
     } else if (automation.disabled || !schedules.length) {
       this.scheduler.delete(workspaceId, slug);
+      logger.debug({
+        msg: 'Removed automation schedules',
+        automation,
+      });
       return;
     }
 
