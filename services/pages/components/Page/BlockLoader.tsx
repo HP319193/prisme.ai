@@ -2,6 +2,7 @@ import { BlockLoader as BLoader, TBlockLoader } from '@prisme.ai/blocks';
 import { useTranslation } from 'next-i18next';
 import {
   createContext,
+  ReactElement,
   useCallback,
   useContext,
   useEffect,
@@ -53,12 +54,16 @@ async function callAutomation(
     ...computeBlock(payload, query),
   });
 }
-
-export const BlockLoader: TBlockLoader = ({
+export const BlockLoader: (
+  props: Parameters<TBlockLoader>[0] & {
+    component?: (props: any) => JSX.Element | null;
+  }
+) => ReturnType<TBlockLoader> = ({
   name = '',
   config: initialConfig,
   onLoad,
   container,
+  component,
 }) => {
   const { user } = useUser();
   const [appConfig, setAppConfig] = useState<any>();
@@ -374,23 +379,28 @@ export const BlockLoader: TBlockLoader = ({
   if (computedConfig?.hidden) {
     return null;
   }
+  const Component = component;
+
   return (
     <recursiveConfigContext.Provider value={cumulatedConfig}>
-      <BLoader
-        name={getBlockName(blockName)}
-        url={url}
-        appConfig={appConfig}
-        onAppConfigUpdate={onAppConfigUpdate}
-        api={api}
-        language={language}
-        workspaceId={`${page.workspaceId}`}
-        events={events}
-        config={computedConfig}
-        layout={{
-          container,
-        }}
-        onLoad={onBlockLoad}
-      />
+      {Component && <Component />}
+      {!Component && (
+        <BLoader
+          name={getBlockName(blockName)}
+          url={url}
+          appConfig={appConfig}
+          onAppConfigUpdate={onAppConfigUpdate}
+          api={api}
+          language={language}
+          workspaceId={`${page.workspaceId}`}
+          events={events}
+          config={computedConfig}
+          layout={{
+            container,
+          }}
+          onLoad={onBlockLoad}
+        />
+      )}
     </recursiveConfigContext.Provider>
   );
 };

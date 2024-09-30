@@ -1,10 +1,4 @@
-import React, {
-  FC,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Loading, notification } from '@prisme.ai/design-system';
