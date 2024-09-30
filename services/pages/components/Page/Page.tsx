@@ -5,7 +5,6 @@ import BlockLoader from './BlockLoader';
 import { usePage } from './PageProvider';
 
 import { useUser } from '../../../console/components/UserProvider';
-import { defaultStyles } from '../../../console/views/Page/defaultStyles';
 import { BlockPage } from './BlockPage';
 import { BlockProvider } from '@prisme.ai/blocks';
 
