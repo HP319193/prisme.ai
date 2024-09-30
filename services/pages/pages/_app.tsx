@@ -19,6 +19,7 @@ import {
 import BlocksProvider from '../components/BlocksProvider/BlocksProvider';
 import WorkspaceProvider from '../components/Workspace';
 import api from '../../console/utils/api';
+import ColorSchemeManager from '../../console/components/ColorSchemeManager';
 
 api.opts = api.opts;
 const Sentry = dynamic(import('../../console/utils/Sentry'), { ssr: false });
@@ -92,6 +93,7 @@ function MyApp({
               />
               {serverSideStyles && <style>{serverSideStyles}</style>}
             </Head>
+            <ColorSchemeManager />
             <Sentry />
             {getLayout(<Component />)}
           </BlocksProvider>
