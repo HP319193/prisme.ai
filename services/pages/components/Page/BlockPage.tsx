@@ -20,10 +20,9 @@ export const BlockPage = () => {
     );
   }, [config, localize]);
   const styles = useMemo(() => {
-    return (
-      interpolateValue({ styles: localize(config.styles) }, config).styles || ''
-    );
-  }, [config, localize]);
+    if (config.styles === undefined) return defaultStyles;
+    return interpolateValue({ styles: config.styles }, config).styles || '';
+  }, [config]);
 
   return (
     <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full">
