@@ -2990,6 +2990,8 @@ components:
           properties:
             workspaceId:
               type: string
+            sourceWorkspaceId:
+              type: string
             automation:
               type: string
             trigger:

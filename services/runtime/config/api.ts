@@ -24,6 +24,9 @@ export const SESSION_ID_HEADER =
 export const AUTH_DATA_HEADER =
   process.env.AUTH_DATA_HEADER || 'x-prismeai-auth-data';
 
+export const SOURCE_WORKSPACE_ID_HEADER =
+  process.env.SOURCE_WORKSPACE_ID_HEADER || 'x-prismeai-workspace-id';
+
 export const ROLE_HEADER = process.env.ROLE_HEADER || 'x-prismeai-role';
 
 export const OPENAPI_FILEPATH =

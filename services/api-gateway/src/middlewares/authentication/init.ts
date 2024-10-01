@@ -110,7 +110,9 @@ export async function init(app: Application) {
             (req.logger || logger).error({
               msg: `Failed request authentication`,
               path: req.path,
-              sourceWorkspaceId: req.get(syscfg.SOURCE_WORKSPACE_ID_HEADER),
+              sourceWorkspaceId:
+                req.context?.sourceWorkspaceId ||
+                req.get(syscfg.SOURCE_WORKSPACE_ID_HEADER),
               ip: extractRequestIp(req),
               userAgent: req.get('User-Agent') as string,
               err,
@@ -216,6 +218,13 @@ async function initPassportStrategies(
           req.context = {
             ...req.context,
             correlationId: token.correlationId,
+          };
+        }
+
+        if (token.workspaceId) {
+          req.context = {
+            ...req.context,
+            sourceWorkspaceId: token.workspaceId,
           };
         }
         delete req.headers['authorization']; // Do not pass user JWT to backed services

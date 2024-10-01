@@ -5,6 +5,7 @@ import {
   USER_ID_HEADER,
   SESSION_ID_HEADER,
   AUTH_DATA_HEADER,
+  SOURCE_WORKSPACE_ID_HEADER,
 } from '../../../config';
 import { logger } from '../../logger';
 import { uniqueId } from '../../utils';
@@ -27,6 +28,7 @@ export interface PrismeContext {
   workspaceId?: string;
   http?: HTTPContext;
   automationDepth?: number;
+  sourceWorkspaceId?: string;
 }
 
 export function requestDecorator(broker: Broker) {
@@ -41,6 +43,7 @@ export function requestDecorator(broker: Broker) {
       sessionId: req.header(SESSION_ID_HEADER) as string,
       ip: req.ip,
       workspaceId: workspaceId,
+      sourceWorkspaceId: req.header(SOURCE_WORKSPACE_ID_HEADER),
       http: {
         originalUrl: req.originalUrl,
         method: req.method,

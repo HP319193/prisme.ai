@@ -491,6 +491,7 @@ export default class Runtime {
       EventType.TriggeredInteraction,
       {
         workspaceId,
+        sourceWorkspaceId: ctx.sourceWorkspaceId,
         automation: triggers[0].automationSlug,
         trigger: {
           type: 'endpoint',
