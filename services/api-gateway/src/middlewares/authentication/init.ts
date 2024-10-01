@@ -201,12 +201,15 @@ async function initPassportStrategies(
         passReqToCallback: true,
       },
       async (req: Request, token: any, done: any) => {
-        // Keep restored express-session object instance for update capabilities
-        req.session = Object.assign(req.session || {}, {
-          prismeaiSessionId: token.prismeaiSessionId,
-          expires: new Date(token.exp * 1000).toISOString(),
-          mfaValidated: false,
-        });
+        // Runtime emitted JWT do not necessarily include authenticated sessions, but they'are always sent to keep source correlationId/workspaceId along the way
+        if (token.prismeaiSessionId) {
+          // Keep restored express-session object instance for update capabilities
+          req.session = Object.assign(req.session || {}, {
+            prismeaiSessionId: token.prismeaiSessionId,
+            expires: new Date(token.exp * 1000).toISOString(),
+            mfaValidated: false,
+          });
+        }
 
         // For better traceability, allow keeping same correlationId from internal HTTP calls
         if (token.correlationId) {
@@ -216,7 +219,11 @@ async function initPassportStrategies(
           };
         }
         delete req.headers['authorization']; // Do not pass user JWT to backed services
-        deserializeUser(token.sub, done as any);
+        if (token.prismeaiSessionId) {
+          deserializeUser(token.sub, done as any);
+        } else {
+          done();
+        }
       }
     )
   );

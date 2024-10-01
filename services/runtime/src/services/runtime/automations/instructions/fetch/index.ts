@@ -94,9 +94,7 @@ export async function fetch(
   if (
     isPrismeaiRequest &&
     !lowercasedHeaders['x-prismeai-token'] &&
-    !lowercasedHeaders['authorization'] &&
-    (ctx?.session?.origin?.userId || ctx?.session?.userId) &&
-    (ctx?.session?.origin?.sessionId || ctx?.session?.sessionId)
+    !lowercasedHeaders['authorization']
   ) {
     const { jwt } = await getAccessToken({
       userId: ctx?.session?.origin?.userId || ctx?.session?.userId,
@@ -104,6 +102,7 @@ export async function fetch(
         ctx?.session?.origin?.sessionId || ctx?.session?.sessionId,
       expiresIn: 10,
       correlationId: ctx.correlationId,
+      workspaceId: ctx.workspaceId,
     });
     headers['Authorization'] = `Bearer ${jwt}`;
   }

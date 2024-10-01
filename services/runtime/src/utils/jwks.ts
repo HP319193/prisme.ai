@@ -103,11 +103,13 @@ export async function getAccessToken({
   expiresIn,
   prismeaiSessionId,
   correlationId,
+  workspaceId,
 }: {
-  userId: string;
+  userId?: string;
   expiresIn: number;
-  prismeaiSessionId: string;
+  prismeaiSessionId?: string;
   correlationId?: string;
+  workspaceId?: string;
 }) {
   const expires = new Date(Date.now() + expiresIn * 1000);
   const token = {
@@ -118,6 +120,7 @@ export async function getAccessToken({
     iss: OIDC_PROVIDER_URL,
     prismeaiSessionId,
     correlationId,
+    workspaceId,
   };
   const jwt = await sign(token);
   return {
