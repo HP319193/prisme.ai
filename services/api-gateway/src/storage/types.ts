@@ -4,7 +4,7 @@ export interface StorageOptions {
   driver: string;
   host: string;
   password?: string;
-  driverOptions: any;
+  driverOptions?: any;
   cache?: {
     key: string;
     ttl?: number;

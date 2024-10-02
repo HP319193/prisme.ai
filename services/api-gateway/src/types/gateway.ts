@@ -1,5 +1,3 @@
-import { Policies } from '../policies';
-
 export interface Endpoint {
   host?: string;
   hosts?: string[];
@@ -15,7 +13,15 @@ export interface Service {
   url: string;
 }
 
-export { Policies };
+interface PolicyMatch {
+  path?: string;
+  methods?: string[];
+}
+
+interface Policies {
+  match: PolicyMatch;
+  [k: string]: object;
+}
 
 export interface Pipeline {
   name: string;

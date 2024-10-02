@@ -1,8 +1,9 @@
 import express, { NextFunction } from 'express';
 import { Pipeline } from '../types';
-import { buildMiddleware } from '../policies';
+import { buildMiddleware, Policies } from '../policies';
 import { GatewayConfig } from '../config';
 import { logger } from '../logger';
+import { ConfigurationError } from '../types/errors';
 
 const log = logger.child({ module: 'pipelines' });
 
@@ -43,9 +44,26 @@ async function configurePipeline(pipeline: Pipeline, gtwcfg: GatewayConfig) {
   const router = express.Router({ mergeParams: true });
 
   await Promise.all(
-    pipeline.policies.map(async (policy) => {
-      const middleware = await buildMiddleware(policy, gtwcfg);
-      router.use(middleware);
+    pipeline.policies.map(async ({ match, ...policy }) => {
+      const middleware = await buildMiddleware(
+        policy as any as Policies,
+        gtwcfg
+      );
+      const args = match?.path ? [match.path, middleware] : [middleware];
+      if (match?.methods?.length) {
+        for (let method of match.methods) {
+          const handler = (router as any)[method.trim().toLowerCase()];
+          if (!handler) {
+            throw new ConfigurationError(
+              `Invalid method ${method} specified in configuration`,
+              {}
+            );
+          }
+          handler.call(router, ...args);
+        }
+      } else {
+        router.use(...(args as any));
+      }
     })
   );
   return router;

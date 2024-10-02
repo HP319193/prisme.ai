@@ -103,3 +103,15 @@ export class PayloadTooLarge extends PrismeError {
     );
   }
 }
+
+export class TooManyRequests extends PrismeError {
+  constructor(retryAfter: number) {
+    super(
+      `Too many requests`,
+      {
+        retryAfter,
+      },
+      429
+    );
+  }
+}

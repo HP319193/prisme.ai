@@ -14,6 +14,7 @@ export interface CacheOptions {
   host: string;
   password?: string;
   prefix?: string;
+  driverOptions?: any;
 }
 
 export interface SetOptions {

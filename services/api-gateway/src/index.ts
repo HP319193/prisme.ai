@@ -13,6 +13,8 @@ import { initOidcProvider } from './services/oidc/provider';
 import startWorkspacesClientSync from './services/oidc/client';
 import { JWKStore } from './services/jwks/store';
 import { publishJWKToRuntime } from './services/jwks/internal';
+import { findConfigErrors } from './config/gatewayConfigValidator';
+import { ConfigurationError } from './types/errors';
 
 const { CONSOLE_URL = '', PAGES_HOST = '' } = process.env;
 
@@ -48,6 +50,10 @@ app.use(
 let gtwcfg: GatewayConfig, oidc;
 (async function () {
   try {
+    const configErrors = findConfigErrors(syscfg.GATEWAY_CONFIG);
+    if (configErrors) {
+      throw new ConfigurationError('Bad configuration', configErrors);
+    }
     gtwcfg = new GatewayConfig(syscfg.GATEWAY_CONFIG);
 
     const jwks = new JWKStore(broker);

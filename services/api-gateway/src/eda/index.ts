@@ -1,6 +1,6 @@
 import { Broker, PendingEvents, PrismeEvent } from '@prisme.ai/broker';
 
-import { eda as edaConfig } from '../config';
+import edaConfig from '../config/eda';
 import { Logger, logger } from '../logger';
 
 const {
