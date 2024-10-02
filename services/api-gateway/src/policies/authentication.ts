@@ -24,7 +24,7 @@ export const validatorSchema = {
   csrf: {},
 };
 
-export async function init(params: Params) {
+export function init(params: Params) {
   let {
     injectUserIdHeader = true,
     optional = false,

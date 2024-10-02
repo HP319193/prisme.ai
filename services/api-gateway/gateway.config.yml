@@ -49,6 +49,10 @@ pipelines:
       - webhooks
       - test
     policies:
+      - authentication:
+          optional: true
+          csrf:
+            validateToken: true
       - proxy:
           service: runtime
 
