@@ -45,6 +45,8 @@ export const emailSender = new Email({
 export enum EmailTemplate {
   ForgotPassword = 'forgotPassword',
   ValidateAccount = 'validateAccount',
+  ValidateDeleteAccount = 'validateDeleteAccount',
+  DeletedAccount = 'deletedAccount',
 }
 
 export type EmailTemplateVariables = {
@@ -57,6 +59,15 @@ export type EmailTemplateVariables = {
     locale: string;
     name: string;
     validateLink: string;
+  };
+  [EmailTemplate.ValidateDeleteAccount]: {
+    locale: string;
+    name: string;
+    validateLink: string;
+  };
+  [EmailTemplate.DeletedAccount]: {
+    locale: string;
+    name: string;
   };
 };
 

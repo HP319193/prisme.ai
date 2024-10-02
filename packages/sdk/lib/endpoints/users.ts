@@ -46,6 +46,13 @@ export class UsersEndpoint {
   async deleteMeta(k: string): Promise<PrismeaiAPI.DeleteMeta.Responses.$200> {
     return await this.api.delete(`/user/meta/${k}`);
   }
+
+  async sendDeleteValidation() {
+    return await this.api.delete(`/user`);
+  }
+  async delete(token?: string) {
+    return await this.api.delete(`/users/${this.id}?token=${token}`);
+  }
 }
 
 export default UsersEndpoint;

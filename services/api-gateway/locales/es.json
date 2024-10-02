@@ -15,5 +15,11 @@
   "You just signed up to Prisme.ai and we need you to confirm your email address :": "Para confirmar la creación de su cuenta en Prisme.ai, haga clic en este enlace:",
   "Confirm my email": "Confirmar mi dirección de correo electrónico",
   "If you did not ask for a signup, please disregard this mail.": "Si no ha solicitado la creación de una cuenta en Prisme.ai, ignore este correo electrónico.",
-  "Prisme.ai - Verification Email": "Prisme.ai - Verification Email"
+  "Prisme.ai - Verification Email": "Prisme.ai - Verification Email",
+  "account.delete.subject": "Eliminación de la cuenta",
+  "account.delete.content": "Ha solicitado la eliminación definitiva de su cuenta. Para confirmar esta acción irreversible, haga clic en el enlace :",
+  "account.delete.confirm": "Borro mi cuenta",
+  "account.delete.disregard": "Si no es usted la fuente de esta solicitud, póngase en contacto con nuestro servicio de asistencia técnica.",
+  "account.deleted.subject": "Cuenta eliminada",
+  "account.deleted.content": "Tu cuenta ha sido eliminada."
 }

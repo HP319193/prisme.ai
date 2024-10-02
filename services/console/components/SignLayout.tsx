@@ -30,6 +30,8 @@ export enum SignType {
   Reset = 'reset',
   Validate = 'validate',
   Manual = 'validate.manual',
+  DeleteAccount = 'account.delete',
+  DeleteAccountError = 'account.delete.error',
 }
 
 export const SignLayout = ({
@@ -37,9 +39,9 @@ export const SignLayout = ({
   type,
   link,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   type: SignType;
-  link: string;
+  link?: string;
 }) => {
   const { t } = useTranslation('sign');
 

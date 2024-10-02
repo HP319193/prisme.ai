@@ -89,5 +89,21 @@
   },
   "pages": {
     "restricted": "Access to this page is restricted."
+  },
+  "account": {
+    "delete": {
+      "topForm1": "Account deleted",
+      "topForm2": "Goodbye, we hope you'll be back soon.",
+      "topForm3": "Your account and personal data have been deleted.",
+      "error": {
+        "topForm1": "Error",
+        "topForm2": "The account has not been deleted due to the following error:",
+        "topForm3": "",
+        "message": "Unknown error",
+        "message_Validation token not found": "The link is invalid. Please restart the procedure from the beginning and use the link from the last e-mail received.",
+        "message_Validation token invalid": "The link is invalid. Please restart the procedure from the beginning and use the link from the last e-mail received.",
+        "message_Validation token has expired": "The link has expired. Please restart the procedure from the beginning and use the link from the last e-mail received."
+      }
+    }
   }
 }

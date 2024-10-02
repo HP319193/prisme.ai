@@ -15,6 +15,8 @@ import {
   validateAccount,
   sendAccountValidationLink,
   externalLoginOrSignup,
+  sendAccountDeleteValidationLink,
+  deleteUser,
 } from './users';
 import { setupUserMFA, validateMFA } from './mfa';
 import {
@@ -50,6 +52,7 @@ export default (ctx?: PrismeContext, logger?: Logger) => {
     get: get(Users, ctx),
     patchUser: patchUser(Users, ctx),
     updateUser: updateUser(Users, ctx),
+    deleteUser: deleteUser(Users, ctx),
     login: login(Users, ctx),
     anonymousLogin: anonymousLogin(Users, ctx),
     externalLoginOrSignup: externalLoginOrSignup(Users, ctx),
@@ -58,6 +61,11 @@ export default (ctx?: PrismeContext, logger?: Logger) => {
     resetPassword: resetPassword(Users, ctx, logger),
     validateAccount: validateAccount(Users, ctx, logger),
     sendAccountValidationLink: sendAccountValidationLink(Users, ctx, logger),
+    sendAccountDeleteValidationLink: sendAccountDeleteValidationLink(
+      Users,
+      ctx,
+      logger
+    ),
 
     setupUserMFA: setupUserMFA(OTPKeys, ctx, logger),
     validateMFA: validateMFA(OTPKeys),

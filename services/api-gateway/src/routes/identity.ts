@@ -235,6 +235,46 @@ async function patchUserHandler(
   return res.send(user);
 }
 
+async function deleteMyUserHandler(
+  req: Request<any, any>,
+  res: Response<Partial<PrismeaiAPI.DeleteMyUser.Responses.$200>>
+) {
+  const { context, logger, headers } = req;
+  const identity = services.identity(context, logger);
+
+  await identity.sendAccountDeleteValidationLink(
+    context.userId,
+    `${headers?.['referer']}`
+  );
+
+  return res.send({ success: true });
+}
+
+async function deleteUserHandler(
+  req: Request<PrismeaiAPI.DeleteUser.PathParameters, any>,
+  res: Response<Partial<PrismeaiAPI.DeleteUser.Responses.$200>>
+) {
+  const {
+    context,
+    logger,
+    params: { userId },
+    query: { token },
+  } = req;
+  const identity = services.identity(context, logger);
+
+  const deleted = await identity.deleteUser(userId, {
+    token: `${token || ''}`,
+    isSuperAdmin: isSuperAdmin(req as any),
+  });
+
+  await req.broker.send(EventType.DeletedUser, {
+    ip: req.context?.http?.ip,
+    userId,
+  });
+
+  return res.send({ success: !!deleted });
+}
+
 async function setMetaHandler(
   req: Request<any, any, PrismeaiAPI.SetMeta.RequestBody>,
   res: Response<PrismeaiAPI.SetMeta.Responses.$200>
@@ -340,6 +380,7 @@ export default async function initIdentityRoutes(
 
   // Users management, super admin only
   app.patch('/users/:userId', isAuthenticated, patchUserHandler as any);
+  app.delete('/users/:userId', isAuthenticated, deleteUserHandler as any);
 
   // From there, only routes restricted to users, forbidden to access tokens
   app.use(forbidAccessTokens);
@@ -355,6 +396,7 @@ export default async function initIdentityRoutes(
 
   // User account
   app.patch(`/user`, isAuthenticated, patchUserHandler as any);
+  app.delete(`/user`, isAuthenticated, deleteMyUserHandler as any);
   const passwordResetRateLimit = await initRateLimit({
     window: 60,
     limit: syscfg.RATE_LIMIT_PASSWORD_RESET,
