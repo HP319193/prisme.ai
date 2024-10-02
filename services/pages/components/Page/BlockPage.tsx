@@ -50,3 +50,5 @@ export const BlockPage = () => {
     </div>
   );
 };
+
+export default BlockPage;
