@@ -1,8 +1,8 @@
 import Head from 'next/head';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import useLocalizedText from '../../../console/utils/useLocalizedText';
 import api from '../../../console/utils/api';
-import BlockLoader, { callAutomation } from './BlockLoader';
+import BlockLoader from './BlockLoader';
 import { usePage } from './PageProvider';
 import PoweredBy from '../../../console/components/PoweredBy';
 import dynamic from 'next/dynamic';
@@ -23,7 +23,6 @@ export const Page = ({ page }: PageProps) => {
   const containerEl = useRef<HTMLDivElement>(null);
   const { user } = useUser();
   const isSignedIn = user?.authData && !user?.authData?.anonymous;
-  const [computedConfig, setComputedConfig] = useState({});
 
   useEffect(() => {
     window.Prisme = window.Prisme || {};
@@ -53,7 +52,6 @@ export const Page = ({ page }: PageProps) => {
       styles = defaultStyles,
       workspaceId,
       workspaceSlug,
-      automation,
       ...pageConfig
     } = page;
 
@@ -63,32 +61,18 @@ export const Page = ({ page }: PageProps) => {
       SYSTEM: {
         userIsSignedIn: isSignedIn,
       },
-      ...computedConfig,
     };
-  }, [computedConfig, isSignedIn, page]);
-
-  useEffect(() => {
-    const { workspaceId, automation } = page;
-
-    async function fetch() {
-      if (!workspaceId || !automation) return;
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const query = {
-        pageSlug: page.slug,
-        ...Object.fromEntries(urlSearchParams.entries()),
-      };
-
-      setComputedConfig(await callAutomation(workspaceId, automation, query));
-    }
-    fetch();
-  }, [page]);
+  }, [isSignedIn, page]);
 
   const { styles = defaultStyles } = page;
-
+  const pageName = useMemo(
+    () => interpolateValue(page.name, blocksListConfig),
+    [blocksListConfig, page.name]
+  );
   return (
     <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full">
       <Head>
-        <title>{localize(interpolateValue(page.name, blocksListConfig))}</title>
+        <title>{localize(pageName)}</title>
         <meta name="description" content={localize(page.description)} />
         <meta
           name="viewport"
@@ -98,13 +82,7 @@ export const Page = ({ page }: PageProps) => {
           <link rel="icon" href={page.favicon || '/favicon.png'} />
         )}
       </Head>
-      {styles && (
-        <style
-          dangerouslySetInnerHTML={{
-            __html: interpolateValue(styles, blocksListConfig),
-          }}
-        />
-      )}
+      {styles && <style dangerouslySetInnerHTML={{ __html: styles }} />}
 
       <div
         className="flex flex-1 flex-col page-blocks w-full"

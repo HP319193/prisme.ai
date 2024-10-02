@@ -36,7 +36,7 @@ export const recursiveConfigContext = createContext<Record<string, any>>({});
 export const useRecursiveConfigContext = () =>
   useContext(recursiveConfigContext);
 
-export async function callAutomation(
+async function callAutomation(
   workspaceId: string,
   automation: Prismeai.Block['automation'],
   query: any
