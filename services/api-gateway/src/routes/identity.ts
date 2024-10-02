@@ -15,6 +15,7 @@ import Provider from 'oidc-provider';
 import { GatewayConfig } from '../config';
 import fetch from 'node-fetch';
 import { JWKStore } from '../services/jwks/store';
+import { initCSRFToken } from '../policies/authentication';
 
 async function reAuthenticate(req: Request, res: Response, next: NextFunction) {
   if (!req.user?.email || !req.body?.currentPassword) {
@@ -47,6 +48,7 @@ async function meHandler(
   req: Request,
   res: Response<PrismeaiAPI.GetMyProfile.Responses.$200>
 ) {
+  initCSRFToken(req, res);
   res.send({
     ...(req.user as any),
     sessionId: req.session.prismeaiSessionId,

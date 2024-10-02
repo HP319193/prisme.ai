@@ -20,6 +20,8 @@ function isFormData(data: any): data is FormData {
   return !!(data.append && typeof data.append === 'function');
 }
 
+const CSRF_TOKEN_HEADER = 'x-prismeai-csrf-token';
+
 export class Fetcher {
   public host: string;
   public token: string | null = null;
@@ -27,6 +29,7 @@ export class Fetcher {
   public overwriteClientId?: string;
   private clientIdHeader?: string;
   protected _apiKey: string | null = null;
+  protected _csrfToken: string | null = null;
   public language: string | undefined;
   public lastReceivedHeaders?: Record<string, any>;
 
@@ -50,6 +53,10 @@ export class Fetcher {
 
     if (this._apiKey && !headers.has('x-prismeai-apikey')) {
       headers.append('x-prismeai-api-key', this._apiKey);
+    }
+
+    if (this._csrfToken && options.method && options.method !== 'GET') {
+      headers.append(CSRF_TOKEN_HEADER, this._csrfToken);
     }
 
     if (this.language) {
@@ -100,6 +107,9 @@ export class Fetcher {
     this.lastReceivedHeaders = headersAsObject(res.headers);
     if (this.clientIdHeader && this.lastReceivedHeaders[this.clientIdHeader]) {
       this.overwriteClientId = this.lastReceivedHeaders[this.clientIdHeader];
+    }
+    if (this.lastReceivedHeaders[CSRF_TOKEN_HEADER]) {
+      this._csrfToken = this.lastReceivedHeaders[CSRF_TOKEN_HEADER];
     }
     if (!res.ok) {
       if (

@@ -66,6 +66,10 @@ pipelines:
     endpoints:
       - events
     policies:
+      - authentication:
+          optional: true
+          csrf:
+            validateToken: true
       - proxy:
           service: events
 
@@ -73,6 +77,10 @@ pipelines:
     endpoints:
       - files
     policies:
+      - authentication:
+          optional: true
+          csrf:
+            validateToken: true
       - proxy:
           service: workspaces
 
@@ -83,6 +91,8 @@ pipelines:
     policies:
       - authentication:
           allowApiKeyOnly: true
+          csrf:
+            validateToken: true
       - proxy:
           service: workspaces
 
@@ -92,6 +102,8 @@ pipelines:
     policies:
       - authentication:
           optional: true
+          csrf:
+            includeToken: true
       - proxy:
           service: workspaces
 

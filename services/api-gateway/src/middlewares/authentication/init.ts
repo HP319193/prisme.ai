@@ -29,6 +29,12 @@ const cookieExtractor = (req: Request) => {
   let token = null;
   if (req && req.cookies) {
     token = req.cookies['access-token'];
+    if (token) {
+      req.locals = {
+        ...req.locals,
+        authScheme: 'cookie',
+      };
+    }
   }
   return token;
 };
@@ -211,6 +217,14 @@ async function initPassportStrategies(
             expires: new Date(token.exp * 1000).toISOString(),
             mfaValidated: false,
           });
+
+          // Cookie scheme would be set from cookieExtractor, so the only other possible scheme is bearer
+          if (!req.locals?.authScheme) {
+            req.locals = {
+              ...req.locals,
+              authScheme: 'bearer',
+            };
+          }
         }
 
         // For better traceability, allow keeping same correlationId from internal HTTP calls

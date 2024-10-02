@@ -40,6 +40,7 @@ app.use(
       'X-Correlation-Id',
       'X-Prismeai-Session-Id',
       syscfg.OIDC_CLIENT_ID_HEADER,
+      syscfg.CSRF_TOKEN_HEADER,
     ],
   })
 );

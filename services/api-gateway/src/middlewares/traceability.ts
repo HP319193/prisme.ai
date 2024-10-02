@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { syscfg } from '../config';
 import { logger } from '../logger';
-import { v4 as uuid } from 'uuid';
 import { broker } from '../eda';
 import { Role } from '../types/permissions';
 import { cleanIncomingRequest } from './validation';
+import { generateToken } from '../utils/tokens';
 
 export interface HTTPContext {
   hostname: string;
@@ -39,7 +39,7 @@ export function extractRequestCorrelationId(req: Request) {
   }
   return syscfg.OVERWRITE_CORRELATION_ID_HEADER ||
     !req.header(syscfg.CORRELATION_ID_HEADER)
-    ? uuid()
+    ? generateToken()
     : (req.header(syscfg.CORRELATION_ID_HEADER) as string);
 }
 

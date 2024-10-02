@@ -6,6 +6,8 @@ const DEBUG = ['dev', 'development'].includes(
 
 const API_KEY_HEADER = process.env.API_KEY_HEADER || 'x-prismeai-api-key';
 const SOURCE_WORKSPACE_ID_HEADER = 'x-prismeai-workspace-id';
+const CSRF_TOKEN_HEADER =
+  process.env.CSRF_TOKEN_HEADER || 'x-prismeai-csrf-token';
 
 export default {
   PORT: process.env.PORT || 3001,
@@ -40,7 +42,9 @@ export default {
   API_KEY_HEADER,
   SOURCE_WORKSPACE_ID_HEADER,
 
-  ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE: [API_KEY_HEADER],
+  CSRF_TOKEN_HEADER,
+
+  ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE: [API_KEY_HEADER, CSRF_TOKEN_HEADER],
 
   ROLE_HEADER: process.env.ROLE_HEADER || 'x-prismeai-role',
 
