@@ -1,16 +1,9 @@
-import Head from 'next/head';
-import { useEffect, useMemo, useRef } from 'react';
-import useLocalizedText from '../../../console/utils/useLocalizedText';
+import { useEffect, useMemo } from 'react';
 import api from '../../../console/utils/api';
 import BlockLoader from './BlockLoader';
 import { usePage } from './PageProvider';
-import PoweredBy from '../../../console/components/PoweredBy';
-import dynamic from 'next/dynamic';
 import { useUser } from '../../../console/components/UserProvider';
 import { defaultStyles } from '../../../console/views/Page/defaultStyles';
-import { interpolateValue } from './computeBlocks';
-
-const Debug = dynamic(() => import('../Debug'), { ssr: false });
 
 export interface PageProps {
   page: Prismeai.DetailedPage;
@@ -18,9 +11,7 @@ export interface PageProps {
 }
 
 export const Page = ({ page }: PageProps) => {
-  const { localize } = useLocalizedText();
   const { events } = usePage();
-  const containerEl = useRef<HTMLDivElement>(null);
   const { user } = useUser();
   const isSignedIn = user?.authData && !user?.authData?.anonymous;
 
@@ -64,39 +55,13 @@ export const Page = ({ page }: PageProps) => {
     };
   }, [isSignedIn, page]);
 
-  const { styles = defaultStyles } = page;
-  const pageName = useMemo(
-    () => interpolateValue(page.name, blocksListConfig),
-    [blocksListConfig, page.name]
-  );
   return (
-    <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full">
-      <Head>
-        <title>{localize(pageName)}</title>
-        <meta name="description" content={localize(page.description)} />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, user-scalable=no"
-        />
-        {page.favicon && (
-          <link rel="icon" href={page.favicon || '/favicon.png'} />
-        )}
-      </Head>
-      {styles && <style dangerouslySetInnerHTML={{ __html: styles }} />}
-
-      <div
-        className="flex flex-1 flex-col page-blocks w-full"
-        ref={containerEl}
-      >
-        <BlockLoader
-          key={page.id}
-          name="BlocksList"
-          config={blocksListConfig}
-        />
-      </div>
-      <PoweredBy />
-      <Debug />
-    </div>
+    <BlockLoader
+      key={page.id}
+      name="BlocksList"
+      config={blocksListConfig}
+      isRoot
+    />
   );
 };
 
