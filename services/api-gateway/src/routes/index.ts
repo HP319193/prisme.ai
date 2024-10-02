@@ -60,7 +60,7 @@ export default async function initRoutes(
       ignorePaths: ['^/sys', '/v2/login/oauth'],
     }),
     validationErrorMiddleware,
-    csrfProtection
+    await csrfProtection
   );
   app.use('/v2/', initIdentityRoutes(oidc, gtwcfg, jwks));
 
