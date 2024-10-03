@@ -37,28 +37,7 @@ export const ProductLayout = ({
 };
 
 const defaultStyles = `
-/*:root[data-color-scheme="light"] {
-  --layout-surface: #ffffff;
-  --layout-surface-secondary: #f9f9f9;
-  --main-surface: #ffffff;
-  --text-contrast: #313131;
-  --main-text: #313131;
-  --main-element: #f3f3f3;
-  --main-element-text: #343434;
-  --main-link: #063281;
-  --secondary-text: #bbb9b9d9;
-  --primary: #015dff;
-  --primary-contrast: #fff;
-  --button: #ffffff;
-  --accent-color: #015dff;
-  --accent-contrast-color: #fff;
-  --border-color: #494949;
-  --main-text-color: #313131;
-  --main-text-contrast: #313131;
-  --main-bg: #ffffff;
-}*/
 :block {
-  background: var(--test);
   display: flex;
   flex-direction: row;
   min-height: 100%;
