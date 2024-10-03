@@ -70,6 +70,10 @@ export async function init(app: Application) {
       req.session = (await identity.validateAccessToken(
         token
       )) as Request['session'];
+      req.locals = {
+        ...req.locals,
+        authScheme: 'bearer',
+      };
     }
     next();
   });
