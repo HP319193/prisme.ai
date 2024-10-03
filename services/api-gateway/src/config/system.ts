@@ -1,6 +1,7 @@
 import path from 'path';
 
 const DEBUG = ['dev', 'development'].includes(process.env.NODE_ENV || '');
+const IS_PROD = process.env.NODE_ENV === 'production';
 
 const API_KEY_HEADER = process.env.API_KEY_HEADER || 'x-prismeai-api-key';
 const SOURCE_WORKSPACE_ID_HEADER = 'x-prismeai-workspace-id';
@@ -65,7 +66,7 @@ export default {
     (process.env.EXPRESS_SESSION_COOKIE_SAMESITE as
       | 'none'
       | 'lax'
-      | 'strict') || (DEBUG ? '' : 'none'),
+      | 'strict') || (IS_PROD ? 'none' : ''),
 
   INTERNAL_API_KEY: process.env.INTERNAL_API_KEY || '#pZFT>2.g9x8p9D',
 
