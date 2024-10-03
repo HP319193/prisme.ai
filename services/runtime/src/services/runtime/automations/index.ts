@@ -7,6 +7,7 @@ import { DetailedAutomation, Workspace } from '../../workspaces';
 import { ContextsManager } from '../contexts';
 import { runInstruction, InstructionType, Break } from './instructions';
 import { rateLimiter } from '../../rateLimits/rateLimiter';
+import { validateArguments } from './validateArguments';
 
 export async function executeAutomation(
   workspace: Workspace,
@@ -17,6 +18,14 @@ export async function executeAutomation(
   cache: Cache,
   rootAutomation?: boolean
 ) {
+  if (automation.validateArguments && automation.arguments) {
+    validateArguments(
+      workspace.id,
+      automation.slug!,
+      ctx.payload,
+      automation.arguments
+    );
+  }
   await ctx.securityChecks();
   await rateLimiter.workspace(workspace.id, ctx.system).executeAutomation(ctx);
   const startedAt = Date.now();

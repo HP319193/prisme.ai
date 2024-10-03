@@ -968,6 +968,7 @@ declare namespace Prismeai {
         arguments?: {
             [name: string]: TypedArgument;
         };
+        validateArguments?: boolean;
         when?: When;
         labels?: string[];
         events?: ProcessedEvents;
@@ -1008,6 +1009,7 @@ declare namespace Prismeai {
         arguments?: {
             [name: string]: TypedArgument;
         };
+        validateArguments?: boolean;
         when?: When;
         labels?: string[];
         events?: ProcessedEvents;

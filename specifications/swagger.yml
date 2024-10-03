@@ -754,6 +754,8 @@ components:
         arguments:
           additionalProperties:
             $ref: '#/components/schemas/TypedArgument'
+        validateArguments:
+          type: boolean
         when:
           $ref: '#/components/schemas/When'
         labels:
