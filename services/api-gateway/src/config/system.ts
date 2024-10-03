@@ -90,4 +90,15 @@ export default {
   ENABLE_HEALTHCHECK_LOGS: ['yes', 'enabled', 'enable', 'true'].includes(
     (process.env.ENABLE_HEALTHCHECK_LOGS || 'no').toLowerCase()
   ),
+
+  RATE_LIMIT_ANONYMOUS_LOGIN: parseInt(
+    process.env.RATE_LIMIT_ANONYMOUS_LOGIN || '10'
+  ),
+  RATE_LIMIT_PRISMEAI_LOGIN: parseInt(
+    process.env.RATE_LIMIT_PRISMEAI_LOGIN || '5'
+  ),
+  RATE_LIMIT_SIGNUP: parseInt(process.env.RATE_LIMIT_SIGNUP || '1'),
+  RATE_LIMIT_PASSWORD_RESET: parseInt(
+    process.env.RATE_LIMIT_PASSWORD_RESET || '1'
+  ),
 };

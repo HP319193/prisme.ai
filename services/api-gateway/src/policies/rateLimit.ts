@@ -1,6 +1,5 @@
 import { RateLimiterRedis, RateLimiterRes } from 'rate-limiter-flexible';
 import { buildRedis } from '../cache/redis';
-import { GatewayConfig } from '../config';
 import storage from '../config/storage';
 import { logger } from '../logger';
 import { Request, Response } from 'express';
@@ -9,7 +8,7 @@ import { extractRequestIp } from '../middlewares';
 
 export interface Params {
   window: number;
-  key: 'userId' | 'ip' | 'workspaceId';
+  key: 'userId' | 'ip' | 'workspaceId' | ((req: Request) => string);
   limit: number;
 }
 
@@ -21,7 +20,7 @@ export const validatorSchema = {
 const redisClient = buildRedis('rate-limiter', storage.RateLimits);
 redisClient.connect().catch((err) => logger.error({ err }));
 
-export async function init(params: Params, gtwcfg: GatewayConfig) {
+export async function init(params: Params) {
   const rateLimiter = new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: 'middleware',
@@ -32,7 +31,10 @@ export async function init(params: Params, gtwcfg: GatewayConfig) {
 
   return async (req: Request, res: Response, next: any) => {
     try {
-      let key = extractRequestIp(req);
+      let key =
+        typeof params.key === 'function'
+          ? params.key(req)
+          : extractRequestIp(req);
       if (params.key === 'userId' && req.user?.id) {
         key = req.user?.id;
       } else if (params.key === 'workspaceId' && req.context?.workspaceId) {

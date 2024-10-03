@@ -49,21 +49,31 @@ async function configurePipeline(pipeline: Pipeline, gtwcfg: GatewayConfig) {
         policy as any as Policies,
         gtwcfg
       );
-      const args = match?.path ? [match.path, middleware] : [middleware];
-      if (match?.methods?.length) {
-        for (let method of match.methods) {
-          const handler = (router as any)[method.trim().toLowerCase()];
-          if (!handler) {
-            throw new ConfigurationError(
-              `Invalid method ${method} specified in configuration`,
-              {}
-            );
-          }
-          handler.call(router, ...args);
+      const paths = match?.paths || [true];
+      do {
+        const curPath = paths.shift();
+        if (!curPath) {
+          break;
         }
-      } else {
-        router.use(...(args as any));
-      }
+        const args =
+          typeof curPath === 'string' && curPath
+            ? [curPath, middleware]
+            : [middleware];
+        if (match?.methods?.length) {
+          for (let method of match.methods) {
+            const handler = (router as any)[method.trim().toLowerCase()];
+            if (!handler) {
+              throw new ConfigurationError(
+                `Invalid method ${method} specified in configuration`,
+                {}
+              );
+            }
+            handler.call(router, ...args);
+          }
+        } else {
+          router.use(...(args as any));
+        }
+      } while (paths.length);
     })
   );
   return router;

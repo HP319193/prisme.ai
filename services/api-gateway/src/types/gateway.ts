@@ -14,7 +14,7 @@ export interface Service {
 }
 
 interface PolicyMatch {
-  path?: string;
+  paths?: string[];
   methods?: string[];
 }
 

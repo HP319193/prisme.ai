@@ -70,6 +70,15 @@ pipelines:
     endpoints:
       - events
     policies:
+      - match:
+          paths:
+            - '/v2/workspaces/:workspaceId/search'
+            - '/v2/workspaces/:workspaceId/events'
+            - '/v2/workspaces/:workspaceId/usage'
+        rateLimit:
+          key: userId
+          window: 60
+          limit: 20
       - authentication:
           optional: true
           csrf:
@@ -97,6 +106,34 @@ pipelines:
           allowApiKeyOnly: true
           csrf:
             validateToken: true
+      - match:
+          paths:
+            - '/v2/workspaces/:workspaceId/files'
+          methods:
+            - POST
+        rateLimit:
+          key: userId
+          window: 60
+          limit: 50
+      - match:
+          paths:
+            - '/v2/workspaces/'
+          methods:
+            - POST
+        rateLimit:
+          key: userId
+          window: 60
+          limit: 3
+      - match:
+          paths:
+            - '/v2/workspaces/import'
+            - '/v2/workspaces/:workspaceId/import'
+            - '/v2/workspaces/:workspaceId/versions/:versionId/pull'
+            - '/v2/workspaces/:workspaceId/versions/:versionId/duplicate'
+        rateLimit:
+          key: userId
+          window: 60
+          limit: 3
       - proxy:
           service: workspaces
 

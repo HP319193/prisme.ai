@@ -34,8 +34,8 @@ export class ForbiddenError extends PrismeError {
 }
 
 export class AuthenticationError extends PrismeError {
-  constructor(msg = 'Incorrect email or password.') {
-    super(msg, undefined, 401);
+  constructor(msg = 'Incorrect email or password.', details?: object) {
+    super(msg, details, 401);
   }
 }
 

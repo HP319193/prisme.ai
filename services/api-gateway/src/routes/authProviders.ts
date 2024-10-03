@@ -12,6 +12,7 @@ import { isAuthenticated } from '../middlewares';
 import { AuthProviderType, AuthProviders } from '../services/identity';
 import { logger } from '../logger';
 import { JWKStore } from '../services/jwks/store';
+import { init as initRateLimit } from '../policies/rateLimit';
 
 async function mfaHandler(
   req: Request<any, any, PrismeaiAPI.MFA.RequestBody>,
@@ -142,7 +143,17 @@ export async function initAuthProviders(
   provider: Provider,
   jwks: JWKStore
 ) {
-  app.post(`/login/anonymous`, getAnonymousLoginHandler(jwks));
+  const anonymousLoginRateLimit = await initRateLimit({
+    window: 60,
+    limit: syscfg.RATE_LIMIT_ANONYMOUS_LOGIN,
+    key: 'ip',
+  });
+
+  app.post(
+    `/login/anonymous`,
+    anonymousLoginRateLimit,
+    getAnonymousLoginHandler(jwks)
+  );
   // TODO rewrite with OIDC
   app.post(`/login/mfa`, isAuthenticated, mfaHandler);
 

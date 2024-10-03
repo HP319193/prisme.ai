@@ -69,7 +69,7 @@ let gtwcfg: GatewayConfig, oidc;
     oidc = await initOidcProvider(broker, jwks);
 
     initMetrics(app);
-    initRoutes(app, gtwcfg, broker, oidc, jwks);
+    await initRoutes(app, gtwcfg, broker, oidc, jwks);
 
     app.listen(syscfg.PORT, () => {
       logger.info(`Running on port ${syscfg.PORT}`);

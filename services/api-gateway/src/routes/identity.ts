@@ -12,10 +12,11 @@ import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { initAuthProviders } from './authProviders';
 import Provider from 'oidc-provider';
-import { GatewayConfig } from '../config';
+import { GatewayConfig, syscfg } from '../config';
 import fetch from 'node-fetch';
 import { JWKStore } from '../services/jwks/store';
 import { initCSRFToken } from '../policies/authentication';
+import { init as initRateLimit } from '../policies/rateLimit';
 
 async function reAuthenticate(req: Request, res: Response, next: NextFunction) {
   if (!req.user?.email || !req.body?.currentPassword) {
@@ -327,7 +328,7 @@ function postUserPhotoHandler(workspaceServiceUrl: string) {
   };
 }
 
-export default function initIdentityRoutes(
+export default async function initIdentityRoutes(
   oidc: Provider,
   gtwcfg: GatewayConfig,
   jwks: JWKStore
@@ -344,11 +345,30 @@ export default function initIdentityRoutes(
   app.use(forbidAccessTokens);
 
   initAuthProviders(app, oidc, jwks);
-  app.post(`/signup`, signupHandler);
+  const signupRateLimit = await initRateLimit({
+    window: 60,
+    limit: syscfg.RATE_LIMIT_SIGNUP,
+    key: 'ip',
+  });
+  app.post(`/signup`, signupRateLimit, signupHandler);
 
   // User account
   app.patch(`/user`, isAuthenticated, patchUserHandler as any);
-  app.post(`/user/password`, resetPasswordHandler);
+  const passwordResetRateLimit = await initRateLimit({
+    window: 60,
+    limit: syscfg.RATE_LIMIT_PASSWORD_RESET,
+    key: 'ip',
+  });
+  app.post(
+    `/user/password`,
+    (req, res, next) => {
+      if (!req.body.token) {
+        return passwordResetRateLimit(req, res, next);
+      }
+      return next();
+    },
+    resetPasswordHandler
+  );
   app.post(`/user/validate`, validateAccountHandler);
   app.post(`/user/mfa`, reAuthenticate, enforceMFA, setupUserMFAHandler);
   app.post(

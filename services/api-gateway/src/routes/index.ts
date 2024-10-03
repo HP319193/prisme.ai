@@ -36,7 +36,7 @@ export default async function initRoutes(
   );
 
   // This needs to be called before passport.authenticate('jwt',...), dunno why
-  app.use('/oidc', initOidcRoutes(broker, oidc));
+  app.use('/oidc', await initOidcRoutes(broker, oidc));
   await initAuthentication(app);
   app.use(requestDecorator);
   app.use(httpLogger);
@@ -62,7 +62,7 @@ export default async function initRoutes(
     validationErrorMiddleware,
     await csrfProtection
   );
-  app.use('/v2/', initIdentityRoutes(oidc, gtwcfg, jwks));
+  app.use('/v2/', await initIdentityRoutes(oidc, gtwcfg, jwks));
 
   app.use(errorHandler);
 }
