@@ -17,6 +17,8 @@ import { findConfigErrors } from './config/gatewayConfigValidator';
 import { ConfigurationError } from './types/errors';
 
 const { CONSOLE_URL = '', PAGES_HOST = '' } = process.env;
+const allowedOrigins = [CONSOLE_URL];
+const pagesSubdomainRegex = new RegExp(`([^.]+${PAGES_HOST})$`);
 
 const app = express();
 app.disable('x-powered-by');
@@ -38,7 +40,17 @@ app.use(
 app.use(
   cors({
     credentials: true,
-    origin: true,
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        pagesSubdomainRegex.test(origin) // Subdomains for pages should be authorized
+      ) {
+        callback(null, origin);
+      } else {
+        callback(null, false);
+      }
+    },
     exposedHeaders: [
       'X-Correlation-Id',
       'X-Prismeai-Session-Id',
