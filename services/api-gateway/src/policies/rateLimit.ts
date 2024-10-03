@@ -10,12 +10,14 @@ export interface Params {
   window: number;
   key: 'userId' | 'ip' | 'workspaceId' | ((req: Request) => string);
   limit: number;
+  name: string;
 }
 
 export const validatorSchema = {
   window: 'required|number',
   limit: 'required|number',
   key: 'required|string',
+  name: 'required|string',
 };
 const redisClient = buildRedis('rate-limiter', storage.RateLimits);
 redisClient.connect().catch((err) => logger.error({ err }));
@@ -23,7 +25,7 @@ redisClient.connect().catch((err) => logger.error({ err }));
 export async function init(params: Params) {
   const rateLimiter = new RateLimiterRedis({
     storeClient: redisClient,
-    keyPrefix: 'middleware',
+    keyPrefix: `ratelimiter:${params.name || 'default'}`,
     points: params.limit,
     duration: params.window,
     useRedisPackage: true,

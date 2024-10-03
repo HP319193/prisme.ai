@@ -53,10 +53,12 @@ pipelines:
           key: userId
           window: 60
           limit: 30
+          name: webhooks
       - rateLimit:
           key: workspaceId
           window: 3600
           limit: 2000
+          name: webhooks
       - authentication:
           optional: true
           csrf:
@@ -87,6 +89,7 @@ pipelines:
           key: userId
           window: 60
           limit: 20
+          name: searchEvents
       - authentication:
           optional: true
           csrf:
@@ -123,6 +126,7 @@ pipelines:
           key: userId
           window: 60
           limit: 50
+          name: uploadFile
       - match:
           paths:
             - '/v2/workspaces/'
@@ -132,6 +136,7 @@ pipelines:
           key: userId
           window: 60
           limit: 3
+          name: createWorkspace
       - match:
           paths:
             - '/v2/workspaces/import'
@@ -142,6 +147,7 @@ pipelines:
           key: userId
           window: 60
           limit: 3
+          name: importWorkspace
       - proxy:
           service: workspaces
 
