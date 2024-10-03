@@ -147,6 +147,7 @@ export async function initAuthProviders(
     window: 60,
     limit: syscfg.RATE_LIMIT_ANONYMOUS_LOGIN,
     key: 'ip',
+    name: 'anonymousLogin',
   });
 
   app.post(

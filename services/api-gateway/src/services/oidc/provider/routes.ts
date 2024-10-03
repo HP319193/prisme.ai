@@ -82,6 +82,7 @@ export async function initRoutes(broker: Broker, provider: Provider) {
     key: (req) => {
       return req.body?.login || 'ip';
     },
+    name: 'prismeaiLogin',
   });
   app.post(
     '/interaction/:grant/login',

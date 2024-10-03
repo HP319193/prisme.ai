@@ -349,6 +349,7 @@ export default async function initIdentityRoutes(
     window: 60,
     limit: syscfg.RATE_LIMIT_SIGNUP,
     key: 'ip',
+    name: 'signup',
   });
   app.post(`/signup`, signupRateLimit, signupHandler);
 
@@ -358,6 +359,7 @@ export default async function initIdentityRoutes(
     window: 60,
     limit: syscfg.RATE_LIMIT_PASSWORD_RESET,
     key: 'ip',
+    name: 'passwordReset',
   });
   app.post(
     `/user/password`,
