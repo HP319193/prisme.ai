@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Form } from 'react-final-form';
 import { useUser } from './UserProvider';
 import {

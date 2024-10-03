@@ -223,13 +223,19 @@ export class Api extends Fetcher {
       token: string;
     }
   > {
-    return await this.post('/signup', {
-      email: email,
-      password,
-      firstName,
-      lastName,
-      language,
-    });
+    return await this.post(
+      '/signup',
+      {
+        email: email,
+        password,
+        firstName,
+        lastName,
+        language,
+      },
+      {
+        credentials: 'omit',
+      }
+    );
   }
 
   getSignoutURL(redirectUri?: string) {
