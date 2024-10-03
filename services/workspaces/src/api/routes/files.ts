@@ -150,6 +150,11 @@ export default function init(fileStorage: FileStorage) {
     }: Request<any, any, any, PrismeaiAPI.ListFiles.QueryParameters>,
     res: Response<PrismeaiAPI.ListFiles.Responses.$200>
   ) {
+    await accessManager.throwUnlessCan(
+      ActionType.ManageSecurity,
+      SubjectType.Workspace,
+      workspaceId
+    );
     const result = await fileStorage.list(
       accessManager,
       context?.http?.baseUrl!,
