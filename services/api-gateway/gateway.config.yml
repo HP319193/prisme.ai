@@ -49,6 +49,14 @@ pipelines:
       - webhooks
       - test
     policies:
+      - rateLimit:
+          key: userId
+          window: 60
+          limit: 30
+      - rateLimit:
+          key: workspaceId
+          window: 3600
+          limit: 2000
       - authentication:
           optional: true
           csrf:

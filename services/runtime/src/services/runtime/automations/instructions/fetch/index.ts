@@ -176,9 +176,25 @@ export async function fetch(
   let result: Response;
   try {
     result = await nodeFetch(parsedURL, params);
+    if (isPrismeaiRequest && result.status === 429) {
+      const json = await result.json();
+      if (json.details?.retryAfter && json.details?.retryAfter < 61) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, json.details?.retryAfter * 1000)
+        );
+        throw {
+          code: 'TooManyRequests',
+        };
+      } else {
+        throw json;
+      }
+    }
   } catch (e) {
     const err = <FetchError>e;
-    if (err?.code == 'ECONNRESET' && maxRetries > 0) {
+    if (
+      (err?.code == 'ECONNRESET' || err.code === 'TooManyRequests') &&
+      maxRetries > 0
+    ) {
       logger.info({
         msg: `Retrying request towards ${url} as we received ${err?.code} error ...`,
       });

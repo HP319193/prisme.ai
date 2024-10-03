@@ -14,6 +14,7 @@
     "submit": "Login",
     "signup": "Signup?",
     "error": "An error has occurred.",
+    "error_TooManyRequests": "Too many requests, please try again later.",
     "error_AuthenticationError": "Wrong email or password.",
     "error_ValidateEmailError": "Please verify your email",
     "error_InvalidOrExpiredToken": "This validation link is invalid. Your account might already be validated, try to sign in.",
@@ -33,6 +34,7 @@
     "cgu": "By continuing you agree to the <a>Terms of Service</a>.",
     "submit": "Start",
     "error": "An error has occurred, please contact support",
+    "error_TooManyRequests": "Too many requests, please try again later.",
     "error_AlreadyUsed": "An account already exists for this email !",
     "error_InvalidEmail": "The email is invalid.",
     "error_InvalidPassword": "The password is invalid : must be at least 8 characters long.",
@@ -52,6 +54,7 @@
     "signin": "<a>Remembered your password?</a>",
     "email": "Email",
     "error": "An error has occurred.",
+    "error_TooManyRequests": "Too many requests, please try again later.",
     "error_InvalidPassword": "The password is invalid : must be at least 8 characters long.",
     "success": "Operation successful!",
     "success_emailSent": "We just sent you an email, please check your inbox!",
@@ -64,7 +67,8 @@
     "topForm3": "Don't have an account yet? <a>Sign up</a>",
     "password": "New password",
     "confirm": "Confirm your new password",
-    "submit": "Save my password"
+    "submit": "Save my password",
+    "error_TooManyRequests": "Too many requests, please try again later.",
   },
   "validate": {
     "topForm1": "Almost there",
