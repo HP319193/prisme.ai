@@ -147,7 +147,6 @@ async function initPassportStrategies(
   ) {
     try {
       const users = services.identity();
-
       let user: Prismeai.User;
 
       // If id is an object, this means we come from an external provider

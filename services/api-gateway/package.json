@@ -8,6 +8,7 @@
     "copy-files": "cp -r src/utils/emails dist/utils/emails",
     "start": "node --abort-on-uncaught-exception dist/index.js",
     "dev": "ts-node-dev -r dotenv/config --inspect=9231 --respawn ./src"
+
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
