@@ -5,6 +5,7 @@ import { logger } from '../logger';
 import { Request, Response } from 'express';
 import { TooManyRequests } from '../types/errors';
 import { extractRequestIp } from '../middlewares';
+import { isPrivateIP } from '../utils/isPrivateIp';
 
 export interface Params {
   window: number;
@@ -33,14 +34,21 @@ export async function init(params: Params) {
 
   return async (req: Request, res: Response, next: any) => {
     try {
-      let key =
-        typeof params.key === 'function'
-          ? params.key(req)
-          : extractRequestIp(req);
-      if (params.key === 'userId' && req.user?.id) {
+      let key;
+      const ip = extractRequestIp(req);
+      if (typeof params.key === 'function') {
+        key = params.key(req);
+      } else if (params.key === 'userId' && req.user?.id) {
         key = req.user?.id;
       } else if (params.key === 'workspaceId' && req.context?.workspaceId) {
         key = req.context.workspaceId;
+      } else if (
+        params.key === 'ip' ||
+        (params.key === 'userId' && !isPrivateIP(ip))
+      ) {
+        key = ip;
+      } else {
+        return next();
       }
       const limits = await rateLimiter.consume(key);
       res.setHeader('Retry-After', limits.msBeforeNext / 1000);
