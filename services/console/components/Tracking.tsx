@@ -54,6 +54,7 @@ async function trackEvent({
     try {
       await fetch(TRACKING_WEBHOOK, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'content-type': 'application/json',
         },
