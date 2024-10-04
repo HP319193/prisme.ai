@@ -1,16 +1,26 @@
-import ajv from 'ajv';
+import ajv, { ValidateFunction } from 'ajv';
+import addFormats from 'ajv-formats';
+import RE2 from 're2';
 import { InvalidArgumentsError } from '../../../errors';
 
 type AutomationSchema = Record<string, Prismeai.TypedArgument>;
 
-const ajValidator = new ajv({ allErrors: true });
+const ajValidator = new ajv({ code: { regExp: RE2 as any } });
+addFormats(ajValidator, {
+  mode: 'fast',
+});
+ajValidator.addFormat('workspaceId', /^[\w_-]{7}$/);
+ajValidator.addFormat('objectId', /^[a-fA-F0-9]{24}$/);
+ajValidator.addFormat('identifier', /^[a-zA-Z0-9_ -]{12,48}$/);
+ajValidator.addFormat('name', /^[a-z ,.'-]{2,60}$/i);
+
 const workspaces: Record<
   string,
   Record<
     string,
     {
       schema: AutomationSchema;
-      validator?: ajv.ValidateFunction;
+      validator?: ValidateFunction;
     }
   >
 > = {};
