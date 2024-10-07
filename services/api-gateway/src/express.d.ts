@@ -12,6 +12,7 @@ declare namespace Express {
       | Omit<CustomSessionFields, 'passport'>;
     locals: {
       authScheme?: 'cookie' | 'bearer';
+      session?: Omit<CustomSessionFields, 'passport'>;
       [k: string]: any;
     };
     authError?: string;
