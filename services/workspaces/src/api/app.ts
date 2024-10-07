@@ -1,6 +1,7 @@
 'use strict';
 
 import express from 'express';
+import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import {
   errorDecorator,
@@ -30,6 +31,8 @@ export function initAPI(
   broker: Broker
 ) {
   const app = express();
+  app.disable('x-powered-by');
+  app.use(helmet());
 
   /**
    * Get NODE_ENV from environment and store in Express.

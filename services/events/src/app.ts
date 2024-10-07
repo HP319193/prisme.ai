@@ -1,5 +1,6 @@
 'use strict';
 import http from 'http';
+import helmet from 'helmet';
 import express from 'express';
 import {
   APP_NAME,
@@ -24,6 +25,8 @@ process.on('uncaughtException', uncaughtExceptionHandler);
 
 (async function () {
   const app = express();
+  app.disable('x-powered-by');
+  app.use(helmet());
   const httpServer = http.createServer(app);
 
   const accessManager = initAccessManager(

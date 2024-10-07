@@ -19,6 +19,7 @@ import { ConfigurationError } from './types/errors';
 const { CONSOLE_URL = '', PAGES_HOST = '' } = process.env;
 
 const app = express();
+app.disable('x-powered-by');
 app.set('trust proxy', true);
 app.use(
   helmet({

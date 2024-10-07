@@ -1,6 +1,7 @@
 'use strict';
 
 import express from 'express';
+import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import {
   errorDecorator,
@@ -15,6 +16,8 @@ import {
 } from './middlewares/validation';
 
 const app = express();
+app.disable('x-powered-by');
+app.use(helmet());
 
 /**
  * Get NODE_ENV from environment and store in Express.
