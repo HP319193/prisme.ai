@@ -68,7 +68,7 @@
     "password": "New password",
     "confirm": "Confirm your new password",
     "submit": "Save my password",
-    "error_TooManyRequests": "Too many requests, please try again later.",
+    "error_TooManyRequests": "Too many requests, please try again later."
   },
   "validate": {
     "topForm1": "Almost there",
