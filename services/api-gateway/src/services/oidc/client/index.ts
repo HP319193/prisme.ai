@@ -256,3 +256,10 @@ export async function getOAuthClient(clientId: string) {
   });
   return clients?.[0];
 }
+
+export async function getAllRedirectUris(
+  query: Record<string, string | object> = {}
+) {
+  const redirectUris = await OAuthClients.distinct('redirectUris', query);
+  return redirectUris;
+}

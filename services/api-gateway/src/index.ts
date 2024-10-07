@@ -2,7 +2,8 @@ import express from 'express';
 import 'express-async-errors';
 import helmet from 'helmet';
 import cors from 'cors';
-import { syscfg, GatewayConfig } from './config';
+import { URL } from 'url';
+import { syscfg, oidcCfg, GatewayConfig } from './config';
 import initRoutes from './routes';
 import { initMetrics } from './metrics';
 import { logger } from './logger';
@@ -15,10 +16,13 @@ import { JWKStore } from './services/jwks/store';
 import { publishJWKToRuntime } from './services/jwks/internal';
 import { findConfigErrors } from './config/gatewayConfigValidator';
 import { ConfigurationError } from './types/errors';
+import {
+  allowedOrigins,
+  CustomDomains,
+  pagesSubdomainRegex,
+} from './utils/customDomains';
 
-const { CONSOLE_URL = '', PAGES_HOST = '' } = process.env;
-const allowedOrigins = [CONSOLE_URL];
-const pagesSubdomainRegex = new RegExp(`([^.]+${PAGES_HOST})$`);
+const { PAGES_HOST, STUDIO_URL } = oidcCfg;
 
 const app = express();
 app.disable('x-powered-by');
@@ -30,38 +34,49 @@ app.use(
       directives: {
         'default-src':
           helmet.contentSecurityPolicy.dangerouslyDisableDefaultSrc,
-        'frame-ancestors': ['self', CONSOLE_URL, `*${PAGES_HOST}`],
+        'frame-ancestors': ['self', STUDIO_URL, `*${PAGES_HOST}`],
       },
     },
     crossOriginEmbedderPolicy: false,
     crossOriginResourcePolicy: false,
   })
 );
-app.use(
-  cors({
-    credentials: true,
-    origin: (origin, callback) => {
-      if (
-        !origin ||
-        allowedOrigins.includes(origin) ||
-        pagesSubdomainRegex.test(origin) // Subdomains for pages should be authorized
-      ) {
-        callback(null, origin);
-      } else {
-        callback(null, false);
-      }
-    },
-    exposedHeaders: [
-      'X-Correlation-Id',
-      'X-Prismeai-Session-Id',
-      syscfg.OIDC_CLIENT_ID_HEADER,
-      syscfg.CSRF_TOKEN_HEADER,
-    ],
-  })
-);
 
-let gtwcfg: GatewayConfig, oidc;
 (async function () {
+  const CustomDomainsService = await new CustomDomains().init();
+  app.use(
+    cors({
+      credentials: true,
+      origin: (origin = '', callback) => {
+        let originDomain = '';
+        try {
+          originDomain = new URL(origin).hostname;
+        } catch {
+          // Can occur when calls are made without origin
+        }
+        const customDomains = CustomDomainsService.get();
+
+        if (
+          !origin ||
+          allowedOrigins.includes(originDomain) ||
+          customDomains.includes(originDomain) ||
+          pagesSubdomainRegex.test(originDomain)
+        ) {
+          callback(null, origin);
+        } else {
+          callback(null, false);
+        }
+      },
+      exposedHeaders: [
+        'X-Correlation-Id',
+        'X-Prismeai-Session-Id',
+        syscfg.OIDC_CLIENT_ID_HEADER,
+        syscfg.CSRF_TOKEN_HEADER,
+      ],
+    })
+  );
+
+  let gtwcfg: GatewayConfig, oidc;
   try {
     const configErrors = findConfigErrors(syscfg.GATEWAY_CONFIG);
     if (configErrors) {

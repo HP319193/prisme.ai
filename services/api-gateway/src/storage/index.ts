@@ -89,6 +89,10 @@ export function buildStorage<Model>(
       return result;
     }
 
+    async distinct(field: string, query: Partial<Model> & Record<string, any>) {
+      return await super.distinct(field, query);
+    }
+
     async count(query: Partial<Model> & Record<string, any>) {
       return await super.count(query);
     }

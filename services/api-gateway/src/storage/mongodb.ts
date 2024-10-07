@@ -152,6 +152,11 @@ export class MongodbDriver implements StorageDriver<any> {
     return (await result.toArray()).map((cur) => this.prepareData(cur));
   }
 
+  async distinct(field: string, query: Record<string, string>) {
+    const collection = await this.collection();
+    return await collection.distinct(field, query);
+  }
+
   async count(query: Record<string, string>) {
     const collection = await this.collection();
     return await collection.count(query);
