@@ -2,7 +2,7 @@ import { BlocksProvider as Provider } from '@prisme.ai/blocks';
 import { FC, useCallback, useMemo } from 'react';
 import externals from '../../../console/utils/externals';
 import { useWorkspace } from '../Workspace';
-import api from '../../../console/utils/api';
+import api, { HTTPError } from '../../../console/utils/api';
 import { getPreview } from './getPreview';
 import Link from './Link';
 import DownIcon from './DownIcon';
@@ -94,6 +94,45 @@ export const BlocksProvider: FC = ({ children }) => {
     [t]
   );
 
+  const fetchWorkspaceOnly = useCallback<typeof globalThis.fetch>(
+    async (...args) => {
+      const [url] = args;
+      if (typeof url !== 'string')
+        return new Response(
+          'You can fetch only your Workspace automations endpoints.',
+          {
+            status: 403,
+            statusText:
+              'You can fetch only your Workspace automations endpoints.',
+          }
+        );
+      const automation = api.getAutomationFromUrl(id, url);
+      if (!automation)
+        return new Response(
+          'You can fetch only your Workspace automations endpoints.',
+          {
+            status: 403,
+            statusText:
+              'You can fetch only your Workspace automations endpoints.',
+          }
+        );
+      try {
+        return new Response(
+          JSON.stringify(await api.callAutomation(id, automation)),
+          {
+            status: 200,
+          }
+        );
+      } catch (e) {
+        const { message } = e as HTTPError;
+        return new Response(JSON.stringify(message), {
+          status: (e as HTTPError).code,
+        });
+      }
+    },
+    [id]
+  );
+
   return (
     <Provider
       externals={externals}
@@ -104,7 +143,13 @@ export const BlocksProvider: FC = ({ children }) => {
         SchemaForm: (props: any) => <SchemaForm {...props} locales={locales} />,
         Head: HeadFromString,
       }}
-      utils={{ uploadFile, BlockLoader, auth, changeBlockConfig }}
+      utils={{
+        uploadFile,
+        BlockLoader,
+        auth,
+        changeBlockConfig,
+        fetchWorkspaceOnly,
+      }}
       language={language}
     >
       {children}

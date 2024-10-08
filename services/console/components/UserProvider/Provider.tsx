@@ -488,7 +488,7 @@ export const UserProvider: FC<UserProviderProps> = ({
 
   const isPublicUrl = isPublic || PUBLIC_URLS.includes(route);
 
-  if (!isPublicUrl && loading) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <context.Provider

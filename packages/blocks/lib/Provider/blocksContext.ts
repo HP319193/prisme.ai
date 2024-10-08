@@ -20,6 +20,7 @@ export interface BlocksDependenciesContext {
       getSignupUrl: (options?: { redirect?: string }) => Promise<string>;
     };
     changeBlockConfig: (block: any, newConfig: Record<string, any>) => Block;
+    fetchWorkspaceOnly: typeof globalThis.fetch;
   };
 }
 
@@ -42,6 +43,7 @@ export const blocksContext = createContext<BlocksDependenciesContext>({
       getSignupUrl: async () => '',
     },
     changeBlockConfig: (block) => block,
+    fetchWorkspaceOnly: async () => new Response(),
   },
 });
 export const useBlocks = () => useContext(blocksContext);

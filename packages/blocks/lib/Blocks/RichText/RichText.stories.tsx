@@ -1,12 +1,12 @@
 import { Story } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { FC, LinkHTMLAttributes, useState } from 'react';
-import { BlockProvider, BlocksProvider } from '../Provider';
+import { BlockProvider, BlocksProvider } from '../../Provider';
 import RichText from './RichText';
 //@ts-ignore
 import { tw } from 'twind';
-import { PreviewInStory } from './PreviewInStory';
-import { BlockLoader } from '../BlockLoader';
+import { PreviewInStory } from '../PreviewInStory';
+import { BlockLoader } from '../../BlockLoader';
 
 export default {
   title: 'Blocks/RichText',

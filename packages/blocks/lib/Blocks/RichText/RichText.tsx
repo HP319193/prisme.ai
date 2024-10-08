@@ -1,15 +1,17 @@
-import { HTMLAttributes, ReactNode, useEffect } from 'react';
-import { BlockComponent } from '../BlockLoader';
-import { useBlock } from '../Provider';
-import { useBlocks } from '../Provider/blocksContext';
-import useLocalizedText from '../useLocalizedText';
+import { HTMLAttributes, ReactNode, useEffect, useRef } from 'react';
+import { BlockComponent } from '../../BlockLoader';
+import { useBlock } from '../../Provider';
+import { useBlocks } from '../../Provider/blocksContext';
+import useLocalizedText from '../../useLocalizedText';
 import parser, { DOMNode, Element, domToReact } from 'html-react-parser';
 import { marked } from 'marked';
-import { BaseBlock } from './BaseBlock';
-import { keysKebabToCamel } from '../utils/kebabToCamel';
+import { BaseBlock } from '../BaseBlock';
+import { keysKebabToCamel } from '../../utils/kebabToCamel';
 import mustache from 'mustache';
 import { Tooltip } from 'antd';
-import { BaseBlockConfig } from './types';
+import { BaseBlockConfig } from '../types';
+
+import Script from './Script';
 
 interface RichTextConfig extends BaseBlockConfig {
   content: string | Prismeai.LocalizedText;
@@ -21,66 +23,6 @@ interface RichTextConfig extends BaseBlockConfig {
   tag?: string;
 }
 
-class ScriptsLoader {
-  private queue: HTMLScriptElement[] = [];
-  private locked = false;
-
-  private nextInQueue() {
-    if (this.locked) return;
-
-    const [next] = this.queue.splice(0, 1);
-    if (!next) return;
-    this.locked = true;
-    let done = false;
-    const loadNext = () => {
-      if (done) return;
-      done = true;
-      this.locked = false;
-      this.nextInQueue();
-    };
-    next.addEventListener('load', loadNext);
-    document.body.appendChild(next);
-    setTimeout(loadNext);
-  }
-
-  add(s: HTMLScriptElement) {
-    this.queue.push(s);
-    this.nextInQueue();
-  }
-
-  addScript({
-    src,
-    script,
-    ...attrs
-  }: HTMLScriptElement & { script?: string }) {
-    const s = document.createElement('script');
-    script && (s.innerHTML = script);
-    Object.entries(attrs).forEach(([k, v]) => s.setAttribute(k, `${v}`));
-    if (s.hasAttribute('async')) {
-      document.body.appendChild(s);
-      return;
-    }
-    this.add(s);
-  }
-}
-const scriptsLoader = new ScriptsLoader();
-const Script = ({
-  children,
-  ...props
-}: Omit<HTMLScriptElement, 'children'> & { children: ReactNode }) => {
-  useEffect(() => {
-    const s = document.createElement('script');
-    s.innerHTML = typeof children === 'string' ? children : '';
-    Object.entries(props).forEach(([k, v]) => s.setAttribute(k, `${v}`));
-    if (s.hasAttribute('async')) {
-      document.body.appendChild(s);
-      return;
-    }
-    scriptsLoader.add(s);
-  }, []);
-
-  return null;
-};
 const NoScript = () => {
   console.warn(
     'Your RichText Block contains HTML <script> tags but you did not allowed their execution by setting `allowScripts`.'
@@ -110,7 +52,7 @@ export const RichText = ({
   allowScripts = false,
   className = '',
   values = {},
-  markdown = true,
+  markdown = allowScripts ? false : true,
   // @deprecated
   container = 'div',
   tag = container,

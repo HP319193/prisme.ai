@@ -702,6 +702,25 @@ it('should call automation', () => {
   );
 });
 
+it('should get automation from url', () => {
+  api.host = 'https://host.com';
+  expect(api.getAutomationFromUrl('13234', 'https://www.prisme.ai')).toBe(
+    false
+  );
+  expect(
+    api.getAutomationFromUrl(
+      '1234',
+      'https://host.com/workspaces/1234/webhooks/endpoint'
+    )
+  ).toBe('endpoint');
+  expect(
+    api.getAutomationFromUrl(
+      '1235',
+      'https://host.com/workspaces/1234/webhooks/endpoint'
+    )
+  ).toBe(false);
+});
+
 it('should get workspace usage', () => {
   const api = new Api({ host: '/fake/' });
   const get: jest.Mock = (api.get = jest.fn((): any => {}));
