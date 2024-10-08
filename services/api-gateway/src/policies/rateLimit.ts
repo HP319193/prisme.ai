@@ -33,6 +33,7 @@ export async function init(params: Params) {
   });
 
   return async (req: Request, res: Response, next: any) => {
+    if (process.env.DISABLE_RATE_LIMIT) return next();
     try {
       let key;
       const ip = extractRequestIp(req);
