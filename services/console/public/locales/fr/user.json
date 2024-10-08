@@ -25,6 +25,16 @@
       "interface": {
         "label": "Interface"
       }
+    },
+    "security": {
+      "delete": {
+        "title": "Suppression du compte",
+        "description": "Vous pouvez supprimer votre compte et toutes vos informations personnelles.",
+        "label": "Supprimer mon compte",
+        "confirm": "Votre compte sera définitivement supprimé. Vos données personnelles seront effacées. Vous ne pourrez plus récupérer vos données.",
+        "yes": "Supprimer mon compte",
+        "no": "Annuler"
+      }
     }
   },
   "workspaces": "Espaces de travail",

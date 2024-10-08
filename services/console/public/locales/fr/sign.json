@@ -89,5 +89,21 @@
   },
   "pages": {
     "restricted": "Cette page nécessite une authentification"
+  },
+  "account": {
+    "delete": {
+      "topForm1": "Compte supprimé",
+      "topForm2": "Au revoir, nous espérons que vous reviendrez bientôt.",
+      "topForm3": "Votre compte et vos données personnelles ont bien été supprimées.",
+      "error": {
+        "topForm1": "Erreur",
+        "topForm2": "Le compte n'a pas été supprimé à cause de l'erreur suivante :",
+        "topForm3": "",
+        "message": "Erreur inconnue",
+        "message_Validation token not found": "Le lien est invalide. Veuillez recommencer la procédure depuis le début et utiliser le lien du dernier mail reçu.",
+        "message_Validation token invalid": "Le lien est invalide. Veuillez recommencer la procédure depuis le début et utiliser le lien du dernier mail reçu.",
+        "message_Validation token has expired": "Le lien a expiré. Veuillez recommencer la procédure depuis le début et utiliser le lien du dernier mail reçu."
+      }
+    }
   }
 }
