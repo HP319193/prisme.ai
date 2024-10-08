@@ -8,7 +8,6 @@ import {
   validationErrorMiddleware,
   validationMiddleware,
 } from '../middlewares/validation';
-import csrfProtection from '../middlewares/csrfProtection';
 import initIdentityRoutes from './identity';
 import bodyParser from 'body-parser';
 import { init as initAuthentication } from '../middlewares';
@@ -59,8 +58,7 @@ export default async function initRoutes(
     validationMiddleware({
       ignorePaths: ['^/sys', '/v2/login/oauth'],
     }),
-    validationErrorMiddleware,
-    await csrfProtection
+    validationErrorMiddleware
   );
   app.use('/v2/', await initIdentityRoutes(oidc, gtwcfg, jwks));
 

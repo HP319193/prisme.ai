@@ -15,6 +15,7 @@ import Provider from 'oidc-provider';
 import { GatewayConfig, syscfg } from '../config';
 import fetch from 'node-fetch';
 import { JWKStore } from '../services/jwks/store';
+import csrfProtection from '../middlewares/csrfProtection';
 import { initCSRFToken } from '../policies/authentication';
 import { init as initRateLimit } from '../policies/rateLimit';
 
@@ -334,12 +335,13 @@ export default async function initIdentityRoutes(
   jwks: JWKStore
 ) {
   const app = express.Router();
+  const csrf = await csrfProtection;
 
   app.get(`/me`, isAuthenticated, meHandler);
-  app.post(`/contacts`, findContactsHandler);
+  app.post(`/contacts`, csrf, findContactsHandler);
 
   // Users management, super admin only
-  app.patch('/users/:userId', isAuthenticated, patchUserHandler as any);
+  app.patch('/users/:userId', isAuthenticated, csrf, patchUserHandler as any);
 
   // From there, only routes restricted to users, forbidden to access tokens
   app.use(forbidAccessTokens);
@@ -354,6 +356,7 @@ export default async function initIdentityRoutes(
   app.post(`/signup`, signupRateLimit, signupHandler);
 
   // User account
+  app.use(csrf);
   app.patch(`/user`, isAuthenticated, patchUserHandler as any);
   const passwordResetRateLimit = await initRateLimit({
     window: 60,

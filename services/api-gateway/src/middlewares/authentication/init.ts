@@ -133,11 +133,10 @@ export async function init(app: Application) {
           req.locals?.session?.prismeaiSessionId;
 
         // Force express-session fallback on req.signedCookies
-        req.headers.cookie = '';
-        req.locals = {
-          ...req.locals,
-          cookie: req.headers.cookie,
-        };
+        req.headers.cookie = (req.headers.cookie || '')
+          .split('; ')
+          .filter((cur) => !cur.startsWith('connect.sid='))
+          .join('; ');
 
         // Remove connect.sid cookie
         const setHeader = res.setHeader.bind(res);
@@ -173,10 +172,6 @@ export async function init(app: Application) {
         // Merge restored session with JWT data
         Object.assign(req.session, req.locals?.session);
         delete req.locals.session;
-
-        // Get cookies back
-        req.headers.cookie = req.locals.cookie;
-        delete req.locals.cookie;
       }
       next();
     }
