@@ -10,6 +10,7 @@
     "ts-node": "ts-node",
     "dev": "ts-node-dev -r dotenv/config --inspect=9230 --transpile-only --respawn ./src/app.ts",
     "start": "node --abort-on-uncaught-exception dist/index.js"
+
   },
   "dependencies": {
     "@azure/storage-blob": "^12.15.0",
