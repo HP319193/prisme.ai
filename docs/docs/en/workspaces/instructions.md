@@ -57,6 +57,8 @@ Set a new or existing variable
 - **value** : Variable value (might be a JSON object, a string, a number, ...)
 - **type** : **replace** to replace target variable with given value, **merge** to try merging objects or arrays, or **push** to push to an array. **replace** by default
 
+#### Objects manipulation  
+
 When setting object fields, parent objects are created on-the-fly :
 
 ```
@@ -127,6 +129,18 @@ When both previous value and **value** are objects, **type: merge** merge them t
 # {{myObject}} = { "firstName": "Martin", "age": 25 }
 ```  
 
+#### Expressions
+
+We can also use [expressions](./conditions.md) inside `value` parameter, with all the same features (arithmetic operators, comparisons, ...) conditions have :  
+
+```yaml
+- set:
+    name: counter
+    value: '{% {{counter}} + 1 %}
+```
+
+Note that `{% ... %}` is not specific to the `set` instruction but can be used anywhere in automations.  
+
 ### Delete
 
 Delete a variable
@@ -151,7 +165,7 @@ Sends an HTTP request to call external web services
 - **multipart** : List of field definitions for multipart/form-data requests
 - **emitErrors** : Boolean enabling or disabling error events upon 4xx or 5xx responses. Enabled by default.  
 - **stream** : For [streamed SSE responses](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events), emit data chunks as they are received
-- **outputMode** : Choose between 'body' | 'detailed_response' | 'data_url'. Defaults to 'body'  
+- **outputMode** : Choose between 'body' | 'detailed_response' | 'data_url'. Defaults to 'body'  (output will be the response body), pick `detailed_response` in order to access response headers within `output.headers` and body within `output.body` 
 - **output** : Name of the variable that will store the response body
 
 When receiving 4xx or 5xx HTTP errors, a native event `runtime.fetch.failed` is automatically emitted, including both request & response contents.
