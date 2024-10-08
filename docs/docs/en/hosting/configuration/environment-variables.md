@@ -640,6 +640,12 @@ UPLOADS_PUBLIC_STORAGE_S3_LIKE_BASE_URL="here is your CDN public base URL"
     <td>image/*,text/*,video/*,audio/*,application/*</td>
   </tr>             
   <tr>
+    <td>UPLOADS_FORBIDDEN_MIMETYPES</td>
+    <td>workspaces</td>
+    <td>Forbidden upload MIME types, comma-separated (do not support wildcards)</td>
+    <td></td>
+  </tr>               
+  <tr>
     <td>UPLOADS_DEFAULT_VISIBILITY</td>
     <td>workspaces</td>
     <td>If not explicitly set in API request, default uploads visibility</td>
