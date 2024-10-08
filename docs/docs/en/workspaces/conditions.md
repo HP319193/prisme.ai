@@ -176,6 +176,10 @@ Examples:
 `round(10.2,1) == 10.2`  
 `round(10.26,1) == 10.3`  
 
+**ceil** transform the decimal number to the smallest integer greater than or equal to a given number.
+`ceil(10.1) == 11`  
+`ceil(10.9) == 11`  
+
 Functions like rand() can also be combined with mathematical operators : `rand(10, 11) * {{var}} + 2`
 
 
