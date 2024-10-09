@@ -15,5 +15,11 @@
   "You just signed up to Prisme.ai and we need you to confirm your email address :": "Untuk mengonfirmasi pembuatan akun Anda di Prisma.ai, klik tautan ini:",
   "Confirm my email": "Konfirmasi alamat email saya",
   "If you did not ask for a signup, please disregard this mail.": "Jika Anda belum meminta pembuatan akun di Prisma.ai, harap abaikan email ini.",
-  "Prisme.ai - Verification Email": "Prisme.ai - Verifikasi Email"
+  "Prisme.ai - Verification Email": "Prisme.ai - Verifikasi Email",
+  "account.delete.subject": "Penghapusan akun",
+  "account.delete.content": "Anda telah meminta untuk menghapus akun Anda secara permanen. Untuk mengonfirmasi tindakan yang tidak dapat diubah ini, silakan klik tautan :",
+  "account.delete.confirm": "Saya menghapus akun saya",
+  "account.delete.disregard": "Jika Anda bukan sumber permintaan ini, silakan hubungi dukungan teknis kami.",
+  "account.deleted.subject": "Akun yang dihapus",
+  "account.deleted.content": "Akun Anda sekarang telah dihapus."
 }

@@ -15,4 +15,5 @@ ENV OPENAPI_FILEPATH /www/specifications/swagger.yml
 ENV NODE_ENV production
 ENV JWKS_FILEPATH /www/jwks.json
 
+
 CMD [ "node", "--abort-on-uncaught-exception", "services/api-gateway/dist/index.js"]

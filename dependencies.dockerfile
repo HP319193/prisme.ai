@@ -34,3 +34,6 @@ COPY --from=build /www/node_modules/ /www/node_modules/
 COPY --from=build /www/specifications/ /www/specifications
 
 COPY --from=build /www/services/runtime/node_modules/ /www/services/runtime/node_modules/
+
+# gcompat required by RE2
+RUN apk add gcompat

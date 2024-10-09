@@ -24,11 +24,18 @@ import { logger } from '../../logger';
 import { extractRequestIp } from '../traceability';
 import { initOidcStrategy } from './initOidcStrategy';
 import { initSamlStrategy } from './initSamlStrategy';
+import { generateToken } from '../../utils/tokens';
 
 const cookieExtractor = (req: Request) => {
   let token = null;
   if (req && req.cookies) {
     token = req.cookies['access-token'];
+    if (token) {
+      req.locals = {
+        ...req.locals,
+        authScheme: 'cookie',
+      };
+    }
   }
   return token;
 };
@@ -53,7 +60,6 @@ export async function init(app: Application) {
     disableTouch: true, // Without this, sessions TTL are reset on every request
   });
 
-  // First check for access token to generate their session before express-session
   app.use(async function (req, res, next) {
     const bearer = (req.headers['authorization'] ||
       req.headers[syscfg.LEGACY_SESSION_HEADER] ||
@@ -61,37 +67,22 @@ export async function init(app: Application) {
     const token = bearer.startsWith('Bearer ') ? bearer.slice(7) : bearer;
     if (typeof token === 'string' && token.startsWith('at:')) {
       const identity = services.identity();
-      req.session = (await identity.validateAccessToken(
-        token
-      )) as Request['session'];
+      req.locals = {
+        ...req.locals,
+        session: (await identity.validateAccessToken(
+          token
+        )) as Request['session'],
+        authScheme: 'bearer',
+      };
     }
     next();
   });
 
-  app.use(
-    expressSession({
-      store: sessionsStore,
-      saveUninitialized: false,
-      secret: syscfg.SESSION_COOKIES_SIGN_SECRET,
-      resave: false,
-      cookie: {
-        maxAge: syscfg.SESSION_COOKIES_MAX_AGE * 1000,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: syscfg.EXPRESS_SESSION_COOKIE_SAMESITE,
-      },
-      unset: 'destroy',
-    })
-  );
-
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  passport.serializeUser(function (user, done) {
-    done(null, (<Prismeai.User>user).id);
-  });
-
-  // Authenticate after express-session as the req.session initialization would otherwise prevent express-session from restoring existing session
   app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.locals?.session?.prismeaiSessionId) {
+      // We're already auth
+      return next();
+    }
     passport.authenticate(
       'jwt',
       { session: false },
@@ -110,7 +101,9 @@ export async function init(app: Application) {
             (req.logger || logger).error({
               msg: `Failed request authentication`,
               path: req.path,
-              sourceWorkspaceId: req.get(syscfg.SOURCE_WORKSPACE_ID_HEADER),
+              sourceWorkspaceId:
+                req.context?.sourceWorkspaceId ||
+                req.get(syscfg.SOURCE_WORKSPACE_ID_HEADER),
               ip: extractRequestIp(req),
               userAgent: req.get('User-Agent') as string,
               err,
@@ -124,6 +117,71 @@ export async function init(app: Application) {
       }
     )(req, res, next);
   });
+
+  /*
+   * When authenticated, below code forces express-session to use our own session Id & prevent him from using cookies
+   * This improves req.session stability (notably avoiding CSRF issues) by keeping a single unique session
+   * cookie rather than relying on separate connect.sid cookie which may get resetted during prismeai session
+   * Still use native express-session cookies for unauthenticated sessions as they are needed during authentication
+   */
+  app.use(
+    (req, res, next) => {
+      if (req.locals?.session?.prismeaiSessionId) {
+        // Trick express-session into using our own sessionId as req.sessionID
+        // This could break with a express-session upgrade if they drop this deprecated req.signedCookies support
+        req.signedCookies['connect.sid'] =
+          req.locals?.session?.prismeaiSessionId;
+
+        // Force express-session fallback on req.signedCookies
+        req.headers.cookie = (req.headers.cookie || '')
+          .split('; ')
+          .filter((cur) => !cur.startsWith('connect.sid='))
+          .join('; ');
+
+        // Remove connect.sid cookie
+        const setHeader = res.setHeader.bind(res);
+        res.setHeader = (name, value) => {
+          if (name !== 'Set-Cookie') {
+            return setHeader(name, value);
+          }
+          if (Array.isArray(value)) {
+            value = value.filter((cur) => !cur.includes('connect.sid'));
+          }
+          return setHeader(name, value);
+        };
+      }
+
+      next();
+    },
+    expressSession({
+      store: sessionsStore,
+      saveUninitialized: false,
+      secret: syscfg.SESSION_COOKIES_SIGN_SECRET,
+      resave: false,
+      name: 'connect.sid',
+      genid: (req) => req.locals?.session?.prismeaiSessionId || generateToken(),
+      cookie: {
+        maxAge: syscfg.SESSION_COOKIES_MAX_AGE * 1000,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: syscfg.EXPRESS_SESSION_COOKIE_SAMESITE,
+      },
+      unset: 'destroy',
+    }),
+    (req, res, next) => {
+      if (req.locals?.session) {
+        // Merge restored session with JWT data
+        Object.assign(req.session, req.locals?.session);
+        delete req.locals.session;
+      }
+      next();
+    }
+  );
+
+  app.use(passport.session());
+
+  passport.serializeUser(function (user, done) {
+    done(null, (<Prismeai.User>user).id);
+  });
 }
 
 async function initPassportStrategies(
@@ -135,7 +193,6 @@ async function initPassportStrategies(
   ) {
     try {
       const users = services.identity();
-
       let user: Prismeai.User;
 
       // If id is an object, this means we come from an external provider
@@ -201,12 +258,20 @@ async function initPassportStrategies(
         passReqToCallback: true,
       },
       async (req: Request, token: any, done: any) => {
-        // Keep restored express-session object instance for update capabilities
-        req.session = Object.assign(req.session || {}, {
-          prismeaiSessionId: token.prismeaiSessionId,
-          expires: new Date(token.exp * 1000).toISOString(),
-          mfaValidated: false,
-        });
+        // Runtime emitted JWT do not necessarily include authenticated sessions, but they'are always sent to keep source correlationId/workspaceId along the way
+        if (token.prismeaiSessionId) {
+          // Keep this in req.locals to allow express-session initializing req.session with these data in next stage
+          req.locals = {
+            ...req.locals,
+            session: Object.assign(req.session || {}, {
+              prismeaiSessionId: token.prismeaiSessionId,
+              expires: new Date(token.exp * 1000).toISOString(),
+              mfaValidated: false,
+            }),
+            // Cookie scheme would be set from cookieExtractor, so the only other possible scheme is bearer
+            authScheme: req.locals?.authScheme || 'bearer',
+          };
+        }
 
         // For better traceability, allow keeping same correlationId from internal HTTP calls
         if (token.correlationId) {
@@ -215,8 +280,19 @@ async function initPassportStrategies(
             correlationId: token.correlationId,
           };
         }
+
+        if (token.workspaceId) {
+          req.context = {
+            ...req.context,
+            sourceWorkspaceId: token.workspaceId,
+          };
+        }
         delete req.headers['authorization']; // Do not pass user JWT to backed services
-        deserializeUser(token.sub, done as any);
+        if (token.prismeaiSessionId) {
+          deserializeUser(token.sub, done as any);
+        } else {
+          done();
+        }
       }
     )
   );

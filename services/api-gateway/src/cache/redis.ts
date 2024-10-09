@@ -1,34 +1,41 @@
 import { createClient, RedisClientType } from '@redis/client';
 import { SetOptions } from '.';
-import { eda } from '../config';
+import eda from '../config/eda';
 import { CacheDriver, CacheOptions } from './types';
 
+export function buildRedis(name: string, opts: CacheOptions) {
+  const { host, password, ...otherOpts } = opts;
+  const client = createClient({
+    url: opts.host,
+    password: opts.password,
+    name: `${eda.APP_NAME}-${name}`,
+    ...otherOpts,
+  });
+
+  client.on('error', (err: Error) => {
+    console.error(
+      `Error occured with api-gateway ${name} redis driver : ${err}`
+    );
+  });
+  client.on('connect', () => {
+    console.info(`api-gateway ${name} redis connected.`);
+  });
+  client.on('reconnecting', () => {
+    console.info(`api-gateway ${name} redis reconnecting ...`);
+  });
+  client.on('ready', () => {
+    console.info(`api-gateway ${name} redis is ready.`);
+  });
+  return client as RedisClientType;
+}
 export default class RedisCache implements CacheDriver {
   public client: RedisClientType;
   private opts: Partial<CacheOptions>;
 
   constructor(opts: CacheOptions) {
-    const { host, password, ...otherOpts } = opts;
-    this.client = createClient({
-      url: opts.host,
-      password: opts.password,
-      name: `${eda.APP_NAME}-cache`,
-    });
+    const { host: _, password: __, ...otherOpts } = opts;
     this.opts = otherOpts;
-    this.client.on('error', (err: Error) => {
-      console.error(
-        `Error occured with api-gateway cache redis driver : ${err}`
-      );
-    });
-    this.client.on('connect', () => {
-      console.info('api-gateway cache redis connected.');
-    });
-    this.client.on('reconnecting', () => {
-      console.info('api-gateway cache redis reconnecting ...');
-    });
-    this.client.on('ready', () => {
-      console.info('api-gateway cache redis is ready.');
-    });
+    this.client = buildRedis('cache', opts);
   }
 
   async connect() {

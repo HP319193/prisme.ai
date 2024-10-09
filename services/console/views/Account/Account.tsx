@@ -55,14 +55,14 @@ const Account = () => {
                   </div>
                 ),
               },
-              // {
-              //   title: t('account.settings.security.label'),
-              //   content: (
-              //     <div className="product-layout-content-panel product-layout-content-panel--1col">
-              //       <SecurityForm />
-              //     </div>
-              //   ),
-              // },
+              {
+                title: t('account.settings.security.label'),
+                content: (
+                  <div className="product-layout-content-panel product-layout-content-panel--1col">
+                    <SecurityForm />
+                  </div>
+                ),
+              },
               // {
               //   title: t('account.settings.interface.label'),
               //   content: (

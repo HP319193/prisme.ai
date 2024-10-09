@@ -15,7 +15,7 @@ export default function (config: Config) {
     'single_policy_in_object',
     function (value, requirement, attribute) {
       // requirement parameter defaults to null
-      if (Object.keys(value).length !== 1) {
+      if (Object.keys(value).length !== 1 && !(<any>value)?.match) {
         return false;
       }
       return true;
@@ -27,8 +27,8 @@ export default function (config: Config) {
   Validator.register(
     'valid_policy_name',
     function (value, requirement, attribute) {
-      const policy = Object.keys(value)[0];
-      return allPolicyNames.includes(policy);
+      const policy = Object.keys(value).find((cur) => cur !== 'match');
+      return allPolicyNames.includes(policy!);
     },
     'Unknown policy name'
   );

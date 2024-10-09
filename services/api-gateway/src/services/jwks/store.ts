@@ -1,7 +1,7 @@
 import fs from 'fs';
 import jose from 'node-jose';
 import { oidcCfg, syscfg } from '../../config';
-import { v4 as uuid } from 'uuid';
+import { generateToken } from '../../utils/tokens';
 import { ConfigurationError, PrismeError } from '../../types/errors';
 import { logger } from '../../logger';
 import { buildStorage } from '../../storage';
@@ -244,7 +244,7 @@ export class JWKStore extends EventEmitter {
       sub: userId,
       iss: oidcCfg.PROVIDER_URL,
       aud: syscfg.API_URL,
-      prismeaiSessionId: uuid(),
+      prismeaiSessionId: generateToken(),
     };
     const jwt = await this.sign(token);
     return {

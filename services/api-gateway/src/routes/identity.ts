@@ -12,9 +12,12 @@ import { AuthenticationError } from '../types/errors';
 import { EventType } from '../eda';
 import { initAuthProviders } from './authProviders';
 import Provider from 'oidc-provider';
-import { GatewayConfig } from '../config';
+import { GatewayConfig, syscfg } from '../config';
 import fetch from 'node-fetch';
 import { JWKStore } from '../services/jwks/store';
+import csrfProtection from '../middlewares/csrfProtection';
+import { initCSRFToken } from '../policies/authentication';
+import { init as initRateLimit } from '../policies/rateLimit';
 
 async function reAuthenticate(req: Request, res: Response, next: NextFunction) {
   if (!req.user?.email || !req.body?.currentPassword) {
@@ -47,6 +50,7 @@ async function meHandler(
   req: Request,
   res: Response<PrismeaiAPI.GetMyProfile.Responses.$200>
 ) {
+  initCSRFToken(req, res);
   res.send({
     ...(req.user as any),
     sessionId: req.session.prismeaiSessionId,
@@ -232,6 +236,46 @@ async function patchUserHandler(
   return res.send(user);
 }
 
+async function deleteMyUserHandler(
+  req: Request<any, any>,
+  res: Response<Partial<PrismeaiAPI.DeleteMyUser.Responses.$200>>
+) {
+  const { context, logger, headers } = req;
+  const identity = services.identity(context, logger);
+
+  await identity.sendAccountDeleteValidationLink(
+    context.userId,
+    `${headers?.['referer']}`
+  );
+
+  return res.send({ success: true });
+}
+
+async function deleteUserHandler(
+  req: Request<PrismeaiAPI.DeleteUser.PathParameters, any>,
+  res: Response<Partial<PrismeaiAPI.DeleteUser.Responses.$200>>
+) {
+  const {
+    context,
+    logger,
+    params: { userId },
+    query: { token },
+  } = req;
+  const identity = services.identity(context, logger);
+
+  const deleted = await identity.deleteUser(userId, {
+    token: `${token || ''}`,
+    isSuperAdmin: isSuperAdmin(req as any),
+  });
+
+  await req.broker.send(EventType.DeletedUser, {
+    ip: req.context?.http?.ip,
+    userId,
+  });
+
+  return res.send({ success: !!deleted });
+}
+
 async function setMetaHandler(
   req: Request<any, any, PrismeaiAPI.SetMeta.RequestBody>,
   res: Response<PrismeaiAPI.SetMeta.Responses.$200>
@@ -325,28 +369,53 @@ function postUserPhotoHandler(workspaceServiceUrl: string) {
   };
 }
 
-export default function initIdentityRoutes(
+export default async function initIdentityRoutes(
   oidc: Provider,
   gtwcfg: GatewayConfig,
   jwks: JWKStore
 ) {
   const app = express.Router();
+  const csrf = await csrfProtection;
 
   app.get(`/me`, isAuthenticated, meHandler);
-  app.post(`/contacts`, findContactsHandler);
+  app.post(`/contacts`, csrf, findContactsHandler);
 
   // Users management, super admin only
-  app.patch('/users/:userId', isAuthenticated, patchUserHandler as any);
+  app.patch('/users/:userId', isAuthenticated, csrf, patchUserHandler as any);
+  app.delete('/users/:userId', isAuthenticated, deleteUserHandler as any);
 
   // From there, only routes restricted to users, forbidden to access tokens
   app.use(forbidAccessTokens);
 
   initAuthProviders(app, oidc, jwks);
-  app.post(`/signup`, signupHandler);
+  const signupRateLimit = await initRateLimit({
+    window: 60,
+    limit: syscfg.RATE_LIMIT_SIGNUP,
+    key: 'ip',
+    name: 'signup',
+  });
+  app.post(`/signup`, signupRateLimit, signupHandler);
 
   // User account
+  app.use(csrf);
   app.patch(`/user`, isAuthenticated, patchUserHandler as any);
-  app.post(`/user/password`, resetPasswordHandler);
+  app.delete(`/user`, isAuthenticated, deleteMyUserHandler as any);
+  const passwordResetRateLimit = await initRateLimit({
+    window: 60,
+    limit: syscfg.RATE_LIMIT_PASSWORD_RESET,
+    key: 'ip',
+    name: 'passwordReset',
+  });
+  app.post(
+    `/user/password`,
+    (req, res, next) => {
+      if (!req.body.token) {
+        return passwordResetRateLimit(req, res, next);
+      }
+      return next();
+    },
+    resetPasswordHandler
+  );
   app.post(`/user/validate`, validateAccountHandler);
   app.post(`/user/mfa`, reAuthenticate, enforceMFA, setupUserMFAHandler);
   app.post(

@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { syscfg } from '../config';
 import { logger } from '../logger';
-import { v4 as uuid } from 'uuid';
 import { broker } from '../eda';
 import { Role } from '../types/permissions';
 import { cleanIncomingRequest } from './validation';
+import { generateToken } from '../utils/tokens';
 
 export interface HTTPContext {
   hostname: string;
@@ -23,6 +23,7 @@ export interface PrismeContext {
   sessionId: string;
   ip?: string;
   workspaceId?: string;
+  sourceWorkspaceId?: string;
   http?: HTTPContext;
 }
 
@@ -38,7 +39,7 @@ export function extractRequestCorrelationId(req: Request) {
   }
   return syscfg.OVERWRITE_CORRELATION_ID_HEADER ||
     !req.header(syscfg.CORRELATION_ID_HEADER)
-    ? uuid()
+    ? generateToken()
     : (req.header(syscfg.CORRELATION_ID_HEADER) as string);
 }
 
@@ -66,6 +67,7 @@ export function requestDecorator(
     sessionId,
     ip,
     workspaceId: workspaceId,
+    sourceWorkspaceId: req.context?.sourceWorkspaceId,
     http: {
       originalUrl: req.originalUrl,
       method: req.method,
@@ -102,6 +104,11 @@ export function requestDecorator(
 
   if (req.user?.authData) {
     req.headers[syscfg.AUTH_DATA_HEADER] = JSON.stringify(req.user?.authData);
+  }
+
+  if (req.context.sourceWorkspaceId) {
+    req.headers[syscfg.SOURCE_WORKSPACE_ID_HEADER] =
+      req.context.sourceWorkspaceId;
   }
 
   next();

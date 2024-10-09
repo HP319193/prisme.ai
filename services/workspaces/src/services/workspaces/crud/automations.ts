@@ -107,6 +107,11 @@ class Automations {
     }
     const events = await this.getProcessedEvents(workspaceId, automation);
 
+    // Default values
+    if (typeof automation.validateArguments === 'undefined') {
+      automation.validateArguments = true;
+    }
+
     await this.storage.save({ workspaceId, slug }, automation, {
       mode: replace ? 'replace' : 'create',
       updatedBy: this.accessManager.user?.id,

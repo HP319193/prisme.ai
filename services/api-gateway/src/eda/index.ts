@@ -1,6 +1,6 @@
 import { Broker, PendingEvents, PrismeEvent } from '@prisme.ai/broker';
 
-import { eda as edaConfig } from '../config';
+import edaConfig from '../config/eda';
 import { Logger, logger } from '../logger';
 
 const {
@@ -23,6 +23,7 @@ export enum EventType {
   SucceededPasswordResetRequested = 'gateway.passwordReset.requested',
   SucceededPasswordReset = 'gateway.passwordReset.succeeded',
   UpdatedUser = 'gateway.users.updated',
+  DeletedUser = 'gateway.users.deleted',
   UpdatedJWKS = 'gateway.jwks.updated',
 
   UpdatedWorkspaceSecurity = 'workspaces.security.updated',

@@ -7,9 +7,10 @@ import { PrismeError } from '../../../types/errors';
 import { Broker } from '@prisme.ai/broker';
 import { EventType } from '../../../eda';
 import { logger } from '../../../logger';
-import { oidcCfg } from '../../../config';
+import { oidcCfg, syscfg } from '../../../config';
+import { init as initRateLimit } from '../../../policies/rateLimit';
 
-export function initRoutes(broker: Broker, provider: Provider) {
+export async function initRoutes(broker: Broker, provider: Provider) {
   const app = express.Router();
 
   // Implement interactive user flow
@@ -75,9 +76,18 @@ export function initRoutes(broker: Broker, provider: Provider) {
 
   // Credentials form submission
   const body = bodyParser();
+  const prismeaiLoginRateLimit = await initRateLimit({
+    window: 60,
+    limit: syscfg.RATE_LIMIT_PRISMEAI_LOGIN,
+    key: (req) => {
+      return req.body?.login || 'ip';
+    },
+    name: 'prismeaiLogin',
+  });
   app.post(
     '/interaction/:grant/login',
     body,
+    prismeaiLoginRateLimit,
     async (req: Request, res: Response, next: NextFunction) => {
       const identity = services.identity(req.context, req.logger);
       const { login, password, remember } = req.body;

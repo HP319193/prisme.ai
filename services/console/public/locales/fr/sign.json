@@ -14,6 +14,7 @@
     "submit": "Se connecter",
     "signup": "Inscription ?",
     "error": "Une erreur est survenue.",
+    "error_TooManyRequests": "Vous avait fait trop de requêtes, merci de réessayer plus tard.",
     "error_AuthenticationError": "Mot de passe ou email invalide.",
     "error_ValidateEmailError": "Veuillez vérifier votre email",
     "error_InvalidOrExpiredToken": "Ce lien de validation est invalide. Votre compte est peut-être déjà activé, essayez de vous connecter.",
@@ -33,6 +34,7 @@
     "cgu": "En continuant vous acceptez les <a>conditions générales de service</a>.",
     "submit": "Démarrer",
     "error": "Une erreur est survenue, veuillez contacter le support",
+    "error_TooManyRequests": "Vous avait fait trop de requêtes, merci de réessayer plus tard.",
     "error_AlreadyUsed": "Un compte existe déjà pour cet email !",
     "error_InvalidEmail": "L'email est invalide.",
     "error_InvalidPassword": "Le mot de passe est invalide : celui-ci doit avoir au moins 8 caractère.",
@@ -52,6 +54,7 @@
     "signin": "<a>Vous vous rappelez de votre mot de passe?</a>",
     "email": "Email",
     "error": "Une erreur est survenue.",
+    "error_TooManyRequests": "Vous avait fait trop de requêtes, merci de réessayer plus tard.",
     "error_InvalidPassword": "Le mot de passe est invalide : celui-ci doit avoir au moins 8 caractère.",
     "success": "L'opération s'est déroulée avec succès !",
     "success_emailSent": "Nous venons de vous envoyer un email, veuillez verifier votre boîte de réception !",
@@ -64,7 +67,8 @@
     "topForm3": "Pas encore de compte ? <a>S'inscrire</a>",
     "password": "Nouveau mot de passe",
     "confirm": "Confirmez votre nouveau mot de passe",
-    "submit": "Sauvegarder le mot de passe"
+    "submit": "Sauvegarder le mot de passe",
+    "error_TooManyRequests": "Vous avait fait trop de requêtes, merci de réessayer plus tard."
   },
   "validate": {
     "topForm1": "On y est presque",
@@ -85,5 +89,21 @@
   },
   "pages": {
     "restricted": "Cette page nécessite une authentification"
+  },
+  "account": {
+    "delete": {
+      "topForm1": "Compte supprimé",
+      "topForm2": "Au revoir, nous espérons que vous reviendrez bientôt.",
+      "topForm3": "Votre compte et vos données personnelles ont bien été supprimées.",
+      "error": {
+        "topForm1": "Erreur",
+        "topForm2": "Le compte n'a pas été supprimé à cause de l'erreur suivante :",
+        "topForm3": "",
+        "message": "Erreur inconnue",
+        "message_Validation token not found": "Le lien est invalide. Veuillez recommencer la procédure depuis le début et utiliser le lien du dernier mail reçu.",
+        "message_Validation token invalid": "Le lien est invalide. Veuillez recommencer la procédure depuis le début et utiliser le lien du dernier mail reçu.",
+        "message_Validation token has expired": "Le lien a expiré. Veuillez recommencer la procédure depuis le début et utiliser le lien du dernier mail reçu."
+      }
+    }
   }
 }

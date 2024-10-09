@@ -422,6 +422,70 @@ When calling this automation, this form will show up :
 
 The last **someToken** argument defined with **secret: true** does not differ visually, but is automatically redacted from native runtime events (i.e runtime.automations.executed, runtime.contexts.updated, ...). This avoids accidental leaks of sensitive information through native Prisme.ai events.
 
+### Arguments validation  
+
+Automation arguments types can also be used to automatically validate input arguments during execution.  
+Arguments validation can be enabled with a `validateArguments: true` option at the automation's root.  
+
+For example, take the following HTTP automation :   
+
+```yaml
+slug: test
+name: test
+do: []
+when:
+  endpoint: true
+output: '{{body}}'
+arguments:
+  body:
+    type: object
+    required:
+      - str
+    properties:
+      str:
+        type: string
+      uri:
+        type: string
+        format: uri
+      obj:
+        type: object
+        required:
+          - un
+        properties:
+          un:
+            type: string
+            pattern: '^[a-z]+$'
+validateArguments: true
+```
+
+With the following (invalid) curl :  
+```bash
+curl -X POST -H "content-type: application/json" http://<API_URL>/v2/workspaces/<WORKSPACE_ID>/webhooks/test -d '{"str": "ola2", "obj": {"un": "test 1"}}'
+```
+
+The following HTTP error would be returned :  
+```json
+{
+  "error":"InvalidArgumentsError",
+  "message":"Invalid arguments",
+  "details":[
+    {
+     "keyword":"pattern",
+     "dataPath":".body.obj.un",
+     "schemaPath":"#/properties/body/properties/obj/properties/un/pattern",
+     "params":{"pattern":"^[a-z]+$"},
+     "message":"should match pattern \"^[a-z]+$\""
+    }
+   ]
+}    
+```
+
+**Notes :**  
+* Arguments validation is not reserved to HTTP automations & is also applied during direct calls or through events.  
+* Arguments support different well-known formats (date, url, time, password, ...) [described here](https://github.com/ajv-validator/ajv-formats?tab=readme-ov-file#formats)  
+* **Validation errors immediately stop current and parent automations.**
+
+
 ## Output  
 Native instructions & automations can return some data that will be :   
 

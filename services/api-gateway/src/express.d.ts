@@ -10,7 +10,11 @@ declare namespace Express {
           Partial<import('express-session').SessionData> &
           CustomSessionFields)
       | Omit<CustomSessionFields, 'passport'>;
-    locals: any;
+    locals: {
+      authScheme?: 'cookie' | 'bearer';
+      session?: Omit<CustomSessionFields, 'passport'>;
+      [k: string]: any;
+    };
     authError?: string;
   }
 
@@ -25,5 +29,6 @@ declare namespace Express {
     auth?: {
       provider?: string;
     };
+    csrfToken?: string;
   }
 }

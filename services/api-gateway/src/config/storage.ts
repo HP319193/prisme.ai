@@ -1,6 +1,9 @@
 import { StorageDriverType, StorageOptions } from '../storage';
 import { extractOptsFromEnv } from '../utils';
 
+const SESSIONS_CACHE_HOST =
+  process.env.SESSIONS_STORAGE_HOST || 'redis://localhost:6379/0';
+
 export default <Record<string, StorageOptions>>{
   // Persists users + OAuth clients + OTPKeys + AccessTokens
   Users: {
@@ -27,7 +30,7 @@ export default <Record<string, StorageOptions>>{
   // Cache OIDC authentication states (not authenticated user/sessions/tokens, but current state of their authentication flow) + express-session
   Sessions: {
     driver: 'redis',
-    host: process.env.SESSIONS_STORAGE_HOST || 'redis://localhost:6379/0',
+    host: SESSIONS_CACHE_HOST,
     password: process.env.SESSIONS_STORAGE_PASSWORD,
     driverOptions: extractOptsFromEnv('SESSIONS_STORAGE_OPT_'),
   },
@@ -39,5 +42,14 @@ export default <Record<string, StorageOptions>>{
       process.env.PERMISSIONS_STORAGE_HOST ||
       'mongodb://localhost:27017/permissions',
     driverOptions: extractOptsFromEnv('PERMISSIONS_STORAGE_OPT_'),
+  },
+
+  RateLimits: {
+    driver: 'redis',
+    host: process.env.RATE_LIMITS_STORAGE_HOST || SESSIONS_CACHE_HOST,
+    password:
+      process.env.RATE_LIMITS_STORAGE_PASSWORD ||
+      process.env.SESSIONS_STORAGE_PASSWORD,
+    driverOptions: extractOptsFromEnv('RATE_LIMITS_STORAGE_OPT_'),
   },
 };

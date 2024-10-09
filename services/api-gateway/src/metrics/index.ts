@@ -1,13 +1,27 @@
-import { Application, Request, Response } from 'express';
+import { Application, NextFunction, Request, Response } from 'express';
 import client from 'prom-client';
 import { initEDAMetrics } from './eda';
 import { httpMetricMiddleware, initHttpMetric } from './http';
+import { syscfg } from '../config';
 
 export async function initMetrics(app: Application) {
-  app.use('/metrics', metricsMiddleware);
+  app.use('/metrics', authorizeBearer, metricsMiddleware);
   app.use(httpMetricMiddleware);
 }
 
+async function authorizeBearer(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const authorization = req.headers['authorization'];
+
+  if (authorization === `Bearer ${syscfg.INTERNAL_API_KEY}`) {
+    next();
+  } else {
+    res.status(403).send('Forbidden');
+  }
+}
 async function metricsMiddleware(req: Request, res: Response) {
   res.setHeader('Content-Type', registry.contentType);
   res.send(await registry.metrics());

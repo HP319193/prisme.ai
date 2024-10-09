@@ -1,11 +1,12 @@
 import path from 'path';
 
-const DEBUG = ['dev', 'development'].includes(
-  process.env.NODE_ENV || 'production'
-);
+const DEBUG = ['dev', 'development'].includes(process.env.NODE_ENV || '');
+const IS_PROD = process.env.NODE_ENV === 'production';
 
 const API_KEY_HEADER = process.env.API_KEY_HEADER || 'x-prismeai-api-key';
 const SOURCE_WORKSPACE_ID_HEADER = 'x-prismeai-workspace-id';
+const CSRF_TOKEN_HEADER =
+  process.env.CSRF_TOKEN_HEADER || 'x-prismeai-csrf-token';
 
 export default {
   PORT: process.env.PORT || 3001,
@@ -40,10 +41,9 @@ export default {
   API_KEY_HEADER,
   SOURCE_WORKSPACE_ID_HEADER,
 
-  ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE: [
-    API_KEY_HEADER,
-    SOURCE_WORKSPACE_ID_HEADER,
-  ],
+  CSRF_TOKEN_HEADER,
+
+  ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE: [API_KEY_HEADER, CSRF_TOKEN_HEADER],
 
   ROLE_HEADER: process.env.ROLE_HEADER || 'x-prismeai-role',
 
@@ -66,7 +66,7 @@ export default {
     (process.env.EXPRESS_SESSION_COOKIE_SAMESITE as
       | 'none'
       | 'lax'
-      | 'strict') || 'none',
+      | 'strict') || (IS_PROD ? 'none' : ''),
 
   INTERNAL_API_KEY: process.env.INTERNAL_API_KEY || '#pZFT>2.g9x8p9D',
 
@@ -89,5 +89,16 @@ export default {
 
   ENABLE_HEALTHCHECK_LOGS: ['yes', 'enabled', 'enable', 'true'].includes(
     (process.env.ENABLE_HEALTHCHECK_LOGS || 'no').toLowerCase()
+  ),
+
+  RATE_LIMIT_ANONYMOUS_LOGIN: parseInt(
+    process.env.RATE_LIMIT_ANONYMOUS_LOGIN || '10'
+  ),
+  RATE_LIMIT_PRISMEAI_LOGIN: parseInt(
+    process.env.RATE_LIMIT_PRISMEAI_LOGIN || '5'
+  ),
+  RATE_LIMIT_SIGNUP: parseInt(process.env.RATE_LIMIT_SIGNUP || '1'),
+  RATE_LIMIT_PASSWORD_RESET: parseInt(
+    process.env.RATE_LIMIT_PASSWORD_RESET || '1'
   ),
 };

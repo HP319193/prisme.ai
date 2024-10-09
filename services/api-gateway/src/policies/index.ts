@@ -4,17 +4,20 @@ import { GatewayConfig } from '../config';
 import * as proxy from './proxy';
 import * as authentication from './authentication';
 import * as blacklist from './blacklist';
+import * as rateLimit from './rateLimit';
 
 export enum PolicyType {
   Proxy = 'proxy',
   PrismeAuth = 'authentication',
   Blacklist = 'blacklist',
+  RateLimit = 'rateLimit',
 }
 
 export interface Policies {
   [PolicyType.Proxy]: proxy.Params;
   [PolicyType.PrismeAuth]: authentication.Params;
   [PolicyType.Blacklist]: blacklist.Params;
+  [PolicyType.RateLimit]: rateLimit.Params;
 }
 
 export const policiesValidatorSchema: {
@@ -23,6 +26,7 @@ export const policiesValidatorSchema: {
   [PolicyType.Proxy]: proxy.validatorSchema,
   [PolicyType.PrismeAuth]: authentication.validatorSchema,
   [PolicyType.Blacklist]: blacklist.validatorSchema,
+  [PolicyType.RateLimit]: rateLimit.validatorSchema,
 };
 
 const policies: {
@@ -34,6 +38,7 @@ const policies: {
   [PolicyType.Proxy]: proxy.init,
   [PolicyType.PrismeAuth]: authentication.init,
   [PolicyType.Blacklist]: blacklist.init,
+  [PolicyType.RateLimit]: rateLimit.init,
 };
 
 export function buildMiddleware(policy: Policies, gtwcfg: GatewayConfig) {

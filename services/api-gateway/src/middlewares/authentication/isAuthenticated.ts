@@ -53,14 +53,18 @@ export function forbidAccessTokens(
   res: Response,
   next: NextFunction
 ) {
-  const { session } = req;
-  if (
-    typeof session.prismeaiSessionId === 'string' &&
-    session.prismeaiSessionId.startsWith('at:')
-  ) {
+  if (isAccessTokenAuthenticated(req)) {
     throw new AuthenticationError(
       'Calling this API with an access token is forbidden.'
     );
   }
   next();
+}
+
+export function isAccessTokenAuthenticated(req: Request) {
+  const { session } = req;
+  return (
+    typeof session.prismeaiSessionId === 'string' &&
+    session.prismeaiSessionId.startsWith('at:')
+  );
 }

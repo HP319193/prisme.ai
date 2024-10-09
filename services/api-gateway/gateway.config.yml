@@ -49,6 +49,20 @@ pipelines:
       - webhooks
       - test
     policies:
+      - rateLimit:
+          key: userId
+          window: 60
+          limit: 30
+          name: webhooks
+      - rateLimit:
+          key: workspaceId
+          window: 3600
+          limit: 2000
+          name: webhooks
+      - authentication:
+          optional: true
+          csrf:
+            validateToken: true
       - proxy:
           service: runtime
 
@@ -66,6 +80,20 @@ pipelines:
     endpoints:
       - events
     policies:
+      - match:
+          paths:
+            - '/v2/workspaces/:workspaceId/search'
+            - '/v2/workspaces/:workspaceId/events'
+            - '/v2/workspaces/:workspaceId/usage'
+        rateLimit:
+          key: userId
+          window: 60
+          limit: 20
+          name: searchEvents
+      - authentication:
+          optional: true
+          csrf:
+            validateToken: true
       - proxy:
           service: events
 
@@ -73,6 +101,10 @@ pipelines:
     endpoints:
       - files
     policies:
+      - authentication:
+          optional: true
+          csrf:
+            validateToken: true
       - proxy:
           service: workspaces
 
@@ -83,6 +115,39 @@ pipelines:
     policies:
       - authentication:
           allowApiKeyOnly: true
+          csrf:
+            validateToken: true
+      - match:
+          paths:
+            - '/v2/workspaces/:workspaceId/files'
+          methods:
+            - POST
+        rateLimit:
+          key: userId
+          window: 60
+          limit: 50
+          name: uploadFile
+      - match:
+          paths:
+            - '/v2/workspaces/'
+          methods:
+            - POST
+        rateLimit:
+          key: userId
+          window: 60
+          limit: 3
+          name: createWorkspace
+      - match:
+          paths:
+            - '/v2/workspaces/import'
+            - '/v2/workspaces/:workspaceId/import'
+            - '/v2/workspaces/:workspaceId/versions/:versionId/pull'
+            - '/v2/workspaces/:workspaceId/versions/:versionId/duplicate'
+        rateLimit:
+          key: userId
+          window: 60
+          limit: 3
+          name: importWorkspace
       - proxy:
           service: workspaces
 
@@ -92,6 +157,8 @@ pipelines:
     policies:
       - authentication:
           optional: true
+          csrf:
+            includeToken: true
       - proxy:
           service: workspaces
 

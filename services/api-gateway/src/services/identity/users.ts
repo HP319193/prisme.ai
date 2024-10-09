@@ -358,6 +358,55 @@ export const updateUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
     return filterUserFields(user as User);
   };
 
+export const deleteUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
+  async function (
+    id: string,
+    opts?: { token?: string; isSuperAdmin?: boolean }
+  ) {
+    let mailTo: User | null = null;
+    if (!id) {
+      throw new RequestValidationError(`Missing target userId`);
+    }
+    if (!opts?.isSuperAdmin) {
+      if (ctx?.userId !== id) {
+        throw new ForbiddenError('You can delete your own user only');
+      }
+      const existingUser = await Users.get(id);
+      if (!existingUser) {
+        throw new ForbiddenError('User does not exist');
+      }
+      if (!existingUser.validationToken) {
+        throw new ForbiddenError('Validation token not found');
+      }
+      const { token, expiresAt } = existingUser.validationToken as {
+        token: string;
+        expiresAt: string;
+      };
+      if (token !== opts?.token) {
+        throw new ForbiddenError('Validation token invalid');
+      }
+
+      if (new Date(expiresAt) < new Date()) {
+        throw new ForbiddenError('Validation token has expired');
+      }
+      mailTo = existingUser;
+    }
+    const ret = await Users.delete(id);
+
+    if (mailTo && mailTo.email) {
+      await sendMail(
+        EmailTemplate.DeletedAccount,
+        {
+          locale: mailTo.language || 'en',
+          name: mailTo.firstName,
+        },
+        mailTo.email
+      );
+    }
+
+    return ret;
+  };
+
 export const login = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
   async function (email: string, password: string) {
     const users = (
@@ -603,4 +652,39 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
         })
       ),
     };
+  };
+
+export const sendAccountDeleteValidationLink =
+  (Users: StorageDriver<User>, ctx?: PrismeContext, logger?: Logger) =>
+  async (id: string, host: string) => {
+    const user = await get(Users, ctx)(id);
+    if (!user || !user.email) {
+      (logger || console).warn(
+        `Delete account validation link asked for a non-existent user : ${id}.`
+      );
+      return;
+    }
+
+    const token = crypto.randomUUID();
+    await Users.save({
+      ...user,
+      validationToken: {
+        token,
+        expiresAt: Date.now() + 3600000,
+      },
+    });
+
+    const validateLink = new URL(`/account/delete`, host);
+    validateLink.searchParams.append('validationToken', token);
+
+    await sendMail(
+      EmailTemplate.ValidateDeleteAccount,
+      {
+        locale: user.language || 'en',
+        name: user.firstName,
+        validateLink: `${validateLink}`,
+      },
+      user.email
+    );
+    return true;
   };

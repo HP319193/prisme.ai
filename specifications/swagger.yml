@@ -548,7 +548,6 @@ components:
               additionalProperties:
                 $ref: '#/components/schemas/TypedArgument'
 
-
     RuntimeModel:
       allOf:
         - $ref: '#/components/schemas/DSUL'
@@ -605,7 +604,6 @@ components:
         block:
           type: string
         value: {}
-
 
     WorkspaceSecrets:
       type: object
@@ -754,6 +752,8 @@ components:
         arguments:
           additionalProperties:
             $ref: '#/components/schemas/TypedArgument'
+        validateArguments:
+          type: boolean
         when:
           $ref: '#/components/schemas/When'
         labels:
@@ -2990,6 +2990,8 @@ components:
           properties:
             workspaceId:
               type: string
+            sourceWorkspaceId:
+              type: string
             automation:
               type: string
             trigger:
@@ -3478,7 +3480,6 @@ paths:
           description: Redirection response
     post: *LOGIN_CALLBACK
 
-
   /v2/login/azure:
     get:
       description: Starts azure authentication
@@ -3578,6 +3579,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '400':
+          description: Bad parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadParametersError'
+        '401': *AuthenticationError
+    delete:
+      description: Send a validation email to delete me
+      operationId: deleteMyUser
+      tags:
+        - API Gateway
+      responses:
+        '200':
+          description: Success Response'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
         '400':
           description: Bad parameters
           content:
@@ -3905,6 +3928,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '404':
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectNotFoundError'
+        '403':
+          description: Bad permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+    delete:
+      description: User management API, reserved to super admins.
+      operationId: deleteUser
+      tags:
+        - API Gateway
+      parameters:
+        - name: 'userId'
+          in: 'path'
+          description: 'Target user id'
+          required: true
+          schema:
+            type: string
+        - name: 'token'
+          in: 'query'
+          description: 'Valiation token sent by email'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
         '404':
           description: Object not found
           content:
@@ -5397,7 +5459,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenError'
-
 
   ## Workspace secrets
   /v2/workspaces/{workspaceId}/security/secrets:

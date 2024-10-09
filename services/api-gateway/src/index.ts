@@ -13,10 +13,13 @@ import { initOidcProvider } from './services/oidc/provider';
 import startWorkspacesClientSync from './services/oidc/client';
 import { JWKStore } from './services/jwks/store';
 import { publishJWKToRuntime } from './services/jwks/internal';
+import { findConfigErrors } from './config/gatewayConfigValidator';
+import { ConfigurationError } from './types/errors';
 
 const { CONSOLE_URL = '', PAGES_HOST = '' } = process.env;
 
 const app = express();
+app.disable('x-powered-by');
 app.set('trust proxy', true);
 app.use(
   helmet({
@@ -40,6 +43,7 @@ app.use(
       'X-Correlation-Id',
       'X-Prismeai-Session-Id',
       syscfg.OIDC_CLIENT_ID_HEADER,
+      syscfg.CSRF_TOKEN_HEADER,
     ],
   })
 );
@@ -47,6 +51,10 @@ app.use(
 let gtwcfg: GatewayConfig, oidc;
 (async function () {
   try {
+    const configErrors = findConfigErrors(syscfg.GATEWAY_CONFIG);
+    if (configErrors) {
+      throw new ConfigurationError('Bad configuration', configErrors);
+    }
     gtwcfg = new GatewayConfig(syscfg.GATEWAY_CONFIG);
 
     const jwks = new JWKStore(broker);
@@ -62,7 +70,7 @@ let gtwcfg: GatewayConfig, oidc;
     oidc = await initOidcProvider(broker, jwks);
 
     initMetrics(app);
-    initRoutes(app, gtwcfg, broker, oidc, jwks);
+    await initRoutes(app, gtwcfg, broker, oidc, jwks);
 
     app.listen(syscfg.PORT, () => {
       logger.info(`Running on port ${syscfg.PORT}`);

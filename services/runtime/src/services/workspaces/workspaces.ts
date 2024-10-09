@@ -168,7 +168,7 @@ export class Workspaces extends Storage {
           if (publishedApp.slug && publishedApp.slug in this.watchedApps) {
             const updateWorkspaceIds = this.watchedApps[publishedApp.slug];
             updateWorkspaceIds.map((workspaceId) =>
-              this.fetchWorkspace(workspaceId)
+              this.fetchWorkspace(workspaceId).catch(() => {})
             );
           }
         } else if (event.type === EventType.UpdatedRuntimeDSUL) {

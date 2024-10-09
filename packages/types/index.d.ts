@@ -968,6 +968,7 @@ declare namespace Prismeai {
         arguments?: {
             [name: string]: TypedArgument;
         };
+        validateArguments?: boolean;
         when?: When;
         labels?: string[];
         events?: ProcessedEvents;
@@ -1008,6 +1009,7 @@ declare namespace Prismeai {
         arguments?: {
             [name: string]: TypedArgument;
         };
+        validateArguments?: boolean;
         when?: When;
         labels?: string[];
         events?: ProcessedEvents;
@@ -2435,6 +2437,7 @@ declare namespace Prismeai {
         type: "runtime.interactions.triggered";
         payload: {
             workspaceId: string;
+            sourceWorkspaceId?: string;
             automation: string;
             trigger: {
                 type: TriggerType;
@@ -3245,6 +3248,15 @@ declare namespace PrismeaiAPI {
             export type $401 = Prismeai.AuthenticationError;
         }
     }
+    namespace DeleteMyUser {
+        namespace Responses {
+            export interface $200 {
+                success?: boolean;
+            }
+            export type $400 = Prismeai.BadParametersError;
+            export type $401 = Prismeai.AuthenticationError;
+        }
+    }
     namespace DeletePage {
         namespace Parameters {
             export type Slug = string;
@@ -3259,6 +3271,25 @@ declare namespace PrismeaiAPI {
                 id: string;
             }
             export type $401 = Prismeai.AuthenticationError;
+            export type $403 = Prismeai.ForbiddenError;
+            export type $404 = Prismeai.ObjectNotFoundError;
+        }
+    }
+    namespace DeleteUser {
+        namespace Parameters {
+            export type Token = string;
+            export type UserId = string;
+        }
+        export interface PathParameters {
+            userId: Parameters.UserId;
+        }
+        export interface QueryParameters {
+            token?: Parameters.Token;
+        }
+        namespace Responses {
+            export interface $200 {
+                success?: boolean;
+            }
             export type $403 = Prismeai.ForbiddenError;
             export type $404 = Prismeai.ObjectNotFoundError;
         }

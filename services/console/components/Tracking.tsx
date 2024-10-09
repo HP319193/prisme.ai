@@ -2,6 +2,7 @@ import { createContext, ReactNode, useCallback, useEffect } from 'react';
 import { useContext } from '../utils/useContext';
 import { useRouter } from 'next/router';
 import getConfig from 'next/config';
+import api from '../utils/api';
 const { publicRuntimeConfig } = getConfig();
 
 const { TRACKING: { url = '', siteId = '' } = {}, TRACKING_WEBHOOK } =
@@ -52,7 +53,7 @@ async function trackEvent({
   ]);
   if (TRACKING_WEBHOOK) {
     try {
-      await fetch(TRACKING_WEBHOOK, {
+      await api.prepareRequest(TRACKING_WEBHOOK, {
         method: 'POST',
         headers: {
           'content-type': 'application/json',

@@ -38,6 +38,7 @@ export interface RunContext {
   date?: string; // ISO8601 date
   trigger?: Trigger; // Current call origin (event/endpoint/automation)
   ip?: string;
+  sourceWorkspaceId?: string;
 
   // Only set if running inside an app instance :
   appSlug?: string; // App unique slug
@@ -167,6 +168,7 @@ export class ContextsManager {
         correlationId: ctx.correlationId!,
         socketId: session.socketId,
         ip: ctx.ip,
+        sourceWorkspaceId: ctx.sourceWorkspaceId,
       },
     };
 
@@ -392,6 +394,7 @@ export class ContextsManager {
       date: new Date().toISOString(),
       trigger: this.trigger,
       socketId: this.session?.socketId,
+      sourceWorkspaceId: this.contexts.run?.sourceWorkspaceId,
     };
   }
 

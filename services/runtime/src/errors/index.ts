@@ -103,3 +103,9 @@ export class InvalidUploadError extends PrismeError {
     });
   }
 }
+
+export class InvalidArgumentsError extends PrismeError {
+  constructor(msg: string = 'Invalid arguments', details?: any) {
+    super(msg, details);
+  }
+}

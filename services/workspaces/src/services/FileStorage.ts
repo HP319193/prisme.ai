@@ -5,6 +5,7 @@ import stream from 'stream';
 import {
   UPLOADS_FILESYSTEM_DOWNLOAD_URL,
   PLATFORM_WORKSPACE_ID,
+  UPLOADS_FORBIDDEN_MIMETYPES,
 } from '../../config';
 import { logger } from '../logger';
 import { AccessManager, Role, SubjectType } from '../permissions';
@@ -98,11 +99,23 @@ class FileStorage {
         );
       }
 
-      if (!file.mimetype.match(new RegExp(ALLOWED_MIMETYPES_REGEXP))) {
+      if (
+        !file.mimetype.match(new RegExp(ALLOWED_MIMETYPES_REGEXP)) ||
+        UPLOADS_FORBIDDEN_MIMETYPES.includes(file.mimetype)
+      ) {
         throw new InvalidUploadError(
           `Invalid uploaded file '${
             file.name
-          }' : mimetype must be one of ${UPLOADS_ALLOWED_MIMETYPES.join(', ')}`
+          }' : mimetype must be one of ${UPLOADS_ALLOWED_MIMETYPES.join(', ')}${
+            UPLOADS_FORBIDDEN_MIMETYPES.length
+              ? `, and different from ${UPLOADS_FORBIDDEN_MIMETYPES.join(', ')}`
+              : ''
+          }`,
+          {
+            mimetype: file.mimetype,
+            allowed: UPLOADS_ALLOWED_MIMETYPES,
+            forbidden: UPLOADS_FORBIDDEN_MIMETYPES,
+          }
         );
       }
     });

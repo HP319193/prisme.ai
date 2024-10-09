@@ -94,9 +94,7 @@ export async function fetch(
   if (
     isPrismeaiRequest &&
     !lowercasedHeaders['x-prismeai-token'] &&
-    !lowercasedHeaders['authorization'] &&
-    (ctx?.session?.origin?.userId || ctx?.session?.userId) &&
-    (ctx?.session?.origin?.sessionId || ctx?.session?.sessionId)
+    !lowercasedHeaders['authorization']
   ) {
     const { jwt } = await getAccessToken({
       userId: ctx?.session?.origin?.userId || ctx?.session?.userId,
@@ -104,6 +102,7 @@ export async function fetch(
         ctx?.session?.origin?.sessionId || ctx?.session?.sessionId,
       expiresIn: 10,
       correlationId: ctx.correlationId,
+      workspaceId: ctx.workspaceId,
     });
     headers['Authorization'] = `Bearer ${jwt}`;
   }
@@ -177,9 +176,25 @@ export async function fetch(
   let result: Response;
   try {
     result = await nodeFetch(parsedURL, params);
+    if (isPrismeaiRequest && result.status === 429) {
+      const json = await result.json();
+      if (json.details?.retryAfter && json.details?.retryAfter < 61) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, json.details?.retryAfter * 1000)
+        );
+        throw {
+          code: 'TooManyRequests',
+        };
+      } else {
+        throw json;
+      }
+    }
   } catch (e) {
     const err = <FetchError>e;
-    if (err?.code == 'ECONNRESET' && maxRetries > 0) {
+    if (
+      (err?.code == 'ECONNRESET' || err.code === 'TooManyRequests') &&
+      maxRetries > 0
+    ) {
       logger.info({
         msg: `Retrying request towards ${url} as we received ${err?.code} error ...`,
       });

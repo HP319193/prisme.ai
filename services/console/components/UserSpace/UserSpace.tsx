@@ -19,7 +19,6 @@ import { useTracking } from '../Tracking';
 import { Loading, Popover } from '@prisme.ai/design-system';
 import { useUser } from '../UserProvider';
 import { useRouter } from 'next/router';
-import api from '../../utils/api';
 import FourOhFour from '../../pages/404';
 import userSpaceContext, { UserSpaceConfig } from './context';
 

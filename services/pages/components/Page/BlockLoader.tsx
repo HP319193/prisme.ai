@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { useUser } from '../../../console/components/UserProvider';
 import api from '../../../console/utils/api';
-import { computeBlock, original } from './computeBlocks';
+import { computeBlock, interpolateValue, original } from './computeBlocks';
 import { usePage } from './PageProvider';
 import { useDebug } from './useDebug';
 import fastDeepEqual from 'fast-deep-equal';
@@ -19,6 +19,10 @@ import isServerSide from '../../../console/utils/isServerSide';
 import { useRedirect } from './useRedirect';
 import { applyCommands } from './commands';
 import { useRouter } from 'next/router';
+import PoweredBy from '../../../console/components/PoweredBy';
+import Head from 'next/head';
+import useLocalizedText from '../../../console/utils/useLocalizedText';
+import { defaultStyles } from '../../../console/views/Page/defaultStyles';
 
 /**
  * This function aims to replace deprecated Block names by the new one
@@ -54,11 +58,16 @@ async function callAutomation(
   });
 }
 
-export const BlockLoader: TBlockLoader = ({
+export const BlockLoader: (
+  props: Parameters<TBlockLoader>[0] & {
+    isRoot?: true;
+  }
+) => ReturnType<TBlockLoader> = ({
   name = '',
   config: initialConfig,
   onLoad,
   container,
+  isRoot,
 }) => {
   const { user } = useUser();
   const [appConfig, setAppConfig] = useState<any>();
@@ -67,6 +76,7 @@ export const BlockLoader: TBlockLoader = ({
   const {
     i18n: { language },
   } = useTranslation();
+  const { localize } = useLocalizedText();
   const lock = useRef(false);
   const [listening, setListening] = useState(false);
   const recursiveConfig = useRecursiveConfigContext();
@@ -374,7 +384,7 @@ export const BlockLoader: TBlockLoader = ({
   if (computedConfig?.hidden) {
     return null;
   }
-  return (
+  const finalBlock = (
     <recursiveConfigContext.Provider value={cumulatedConfig}>
       <BLoader
         name={getBlockName(blockName)}
@@ -393,6 +403,39 @@ export const BlockLoader: TBlockLoader = ({
       />
     </recursiveConfigContext.Provider>
   );
+
+  if (isRoot) {
+    const { styles = defaultStyles } = page;
+    return (
+      <div className="page flex flex-1 flex-col m-0 p-0 max-w-[100vw] min-h-full">
+        <Head>
+          <title>{localize(interpolateValue(page.name, computedConfig))}</title>
+          <meta name="description" content={localize(page.description)} />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, user-scalable=no"
+          />
+          {page.favicon && (
+            <link rel="icon" href={page.favicon || '/favicon.png'} />
+          )}
+        </Head>
+        {styles && (
+          <style
+            dangerouslySetInnerHTML={{
+              __html: interpolateValue(styles, computedConfig),
+            }}
+          />
+        )}
+
+        <div className="flex flex-1 flex-col page-blocks w-full">
+          {finalBlock}
+        </div>
+        <PoweredBy />
+      </div>
+    );
+  }
+
+  return finalBlock;
 };
 
 export default BlockLoader;
