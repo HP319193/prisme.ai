@@ -187,7 +187,23 @@ export const EditDetails = ({ children, className }: EditDetailsprops) => {
   );
 
   const submit = useCallback(async () => {
-    saveWorkspace(values);
+    try {
+      await saveWorkspace(values);
+    } catch (err) {
+      notification.error({
+        message:
+          (err as any)?.error === 'InvalidFile' &&
+          (err as any)?.details?.maxSize
+            ? t('InvalidFileError', {
+                ns: 'errors',
+                type: 'image',
+                maxSize: (err as any)?.details?.maxSize,
+              })
+            : t('unknown', { ns: 'errors', errorName: (err as any)?.error }),
+        placement: 'bottomRight',
+      });
+      return;
+    }
     if (values.slug !== workspace.slug) {
       try {
         await saveWorkspace({ ...values, slug: values.slug });

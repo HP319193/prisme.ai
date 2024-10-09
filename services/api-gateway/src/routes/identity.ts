@@ -8,7 +8,7 @@ import {
   isAuthenticated,
   isSuperAdmin,
 } from '../middlewares/authentication';
-import { AuthenticationError } from '../types/errors';
+import { AuthenticationError, InvalidFile } from '../types/errors';
 import { EventType } from '../eda';
 import { initAuthProviders } from './authProviders';
 import Provider from 'oidc-provider';
@@ -343,6 +343,23 @@ function postUserPhotoHandler(workspaceServiceUrl: string) {
 
     const formData = new FormData();
     const file = req.files[0];
+    if (!(file.mimetype || '').startsWith('image/')) {
+      throw new InvalidFile(
+        `Invalid type ${file.mimetype}, expected an image.`,
+        {
+          maxSize: syscfg.USER_PICTURE_MAX_SIZE,
+        }
+      );
+    }
+    if (file.buffer.length > syscfg.USER_PICTURE_MAX_SIZE) {
+      throw new InvalidFile(
+        `Too large : ${file.buffer.length}B exceeds limit ${syscfg.USER_PICTURE_MAX_SIZE}B.`,
+        {
+          maxSize: syscfg.USER_PICTURE_MAX_SIZE,
+        }
+      );
+    }
+
     formData.append('file', file.buffer, {
       filename: file.originalname,
       contentType: file.mimetype,

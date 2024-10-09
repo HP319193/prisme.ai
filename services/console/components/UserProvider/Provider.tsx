@@ -434,10 +434,24 @@ export const UserProvider: FC<UserProviderProps> = ({
           placement: 'bottomRight',
         });
       } catch (e: any) {
-        notification.error({
-          message: t('account.settings.user.error'),
-          placement: 'bottomRight',
-        });
+        if (
+          (e as any)?.error === 'InvalidFile' &&
+          (e as any)?.details?.maxSize
+        ) {
+          notification.error({
+            message: t('InvalidFileError', {
+              ns: 'errors',
+              type: 'image',
+              maxSize: (e as any)?.details?.maxSize,
+            }),
+            placement: 'bottomRight',
+          });
+        } else {
+          notification.error({
+            message: t('account.settings.user.error'),
+            placement: 'bottomRight',
+          });
+        }
       }
     },
     [t, user?.id]

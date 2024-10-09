@@ -87,6 +87,10 @@ export default {
     process.env.UPLOADS_MAX_SIZE || '10000000' // 10MB
   ),
 
+  USER_PICTURE_MAX_SIZE: parseInt(
+    process.env.PROFILE_PICTURE_MAX_SIZE || '4000000'
+  ),
+
   ENABLE_HEALTHCHECK_LOGS: ['yes', 'enabled', 'enable', 'true'].includes(
     (process.env.ENABLE_HEALTHCHECK_LOGS || 'no').toLowerCase()
   ),

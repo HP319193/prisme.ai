@@ -115,3 +115,9 @@ export class TooManyRequests extends PrismeError {
     );
   }
 }
+
+export class InvalidFile extends PrismeError {
+  constructor(msg: string = 'Invalid file', details: any = {}) {
+    super(msg, details, 400);
+  }
+}
