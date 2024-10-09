@@ -1250,7 +1250,7 @@ declare namespace Prismeai {
         };
     }
     export interface DSUL {
-        name: string;
+        name: string; // ^[a-z ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -1278,7 +1278,7 @@ declare namespace Prismeai {
         };
     }
     export interface DSULPatch {
-        name?: string;
+        name?: string; // ^[a-z ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -1306,7 +1306,7 @@ declare namespace Prismeai {
         };
     }
     export interface DSULReadOnly {
-        name: string;
+        name: string; // ^[a-z ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -2271,7 +2271,7 @@ declare namespace Prismeai {
     }
     export type Role = string;
     export interface RuntimeModel {
-        name: string;
+        name: string; // ^[a-z ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
