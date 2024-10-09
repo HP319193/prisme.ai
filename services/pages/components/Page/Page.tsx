@@ -4,6 +4,9 @@ import BlockLoader from './BlockLoader';
 import { usePage } from './PageProvider';
 import { useUser } from '../../../console/components/UserProvider';
 import { defaultStyles } from '../../../console/views/Page/defaultStyles';
+import dynamic from 'next/dynamic';
+
+const Debug = dynamic(() => import('../Debug'), { ssr: false });
 
 export interface PageProps {
   page: Prismeai.DetailedPage;
@@ -56,12 +59,15 @@ export const Page = ({ page }: PageProps) => {
   }, [isSignedIn, page]);
 
   return (
-    <BlockLoader
-      key={page.id}
-      name="BlocksList"
-      config={blocksListConfig}
-      isRoot
-    />
+    <>
+      <BlockLoader
+        key={page.id}
+        name="BlocksList"
+        config={blocksListConfig}
+        isRoot
+      />
+      <Debug />
+    </>
   );
 };
 

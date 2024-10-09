@@ -143,12 +143,16 @@ export class Events {
   }
 
   all(listener: (eventName: string, eventData: Prismeai.PrismeEvent) => void) {
-    this.client.onAny((eventName: string, eventData: Prismeai.PrismeEvent) => {
+    const anyListener = (
+      eventName: string,
+      eventData: Prismeai.PrismeEvent
+    ) => {
       this.lastReceivedEventDate = new Date(eventData?.createdAt);
       return listener(eventName, eventData);
-    });
+    };
+    this.client.onAny(anyListener);
 
-    return () => this.client.offAny(listener);
+    return () => this.client.offAny(anyListener);
   }
 
   on(ev: string, listener: (eventData: Prismeai.PrismeEvent) => void) {

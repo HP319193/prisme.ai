@@ -23,9 +23,6 @@ import PoweredBy from '../../../console/components/PoweredBy';
 import Head from 'next/head';
 import useLocalizedText from '../../../console/utils/useLocalizedText';
 import { defaultStyles } from '../../../console/views/Page/defaultStyles';
-import dynamic from 'next/dynamic';
-
-const Debug = dynamic(() => import('../Debug'), { ssr: false });
 
 /**
  * This function aims to replace deprecated Block names by the new one
@@ -434,7 +431,6 @@ export const BlockLoader: (
           {finalBlock}
         </div>
         <PoweredBy />
-        <Debug />
       </div>
     );
   }
