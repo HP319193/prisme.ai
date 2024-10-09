@@ -38,12 +38,6 @@ export const ProductsSidebar = () => {
     setExpanded(!expanded);
     Storage.set('sidebarExpanded', !expanded);
   }, [expanded]);
-  const [history, setHistory] = useState(new Map());
-
-  useEffect(() => {
-    const history = new Map(Storage.get('productsHistory') || []);
-    setHistory(history);
-  }, []);
 
   const selected = useMemo(() => {
     const productSlug = getProductSlug(router.asPath);
@@ -81,17 +75,6 @@ export const ProductsSidebar = () => {
       updateUserMeta.current(product);
     }
     updateUser();
-  }, [fetchProducts, router, user]);
-
-  useEffect(() => {
-    const slug = getProductSlug(router.asPath);
-    if (!slug) return;
-    setHistory((history) => {
-      const newHistory = new Map(history);
-      newHistory.set(slug, router.asPath);
-      Storage.set('productsHistory', Array.from(newHistory));
-      return newHistory;
-    });
   }, [fetchProducts, router, user]);
 
   const removeProduct = useCallback(
@@ -154,9 +137,7 @@ export const ProductsSidebar = () => {
                 added === slug ? 'animate-add-product animate-[' : ''
               }`}
             >
-              <Link
-                href={index === selected ? href : history.get(slug) || href}
-              >
+              <Link href={href}>
                 <a
                   className="flex flex-1"
                   onClick={(e) => {
