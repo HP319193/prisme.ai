@@ -46,7 +46,7 @@ components:
     PatternLabel:
       type: string
       pattern: &PATTERN_LABEL
-              "^[A-Za-z._:-]{2,60}$"
+              "^[0-9A-Za-z._:-]{2,60}$"
     PatternLanguage:
       type: string
       pattern: &PATTERN_LANGUAGE
