@@ -1250,7 +1250,7 @@ declare namespace Prismeai {
         };
     }
     export interface DSUL {
-        name: string; // ^[0-9A-Za-z ,.'-]{2,60}$
+        name: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -1278,7 +1278,7 @@ declare namespace Prismeai {
         };
     }
     export interface DSULPatch {
-        name?: string; // ^[0-9A-Za-z ,.'-]{2,60}$
+        name?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -1306,7 +1306,7 @@ declare namespace Prismeai {
         };
     }
     export interface DSULReadOnly {
-        name: string; // ^[0-9A-Za-z ,.'-]{2,60}$
+        name: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -2071,7 +2071,7 @@ declare namespace Prismeai {
     }
     export type PatternLabel = string; // ^[0-9A-Za-z._:-]{2,60}$
     export type PatternLanguage = string; // ^[A-Za-z]{2,10}$
-    export type PatternName = string; // ^[0-9A-Za-z ,.'-]{2,60}$
+    export type PatternName = string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
     export interface PendingWait {
         /**
          * example:
@@ -2274,7 +2274,7 @@ declare namespace Prismeai {
     }
     export type Role = string;
     export interface RuntimeModel {
-        name: string; // ^[0-9A-Za-z ,.'-]{2,60}$
+        name: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -3456,8 +3456,8 @@ declare namespace PrismeaiAPI {
         export interface RequestBody {
             email?: string;
             ids?: string[];
-            firstName?: string; // ^[0-9A-Za-z ,.'-]{2,60}$
-            lastName?: string; // ^[0-9A-Za-z ,.'-]{2,60}$
+            firstName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
+            lastName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
             authProvider?: string;
             status?: "pending" | "validated" | "deactivated";
         }
@@ -4093,8 +4093,8 @@ declare namespace PrismeaiAPI {
     }
     namespace PatchMyUser {
         export interface RequestBody {
-            firstName?: string; // ^[0-9A-Za-z ,.'-]{2,60}$
-            lastName?: string; // ^[0-9A-Za-z ,.'-]{2,60}$
+            firstName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
+            lastName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
             meta?: {
                 [name: string]: any;
             };
@@ -4115,8 +4115,8 @@ declare namespace PrismeaiAPI {
             userId: Parameters.UserId;
         }
         export interface RequestBody {
-            firstName?: string; // ^[0-9A-Za-z ,.'-]{2,60}$
-            lastName?: string; // ^[0-9A-Za-z ,.'-]{2,60}$
+            firstName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
+            lastName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
             status?: "pending" | "validated" | "deactivated";
             meta?: {
                 [name: string]: any;
@@ -4474,8 +4474,8 @@ declare namespace PrismeaiAPI {
         export interface RequestBody {
             email: string;
             password: string;
-            firstName: string; // ^[0-9A-Za-z ,.'-]{2,60}$
-            lastName: string; // ^[0-9A-Za-z ,.'-]{2,60}$
+            firstName: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
+            lastName: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
             language?: string; // ^[A-Za-z]{2,10}$
         }
         namespace Responses {

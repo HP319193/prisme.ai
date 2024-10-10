@@ -372,9 +372,22 @@ export const UserProvider: FC<UserProviderProps> = ({
         }, 2000);
         return user;
       } catch (e) {
+        console.log('POBLEMM ', e);
         const { error } = e as ApiError;
         if (error === 'AlreadyUsed') {
           setError(e as ApiError);
+          setLoading(false);
+          return null;
+        } else if (error === 'RequestValidationError') {
+          notification.error({
+            message: t('InvalidRequestError', {
+              ns: 'errors',
+              field: ((e as any)?.details?.[0]?.path || '')
+                .split('.')
+                .slice(-1)[0],
+            }),
+            placement: 'bottomRight',
+          });
           setLoading(false);
           return null;
         }
