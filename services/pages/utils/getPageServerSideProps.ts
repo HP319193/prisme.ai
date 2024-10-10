@@ -117,6 +117,7 @@ export const getPageServerSideProps =
         }
       }
     }
+    res.statusCode = 200;
     return {
       props: {
         page,

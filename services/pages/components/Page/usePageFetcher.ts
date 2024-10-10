@@ -4,6 +4,20 @@ import api, { HTTPError } from '../../../console/utils/api';
 import { getSubmodain } from '../../../console/utils/urls';
 import BUILTIN_PAGES from '../../builtinPages';
 
+let lastDisplayedPage: Prismeai.DetailedPage = {
+  slug: 'Loading',
+  appInstances: [],
+  blocks: [
+    {
+      slug: 'RichText',
+      content: `<div class="flex flex-1 align-center justify-center "><div class="ant-spin ant-spin-spinning !flex justify-center items-center " aria-live="polite" aria-busy="true"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span></div></div>`,
+    },
+  ],
+  styles: `.page-blocks {
+  justify-content: center;
+}`,
+};
+
 export const usePageFetcher = (
   pageFromServer?: Prismeai.DetailedPage,
   errorFromServer?: number
@@ -11,6 +25,7 @@ export const usePageFetcher = (
   const [page, setPage] = useState<Prismeai.DetailedPage | null>(
     pageFromServer || null
   );
+
   const [error, setError] = useState<null | number>(null);
   const [loading, setLoading] = useState(!pageFromServer);
   const {
@@ -27,6 +42,7 @@ export const usePageFetcher = (
         slug === '' ? 'index' : slug
       );
       setPage(page);
+      lastDisplayedPage = page;
     } catch (e) {
       const statusCode = (e as HTTPError).code;
       setError(statusCode);
@@ -75,19 +91,7 @@ export const usePageFetcher = (
     if (pageFromServer && !errorFromServer) return;
     setLoading(true);
     // Display a loading while page is fetched
-    setPage({
-      slug: 'Loading',
-      appInstances: [],
-      blocks: [
-        {
-          slug: 'RichText',
-          content: `<div class="flex flex-1 align-center justify-center "><div class="ant-spin ant-spin-spinning !flex justify-center items-center " aria-live="polite" aria-busy="true"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span></div></div>`,
-        },
-      ],
-      styles: `.page-blocks {
-  justify-content: center;
-}`,
-    });
+    setPage(lastDisplayedPage);
 
     fetchPage();
   }, [errorFromServer, fetchPage, pageFromServer]);
