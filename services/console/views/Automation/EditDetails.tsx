@@ -88,6 +88,11 @@ export const EditDetails = ({
         arguments: {
           'ui:widget': ArgumentsEditor,
         },
+        validateArguments: {
+          type: 'boolean',
+          title: t('automations.details.validateArguments.title'),
+          description: t('automations.details.validateArguments.description'),
+        },
       },
     }),
     []
