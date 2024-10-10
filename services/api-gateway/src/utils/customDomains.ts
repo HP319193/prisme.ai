@@ -49,11 +49,23 @@ export class CustomDomains {
   }
 
   /**
-   *
-   * @returns an array of the current customDomains
+   * Verify if a domain is allowed
+   * @param origin
+   * @returns
    */
-  public get(): string[] {
-    return Array.from(this.customDomains);
+  public isAllowed(origin: string): boolean {
+    let domain = '';
+    try {
+      domain = new URL(origin).hostname;
+    } catch {
+      // Can occur when calls are made without origin
+    }
+    return (
+      !domain ||
+      allowedOrigins.includes(domain) ||
+      this.customDomains.has(domain) ||
+      pagesSubdomainRegex.test(domain)
+    );
   }
 
   /**

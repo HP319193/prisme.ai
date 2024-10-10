@@ -2,7 +2,6 @@ import express from 'express';
 import 'express-async-errors';
 import helmet from 'helmet';
 import cors from 'cors';
-import { URL } from 'url';
 import { syscfg, oidcCfg, GatewayConfig } from './config';
 import initRoutes from './routes';
 import { initMetrics } from './metrics';
@@ -16,11 +15,7 @@ import { JWKStore } from './services/jwks/store';
 import { publishJWKToRuntime } from './services/jwks/internal';
 import { findConfigErrors } from './config/gatewayConfigValidator';
 import { ConfigurationError } from './types/errors';
-import {
-  allowedOrigins,
-  CustomDomains,
-  pagesSubdomainRegex,
-} from './utils/customDomains';
+import { CustomDomains } from './utils/customDomains';
 
 const { PAGES_HOST, STUDIO_URL } = oidcCfg;
 
@@ -48,20 +43,7 @@ app.use(
     cors({
       credentials: true,
       origin: (origin = '', callback) => {
-        let originDomain = '';
-        try {
-          originDomain = new URL(origin).hostname;
-        } catch {
-          // Can occur when calls are made without origin
-        }
-        const customDomains = CustomDomainsService.get();
-
-        if (
-          !origin ||
-          allowedOrigins.includes(originDomain) ||
-          customDomains.includes(originDomain) ||
-          pagesSubdomainRegex.test(originDomain)
-        ) {
+        if (CustomDomainsService.isAllowed(origin)) {
           callback(null, origin);
         } else {
           callback(null, false);
