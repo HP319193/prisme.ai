@@ -29,6 +29,10 @@ export interface StorageDriver<Model> {
 
   save(data: Model, opts?: SaveOpts<Model>): Promise<Model>;
   get(id: string): Promise<Model>;
+  distinct(
+    field: string,
+    query: Partial<Model> & Record<string, any>
+  ): Promise<any[]>;
   count(query: Partial<Model> & Record<string, any>): Promise<number>;
   find(
     query: Partial<Model> & Record<string, any>,

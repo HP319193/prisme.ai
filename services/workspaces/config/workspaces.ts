@@ -21,3 +21,7 @@ export const IMPORT_BATCH_SIZE = parseInt(
 );
 
 export const PLATFORM_WORKSPACE_ID = 'platform';
+
+export const WORKSPACE_PHOTO_MAX_SIZE = parseInt(
+  process.env.WORKSPACE_PHOTO_MAX_SIZE || '4000000'
+);

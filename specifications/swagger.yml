@@ -39,6 +39,18 @@ components:
       openIdConnectUrl: https://api.studio.prisme.ai/oidc/.well-known/openid-configuration
 
   schemas:
+    PatternName:
+      type: string
+      pattern: &PATTERN_NAME
+              "^[0-9A-Za-zéèê ,.'-]{2,60}$"
+    PatternLabel:
+      type: string
+      pattern: &PATTERN_LABEL
+              "^[0-9A-Za-z._:-]{2,60}$"
+    PatternLanguage:
+      type: string
+      pattern: &PATTERN_LANGUAGE
+              "^[A-Za-z]{2,10}$"
     AnyValue: {}
     Object:
       type: object
@@ -162,6 +174,7 @@ components:
           type: array
           items:
             type: string
+            pattern: *PATTERN_LABEL
         slug:
           type: string
         updatedAt:
@@ -197,6 +210,7 @@ components:
           type: array
           items:
             type: string
+            pattern: *PATTERN_LABEL
         updatedAt:
           type: string
         createdAt:
@@ -510,6 +524,7 @@ components:
       properties: &DSUL
         name:
           type: string
+          pattern: *PATTERN_NAME
         description:
           $ref: '#/components/schemas/LocalizedText'
         photo:
@@ -528,6 +543,7 @@ components:
           type: array
           items:
             type: string
+            pattern: *PATTERN_LABEL
         customDomains:
           type: array
           items:
@@ -760,6 +776,7 @@ components:
           type: array
           items:
             type: string
+            pattern: *PATTERN_LABEL
         events:
           $ref: '#/components/schemas/ProcessedEvents'
         updatedAt:
@@ -900,6 +917,7 @@ components:
           type: array
           items:
             type: string
+            pattern: *PATTERN_LABEL
         events:
           $ref: '#/components/schemas/ProcessedEvents'
         createdBy:
@@ -3563,8 +3581,10 @@ paths:
               properties:
                 firstName:
                   type: string
+                  pattern: *PATTERN_NAME
                 lastName:
                   type: string
+                  pattern: *PATTERN_NAME
                 meta:
                   type: object
                   additionalProperties: true
@@ -3572,6 +3592,7 @@ paths:
                   type: string
                 language:
                   type: string
+                  pattern: *PATTERN_LANGUAGE
       responses:
         '200':
           description: Success Response
@@ -3858,8 +3879,10 @@ paths:
                     type: string
                 firstName:
                   type: string
+                  pattern: *PATTERN_NAME
                 lastName:
                   type: string
+                  pattern: *PATTERN_NAME
                 authProvider:
                   type: string
                 status: *USER_STATUS
@@ -3915,8 +3938,10 @@ paths:
               properties:
                 firstName:
                   type: string
+                  pattern: *PATTERN_NAME
                 lastName:
                   type: string
+                  pattern: *PATTERN_NAME
                 status: *USER_STATUS
                 meta:
                   type: object
@@ -4005,10 +4030,13 @@ paths:
                   type: string
                 firstName:
                   type: string
+                  pattern: *PATTERN_NAME
                 lastName:
                   type: string
+                  pattern: *PATTERN_NAME
                 language:
                   type: string
+                  pattern: *PATTERN_LANGUAGE
 
       responses:
         '200':
@@ -4044,6 +4072,7 @@ paths:
                       type: string
                     language:
                       type: string
+                      pattern: *PATTERN_LANGUAGE
                 - type: object
                   required:
                     - token
@@ -4100,6 +4129,7 @@ paths:
                       type: string
                     language:
                       type: string
+                      pattern: *PATTERN_LANGUAGE
                 - type: object
                   required:
                     - token

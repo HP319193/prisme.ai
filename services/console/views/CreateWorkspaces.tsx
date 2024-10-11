@@ -1,4 +1,9 @@
-import { Button, Schema, SchemaForm } from '@prisme.ai/design-system';
+import {
+  Button,
+  notification,
+  Schema,
+  SchemaForm,
+} from '@prisme.ai/design-system';
 import { ButtonProps } from '@prisme.ai/design-system/lib/Components/Button';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -71,18 +76,34 @@ export const CreateWorkspaces = () => {
   const submit = useCallback(
     async (values: any) => {
       if (creating) return;
-      const created = await createWorkspace(values);
-      trackEvent({
-        name: 'Create new Workspace',
-        category: 'Workspaces',
-        action: 'click',
-        value: {
-          workspaceId: created.id,
-          workspace: created,
-          userId: user?.id,
-        },
-      });
-      replace(`/workspaces/${created.id}`);
+      try {
+        const created = await createWorkspace(values);
+        trackEvent({
+          name: 'Create new Workspace',
+          category: 'Workspaces',
+          action: 'click',
+          value: {
+            workspaceId: created.id,
+            workspace: created,
+            userId: user?.id,
+          },
+        });
+        replace(`/workspaces/${created.id}`);
+      } catch (err) {
+        notification.error({
+          message:
+            (err as any)?.error === 'InvalidFile' &&
+            (err as any)?.details?.maxSize
+              ? t('InvalidFileError', {
+                  ns: 'errors',
+                  type: 'image',
+                  maxSize: (err as any)?.details?.maxSize,
+                })
+              : t('unknown', { ns: 'errors', errorName: (err as any)?.error }),
+          placement: 'bottomRight',
+        });
+        return;
+      }
     },
     [createWorkspace, creating, replace, trackEvent, user?.id]
   );

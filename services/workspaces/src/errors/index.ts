@@ -91,3 +91,9 @@ export class InvalidSecurity extends PrismeError {
     super(msg || 'Invalid security specifications', details);
   }
 }
+
+export class InvalidFile extends PrismeError {
+  constructor(msg: string = 'Invalid file', details: any = {}) {
+    super(msg, details);
+  }
+}

@@ -409,7 +409,7 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         updatedAt?: string;
         updatedBy?: string;
         createdBy?: string;
@@ -813,7 +813,7 @@ declare namespace Prismeai {
         };
         config?: Config;
         photo?: string;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         slug: string;
         updatedAt?: string;
         createdAt?: string;
@@ -864,7 +864,7 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         updatedAt?: string;
         createdAt?: string;
         updatedBy?: string;
@@ -889,7 +889,7 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         updatedAt?: string;
         createdAt?: string;
         updatedBy?: string;
@@ -970,7 +970,7 @@ declare namespace Prismeai {
         };
         validateArguments?: boolean;
         when?: When;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         events?: ProcessedEvents;
         updatedAt?: string;
         createdAt?: string;
@@ -1011,7 +1011,7 @@ declare namespace Prismeai {
         };
         validateArguments?: boolean;
         when?: When;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         events?: ProcessedEvents;
         updatedAt?: string;
         createdAt?: string;
@@ -1141,7 +1141,7 @@ declare namespace Prismeai {
                  * If disabled, this appInstance will be ignored during execution
                  */
                 disabled?: boolean;
-                labels?: string[];
+                labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
                 updatedAt?: string;
                 createdAt?: string;
                 updatedBy?: string;
@@ -1250,7 +1250,7 @@ declare namespace Prismeai {
         };
     }
     export interface DSUL {
-        name: string;
+        name: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -1259,7 +1259,7 @@ declare namespace Prismeai {
         };
         slug?: string;
         id?: string;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         customDomains?: string[];
         /**
          * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
@@ -1278,7 +1278,7 @@ declare namespace Prismeai {
         };
     }
     export interface DSULPatch {
-        name?: string;
+        name?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -1287,7 +1287,7 @@ declare namespace Prismeai {
         };
         slug?: string;
         id?: string;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         customDomains?: string[];
         /**
          * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
@@ -1306,7 +1306,7 @@ declare namespace Prismeai {
         };
     }
     export interface DSULReadOnly {
-        name: string;
+        name: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -1315,7 +1315,7 @@ declare namespace Prismeai {
         };
         slug?: string;
         id?: string;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         customDomains?: string[];
         /**
          * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
@@ -1434,7 +1434,7 @@ declare namespace Prismeai {
          * If disabled, this appInstance will be ignored during execution
          */
         disabled?: boolean;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         updatedAt?: string;
         createdAt?: string;
         updatedBy?: string;
@@ -1465,7 +1465,7 @@ declare namespace Prismeai {
                 payload?: AnyValue;
             };
         }[];
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         events?: ProcessedEvents;
         createdBy?: string;
         updatedBy?: string;
@@ -1983,7 +1983,7 @@ declare namespace Prismeai {
                 payload?: AnyValue;
             };
         }[];
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         events?: ProcessedEvents;
         createdBy?: string;
         updatedBy?: string;
@@ -2034,7 +2034,7 @@ declare namespace Prismeai {
             slug?: string;
             appInstance?: string;
         }[];
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         events?: ProcessedEvents;
         createdBy?: string;
         updatedBy?: string;
@@ -2069,6 +2069,9 @@ declare namespace Prismeai {
             };
         };
     }
+    export type PatternLabel = string; // ^[0-9A-Za-z._:-]{2,60}$
+    export type PatternLanguage = string; // ^[A-Za-z]{2,10}$
+    export type PatternName = string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
     export interface PendingWait {
         /**
          * example:
@@ -2271,7 +2274,7 @@ declare namespace Prismeai {
     }
     export type Role = string;
     export interface RuntimeModel {
-        name: string;
+        name: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
         description?: LocalizedText;
         photo?: string;
         config?: Config;
@@ -2280,7 +2283,7 @@ declare namespace Prismeai {
         };
         slug?: string;
         id?: string;
-        labels?: string[];
+        labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
         customDomains?: string[];
         /**
          * If true, make this workspace metadata available to all workspaces with this variable : {{global.workspacesRegistry[WORKSPACE_SLUG]}}
@@ -3453,8 +3456,8 @@ declare namespace PrismeaiAPI {
         export interface RequestBody {
             email?: string;
             ids?: string[];
-            firstName?: string;
-            lastName?: string;
+            firstName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
+            lastName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
             authProvider?: string;
             status?: "pending" | "validated" | "deactivated";
         }
@@ -3528,7 +3531,7 @@ declare namespace PrismeaiAPI {
                  * If disabled, this appInstance will be ignored during execution
                  */
                 disabled?: boolean;
-                labels?: string[];
+                labels?: string /* ^[0-9A-Za-z._:-]{2,60}$ */[];
                 updatedAt?: string;
                 createdAt?: string;
                 updatedBy?: string;
@@ -4090,13 +4093,13 @@ declare namespace PrismeaiAPI {
     }
     namespace PatchMyUser {
         export interface RequestBody {
-            firstName?: string;
-            lastName?: string;
+            firstName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
+            lastName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
             meta?: {
                 [name: string]: any;
             };
             photo?: string;
-            language?: string;
+            language?: string; // ^[A-Za-z]{2,10}$
         }
         namespace Responses {
             export type $200 = Prismeai.User;
@@ -4112,8 +4115,8 @@ declare namespace PrismeaiAPI {
             userId: Parameters.UserId;
         }
         export interface RequestBody {
-            firstName?: string;
-            lastName?: string;
+            firstName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
+            lastName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
             status?: "pending" | "validated" | "deactivated";
             meta?: {
                 [name: string]: any;
@@ -4256,7 +4259,7 @@ declare namespace PrismeaiAPI {
     namespace ResetPassword {
         export type RequestBody = {
             email: string;
-            language?: string;
+            language?: string; // ^[A-Za-z]{2,10}$
         } | {
             token: string;
             /**
@@ -4471,9 +4474,9 @@ declare namespace PrismeaiAPI {
         export interface RequestBody {
             email: string;
             password: string;
-            firstName: string;
-            lastName: string;
-            language?: string;
+            firstName: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
+            lastName: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
+            language?: string; // ^[A-Za-z]{2,10}$
         }
         namespace Responses {
             export type $200 = Prismeai.User;
@@ -4742,7 +4745,7 @@ declare namespace PrismeaiAPI {
     namespace ValidateAccount {
         export type RequestBody = {
             email: string;
-            language?: string;
+            language?: string; // ^[A-Za-z]{2,10}$
         } | {
             token: string;
         };

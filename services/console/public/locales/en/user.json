@@ -17,7 +17,8 @@
           "label": "Photo"
         },
         "success": "Your profile has been updated",
-        "error": "An error has occurred. Please contact an administrator"
+        "error": "An error has occurred. Please contact an administrator",
+        "error_InvalidFile": "Thanks to select an image or reduce its size."
       },
       "security": {
         "label": "Security"

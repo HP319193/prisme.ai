@@ -17,7 +17,8 @@
           "label": "Photo"
         },
         "success": "Votre profil a bien été mis à jour",
-        "error": "Une erreur esr survenue. Veuillez contacter un administrateur"
+        "error": "Une erreur est survenue. Veuillez contacter un administrateur",
+        "error_InvalidFile": "Merci de sélectionner une image ou de réduire sa taille"
       },
       "security": {
         "label": "Sécurité"

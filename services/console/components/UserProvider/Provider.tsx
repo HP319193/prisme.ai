@@ -372,9 +372,22 @@ export const UserProvider: FC<UserProviderProps> = ({
         }, 2000);
         return user;
       } catch (e) {
+        console.log('POBLEMM ', e);
         const { error } = e as ApiError;
         if (error === 'AlreadyUsed') {
           setError(e as ApiError);
+          setLoading(false);
+          return null;
+        } else if (error === 'RequestValidationError') {
+          notification.error({
+            message: t('InvalidRequestError', {
+              ns: 'errors',
+              field: ((e as any)?.details?.[0]?.path || '')
+                .split('.')
+                .slice(-1)[0],
+            }),
+            placement: 'bottomRight',
+          });
           setLoading(false);
           return null;
         }
@@ -434,10 +447,24 @@ export const UserProvider: FC<UserProviderProps> = ({
           placement: 'bottomRight',
         });
       } catch (e: any) {
-        notification.error({
-          message: t('account.settings.user.error'),
-          placement: 'bottomRight',
-        });
+        if (
+          (e as any)?.error === 'InvalidFile' &&
+          (e as any)?.details?.maxSize
+        ) {
+          notification.error({
+            message: t('InvalidFileError', {
+              ns: 'errors',
+              type: 'image',
+              maxSize: (e as any)?.details?.maxSize,
+            }),
+            placement: 'bottomRight',
+          });
+        } else {
+          notification.error({
+            message: t('account.settings.user.error'),
+            placement: 'bottomRight',
+          });
+        }
       }
     },
     [t, user?.id]

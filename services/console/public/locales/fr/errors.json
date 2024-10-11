@@ -8,5 +8,7 @@
   "openapi_should be object": "{{path}} doit être un objet",
   "alreadyUsed": "Ce nom technique existe déjà. Veuillez en choisir un autre.",
   "PayloadTooLarge": "Fichier trop volumineux",
-  "InvalidSlugError": "Seuls les caractères alphanumériques et espace sont autorisés."
+  "InvalidSlugError": "Seuls les caractères alphanumériques et espace sont autorisés.",
+  "InvalidFileError": "Fichier invalide, merci de sélectionner un fichier de type '{{type}}', au maximum de {{maxSize}}B.",
+  "InvalidRequestError": "Champs '{{field}}' invalide, merci de retirer tout caractère interdit."
 }

@@ -1,4 +1,9 @@
-import { Button, Schema, SchemaForm } from '@prisme.ai/design-system';
+import {
+  Button,
+  notification,
+  Schema,
+  SchemaForm,
+} from '@prisme.ai/design-system';
 import { ButtonProps } from '@prisme.ai/design-system/lib/Components/Button';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
@@ -59,7 +64,22 @@ export const UserForm = () => {
         delete values.photo;
       }
       setUpdating(true);
-      await update(values);
+      try {
+        await update(values);
+      } catch (err) {
+        notification.error({
+          message:
+            (err as any)?.error === 'InvalidFile' &&
+            (err as any)?.details?.maxSize
+              ? t('InvalidFileError', {
+                  ns: 'errors',
+                  type: 'image',
+                  maxSize: (err as any)?.details?.maxSize,
+                })
+              : t('unknown', { ns: 'errors', errorName: (err as any)?.error }),
+          placement: 'bottomRight',
+        });
+      }
       setUpdating(false);
     },
     [update, user.photo]

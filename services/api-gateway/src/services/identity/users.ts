@@ -24,6 +24,7 @@ import { extractObjectsByPath } from '../../utils/extractObjectsByPath';
 import { syscfg, mails as mailConfig, authProviders } from '../../config';
 import { logger, Logger } from '../../logger';
 import { AuthProviders, User } from '.';
+import { validateUploadedFile } from '../../utils/validateUploadedFile';
 
 const { RESET_PASSWORD_URL, CONSOLE_URL } = mailConfig;
 
@@ -340,6 +341,14 @@ export const patchUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
     if (unauthorizedField) {
       throw new ForbiddenError(
         `Unauthorized update on '${unauthorizedField}' field`
+      );
+    }
+
+    if (user.photo) {
+      await validateUploadedFile(
+        user.photo,
+        syscfg.USER_PICTURE_MAX_SIZE,
+        'image/'
       );
     }
 

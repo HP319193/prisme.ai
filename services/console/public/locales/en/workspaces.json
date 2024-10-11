@@ -593,6 +593,10 @@
       "disabled": {
         "label": "Disabled",
         "description": "If you enable this setting, Automation will not be executed anymore and simply ignored"
+      },
+      "validateArguments": {
+        "title": "Automatic argument validation",
+        "description": "If a passed argument does not match the expected type, the automation will not be executed."
       }
     },
     "arguments": {

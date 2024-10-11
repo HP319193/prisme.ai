@@ -2,7 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import express, { Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
-import { UPLOADS_MAX_SIZE } from '../../../config';
+import { UPLOADS_MAX_SIZE, WORKSPACE_PHOTO_MAX_SIZE } from '../../../config';
 import { InvalidUploadError, MissingFieldError } from '../../errors';
 import { AccessManager } from '../../permissions';
 import { AppInstances, Apps, Workspaces } from '../../services';
@@ -11,6 +11,7 @@ import FileStorage from '../../services/FileStorage';
 import { PrismeContext } from '../middlewares';
 import { asyncRoute } from '../utils/async';
 import { WorkspaceExports } from '../../services/workspaces/crud/exports';
+import { validateUploadedFile } from '../../utils/validateUploadedFile';
 
 export default function init(
   dsulStorage: DSULStorage,
@@ -50,6 +51,14 @@ export default function init(
     }: Request<any, any, PrismeaiAPI.CreateWorkspace.RequestBody>,
     res: Response<PrismeaiAPI.CreateWorkspace.Responses.$200>
   ) {
+    if (body.photo) {
+      await validateUploadedFile(
+        body.photo,
+        WORKSPACE_PHOTO_MAX_SIZE,
+        'image/'
+      );
+    }
+
     const { workspaces } = getServices({
       context,
       accessManager,
@@ -122,6 +131,13 @@ export default function init(
     >,
     res: Response<PrismeaiAPI.CreateWorkspace.Responses.$200>
   ) {
+    if (body.photo) {
+      await validateUploadedFile(
+        body.photo,
+        WORKSPACE_PHOTO_MAX_SIZE,
+        'image/'
+      );
+    }
     const { workspaces } = getServices({
       context,
       accessManager,
