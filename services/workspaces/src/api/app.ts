@@ -32,7 +32,7 @@ export function initAPI(
 ) {
   const app = express();
   app.disable('x-powered-by');
-  app.use(helmet());
+  app.use(helmet({ crossOriginResourcePolicy: { policy: 'same-site' } }));
 
   /**
    * Get NODE_ENV from environment and store in Express.
