@@ -4,7 +4,6 @@ const errors = require('fix-esm').require('oidc-provider').errors;
 import { CookieOptions } from 'express';
 import { URL, URLSearchParams } from 'url';
 import { syscfg } from '.';
-import { findCommonParentDomain } from '../utils/findCommonParentDomain';
 import { logger } from '../logger';
 import { getOAuthClient } from '../services/oidc/client';
 
@@ -49,17 +48,6 @@ function getSignoutUri(
     return SIGNOUT_URI + '?' + signoutParams.toString();
   }
   return SIGNOUT_URI;
-}
-
-const cookiesDomain = findCommonParentDomain([
-  PAGES_HOST,
-  PROVIDER_URL,
-  STUDIO_URL,
-]);
-if (!cookiesDomain) {
-  console.warn(
-    `No shared parent domain found between pages host, OIDC provider url and studio login url. Authentication might not be working !`
-  );
 }
 
 const OIDC_WELL_KNOWN_URL = process.env.OIDC_WELL_KNOWN_URL;
@@ -286,12 +274,10 @@ export default {
           overwrite: true,
           sameSite: 'none', // Lax would break external SSO auth as they redirect directly on OIDC termination
           path: '/',
-          domain: cookiesDomain,
         },
 
         long: {
           maxAge: SESSION_COOKIES_MAX_AGE * 1000,
-          domain: cookiesDomain,
         },
 
         names: {
