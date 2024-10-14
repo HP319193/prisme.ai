@@ -26,6 +26,16 @@
       "interface": {
         "label": "Interface"
       }
+    },
+    "security": {
+      "delete": {
+        "title": "Account deletion",
+        "description": "You can delete your account and all your personal information.",
+        "label": "Delete my account",
+        "confirm": "Your account will be permanently deleted. Your personal data will be deleted. You will not be able to retrieve your data.",
+        "yes": "Delete my account",
+        "no": "Cancel"
+      }
     }
   },
   "workspaces": "Workspaces",

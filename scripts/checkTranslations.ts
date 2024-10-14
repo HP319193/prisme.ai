@@ -19,8 +19,7 @@ function compareKeys(a: any, b: any): boolean {
     }
 
     if (!b[k]) {
-      console.error(`Key "${k}" is missing on one file`);
-      return false;
+      throw new Error(`Key "${k}" is missing on one file`);
     }
 
     return compareKeys(v, b[k]);
