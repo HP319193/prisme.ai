@@ -22,6 +22,7 @@ const whitelist = [
   'String',
   'TypeError',
   'Prisme',
+  'location',
 ];
 
 function wrapFn(fn: Function) {
