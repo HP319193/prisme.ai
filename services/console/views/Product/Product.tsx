@@ -14,7 +14,6 @@ export const Product = memo(function Product() {
   } = useTranslation();
   const iframe = useRef<HTMLIFrameElement>(null);
   const {
-    asPath,
     query: { slug = [] },
     replace,
     push,
@@ -23,9 +22,13 @@ export const Product = memo(function Product() {
 
   useEffect(() => {
     setProductUrlHandler(() => (url: string) => {
-      const [, productSlug, path] = url.split(/\//);
-      const src = `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}`;
-      iframe.current?.setAttribute('src', src);
+      if (url.match(/^\/product/)) {
+        const [, productSlug, path] = url.split(/\//).filter(Boolean);
+        const src = `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}`;
+        iframe.current?.setAttribute('src', src);
+      } else {
+        iframe.current?.setAttribute('src', url);
+      }
     });
   }, [language, setProductUrlHandler]);
 
