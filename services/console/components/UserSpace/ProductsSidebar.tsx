@@ -28,8 +28,7 @@ export const ProductsSidebar = () => {
   const [expanded, setExpanded] = useState(!!Storage.get('sidebarExpanded'));
   const { user, updateMeta } = useUser();
   const [added, setAdded] = useState<string>('');
-  const { fetchProducts, shortcuts, changeProductUrl } = useProducts();
-
+  const { fetchProducts, shortcuts } = useProducts();
   const products: Product[] = useMemo(
     () => (user && user.meta?.products) || [],
     [user]
@@ -119,10 +118,7 @@ export const ProductsSidebar = () => {
                 ({ name, href, icon }, key) =>
                   href && (
                     <Link href={href} key={key}>
-                      <a
-                        className="flex flex-1"
-                        onClick={() => changeProductUrl(href)}
-                      >
+                      <a className="flex flex-1">
                         <Button
                           expanded={expanded}
                           icon={icon}
@@ -145,7 +141,10 @@ export const ProductsSidebar = () => {
                 <a
                   className="flex flex-1"
                   onClick={(e) => {
-                    changeProductUrl(href);
+                    if (router.asPath.match(href)) {
+                      window.location.assign(href);
+                      return;
+                    }
                   }}
                 >
                   <Button
