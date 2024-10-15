@@ -855,6 +855,13 @@ export class Api extends Fetcher {
     return replaced;
   }
 
+  getAutomationFromUrl(workspaceId: string, url: string) {
+    const match = url.match(
+      `${this.host}/workspaces/${workspaceId}/webhooks\/(.*$)`
+    );
+    return match ? match[1] : false;
+  }
+
   async callAutomation(
     workspaceId: string,
     automation: string,

@@ -14,6 +14,7 @@ const dftUtils = {
     return `${window.location.protocol}//${window.location.host}`;
   },
   changeBlockConfig: (block: any) => block,
+  fetchWorkspaceOnly: async () => new Response(),
 };
 
 const uploadFile = async (file: string) => file;

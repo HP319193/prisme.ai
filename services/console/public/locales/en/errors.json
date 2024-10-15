@@ -9,5 +9,6 @@
   "alreadyUsed": "This slug already exists. Please choose another.",
   "PayloadTooLarge": "File too large",
   "InvalidSlugError": "Only alphanumeric characters and spaces are allowed.",
-  "InvalidFileError": "Invalid file, please select a valid {{type}} smaller than {{maxSize}}B."
+  "InvalidFileError": "Invalid file, please select a valid {{type}} smaller than {{maxSize}}B.",
+  "InvalidRequestError": "Invalid field '{{field}}', please remove any forbidden characters."
 }
