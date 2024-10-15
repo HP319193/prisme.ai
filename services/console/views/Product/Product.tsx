@@ -23,7 +23,7 @@ export const Product = memo(function Product() {
   useEffect(() => {
     setProductUrlHandler(() => (url: string) => {
       if (url.match(/^\/product/)) {
-        const [, productSlug, path] = url.split(/\//).filter(Boolean);
+        const [, productSlug = '', path = ''] = url.split(/\//).filter(Boolean);
         const src = `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}`;
         iframe.current?.setAttribute('src', src);
       } else {
