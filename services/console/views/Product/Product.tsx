@@ -14,7 +14,6 @@ export const Product = memo(function Product() {
   } = useTranslation();
   const iframe = useRef<HTMLIFrameElement>(null);
   const {
-    asPath,
     query: { slug = [] },
     replace,
     push,
@@ -26,10 +25,12 @@ export const Product = memo(function Product() {
     return `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}${window.location.search}${window.location.hash}`;
   }, [language, productSlug]);
 
-  const lastiFrameUrl = useRef('');
-
   useEffect(() => {
     if (!iframe.current) return;
+    iframe.current.contentWindow?.postMessage({
+      type: 'api.token',
+      token: api.token,
+    });
 
     const listener = ({
       origin,
@@ -53,19 +54,12 @@ export const Product = memo(function Product() {
       const [prefix] = window.location.pathname.split(`product/${productSlug}`);
       const rootPath = `${prefix}product/${productSlug}`;
       replace(`${rootPath}${path}`);
-      lastiFrameUrl.current = `${rootPath}${path}`;
     };
     window.addEventListener('message', listener);
     return () => {
       window.removeEventListener('message', listener);
     };
   }, [productSlug, productUrl, push, replace]);
-
-  useEffect(() => {
-    if (!lastiFrameUrl.current.match(asPath)) {
-      iframe.current?.setAttribute('src', productUrl);
-    }
-  }, [asPath, productUrl]);
 
   if (!productUrl) return null;
   return (
