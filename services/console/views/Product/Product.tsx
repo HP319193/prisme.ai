@@ -2,7 +2,7 @@ import { useTranslation } from 'next-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useMemo, useRef } from 'react';
-import api from '../../utils/api';
+import { useProducts } from '../../providers/Products';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '' },
@@ -14,10 +14,20 @@ export const Product = memo(function Product() {
   } = useTranslation();
   const iframe = useRef<HTMLIFrameElement>(null);
   const {
+    asPath,
     query: { slug = [] },
     replace,
     push,
   } = useRouter();
+  const { setProductUrlHandler } = useProducts();
+
+  useEffect(() => {
+    setProductUrlHandler(() => (url: string) => {
+      const [, productSlug, path] = url.split(/\//);
+      const src = `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}`;
+      iframe.current?.setAttribute('src', src);
+    });
+  }, [language, setProductUrlHandler]);
 
   const [productSlug] = Array.isArray(slug) ? slug : [slug];
   const productUrl = useMemo(() => {
@@ -27,10 +37,6 @@ export const Product = memo(function Product() {
 
   useEffect(() => {
     if (!iframe.current) return;
-    iframe.current.contentWindow?.postMessage({
-      type: 'api.token',
-      token: api.token,
-    });
 
     const listener = ({
       origin,
