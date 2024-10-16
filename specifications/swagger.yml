@@ -84,6 +84,10 @@ components:
                 - deactivated
             meta:
               type: object
+            groups:
+              type: array
+              items:
+                type: string
 
         - $ref: '#/components/schemas/Object'
 
@@ -134,6 +138,8 @@ components:
               $ref: '#/components/schemas/SupportedMFA'
             meta:
               type: object
+            platformRole:
+              type: string
         - $ref: '#/components/schemas/Contact'
 
     App:
@@ -3886,6 +3892,12 @@ paths:
                 authProvider:
                   type: string
                 status: *USER_STATUS
+                platformRole:
+                  type: string
+                groups:
+                  type: array
+                  items:
+                    type: string
       responses:
         '200':
           description: Success Response
@@ -3946,6 +3958,12 @@ paths:
                 meta:
                   type: object
                   additionalProperties: true
+                platformRole:
+                  type: string
+                groups:
+                  type: array
+                  items:
+                    type: string
       responses:
         '200':
           description: Success Response
