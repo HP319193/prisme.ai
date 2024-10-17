@@ -282,11 +282,11 @@ export default {
 
         names: {
           interaction:
-            process.env.OIDC_INTERACTION_COOKIE_NAME || '_interaction',
+            process.env.OIDC_INTERACTION_COOKIE_NAME || '_interactionv2',
           resume:
             process.env.OIDC_INTERACTION_RESUME_COOKIE_NAME ||
-            '_interaction_resume',
-          session: process.env.OIDC_SESSION_COOKIE_NAME || '_session',
+            '_interaction_resumev2',
+          session: process.env.OIDC_SESSION_COOKIE_NAME || '_sessionv2',
         },
       },
 
