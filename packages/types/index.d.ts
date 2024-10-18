@@ -1186,6 +1186,7 @@ declare namespace Prismeai {
         meta?: {
             [key: string]: any;
         };
+        groups?: string[];
         /**
          * Unique id
          */
@@ -2646,6 +2647,7 @@ declare namespace Prismeai {
         meta?: {
             [key: string]: any;
         };
+        platformRole?: string;
         /**
          * Name
          */
@@ -2658,6 +2660,7 @@ declare namespace Prismeai {
          * Profile picture URL
          */
         photo?: string;
+        groups?: string[];
         /**
          * Unique id
          */
@@ -3001,6 +3004,7 @@ declare namespace PrismeaiAPI {
                 meta?: {
                     [key: string]: any;
                 };
+                platformRole?: string;
                 /**
                  * Name
                  */
@@ -3013,6 +3017,7 @@ declare namespace PrismeaiAPI {
                  * Profile picture URL
                  */
                 photo?: string;
+                groups?: string[];
                 /**
                  * Unique id
                  */
@@ -3460,6 +3465,8 @@ declare namespace PrismeaiAPI {
             lastName?: string; // ^[0-9A-Za-zéèê ,.'-]{2,60}$
             authProvider?: string;
             status?: "pending" | "validated" | "deactivated";
+            platformRole?: string;
+            groups?: string[];
         }
         namespace Responses {
             export interface $200 {
@@ -3619,6 +3626,7 @@ declare namespace PrismeaiAPI {
                 meta?: {
                     [key: string]: any;
                 };
+                platformRole?: string;
                 /**
                  * Name
                  */
@@ -3631,6 +3639,7 @@ declare namespace PrismeaiAPI {
                  * Profile picture URL
                  */
                 photo?: string;
+                groups?: string[];
                 /**
                  * Unique id
                  */
@@ -4121,6 +4130,8 @@ declare namespace PrismeaiAPI {
             meta?: {
                 [name: string]: any;
             };
+            platformRole?: string;
+            groups?: string[];
         }
         namespace Responses {
             export type $200 = Prismeai.User;

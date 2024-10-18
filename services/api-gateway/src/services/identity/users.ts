@@ -279,7 +279,10 @@ export const get = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
     return filterUserFields(user);
   };
 
-const filterUserFields = (user: User): Prismeai.User => {
+const filterUserFields = (
+  user: User,
+  isSuperAdmin?: boolean
+): Prismeai.User => {
   let {
     email,
     status,
@@ -292,6 +295,8 @@ const filterUserFields = (user: User): Prismeai.User => {
     id,
     meta,
     password,
+    platformRole,
+    groups,
   } = user;
   if (!authData) {
     authData = email
@@ -319,6 +324,8 @@ const filterUserFields = (user: User): Prismeai.User => {
     language,
     mfa,
     meta,
+    groups,
+    platformRole: isSuperAdmin ? platformRole : undefined,
   };
 };
 
@@ -331,9 +338,21 @@ export const patchUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       throw new ForbiddenError('You can only update your own user');
     }
     const authorizedFields = new Set(
-      isSuperAdmin && ctx?.userId !== userId
-        ? ['firstName', 'lastName', 'meta', 'status']
-        : ['firstName', 'lastName', 'meta', 'photo', 'language']
+      (ctx?.userId === userId
+        ? ['firstName', 'lastName', 'meta', 'photo', 'language']
+        : []
+      ).concat(
+        isSuperAdmin
+          ? [
+              'firstName',
+              'lastName',
+              'meta',
+              'status',
+              'platformRole',
+              'groups',
+            ]
+          : []
+      )
     );
     const unauthorizedField = Object.keys(user).find(
       (field) => !authorizedFields.has(field)
@@ -354,17 +373,20 @@ export const patchUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
 
     const existingUser = await get(Users, ctx)(userId);
 
-    return await updateUser(
-      Users,
-      ctx
-    )({ ...existingUser, id: userId, ...user });
+    return await updateUser(Users, ctx)(
+      { ...existingUser, id: userId, ...user },
+      isSuperAdmin
+    );
   };
 
 export const updateUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
-  async function (user: Partial<User> & { id: string }) {
+  async function (
+    user: Partial<User> & { id: string },
+    isSuperAdmin?: boolean
+  ) {
     // MongoDB driver always $set & so can have partial object, but care if another driver gets in !
     await Users.save(user as User);
-    return filterUserFields(user as User);
+    return filterUserFields(user as User, isSuperAdmin);
   };
 
 export const deleteUser = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
@@ -562,12 +584,16 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
       lastName,
       authProvider,
       status,
+      groups,
+      platformRole,
     }: PrismeaiAPI.FindContacts.RequestBody,
     opts: FindOpts,
     isSuperAdmin?: boolean
   ): Promise<PrismeaiAPI.FindContacts.Responses.$200> {
     let users: User[] = [];
-    const mongoQuery: any = {};
+    const mongoQuery: any = !authProvider
+      ? { 'authData.anonymous': { $exists: false } }
+      : {};
 
     let page = 0;
     let limit = 1;
@@ -616,6 +642,14 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
         mongoQuery['authData.' + authProvider] = { $exists: true };
       }
 
+      if (groups) {
+        mongoQuery['groups'] = { $in: groups };
+      }
+
+      if (platformRole) {
+        mongoQuery['platformRole'] = platformRole;
+      }
+
       limit = opts?.limit || 50;
       page = opts?.page || 0;
     } else {
@@ -649,6 +683,8 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
           id,
           status,
           meta,
+          groups,
+          platformRole,
         }) => ({
           id,
           email: isSuperAdmin ? email : undefined,
@@ -658,6 +694,8 @@ export const findContacts = (Users: StorageDriver<User>, ctx?: PrismeContext) =>
           status: isSuperAdmin ? status : undefined,
           photo,
           meta: isSuperAdmin ? meta : undefined,
+          groups,
+          platformRole: isSuperAdmin ? platformRole : undefined,
         })
       ),
     };

@@ -51,7 +51,6 @@ export class Fetcher {
 
     if (this._csrfToken && options.method && options.method !== 'GET') {
       headers.append(CSRF_TOKEN_HEADER, this._csrfToken);
-      console.log(headers);
     }
 
     if (this.language) {

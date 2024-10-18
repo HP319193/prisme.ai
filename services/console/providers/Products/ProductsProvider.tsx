@@ -1,6 +1,8 @@
 import {
   createContext,
+  Dispatch,
   ReactNode,
+  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -11,7 +13,6 @@ import { useContext } from '../../utils/useContext';
 import consoleIcon from '../../public/images/icon-console.svg';
 import getConfig from 'next/config';
 import { Loading } from '@prisme.ai/design-system';
-import api from '../../utils/api';
 
 const {
   publicRuntimeConfig: { PRODUCTS_ENDPOINT = '' },
@@ -53,6 +54,8 @@ export interface ProductsContext {
   >;
   canSearch: boolean;
   searchProducts: (query: { query?: string }) => Promise<Product[]>;
+  changeProductUrl: (url: string) => void;
+  setProductUrlHandler: Dispatch<SetStateAction<(url: string) => void>>;
 }
 
 interface ProductsContextProviderProps {
@@ -184,6 +187,17 @@ export const ProductsProvider = ({
     setLoading(false);
   }, [fetchProducts]);
 
+  const [productUrlHandler, setProductUrlHandler] = useState(
+    () => (url: string) => {}
+  );
+
+  const changeProductUrl = useCallback(
+    (url: string) => {
+      productUrlHandler(url);
+    },
+    [productUrlHandler]
+  );
+
   return (
     <productsContext.Provider
       value={{
@@ -193,6 +207,8 @@ export const ProductsProvider = ({
         fetchProducts,
         canSearch: !!PRODUCTS_ENDPOINT,
         searchProducts,
+        setProductUrlHandler,
+        changeProductUrl,
       }}
     >
       {loading ? <Loading /> : children}

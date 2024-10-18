@@ -2,7 +2,7 @@ import { useTranslation } from 'next-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useMemo, useRef } from 'react';
-import api from '../../utils/api';
+import { useProducts } from '../../providers/Products';
 
 const {
   publicRuntimeConfig: { PAGES_HOST = '' },
@@ -14,19 +14,29 @@ export const Product = memo(function Product() {
   } = useTranslation();
   const iframe = useRef<HTMLIFrameElement>(null);
   const {
-    asPath,
     query: { slug = [] },
     replace,
     push,
   } = useRouter();
+  const { setProductUrlHandler } = useProducts();
+
+  useEffect(() => {
+    setProductUrlHandler(() => (url: string) => {
+      if (url.match(/^\/product/)) {
+        const [, productSlug = '', path = ''] = url.split(/\//).filter(Boolean);
+        const src = `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}`;
+        iframe.current?.setAttribute('src', src);
+      } else {
+        iframe.current?.setAttribute('src', url);
+      }
+    });
+  }, [language, setProductUrlHandler]);
 
   const [productSlug] = Array.isArray(slug) ? slug : [slug];
   const productUrl = useMemo(() => {
     const [, path] = window.location.pathname.split(`product/${productSlug}`);
     return `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}${window.location.search}${window.location.hash}`;
   }, [language, productSlug]);
-
-  const lastiFrameUrl = useRef('');
 
   useEffect(() => {
     if (!iframe.current) return;
@@ -53,19 +63,12 @@ export const Product = memo(function Product() {
       const [prefix] = window.location.pathname.split(`product/${productSlug}`);
       const rootPath = `${prefix}product/${productSlug}`;
       replace(`${rootPath}${path}`);
-      lastiFrameUrl.current = `${rootPath}${path}`;
     };
     window.addEventListener('message', listener);
     return () => {
       window.removeEventListener('message', listener);
     };
   }, [productSlug, productUrl, push, replace]);
-
-  useEffect(() => {
-    if (!lastiFrameUrl.current.match(asPath)) {
-      iframe.current?.setAttribute('src', productUrl);
-    }
-  }, [asPath, productUrl]);
 
   if (!productUrl) return null;
   return (
