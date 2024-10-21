@@ -46,7 +46,7 @@ export default {
   CORS_ADDITIONAL_ALLOWED_ORIGINS: (
     process.env.CORS_ADDITIONAL_ALLOWED_ORIGINS || ''
   )
-    .split(new RegExp(/(https:\/\/|http:\/\/)/i))
+    .split(new RegExp(/,?(https:\/\/|http:\/\/)/i))
     .map((cur, idx, list) =>
       cur.startsWith('http') && cur.endsWith('://')
         ? cur + list[idx + 1]
