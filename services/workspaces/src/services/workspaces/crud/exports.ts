@@ -790,9 +790,17 @@ export class WorkspaceExports extends DsulCrud {
         );
 
         let target: { id: string };
+        let exclude: { path: string }[] | undefined;
         if (existingWorkspace?.[0]?.id) {
           target = { id: existingWorkspace?.[0]?.id };
           updatedWorkspaceIds.push(target.id);
+          try {
+            const dsulIndex = await this?.getWorkspace(target.id);
+            exclude =
+              Object.values(dsulIndex?.repositories || {}).find(
+                (cur) => cur.type === 'archive'
+              )?.pull?.exclude || undefined;
+          } catch {}
         } else {
           target = await this.workspaces.createWorkspace({
             name: 'Import',
@@ -808,6 +816,7 @@ export class WorkspaceExports extends DsulCrud {
           {
             overwriteWorkspaceSlug: true,
             publishApp: false, // We will publish ourselves just after this
+            exclude,
           }
         );
         allImported = allImported.concat(
