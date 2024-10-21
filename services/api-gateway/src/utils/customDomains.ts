@@ -2,7 +2,7 @@ import { Broker } from '@prisme.ai/broker';
 import { URL } from 'url';
 import { EventType, broker } from '../eda';
 import { getAllRedirectUris } from '../services/oidc/client';
-import { oidcCfg } from '../config';
+import { oidcCfg, syscfg } from '../config';
 import { logger } from '../logger';
 
 const { PAGES_HOST, STUDIO_URL } = oidcCfg;
@@ -99,14 +99,20 @@ export class CustomDomains {
   }
 }
 
-export const allowedOrigins = [STUDIO_URL].map((url) => {
-  try {
-    return new URL(url).hostname;
-  } catch {
-    logger.erro('You provided an invalid URL.');
-    return url;
-  }
-});
+export const allowedOrigins = [STUDIO_URL]
+  .concat(syscfg.CORS_ADDITIONAL_ALLOWED_ORIGINS)
+  .map((url) => {
+    try {
+      return new URL(url).hostname;
+    } catch {
+      logger.error({
+        msg: 'Invalid URL provided in CORS_ADDITIONAL_ALLOWED_ORIGINS or STUDIO_URL. Will be ignored for CORS origins',
+        url,
+      });
+      return false;
+    }
+  })
+  .filter(Boolean);
 
 export const pagesSubdomainRegex = new RegExp(
   `[^.]+${PAGES_HOST.replace(/:\d+$/, '')}`

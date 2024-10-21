@@ -127,6 +127,12 @@ UPLOADS_PUBLIC_STORAGE_S3_LIKE_BASE_URL="here is your CDN public base URL"
     <td>Redis password for sessions storage</td>
     <td></td>
   </tr>   
+  <tr>
+    <td>CORS_ADDITIONAL_ALLOWED_ORIGINS</td>
+    <td>api-gateway</td>
+    <td>Allowed CORS origins. By default, only allowed origins are STUDIO_URL, PAGES_HOST or workspace configured custom domains</td>
+    <td></td>
+  </tr>   
 
   <!-- Events -->
 

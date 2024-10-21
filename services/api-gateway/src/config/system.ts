@@ -43,6 +43,17 @@ export default {
 
   CSRF_TOKEN_HEADER,
 
+  CORS_ADDITIONAL_ALLOWED_ORIGINS: (
+    process.env.CORS_ADDITIONAL_ALLOWED_ORIGINS || ''
+  )
+    .split(new RegExp(/(https:\/\/|http:\/\/)/i))
+    .map((cur, idx, list) =>
+      cur.startsWith('http') && cur.endsWith('://')
+        ? cur + list[idx + 1]
+        : false
+    )
+    .filter<string>(Boolean as any),
+
   ALLOWED_PRISMEAI_HEADERS_FROM_OUTSIDE: [API_KEY_HEADER, CSRF_TOKEN_HEADER],
 
   ROLE_HEADER: process.env.ROLE_HEADER || 'x-prismeai-role',
