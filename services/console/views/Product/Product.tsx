@@ -3,9 +3,10 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { useProducts } from '../../providers/Products';
+import api from '../../utils/api';
 
 const {
-  publicRuntimeConfig: { PAGES_HOST = '' },
+  publicRuntimeConfig: { PAGES_HOST = '', DEBUG_PROD },
 } = getConfig();
 
 export const Product = memo(function Product() {
@@ -35,7 +36,12 @@ export const Product = memo(function Product() {
   const [productSlug] = Array.isArray(slug) ? slug : [slug];
   const productUrl = useMemo(() => {
     const [, path] = window.location.pathname.split(`product/${productSlug}`);
-    return `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}${window.location.search}${window.location.hash}`;
+    const search = new URLSearchParams(location.search);
+    if (DEBUG_PROD && api.token) {
+      search.append('access-token', api.token);
+    }
+    const querystring = Array.from(search).length ? `?${search}` : '';
+    return `${window.location.protocol}//${productSlug}${PAGES_HOST}/${language}/${path}${querystring}${window.location.hash}`;
   }, [language, productSlug]);
 
   useEffect(() => {

@@ -9,8 +9,10 @@ import getConfig from 'next/config';
 import { useTranslation } from 'next-i18next';
 import cookie from 'js-cookie';
 
+api.token = Storage.get('access-token');
+
 const {
-  publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_URL = '' },
+  publicRuntimeConfig: { PAGES_HOST = '', CONSOLE_URL = '', DEBUG_PROD },
 } = getConfig();
 
 const REDIRECT_IF_SIGNED = ['/forgot', '/signin', '/signup', '/'];
@@ -70,7 +72,16 @@ export const UserProvider: FC<UserProviderProps> = ({
   const [error, setError] = useState<ApiError>();
   const [success, setSuccess] = useState<any>();
 
-  const { push, route } = useRouter();
+  const {
+    push,
+    route,
+    query: { 'access-token': token },
+  } = useRouter();
+
+  if (DEBUG_PROD && token) {
+    api.token = `${token}`;
+    Storage.set('access-token', token);
+  }
 
   const sendValidationMail: UserContext['sendValidationMail'] = useCallback(
     async (email: string, language: string) => {

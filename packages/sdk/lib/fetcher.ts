@@ -45,6 +45,12 @@ export class Fetcher {
   prepareRequest(url: string, options: RequestInit = {}) {
     const headers = new Headers(options.headers || {});
 
+    if (this.token && !headers.has('Authorization')) {
+      headers.append('Authorization', `Bearer ${this.token}`);
+    } else if (this.legacyToken && !headers.has('Authorization')) {
+      headers.append('x-prismeai-token', this.legacyToken);
+    }
+
     if (this._apiKey && !headers.has('x-prismeai-apikey')) {
       headers.append('x-prismeai-api-key', this._apiKey);
     }
@@ -73,7 +79,7 @@ export class Fetcher {
         ? url
         : `${this.host}${url}`;
     return global.fetch(fullUrl, {
-      credentials: 'include',
+      credentials: headers.has('Authorization') ? 'omit' : 'include',
       ...options,
       headers,
     });

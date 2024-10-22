@@ -60,7 +60,7 @@ export class Events {
       `${apiHost}/workspaces/${workspaceId}/events${fullQueryString}`,
       {
         extraHeaders,
-        withCredentials: true,
+        withCredentials: !extraHeaders.authorization,
         transports: transports || ['polling', 'websocket'],
         auth: (cb) => {
           cb({

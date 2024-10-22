@@ -62,6 +62,7 @@ module.exports = {
     WEBSOCKETS_DEFAULT_TRANSPORTS: (
       process.env.WEBSOCKETS_DEFAULT_TRANSPORTS || 'polling,websocket'
     ).split(','),
+    DEBUG_PROD: process.env.DEBUG_PROD,
   },
   webpack(config) {
     config.module.rules.push({
