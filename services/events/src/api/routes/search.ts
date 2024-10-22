@@ -12,7 +12,7 @@ import { asyncRoute } from '../utils/async';
 
 export function initSearchRoutes(
   eventsStore: EventsStore,
-  additionalBody?: any
+  additionalOpts?: any
 ) {
   // Some refacto to do the day we want to move from ES ...
   const elastic = eventsStore as ElasticsearchStore;
@@ -61,7 +61,7 @@ export function initSearchRoutes(
     try {
       const { hits, aggregations } = await elastic._search(
         workspaceId,
-        { limit, page },
+        { limit, page, ...additionalOpts },
         {
           timeout: ELASTIC_SEARCH_TIMEOUT,
           query,
@@ -70,7 +70,6 @@ export function initSearchRoutes(
           _source: source,
           runtime_mappings: runtimeMappings,
           track_total_hits,
-          ...additionalBody,
         },
         context
       );

@@ -230,7 +230,7 @@ export class ElasticsearchStore implements EventsStore {
 
   async _search(
     workspaceId: string,
-    options: SearchOptions = {},
+    options: SearchOptions & { ignore_unavailable?: boolean } = {},
     body: any,
     ctx?: PrismeContext
   ): Promise<elasticsearch.ApiResponse['body']> {
@@ -244,6 +244,7 @@ export class ElasticsearchStore implements EventsStore {
           from: page * limit,
           size: limit,
           body,
+          ignore_unavailable: options?.ignore_unavailable,
         },
         {
           maxRetries: 3,
