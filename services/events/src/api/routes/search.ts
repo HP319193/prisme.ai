@@ -10,7 +10,10 @@ import { EventsStore } from '../../services/events/store';
 import { ElasticsearchStore } from '../../services/events/store/ElasticsearchStore';
 import { asyncRoute } from '../utils/async';
 
-export function initSearchRoutes(eventsStore: EventsStore) {
+export function initSearchRoutes(
+  eventsStore: EventsStore,
+  additionalBody?: any
+) {
   // Some refacto to do the day we want to move from ES ...
   const elastic = eventsStore as ElasticsearchStore;
 
@@ -67,6 +70,7 @@ export function initSearchRoutes(eventsStore: EventsStore) {
           _source: source,
           runtime_mappings: runtimeMappings,
           track_total_hits,
+          ...additionalBody,
         },
         context
       );

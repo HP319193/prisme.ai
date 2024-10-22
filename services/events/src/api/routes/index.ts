@@ -39,7 +39,12 @@ export const init = async (
     `${root}/workspaces/:workspaceId/search`,
     initSearchRoutes(eventsStore)
   );
-  app.use(`${root}/search`, initSearchRoutes(eventsStore));
+  app.use(
+    `${root}/search`,
+    initSearchRoutes(eventsStore, {
+      ignore_unavailable: true,
+    })
+  );
 
   return { io: workspacesNs };
 };
