@@ -60,12 +60,3 @@
   <script>document.addEventListener("DOMContentLoaded",function(){document.body.addEventListener("click",function(e){if(e.target instanceof HTMLElement){var t=e.target.closest("a[href^=http]");t&&ga("send","event","outbound","click",t.href)}})})</script>
 {% endblock %}
 
-{% block scripts %}
-  {{ super() }}
- <script src="https://cdn-assets.prisme.ai/blocks/popover/inject/index.js"></script>
-<script type="text/javascript">
-Prismeai.popover({
-  "url": "https://pr-ai-product.pages.prisme.ai/fr/chat"
-})
-</script>
-{% endblock %}

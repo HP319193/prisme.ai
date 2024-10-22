@@ -1,13 +1,13 @@
-site_name:  Prisme.ai
+site_name:  prisme.ai
 site_url: https://docs.eda.prisme.ai
-console_url: https://console.eda.prisme.ai/signin
-site_author: Prisme.ai
+console_url: https://studio.prisme.ai/signin
+site_author: prisme.ai
 site_description:  Everything you need to know about Prisme.ai
 start:  Documentation
 docs_dir: docs/en
 site_dir: public/fr
 # Copyright
-copyright: Prisme.ai &copy; 2016 - 2022 Gogowego SAS
+copyright: Prisme.ai &copy; 2016 - 2024
 extra_css:
   - stylesheets/extra.css
 extra_javascript:
