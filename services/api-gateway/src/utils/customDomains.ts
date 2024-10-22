@@ -64,7 +64,10 @@ export class CustomDomains {
       !domain ||
       allowedOrigins.includes(domain) ||
       this.customDomains.has(domain) ||
-      pagesSubdomainRegex.test(domain)
+      pagesSubdomainRegex.test(domain) ||
+      // Allowed origins can also be ".parentdomain.prisme.ai" to whitelist all subdomains
+      // Avoid regex usage with domain slicing
+      allowedOrigins.includes(domain.slice(domain.indexOf('.')))
     );
   }
 
