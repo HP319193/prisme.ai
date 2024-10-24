@@ -39,14 +39,29 @@ export const BlocksGrid = ({
   useEffect(() => {
     const blocksInLayout: BlockWithLayout['block'][] = [];
     const layoutFromConfig: ReactGridLayout.Layout[] = [];
-
-    blocks.forEach(({ block, layout }, key) => {
-      blocksInLayout.push(block);
-      layoutFromConfig.push({
-        i: `${key}-${block.slug}`,
-        ...layout,
-      });
-    });
+    blocks.forEach(
+      (
+        {
+          block,
+          layout = {
+            isDraggable: false,
+            isResizable: true,
+            resizeHandles: ['e'],
+            x: 0,
+            y: 0,
+            h: 1,
+            w: 4,
+          },
+        },
+        key
+      ) => {
+        blocksInLayout.push(block);
+        layoutFromConfig.push({
+          i: `${key}-${block.slug}`,
+          ...layout,
+        });
+      }
+    );
 
     const blocksFromConfig = blocksInLayout
       .filter(Boolean)
