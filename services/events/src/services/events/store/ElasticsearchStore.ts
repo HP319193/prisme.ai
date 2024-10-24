@@ -912,52 +912,70 @@ export class ElasticsearchStore implements EventsStore {
             .map(([workspaceId, {}]) => workspaceId);
 
     // 3. Fetch last events from each small datastream
-    const lastEvents = await this.client.search({
-      size: smallWorkspaceIds.length,
-      index: smallWorkspaceIds
-        .map((cur) => {
-          const datastream = this.getWorkspaceEventsIndexName(cur);
-          if (closedDatastreams.has(datastream)) {
-            return false;
-          }
-          return datastream;
-        })
-        .filter<string>(Boolean as any),
-      body: {
-        sort: [
-          {
-            '@timestamp': 'desc',
-          },
-        ],
-        query: {
-          bool: {
-            must_not: {
-              terms: {
-                type: ['error'], // Do not count error events as an 'activity' indicator, as they can come from automated tasks
+
+    /*
+     * Split in multiple requests to avoid HTTP "too_long_http_line_exception"
+     * Calculate how many index name can fit within HTTP 4096 bytes max line length
+     * Workspace ids are 8 bytes long, + 3 bytes for the urlencoded separation comma
+     */
+    const maxIndicesPerRequest = Math.ceil(
+      3000 / this.getWorkspaceEventsIndexName('12345678911').length
+    );
+    let inactivityDaysByWorkspaceId: Record<string, number> = {};
+    let i = 0;
+    while (i < smallWorkspaceIds.length) {
+      const batch = smallWorkspaceIds.slice(i, i + maxIndicesPerRequest);
+      i += maxIndicesPerRequest;
+      const lastEvents = await this.client.search({
+        size: batch.length,
+        index: batch
+          .map((cur) => {
+            const datastream = this.getWorkspaceEventsIndexName(cur);
+            if (closedDatastreams.has(datastream)) {
+              return false;
+            }
+            return datastream;
+          })
+          .filter<string>(Boolean as any),
+        body: {
+          sort: [
+            {
+              '@timestamp': 'desc',
+            },
+          ],
+          query: {
+            bool: {
+              must_not: {
+                terms: {
+                  type: ['error'], // Do not count error events as an 'activity' indicator, as they can come from automated tasks
+                },
               },
             },
           },
+          collapse: {
+            field: 'source.workspaceId',
+          },
         },
-        collapse: {
-          field: 'source.workspaceId',
-        },
-      },
-    });
+      });
 
-    // 4. Calculate inactivity days from small datastreams
-    const inactivityDaysByWorkspaceId = lastEvents.body.hits.hits.reduce(
-      (lastDatesByWorkspaceId: Record<string, string>, cur: any) => {
-        const workspaceId = this.extractWorkspaceIdFromindex(cur._index);
-        const inactivityDays =
-          (Date.now() - new Date(cur._source.createdAt).getTime()) /
-          (1000 * 3600 * 24);
-        return {
-          ...lastDatesByWorkspaceId,
-          [workspaceId]: Math.round(inactivityDays),
-        };
-      },
-      {}
-    );
+      // 4. Calculate inactivity days from small datastreams
+      inactivityDaysByWorkspaceId = {
+        ...inactivityDaysByWorkspaceId,
+        ...lastEvents.body.hits.hits.reduce(
+          (lastDatesByWorkspaceId: Record<string, string>, cur: any) => {
+            const workspaceId = this.extractWorkspaceIdFromindex(cur._index);
+            const inactivityDays =
+              (Date.now() - new Date(cur._source.createdAt).getTime()) /
+              (1000 * 3600 * 24);
+            return {
+              ...lastDatesByWorkspaceId,
+              [workspaceId]: Math.round(inactivityDays),
+            };
+          },
+          {}
+        ),
+      };
+    }
 
     // 5. List small & inactive datastreams that we want to delete
     const deleteDatastreams = smallWorkspaceIds
