@@ -881,7 +881,10 @@ export class ElasticsearchStore implements EventsStore {
     };
   }
 
-  async findInactiveIndices(indicesStats: EventsIndicesStats) {
+  async findInactiveIndices(
+    indicesStats: EventsIndicesStats,
+    maxIndicesPerRequest: number
+  ) {
     // 1. list data streams
     const { body: datastreams } = await this.client.indices.dataStreamsStats();
     const closedDatastreams = new Set();
@@ -912,15 +915,6 @@ export class ElasticsearchStore implements EventsStore {
             .map(([workspaceId, {}]) => workspaceId);
 
     // 3. Fetch last events from each small datastream
-
-    /*
-     * Split in multiple requests to avoid HTTP "too_long_http_line_exception"
-     * Calculate how many index name can fit within HTTP 4096 bytes max line length
-     * Workspace ids are 8 bytes long, + 3 bytes for the urlencoded separation comma
-     */
-    const maxIndicesPerRequest = Math.ceil(
-      3000 / this.getWorkspaceEventsIndexName('12345678911').length
-    );
     let inactivityDaysByWorkspaceId: Record<string, number> = {};
     let i = 0;
     while (i < smallWorkspaceIds.length) {
@@ -1070,11 +1064,19 @@ export class ElasticsearchStore implements EventsStore {
   }
 
   async cleanupIndices(opts: any, dryRun: boolean) {
+    /*
+     * Split in multiple requests to avoid HTTP "too_long_http_line_exception"
+     * Calculate how many index name can fit within HTTP 4096 bytes max line length
+     * Workspace ids are 8 bytes long, + 3 bytes for the urlencoded separation comma
+     */
+    const maxIndicesPerRequest = Math.ceil(
+      3000 / this.getWorkspaceEventsIndexName('12345678911').length
+    );
     let { emptyIndices, indices: indicesStats } =
       await this.fetchWorkspacesStats();
 
     const { indicesWithoutDatastream, deleteDatastreams } =
-      await this.findInactiveIndices(indicesStats);
+      await this.findInactiveIndices(indicesStats, maxIndicesPerRequest);
 
     let expiredEvents;
     if (EVENTS_RETENTION_DAYS != -1) {
@@ -1091,17 +1093,26 @@ export class ElasticsearchStore implements EventsStore {
       };
     }
 
-    let deleteDatastreamsResult;
+    let deleteDatastreamsResult = [];
     let deleteEmptyIndicesResult;
 
-    try {
-      deleteDatastreamsResult = deleteDatastreams?.length
-        ? await this.client.indices.deleteDataStream({
-            name: deleteDatastreams.map((cur) => cur.name),
-          })
-        : {};
-    } catch (err) {
-      deleteDatastreamsResult = err;
+    let i = 0;
+    while (i < deleteDatastreams.length) {
+      try {
+        const batch = deleteDatastreams
+          .slice(i, i + maxIndicesPerRequest)
+          .map((cur) => cur.name);
+        i += maxIndicesPerRequest;
+        deleteDatastreamsResult.push(
+          deleteDatastreams?.length
+            ? await this.client.indices.deleteDataStream({
+                name: batch,
+              })
+            : {}
+        );
+      } catch (err) {
+        deleteDatastreamsResult.push(err);
+      }
     }
 
     try {
